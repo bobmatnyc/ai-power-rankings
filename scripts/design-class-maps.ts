@@ -108,6 +108,19 @@ const MAP_190E2B: ClassMap = {
     "components/auth/user-button-with-admin.tsx",
     "components/auth/clerk-provider-client.tsx",
     "app/[lang]/(authenticated)/layout.tsx",
+    // E2b-2: the rest of app/[lang]/(authenticated)/**. clerk-debug/page.tsx
+    // is capped unchanged (architect ruling), so it is not listed.
+    "app/[lang]/(authenticated)/admin/automated-ingestion/automated-ingestion-client.tsx",
+    "app/[lang]/(authenticated)/admin/news/edit/[id]/page.tsx",
+    "app/[lang]/(authenticated)/admin/news/new/page.tsx",
+    "app/[lang]/(authenticated)/admin/state-of-ai/state-of-ai-client.tsx",
+    "app/[lang]/(authenticated)/admin/whats-new-summary/whats-new-summary-client.tsx",
+    "app/[lang]/(authenticated)/dashboard/auth/error/page.tsx",
+    "app/[lang]/(authenticated)/dashboard/cache/cache-client.tsx",
+    "app/[lang]/(authenticated)/dashboard/rankings/[period]/changes/ranking-changes-summary.tsx",
+    "app/[lang]/(authenticated)/dashboard/rankings/page.tsx",
+    "app/[lang]/(authenticated)/dashboard/tools/[slug]/dashboard-tool-detail.tsx",
+    "app/[lang]/(authenticated)/unauthorized/page.tsx",
   ],
   classes: {
     // Neutral paper surfaces, borders and text (one value in both modes).
@@ -118,12 +131,32 @@ const MAP_190E2B: ClassMap = {
     "bg-gray-900": "bg-ds-surface-footer",
     "bg-black": "bg-ds-surface-overlay",
     "border-gray-200": "border-ds-border-paper",
+    "text-gray-500": "text-ds-text-paper-subtle",
     "text-gray-600": "text-ds-text-paper-muted",
     "text-white": "text-ds-text-on-fill",
     // Accent.
     "bg-blue-600": "bg-ds-accent-fixed",
+    // E2b-2: status and category colours (fixed: one value in both modes).
+    "text-blue-600": "text-ds-accent-fixed",
+    "text-blue-500": "text-ds-accent-cat-blue",
+    "text-purple-500": "text-ds-accent-cat-purple",
+    "text-orange-500": "text-ds-accent-cat-orange",
+    "border-blue-200": "border-ds-border-tag-blue",
+    "text-green-500": "text-ds-success-solid",
+    "bg-green-500": "bg-ds-success-solid",
+    "text-green-600": "text-ds-success-fixed-mid",
+    "bg-green-50": "bg-ds-success-fixed-subtle",
+    "border-green-200": "border-ds-success-fixed-border",
+    "text-red-500": "text-ds-danger-solid",
+    "text-red-600": "text-ds-danger-fixed",
   },
-  pairs: {},
+  pairs: {
+    // E2b-2: success alerts and the access-denied icon (callout tokens switch with the mode).
+    "bg-green-50 dark:bg-green-950": "bg-ds-surface-callout-success",
+    "border-green-200 dark:border-green-800": "border-ds-border-callout-success",
+    "text-green-600 dark:text-green-400": "text-ds-text-callout-success",
+    "text-red-600 dark:text-red-400": "text-ds-text-callout-danger",
+  },
   inline: {},
 };
 

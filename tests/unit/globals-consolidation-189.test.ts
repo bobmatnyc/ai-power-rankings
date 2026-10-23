@@ -107,10 +107,13 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
  * E2a's 55 untokenised uses exempted the same way. #190 PR E2b-1: 119, the
  * 31 auth uses: 15 moved to tokens, 14 exempted per file (Df8) and Clerk's
  * two colorPrimary values exempted permanently (migration-190e2b.md).
+ * #190 PR E2b-2: 0, the 119 uses in the rest of app/[lang]/(authenticated)/:
+ * 46 moved to tokens, 42 exempted per file (Df8) and clerk-debug/page.tsx's
+ * 31 capped unchanged by architect ruling (migration-190e2b.md).
  * Lower it as #190 migrates; never raise it.
  */
-// #190 E2b-1: lowered from 150 by the 31 components/auth and (authenticated)/layout.tsx uses.
-const HARDCODED_COLOUR_BASELINE = 119;
+// #190 E2b-2: lowered from 119 by the rest of app/[lang]/(authenticated)/.
+const HARDCODED_COLOUR_BASELINE = 0;
 
 /**
  * #190 rulings D2-D4 and Df8: the only places a literal colour is the right
@@ -282,6 +285,54 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{
     path: /^components\/auth\/user-button-with-admin\.tsx$/,
     colourCap: 1,
     reason: "Df8: the subscription item's onMouseEnter rgba(0, 0, 0, 0.03); no token holds that value.",
+  },
+  // #190 E2b-2 (architect, 2026-10-23): the developer page stays byte-for-byte, capped at its full count.
+  {
+    path: /^app\/\[lang\]\/\(authenticated\)\/clerk-debug\/page\.tsx$/,
+    colourCap: 31,
+    reason: "developer page; capped by Architect ruling 2026-10-23, parity only",
+  },
+  // #190 Df8: the 42 E2b-2 page colours with no exact token (migration-190e2b.md
+  // "E2b-2", "Not migrated"), exempted per file and capped at the measured count.
+  {
+    path: /^app\/\[lang\]\/\(authenticated\)\/unauthorized\/page\.tsx$/,
+    colourCap: 19,
+    reason:
+      "Df8: light/dark pairs no token holds in both modes (red-100 / red-900 at 20 %, gray-900 / white, gray-600 / gray-400, gray-500 / gray-500, gray-200 / gray-700, gray-300 / gray-600, gray-50 / gray-800) and hover:bg-blue-700 (--ds-accent-hover is blue-700 in light only).",
+  },
+  {
+    path: /^app\/\[lang\]\/\(authenticated\)\/dashboard\/rankings\/\[period\]\/changes\/ranking-changes-summary\.tsx$/,
+    colourCap: 6,
+    reason: "Df8: green, red and blue 100/800 movement badges in both modes; the tag tokens switch to 900 and 300 in dark.",
+  },
+  {
+    path: /^app\/\[lang\]\/\(authenticated\)\/dashboard\/auth\/error\/page\.tsx$/,
+    colourCap: 5,
+    reason:
+      "Df8: bg-red-100, text-gray-900 and text-gray-800 (no text token holds them), hover:bg-blue-700 (--ds-accent-hover is light only) and hover:bg-gray-300 (only a text token holds it).",
+  },
+  {
+    path: /^app\/\[lang\]\/\(authenticated\)\/dashboard\/tools\/\[slug\]\/dashboard-tool-detail\.tsx$/,
+    colourCap: 4,
+    reason: "Df8: green and red 100/800 position badges in both modes; the tag tokens switch to 900 and 300 in dark.",
+  },
+  {
+    path: /^app\/\[lang\]\/\(authenticated\)\/admin\/whats-new-summary\/whats-new-summary-client\.tsx$/,
+    colourCap: 4,
+    reason:
+      "Df8: text-green-800 (only a gradient token holds it), bg-blue-50 (--ds-accent-subtle is blue-900 in dark) and text-blue-800 (--ds-text-tag-blue is blue-300 in dark).",
+  },
+  {
+    path: /^app\/\[lang\]\/\(authenticated\)\/admin\/automated-ingestion\/automated-ingestion-client\.tsx$/,
+    colourCap: 2,
+    reason:
+      "Df8: the success alert's text-green-800 dark:text-green-200; --ds-text-callout-success-title is green-700 / green-300, and a pair is never half migrated.",
+  },
+  {
+    path: /^app\/\[lang\]\/\(authenticated\)\/admin\/state-of-ai\/state-of-ai-client\.tsx$/,
+    colourCap: 2,
+    reason:
+      "Df8: the success alert's text-green-800 dark:text-green-200; --ds-text-callout-success-title is green-700 / green-300, and a pair is never half migrated.",
   },
 ];
 

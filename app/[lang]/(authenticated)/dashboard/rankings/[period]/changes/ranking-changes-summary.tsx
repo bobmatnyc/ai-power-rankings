@@ -329,7 +329,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
           </Card>
           <Card>
             <CardContent className="p-6">
-              <div className="text-2xl font-bold text-green-600">
+              <div className="text-2xl font-bold text-ds-success-fixed-mid">
                 {changes.filter((c) => c.movement_direction === "up").length}
               </div>
               <p className="text-sm text-muted-foreground">Tools Moving Up</p>
@@ -337,7 +337,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
           </Card>
           <Card>
             <CardContent className="p-6">
-              <div className="text-2xl font-bold text-red-600">
+              <div className="text-2xl font-bold text-ds-danger-fixed">
                 {changes.filter((c) => c.movement_direction === "down").length}
               </div>
               <p className="text-sm text-muted-foreground">Tools Moving Down</p>
@@ -345,7 +345,7 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
           </Card>
           <Card>
             <CardContent className="p-6">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-ds-accent-fixed">
                 {changes.filter((c) => c.movement_direction === "new").length}
               </div>
               <p className="text-sm text-muted-foreground">New Entries</p>
@@ -380,18 +380,18 @@ export function RankingChangesSummary({ period, lang }: RankingChangesSummaryPro
                 <Link
                   key={change.tool_id}
                   href={`/en/dashboard/tools/${change.tool_id}`}
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50 transition-colors"
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-ds-surface-paper-muted transition-colors"
                 >
                   <div className="flex items-center gap-4">
                     <div className="text-center">
                       {change.movement_direction === "up" && (
-                        <TrendingUp className="h-5 w-5 text-green-600" />
+                        <TrendingUp className="h-5 w-5 text-ds-success-fixed-mid" />
                       )}
                       {change.movement_direction === "down" && (
-                        <TrendingDown className="h-5 w-5 text-red-600" />
+                        <TrendingDown className="h-5 w-5 text-ds-danger-fixed" />
                       )}
                       {change.movement_direction === "new" && (
-                        <Zap className="h-5 w-5 text-blue-600" />
+                        <Zap className="h-5 w-5 text-ds-accent-fixed" />
                       )}
                     </div>
                     <div>

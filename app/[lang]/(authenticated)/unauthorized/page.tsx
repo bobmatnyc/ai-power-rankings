@@ -17,7 +17,7 @@ export default async function UnauthorizedPage({ params }: PageProps) {
         {/* Icon */}
         <div className="flex justify-center mb-6">
           <div className="w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
-            <ShieldAlert className="w-10 h-10 text-red-600 dark:text-red-400" />
+            <ShieldAlert className="w-10 h-10 text-ds-text-callout-danger" />
           </div>
         </div>
 
@@ -38,7 +38,7 @@ export default async function UnauthorizedPage({ params }: PageProps) {
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
             href={`/${lang}`}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-ds-accent-fixed hover:bg-blue-700 text-ds-text-on-fill font-medium rounded-lg transition-colors"
           >
             <Home className="w-4 h-4" />
             Go to Home
