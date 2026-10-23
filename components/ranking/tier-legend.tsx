@@ -15,41 +15,42 @@ export function TierLegend({ dict }: TierLegendProps) {
   const tierData = dict?.rankings?.tierLegend?.tiers;
 
   // #190 C2 (Option B): solid --ds-score-* bands with --ds-score-fg text (AA in
-  // both modes), the same classes as getTierColor in lib/ranking-utils.ts.
+  // both modes), the same classes as getTierColor in lib/ranking-utils.ts, including
+  // the band repeated as the hover fill, so Badge's default primary hover never shows.
   const tiers = [
     {
       name: "S",
       label: tierData?.S?.label || "Elite",
       range: tierData?.S?.range || "Top 5",
-      color: "bg-ds-score-s text-ds-score-fg",
+      color: "bg-ds-score-s hover:bg-ds-score-s text-ds-score-fg",
       description: tierData?.S?.description || "The absolute best AI coding tools",
     },
     {
       name: "A",
       label: tierData?.A?.label || "Excellent",
       range: tierData?.A?.range || "6-15",
-      color: "bg-ds-score-a text-ds-score-fg",
+      color: "bg-ds-score-a hover:bg-ds-score-a text-ds-score-fg",
       description: tierData?.A?.description || "Exceptional tools with strong performance",
     },
     {
       name: "B",
       label: tierData?.B?.label || "Good",
       range: tierData?.B?.range || "16-25",
-      color: "bg-ds-score-b text-ds-score-fg",
+      color: "bg-ds-score-b hover:bg-ds-score-b text-ds-score-fg",
       description: tierData?.B?.description || "Solid, reliable tools",
     },
     {
       name: "C",
       label: tierData?.C?.label || "Average",
       range: tierData?.C?.range || "26-35",
-      color: "bg-ds-score-c text-ds-score-fg",
+      color: "bg-ds-score-c hover:bg-ds-score-c text-ds-score-fg",
       description: tierData?.C?.description || "Decent tools with specific use cases",
     },
     {
       name: "D",
       label: tierData?.D?.label || "Below Average",
       range: tierData?.D?.range || "36+",
-      color: "bg-ds-score-d text-ds-score-fg",
+      color: "bg-ds-score-d hover:bg-ds-score-d text-ds-score-fg",
       description: tierData?.D?.description || "Tools with limited features or adoption",
     },
   ];
