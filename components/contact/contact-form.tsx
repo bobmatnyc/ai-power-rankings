@@ -15,7 +15,7 @@ function SignupCTA({ onOpenModal }: { onOpenModal: () => void }) {
   return (
     <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-900">
       <CardHeader className="text-center">
-        <div className="mx-auto w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-4">
+        <div className="mx-auto w-16 h-16 bg-ds-surface-tag-blue rounded-full flex items-center justify-center mb-4">
           <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400" />
         </div>
         <CardTitle className="text-2xl">Stay Updated with AI Power Rankings</CardTitle>
@@ -26,7 +26,7 @@ function SignupCTA({ onOpenModal }: { onOpenModal: () => void }) {
       <CardContent className="space-y-6">
         <div className="space-y-3">
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+            <CheckCircle className="h-5 w-5 text-ds-text-callout-success mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-medium">Weekly Rankings & Updates</p>
               <p className="text-sm text-muted-foreground">
@@ -35,7 +35,7 @@ function SignupCTA({ onOpenModal }: { onOpenModal: () => void }) {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+            <CheckCircle className="h-5 w-5 text-ds-text-callout-success mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-medium">Exclusive Insights</p>
               <p className="text-sm text-muted-foreground">
@@ -44,7 +44,7 @@ function SignupCTA({ onOpenModal }: { onOpenModal: () => void }) {
             </div>
           </div>
           <div className="flex items-start gap-3">
-            <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+            <CheckCircle className="h-5 w-5 text-ds-text-callout-success mt-0.5 flex-shrink-0" />
             <div>
               <p className="font-medium">Early Access</p>
               <p className="text-sm text-muted-foreground">
@@ -164,8 +164,8 @@ function UserPreferences({ user }: { user: any }) {
         </div>
 
         {saveStatus === "success" && (
-          <Alert className="border-green-200 bg-green-50 dark:bg-green-950/20">
-            <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+          <Alert className="border-ds-success-fixed-border bg-green-50 dark:bg-green-950/20">
+            <CheckCircle className="h-4 w-4 text-ds-text-callout-success" />
             <AlertDescription className="text-green-800 dark:text-green-200">
               Your preferences have been updated successfully!
             </AlertDescription>
@@ -173,8 +173,8 @@ function UserPreferences({ user }: { user: any }) {
         )}
 
         {saveStatus === "error" && (
-          <Alert className="border-red-200 bg-red-50 dark:bg-red-950/20">
-            <AlertCircle className="h-4 w-4 text-red-600 dark:text-red-400" />
+          <Alert className="border-ds-danger-fixed-border bg-red-50 dark:bg-red-950/20">
+            <AlertCircle className="h-4 w-4 text-ds-text-callout-danger" />
             <AlertDescription className="text-red-800 dark:text-red-200">
               {errorMessage}
             </AlertDescription>
@@ -186,7 +186,7 @@ function UserPreferences({ user }: { user: any }) {
           <div className="flex items-center gap-2">
             <div
               className={`w-2 h-2 rounded-full ${
-                isSubscribed ? "bg-green-500" : "bg-gray-400"
+                isSubscribed ? "bg-ds-success-solid" : "bg-gray-400"
               }`}
             />
             <p className="text-sm text-muted-foreground">
@@ -263,7 +263,7 @@ export function ContactForm() {
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-blue rounded-full"></div>
                 <a
                   href="https://hyperdev.matsuoka.com/"
                   target="_blank"
@@ -274,7 +274,7 @@ export function ContactForm() {
                 </a>
               </div>
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-fixed rounded-full"></div>
                 <a
                   href="https://hyperdev.matsuoka.com/"
                   target="_blank"

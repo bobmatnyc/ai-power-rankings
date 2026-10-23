@@ -1,19 +1,19 @@
 export default function NotFound() {
   return (
     <div
+      className="bg-ds-surface-paper-muted"
       style={{
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#f9fafb",
         padding: "1rem",
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
       <div
+        className="bg-ds-surface-paper"
         style={{
-          backgroundColor: "white",
           borderRadius: "0.5rem",
           padding: "2rem",
           maxWidth: "28rem",
@@ -43,9 +43,9 @@ export default function NotFound() {
           Page Not Found
         </h2>
         <p
+          className="text-ds-text-paper-subtle"
           style={{
             marginBottom: "1.5rem",
-            color: "#6b7280",
           }}
         >
           Sorry, we couldn&apos;t find the page you&apos;re looking for.
@@ -57,12 +57,12 @@ export default function NotFound() {
             gap: "0.5rem",
           }}
         >
+          {/* #190: hover/active variants hold the colour against globals.css a:hover and a:active. */}
           <a
             href="/"
+            className="bg-ds-accent-cat-blue text-ds-text-on-fill hover:text-ds-text-on-fill active:text-ds-text-on-fill"
             style={{
               padding: "0.5rem 1rem",
-              backgroundColor: "#3b82f6",
-              color: "white",
               borderRadius: "0.375rem",
               textDecoration: "none",
               display: "inline-block",
@@ -72,12 +72,12 @@ export default function NotFound() {
           </a>
           <a
             href="/en"
+            className="border-ds-border-paper bg-ds-surface-paper text-ds-accent-cat-blue hover:text-ds-accent-cat-blue active:text-ds-accent-cat-blue"
             style={{
               padding: "0.5rem 1rem",
-              backgroundColor: "white",
-              color: "#3b82f6",
               borderRadius: "0.375rem",
-              border: "1px solid #e5e7eb",
+              borderWidth: "1px",
+              borderStyle: "solid",
               textDecoration: "none",
               display: "inline-block",
             }}

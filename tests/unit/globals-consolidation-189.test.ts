@@ -97,9 +97,13 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
  * C2: 679, the 28 gradient stops in tool-icon.tsx (18) and tier-legend.tsx
  * (10); lib/ranking-utils.ts is outside the scan. #190 PR D: 459, the 220
  * uses on the news, what's-new, SEO and best-* pages and their components.
+ * #190 PR E1: 390, the 69 uses in the public modals, contact form, error and
+ * not-found pages, chart skeleton, crown icon and image placeholder that have
+ * an exact token; the 59 without one stay (migration-190e1.md).
  * Lower it as #190 migrates; never raise it.
  */
-const HARDCODED_COLOUR_BASELINE = 459;
+// #190: E1 lowered this from 459.
+const HARDCODED_COLOUR_BASELINE = 390;
 
 /**
  * #190 rulings D2-D4: the only places a literal colour is the right tool. An

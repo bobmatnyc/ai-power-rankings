@@ -13,21 +13,40 @@
  * toggle, so dark mode is forced by adding `class="dark"` to `<html>`, which
  * is what Tailwind's `darkMode: ["class"]` keys on. `--compare a,b` compares
  * two captured sets: identical bytes first, then decoded pixels in a canvas.
+ * `--set states` captures `STATE_SHOTS` instead: open modals, the contact
+ * page and the not-found pages (#190 E1), each reached by its own steps.
  * Test: run by hand against a dev server (docs/refresh/design-audit/README.md);
  * it needs a browser and a running site, so it has no unit test.
  *
  * Usage (set PLAYWRIGHT_CHROMIUM_PATH to use a Chromium other than the bundled one):
  *   npx tsx scripts/design-audit-shots.ts --label before --base-url http://localhost:3007
+ *   npx tsx scripts/design-audit-shots.ts --label states-before --set states
  *   npx tsx scripts/design-audit-shots.ts --compare before,after
  */
 
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { chromium, type Browser } from "playwright";
+import { chromium, type Browser, type Page } from "playwright";
+import { countDiffPixels } from "./pixel-diff";
+
+/**
+ * One screenshot target. `steps` run after load, in order: `click` and
+ * `waitFor` take a Playwright selector. `viewport` shoots the viewport only,
+ * for a modal over a page whose height varies between runs. `mocks` answer a
+ * same-origin URL glob with fixed JSON, or `hold` it unanswered to keep a
+ * loading state on screen.
+ */
+export interface Shot {
+  name: string;
+  path: string;
+  steps?: ReadonlyArray<{ click: string } | { waitFor: string }>;
+  viewport?: boolean;
+  mocks?: ReadonlyArray<{ url: string; json?: unknown; hold?: true }>;
+}
 
 /** The 9 page types, one representative route each (public routes under app/[lang]). */
-export const PAGE_TYPES: ReadonlyArray<{ name: string; path: string }> = [
+export const PAGE_TYPES: ReadonlyArray<Shot> = [
   { name: "home", path: "/en" },
   { name: "rankings", path: "/en/rankings" },
   { name: "tools-index", path: "/en/tools" },
@@ -37,6 +56,68 @@ export const PAGE_TYPES: ReadonlyArray<{ name: string; path: string }> = [
   { name: "news-article", path: "/en/news/anthropic-releases-claude-opus-4-1-improved-coding-accuracy" },
   { name: "trending", path: "/en/trending" },
   { name: "content", path: "/en/methodology" },
+];
+
+// #190 E1: public modals, the contact page and the not-found pages. The home
+// page opens the what's-new modal itself after 2 s in a fresh browser. An
+// unmatched URL renders app/not-found.tsx; notFound() inside [lang] (the
+// contact page with an unknown slug) renders app/[lang]/not-found.tsx.
+// The feed fixture holds one item of each kind, so every icon and badge colour
+// shows; its fixed past date keeps the "Nd ago" label equal within a day.
+const DIALOG = '[role="dialog"]';
+const FEED_URL = "**/api/whats-new?days=7";
+const SUMMARY_URL = "**/api/whats-new/summary";
+const FEED_DATE = "2020-01-01T00:00:00.000Z";
+const FEED_FIXTURE = {
+  feed: [
+    { type: "news", date: FEED_DATE, id: "n1", slug: "n1", title: "News item", summary: "Summary", published_at: FEED_DATE, source: "Source" },
+    { type: "tool", date: FEED_DATE, id: "t1", name: "Tool item", slug: "t1", description: "Description", updatedAt: FEED_DATE, category: "ide-assistant" },
+    ...(["feature", "improvement", "fix", "news"] as const).map((changeType) => ({
+      type: "platform",
+      date: FEED_DATE,
+      id: `p-${changeType}`,
+      title: `Platform ${changeType}`,
+      description: "Description",
+      category: "Platform",
+      changeType,
+      version: "1.0.0",
+    })),
+  ],
+};
+export const STATE_SHOTS: ReadonlyArray<Shot> = [
+  {
+    name: "whats-new-loading",
+    path: "/en",
+    mocks: [{ url: FEED_URL, hold: true }],
+    steps: [{ waitFor: DIALOG }],
+    viewport: true,
+  },
+  {
+    name: "whats-new-recent",
+    path: "/en",
+    mocks: [{ url: FEED_URL, json: FEED_FIXTURE }],
+    steps: [{ waitFor: `${DIALOG} >> text=Platform feature` }],
+    viewport: true,
+  },
+  {
+    name: "whats-new-summary-loading",
+    path: "/en",
+    mocks: [
+      { url: FEED_URL, json: FEED_FIXTURE },
+      { url: SUMMARY_URL, hold: true },
+    ],
+    steps: [{ waitFor: DIALOG }, { click: `${DIALOG} >> text=Monthly Summary` }],
+    viewport: true,
+  },
+  { name: "contact", path: "/en/contact/default" },
+  {
+    name: "signup-modal",
+    path: "/en/contact/default",
+    steps: [{ click: "text=Sign Up for Updates" }, { waitFor: DIALOG }],
+    viewport: true,
+  },
+  { name: "not-found", path: "/en/no-such-page-190e1" },
+  { name: "not-found-localized", path: "/en/contact/no-such-slug" },
 ];
 
 export const WIDTHS = [375, 768, 1280] as const;
@@ -55,7 +136,7 @@ function arg(name: string): string | undefined {
   return index >= 0 ? process.argv[index + 1] : undefined;
 }
 
-async function capture(label: string, baseUrl: string): Promise<void> {
+async function capture(label: string, baseUrl: string, shots: ReadonlyArray<Shot>): Promise<void> {
   if (!/^[a-z0-9-]+$/.test(label)) {
     throw new Error(`--label must be lowercase letters, digits or dashes; got "${label}"`);
   }
@@ -64,12 +145,12 @@ async function capture(label: string, baseUrl: string): Promise<void> {
   const browser = await chromium.launch(launchOptions);
   const failures: string[] = [];
   try {
-    for (const page of PAGE_TYPES) {
+    for (const page of shots) {
       for (const width of WIDTHS) {
         for (const mode of MODES) {
           const file = join(outDir, `${page.name}-${width}-${mode}.png`);
           try {
-            await shoot(browser, `${baseUrl}${page.path}`, width, mode, file);
+            await shoot(browser, `${baseUrl}${page.path}`, width, mode, file, page);
             console.log(`ok   ${file}`);
           } catch (error) {
             failures.push(`${page.name}-${width}-${mode}: ${(error as Error).message}`);
@@ -93,6 +174,7 @@ async function shoot(
   width: number,
   mode: (typeof MODES)[number],
   file: string,
+  shot: Shot,
 ): Promise<void> {
   const context = await browser.newContext({
     viewport: { width, height: 900 },
@@ -117,6 +199,12 @@ async function shoot(
         ? route.continue()
         : route.abort(),
     );
+    // Registered after the catch-all, so these take precedence for their URLs.
+    for (const mock of shot.mocks ?? []) {
+      await page.route(mock.url, (route) =>
+        mock.hold ? undefined : route.fulfill({ json: mock.json }),
+      );
+    }
     // The dev server keeps an HMR socket open, so "networkidle" may never come;
     // wait for "load", then give idle a short bounded chance.
     const response = await page.goto(url, { waitUntil: "load", timeout: 120_000 });
@@ -129,8 +217,9 @@ async function shoot(
     await page.addStyleTag({
       content: "*{caret-color:transparent!important} nextjs-portal{display:none!important}",
     });
+    await runSteps(page, shot.steps ?? []);
     await page.waitForTimeout(500);
-    await page.screenshot({ path: file, fullPage: true, animations: "disabled" });
+    await page.screenshot({ path: file, fullPage: !shot.viewport, animations: "disabled" });
     if (response && response.status() >= 500) {
       console.warn(`warn ${url} answered ${response.status()}`);
     }
@@ -139,32 +228,15 @@ async function shoot(
   }
 }
 
-/**
- * Browser-side pixel diff, kept as source text: tsx compiles functions with a
- * `__name` helper that does not exist in the page, so a function argument to
- * `page.evaluate` fails there. Returns the count of differing pixels, or -1
- * when the image sizes differ.
- */
-const PIXEL_DIFF = `async (da, db) => {
-  const load = async (src) => {
-    const img = new Image();
-    img.src = src;
-    await img.decode();
-    const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0);
-    return { w: img.width, h: img.height, px: ctx.getImageData(0, 0, img.width, img.height).data };
-  };
-  const [ia, ib] = await Promise.all([load(da), load(db)]);
-  if (ia.w !== ib.w || ia.h !== ib.h) return -1;
-  let count = 0;
-  for (let i = 0; i < ia.px.length; i += 4) {
-    if (ia.px[i] !== ib.px[i] || ia.px[i + 1] !== ib.px[i + 1] || ia.px[i + 2] !== ib.px[i + 2] || ia.px[i + 3] !== ib.px[i + 3]) count += 1;
+/** Runs a shot's steps, then lets the requests they start settle (bounded). */
+async function runSteps(page: Page, steps: NonNullable<Shot["steps"]>): Promise<void> {
+  for (const step of steps) {
+    if ("click" in step) await page.locator(step.click).first().click({ timeout: 30_000 });
+    else await page.locator(step.waitFor).first().waitFor({ state: "visible", timeout: 30_000 });
+    await page.waitForLoadState("networkidle", { timeout: 10_000 }).catch(() => undefined);
   }
-  return count;
-}`;
+  if (steps.length > 0) await page.waitForTimeout(1_000);
+}
 
 /** Compares two labelled sets: byte hash first, then decoded pixels for files that differ. */
 async function compare(left: string, right: string): Promise<void> {
@@ -193,9 +265,7 @@ async function compare(left: string, right: string): Promise<void> {
         rows.push(`${file}\tidentical-bytes\t${hash(a)}`);
         continue;
       }
-      const diffPixels = (await page.evaluate(
-        `(${PIXEL_DIFF})(${JSON.stringify(`data:image/png;base64,${a.toString("base64")}`)}, ${JSON.stringify(`data:image/png;base64,${b.toString("base64")}`)})`,
-      )) as number;
+      const diffPixels = await countDiffPixels(page, a, b);
       if (diffPixels === 0) {
         rows.push(`${file}\tidentical-pixels\t(bytes differ)`);
       } else {
@@ -222,7 +292,10 @@ async function main(): Promise<void> {
   }
   const label = arg("label");
   if (!label) throw new Error("pass --label <before|after|...> or --compare <a>,<b>");
-  await capture(label, (arg("base-url") ?? "http://localhost:3007").replace(/\/$/, ""));
+  const set = arg("set") ?? "pages";
+  if (set !== "pages" && set !== "states") throw new Error(`--set must be pages or states; got "${set}"`);
+  const shots = set === "states" ? STATE_SHOTS : PAGE_TYPES;
+  await capture(label, (arg("base-url") ?? "http://localhost:3007").replace(/\/$/, ""), shots);
 }
 
 main().catch((error) => {

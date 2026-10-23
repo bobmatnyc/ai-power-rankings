@@ -65,7 +65,7 @@ export function SignupForUpdatesModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             {dict.newsletter?.modal?.title || "Sign In"}
-            <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:text-blue-400">
+            <span className="inline-flex items-center rounded-full bg-ds-surface-tag-blue px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:text-blue-400">
               Coming Soon
             </span>
           </DialogTitle>
@@ -80,8 +80,8 @@ export function SignupForUpdatesModal({
           {isSubscribed ? (
             // Success state
             <div className="py-8 text-center">
-              <div className="mx-auto w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-4">
-                <Check className="h-6 w-6 text-green-600 dark:text-green-400" />
+              <div className="mx-auto w-12 h-12 bg-ds-surface-tag-green rounded-full flex items-center justify-center mb-4">
+                <Check className="h-6 w-6 text-ds-text-callout-success" />
               </div>
               <p className="text-lg font-medium mb-2">
                 {dict.newsletter?.modal?.thankYou || "Welcome!"}
