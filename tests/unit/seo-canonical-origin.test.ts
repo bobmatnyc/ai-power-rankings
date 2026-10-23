@@ -82,6 +82,17 @@ vi.mock("../../lib/db/repositories/news", () => {
   return { NewsRepository, newsRepository: new NewsRepository() };
 });
 
+// #54: the /whats-new pages and the sitemap read stored monthly reports. With
+// no latest report the index keeps its own canonical, as the
+// ENGLISH_ONLY_PAGES case expects; the AC6 case below sets one.
+const reports = vi.hoisted(() => ({
+  latest: null as null | { period: string },
+}));
+vi.mock("../../lib/services/whats-new-summary.service", () => ({
+  getLatestStoredSummary: async () => reports.latest,
+  listPeriods: async () => [{ period: "2026-07", updatedAt: new Date("2026-08-02") }],
+}));
+
 const fetchMock = vi.fn(async (input: string | URL | Request) => {
   const url = String(input instanceof Request ? input.url : input);
   if (url.includes("/api/news/")) {
@@ -120,6 +131,7 @@ beforeEach(() => {
   vi.stubEnv("DATABASE_URL", "postgres://stub");
   vi.stubGlobal("fetch", fetchMock);
   fetchMock.mockClear();
+  reports.latest = null;
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "warn").mockImplementation(() => {});
 });
@@ -372,6 +384,14 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     }
   );
 
+  it("whats-new index canonicalises to the latest report permalink while one exists (#54)", async () => {
+    reports.latest = { period: "2026-07" };
+    const { generateMetadata } = await import("../../app/[lang]/whats-new/page");
+    const metadata = await generateMetadata(params({ lang: "ko" }));
+    expectProductionUrls(metadata, "whats-new index");
+    expectEnglishOnly(metadata, "/whats-new/2026-07", "whats-new index");
+  });
+
   it.each(DASHBOARD_PAGES)(
     "%s metadata is noindex, self-canonical under its locale, with no hreflang (#156)",
     async (dir, route) => {
@@ -404,6 +424,14 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
         ),
         schema.createBreadcrumbSchema([{ name: "Tools", url: "/en/tools" }]),
         schema.createComparisonSchema(tool, tool),
+        // #54: the report permalink's Article block.
+        schema.createMonthlyReportSchema({
+          headline: "What's New: July 2026",
+          description: "d",
+          canonical: `${ORIGIN}/en/whats-new/2026-07`,
+          createdAt: new Date("2026-07-31"),
+          generatedAt: new Date("2026-08-02"),
+        }),
       ],
       "lib/seo/schema"
     );
@@ -477,6 +505,8 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     for (const path of englishOnlyPaths) {
       expect(listedLocales(path), `sitemap ${path}`).toEqual(["en"]);
     }
+    // #54: a monthly report permalink is English-only, listed under /en once.
+    expect(listedLocales("/whats-new/2026-07"), "sitemap report permalink").toEqual(["en"]);
     // /{lang}/contact only redirects to /{lang}/contact/default.
     expect(listedLocales("/contact"), "sitemap /contact").toEqual([]);
     // A per-locale page keeps one URL per locale.
