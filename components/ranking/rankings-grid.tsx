@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { trackEvent } from "@/lib/analytics/track";
+import { formatUtcDate } from "@/lib/format-utc-date";
 import { loggers } from "@/lib/logger-client";
 import { RankingCard } from "./ranking-card";
 import { SearchEmptyState } from "./search-empty-state";
@@ -128,7 +129,8 @@ function RankingsGridContent({
         const data = await response.json();
         if (data.algorithm?.date) {
           const date = new Date(data.algorithm.date);
-          const formattedDate = date.toLocaleDateString(lang, {
+          // #239: UTC, so the stored date names the same day in every browser zone.
+          const formattedDate = formatUtcDate(date, lang, {
             month: "short",
             day: "numeric",
             year: "numeric",
@@ -136,8 +138,9 @@ function RankingsGridContent({
           setLastUpdateDate(formattedDate);
         }
         if (data.published_at) {
+          // #239: UTC, so the stored date names the same day in every browser zone.
           setPublishedDate(
-            new Date(data.published_at).toLocaleDateString(lang, {
+            formatUtcDate(data.published_at, lang, {
               month: "long",
               day: "numeric",
               year: "numeric",
@@ -184,8 +187,9 @@ function RankingsGridContent({
 
         // Set the "Rankings as of" marker from the snapshot's published_at
         if (data.published_at) {
+          // #239: UTC, so the stored date names the same day in every browser zone.
           setPublishedDate(
-            new Date(data.published_at).toLocaleDateString(lang, {
+            formatUtcDate(data.published_at, lang, {
               month: "long",
               day: "numeric",
               year: "numeric",
@@ -196,7 +200,8 @@ function RankingsGridContent({
         // Set last update date from algorithm date
         if (data.algorithm?.date) {
           const date = new Date(data.algorithm.date);
-          const formattedDate = date.toLocaleDateString(lang, {
+          // #239: UTC, so the stored date names the same day in every browser zone.
+          const formattedDate = formatUtcDate(date, lang, {
             month: "short",
             day: "numeric",
             year: "numeric",
