@@ -6,7 +6,8 @@ import { cn } from "@/lib/utils";
 
 // #178: the rank-delta colours and gap come from the sample --ds-* design-agent
 // tokens (app/globals.css). Values equal the Tailwind palette classes they
-// replace, light and dark, so nothing renders differently.
+// replaced, except light rank-up.
+// #190: light rank-up is green-700 (was green-600) to meet AA on white.
 
 interface RankingChangeProps {
   previousRank?: number;

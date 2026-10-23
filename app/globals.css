@@ -146,7 +146,9 @@
        Namespaced --ds-* so it adds to, and never overrides, the tokens above.
        Colour values equal Tailwind's green-600 / red-600 / gray-500, so
        components that move onto them render unchanged. */
-    --ds-rank-up: 142.1 76.2% 36.3%;
+    /* #190: rank-up darkened from green-600 (3.30:1 on white) to green-700,
+       the --ds-success value, so it meets AA (5.02:1). */
+    --ds-rank-up: 142.4 71.8% 29.2%;
     --ds-rank-down: 0 72.2% 50.6%;
     --ds-rank-steady: 220 8.9% 46.1%;
     --ds-space-inline: 0.25rem;
@@ -260,7 +262,10 @@
 
     /* Border */
     --ds-border: 214.3 31.8% 91.4%;
-    --ds-border-strong: 212.7 26.8% 83.9%;
+    /* #190: --ds-border stays a decorative divider and card edge (below 3:1,
+       listed in tests/unit/design-contrast-190.test.ts). --ds-border-strong
+       is the form-control edge and meets 3:1 on every surface. */
+    --ds-border-strong: 215 16.3% 56%;
     --ds-focus-ring: 221.2 83.2% 53.3%;
 
     /* Accent */
@@ -314,7 +319,7 @@
 
     /* Border */
     --ds-border: 217.2 32.6% 17.5%;
-    --ds-border-strong: 215.3 19.3% 34.5%;
+    --ds-border-strong: 215 16.3% 46.9%; /* #190: slate-500, 3:1 on every dark surface */
     --ds-focus-ring: 213.1 93.9% 67.8%;
 
     /* Accent */
@@ -390,8 +395,9 @@
     --ds-warning-solid-strong: 24.5814978 94.9790795% 53.1372549%; /* orange-500 */
     --ds-danger-solid: 0 84.2364532% 60.19607843%; /* red-500 */
     --ds-info-solid: 217.21925134 91.2195122% 59.80392157%; /* blue-500 */
-    --ds-success-fixed: 142.1276596 76.2162162% 36.2745098%; /* green-600 */
-    --ds-warning-fixed: 20.54054054 90.24390244% 48.23529412%; /* orange-600 */
+    /* #190: -fixed text moved from the 600 to the 700 step to meet AA on white. */
+    --ds-success-fixed: 142.42990654 71.81208054% 29.21568627%; /* green-700 */
+    --ds-warning-fixed: 17.47252747 88.34951456% 40.39215686%; /* orange-700 */
     --ds-danger-fixed: 0 72.2222222% 50.5882353%; /* red-600 */
     --ds-danger-fixed-soft: 0 90.6040268% 70.7843137%; /* red-400 */
   }

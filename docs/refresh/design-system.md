@@ -26,8 +26,10 @@ How to build and change UI on the `--ds-*` tokens. Token values and roles:
 
 `/design` (`app/design/`) shows each core component in each state, once in a
 light panel and once in a `.dark` panel: card, table, badge, nav, footer,
-score pill and rank change. It is `noindex`, linked from nowhere and not in
-the sitemap.
+score pill, rank change, alert, form controls and fixed status text. It is
+`noindex`, linked from nowhere and not in the sitemap. In production it
+answers 404 unless `DESIGN_PREVIEW` is set before the build
+(`app/design/preview-gate.ts`); dev servers and `npm run test:visual` render it.
 
 - **Hover and focus samples are forced.** A sample marked
   `data-force-state="hover"` or `"focus"` gets the component's own hover or
@@ -48,7 +50,8 @@ the sitemap.
 | `npx vitest run tests/unit/design-tokens-188.test.ts` | Token categories, Tailwind mapping, text contrast 4.5:1 | Yes |
 | `npx vitest run tests/unit/design-contrast-190.test.ts` | Focus ring and borders 3:1 on each surface; named exceptions | Yes |
 | `npx vitest run tests/unit/globals-consolidation-189.test.ts` | One stylesheet; hard-coded colour ratchet | Yes |
-| `npx vitest run tests/unit/design-page-190.test.tsx` | Every component and state on `/design`; noindex, unlinked, not in the sitemap | Yes |
+| `npx vitest run tests/unit/tailwind-colour-classes-190.test.ts` | Every `text-`, `bg-` and `border-` class in source compiles to a utility | Yes |
+| `npx vitest run tests/unit/design-page-190.test.tsx` | Every component and state on `/design`; noindex, unlinked, not in the sitemap, production 404 gate | Yes |
 | `npm run test:visual` | `/design` snapshots at 375, 768 and 1280 px, light and dark | No (needs a browser) |
 
 **Ratchet.** `HARDCODED_COLOUR_BASELINE` in the ratchet test is the measured

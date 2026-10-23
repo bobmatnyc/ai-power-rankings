@@ -19,10 +19,11 @@ function processMarkdownWithComponents(htmlContent: string, lang: Locale): strin
   processedContent = processedContent.replace(/<NewsletterButton\s*\/>/g, "");
 
   // Replace TechStackButton
+  // #190: outline buttons here and below use the --ds-border-strong control edge (3:1).
   processedContent = processedContent.replace(
     /<TechStackButton\s*\/>/g,
     `<div class="flex flex-wrap gap-4">
-      <button class="tech-stack-button inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-2">
+      <button class="tech-stack-button inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-ds-border-strong bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 gap-2">
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
           <path d="m9 9 6 6"></path>
@@ -48,7 +49,7 @@ function processMarkdownWithComponents(htmlContent: string, lang: Locale): strin
   // Replace SecondaryButton
   processedContent = processedContent.replace(
     /<SecondaryButton href="([^"]*)">(.*?)<\/SecondaryButton>/g,
-    `<a href="${lang}$1" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">$2</a>`
+    `<a href="${lang}$1" class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-ds-border-strong bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">$2</a>`
   );
 
   // Replace ExternalLink
