@@ -16,9 +16,10 @@ import { describe, expect, it } from "vitest";
  * dynamic `import`, `require`, CSS `@import`, `/globals.css` URL) only by
  * `app/layout.tsx`; (2) counts hard-coded colours in `components/` and `app/`
  * exactly as docs/refresh/design-audit/one-off-styles.md "Method" describes,
- * less the #190 D2-D4 allowlist, and fails above the baseline or on an empty
- * scan; (3) caps the colour literals in each allowlisted file set that carries
- * a `literalCap`, so an exemption cannot grow unseen.
+ * less the #190 D2-D4 and Df8 allowlist, and fails above the baseline or on
+ * an empty scan; (3) caps the colour literals (`literalCap`) or every counted
+ * use (`colourCap`) in each allowlisted file set that carries a cap, so an
+ * exemption cannot grow unseen.
  * Test: `npx vitest run tests/unit/globals-consolidation-189.test.ts`. No network.
  */
 
@@ -101,23 +102,28 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
  * not-found pages, chart skeleton, crown icon and image placeholder that have
  * an exact token; the 59 without one stay (migration-190e1.md). #190 PR E2a:
  * 264, the 126 uses in the admin components and SEO dashboard that have an
- * exact token; the 55 without one stay (migration-190e2a.md).
+ * exact token; the 55 without one stay (migration-190e2a.md). #190 ruling
+ * Df8: 205, E1's 59 untokenised uses exempted per file below.
  * Lower it as #190 migrates; never raise it.
  */
-// #190: E2a lowered this from 390.
-const HARDCODED_COLOUR_BASELINE = 264;
+// #190 Df8: lowered from 264 by the 59 E1 uses the allowlist now exempts.
+const HARDCODED_COLOUR_BASELINE = 205;
 
 /**
- * #190 rulings D2-D4: the only places a literal colour is the right tool. An
- * entry exempts the whole file unless `scope` narrows it to `--shadow*`
- * custom-property declarations, so every other colour in that file counts.
- * `literalCap` is the measured count of colour literals in the files an
- * entry matches; lower it when they fall, never raise it.
+ * #190 rulings D2-D4 and Df8: the only places a literal colour is the right
+ * tool, or where no token matches and the owner exempted it. An entry exempts
+ * the whole file unless `scope` narrows it to `--shadow*` custom-property
+ * declarations, so every other colour in that file counts. `literalCap` is
+ * the measured count of colour literals in the files an entry matches;
+ * `colourCap` is the measured count of every use the ratchet counts there
+ * (palette classes, black/white, hex, rgb). Lower a cap when it falls, never
+ * raise it.
  */
 const RATCHET_ALLOWLIST: ReadonlyArray<{
   path: RegExp;
   scope?: "shadow-custom-properties";
   literalCap?: number;
+  colourCap?: number;
   reason: string;
 }> = [
   {
@@ -135,6 +141,56 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{
     path: /^app\/globals\.css$/,
     scope: "shadow-custom-properties",
     reason: "D4: the `--shadow*` definitions' rgb() values; any other colour in the file counts.",
+  },
+  // #190 Df8 (owner, 2026-10-23): the 59 E1 colours with no exact token
+  // (migration-190e1.md "Not migrated"), exempted per file and capped at the
+  // measured count so the exemption cannot grow.
+  {
+    path: /^components\/ui\/whats-new-modal\.tsx$/,
+    colourCap: 12,
+    reason: "Df8: kind badges are bg-<hue>-100 text-<hue>-800 in both modes; the tag tokens switch to 900 at 30 % and 300 in dark.",
+  },
+  {
+    path: /^components\/ui\/changelog-modal\.tsx$/,
+    colourCap: 5,
+    reason:
+      "Df8: a light-only 100/800 badge, and text-blue-700 / text-red-700 in both modes; --ds-accent-hover and --ds-danger hold them in light only.",
+  },
+  {
+    path: /^components\/ui\/signup-for-updates-modal\.tsx$/,
+    colourCap: 2,
+    reason: "Df8: text-blue-800 / dark:text-blue-400; --ds-text-tag-blue is blue-300 in dark.",
+  },
+  {
+    path: /^components\/ui\/tech-stack-modal\.tsx$/,
+    colourCap: 2,
+    reason: "Df8: a bg-green-100 text-green-800 badge in both modes; the tag tokens switch in dark.",
+  },
+  {
+    path: /^components\/contact\/contact-form\.tsx$/,
+    colourCap: 18,
+    reason:
+      "Df8: no exact token for the sign-up card gradient stops, its blue-200/900 border and mail icon (HSL not exact), the alerts' 20 % dark tints and 800/200 text, or the gray-400/800 dots.",
+  },
+  {
+    path: /^app\/error\.tsx$/,
+    colourCap: 3,
+    reason: "Df8: the card's box-shadow rgba values (no matching --shadow token) and the #111827 heading (only a surface token holds it).",
+  },
+  {
+    path: /^app\/global-error\.tsx$/,
+    colourCap: 9,
+    reason: "Df8: renders its own <html> without the root layout, so app/globals.css and the --ds-* tokens may not load.",
+  },
+  {
+    path: /^app\/not-found\.tsx$/,
+    colourCap: 4,
+    reason: "Df8: the card's box-shadow rgba values, and #111827 / #374151 headings that only surface and border tokens hold.",
+  },
+  {
+    path: /^app\/\[lang\]\/not-found\.tsx$/,
+    colourCap: 4,
+    reason: "Df8: the card's box-shadow rgba values, and #111827 / #374151 headings that only surface and border tokens hold.",
   },
 ];
 
@@ -244,6 +300,20 @@ describe("hard-coded colour ratchet (#189)", () => {
     const total = files.reduce((sum, file) => sum + countColourLiterals(readFileSync(join(root, file), "utf8")), 0);
     expect(total, `colour literals in ${entry.path.source} (lower literalCap when this falls)`).toBeLessThanOrEqual(
       entry.literalCap ?? 0,
+    );
+  });
+
+  // #190 Df8: a whole-file exemption is capped on every counted use, so a new colour in the file fails.
+  it.each(
+    RATCHET_ALLOWLIST.filter((entry) => entry.colourCap !== undefined).map(
+      (entry) => [entry.path.source, entry] as const,
+    ),
+  )("allowlist entry %s stays at or below its colour cap", (_, entry) => {
+    const hits = scanRepoColours().filter(({ file }) => entry.path.test(file));
+    expect(hits.length, entry.reason).toBeGreaterThan(0);
+    const total = hits.reduce((sum, h) => sum + h.exempted, 0);
+    expect(total, `colours in ${entry.path.source} (lower colourCap when this falls)`).toBeLessThanOrEqual(
+      entry.colourCap ?? 0,
     );
   });
 
