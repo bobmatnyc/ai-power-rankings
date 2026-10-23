@@ -8,42 +8,41 @@ import { describe, expect, it } from "vitest";
 import {
   AGENT_ACCENTS,
   agentContrast,
-  FAILING_ICON_HUES,
-  FAILING_TIERS,
-  GRADIENT_OPTIONS,
   GRAPHIC_MINIMUM,
   hslToRgb,
+  ICON_SWATCHES,
   MODE_TOKENS,
   type Mode,
   PALETTE,
   type PaletteStep,
   TEXT_MINIMUM,
+  TIER_SWATCHES,
   worstContrast,
 } from "../../app/design/option-data";
+import { getTierColor } from "../../lib/ranking-utils";
 import { tokensFor } from "../../scripts/design-tokens";
 
 /**
- * The #190 C2 option comparison on `/design`.
+ * #190 C2: the shipped Option B fills and the pending Agents-card accents.
  *
- * Why: the owner picks a gradient treatment and an Agents-card accent from
- * the rendered comparison and its contrast ratios; a value that drifted from
- * app/globals.css, or a class Tailwind does not emit, would show a wrong
- * sample or a wrong ratio.
- * What: checks that app/design/option-data.ts matches the Tailwind palette and
- * the --ds-* tokens in app/globals.css (the exact tokens to the channel, the
- * HSL ones to 1e-6), that every from-/to-/bg-/text-/border-ds class it names
- * compiles, that each option has all 9 icon hues and 5 tiers, and the
- * contrast claims: Option A equals Current, Option B passes everywhere, C's
- * B-treated fills pass, and the Agents-card accents pass AA except the
- * labelled amber light-mode badge.
+ * Why: ToolIcon, TierLegend and getTierColor moved to tokens so a white glyph
+ * or the band text meets its contrast minimum; the /design ratios must
+ * describe what production draws, and every class must compile (a missing
+ * Tailwind colour emits nothing, as `destructive` once did).
+ * What: checks app/design/option-data.ts against the Tailwind palette, the
+ * --ds-* tokens in app/globals.css and the three production components;
+ * that every from-/to-/bg-/text-/border-ds class it names compiles; that
+ * each shipped fill meets 3:1 (icon glyphs) or 4.5:1 (tier letters) in both
+ * modes; and that the accent candidates meet AA except the labelled amber
+ * light-mode badge.
  * Test: `npx vitest run tests/unit/design-options-190.test.ts`. No network.
  */
 
 const root = join(__dirname, "..", "..");
 const require = createRequire(import.meta.url);
 const tailwindConfig = require(join(root, "tailwind.config.js"));
-const globalsCss = readFileSync(join(root, "app", "globals.css"), "utf8");
-const optionSource = readFileSync(join(root, "app", "design", "option-data.ts"), "utf8");
+const read = (...path: string[]) => readFileSync(join(root, ...path), "utf8");
+const globalsCss = read("app", "globals.css");
 const MODES: Mode[] = ["light", "dark"];
 
 const channels = (hex: string) => [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
@@ -58,7 +57,7 @@ function hslToFloat(hsl: string): number[] {
   });
 }
 
-describe("C2 option data matches the palette and app/globals.css (#190)", () => {
+describe("C2 data matches the palette, app/globals.css and the components (#190)", () => {
   it("holds Tailwind's palette channels", () => {
     for (const [step, rgb] of Object.entries(PALETTE)) {
       const [hue, shade] = step.split("-");
@@ -74,26 +73,36 @@ describe("C2 option data matches the palette and app/globals.css (#190)", () => 
     }
   });
 
-  it("declares each gradient token at its palette value", () => {
-    const tokens = tokensFor(globalsCss, "light");
-    const exact = [...tokens.entries()].filter(([name]) => name.startsWith("--ds-grad-exact-"));
-    const hsl = [...tokens.entries()].filter(([name]) => /^--ds-grad-(?!exact-)/.test(name));
-    expect(exact.length).toBe(22);
-    expect(hsl.length).toBe(18);
-    for (const [name, value] of exact) {
-      const step = name.replace("--ds-grad-exact-", "") as PaletteStep;
-      expect(value, name).toBe(PALETTE[step].join(" "));
-    }
-    for (const [name, value] of hsl) {
+  it("declares each --ds-grad-* token at its palette value, to 1e-6 of a channel", () => {
+    const grad = [...tokensFor(globalsCss, "light").entries()].filter(([name]) => name.startsWith("--ds-grad-"));
+    expect(grad.map(([name]) => name.replace("--ds-grad-", "")).sort()).toEqual(
+      ICON_SWATCHES.flatMap((s) => s.stops.map((c) => ("palette" in c ? c.palette : ""))).sort(),
+    );
+    for (const [name, value] of grad) {
       const step = name.replace("--ds-grad-", "") as PaletteStep;
       expect(hslToRgb(value), name).toEqual([...PALETTE[step]]);
       hslToFloat(value).forEach((channel, i) => expect(Math.abs(channel - PALETTE[step][i]), name).toBeLessThan(1e-6));
     }
   });
 
+  it("uses the same classes as ToolIcon, TierLegend and getTierColor", () => {
+    const toolIcon = read("components", "ui", "tool-icon.tsx");
+    const legend = read("components", "ranking", "tier-legend.tsx");
+    for (const { hue, className } of ICON_SWATCHES) expect(toolIcon, hue).toContain(`"${className}"`);
+    for (const { tier, className } of TIER_SWATCHES) {
+      expect(legend, tier).toContain(`"${className}"`);
+      expect(getTierColor(tier)).toBe(`${className} border-0`);
+    }
+    // #190 C2: no palette gradient stops remain in the three components.
+    for (const source of [toolIcon, legend, read("lib", "ranking-utils.ts")]) {
+      expect(source).not.toMatch(/(?<![\w-])(?:from|to)-(?!ds-)[a-z]+-\d{3}\b/);
+    }
+  });
+
   it("names only classes Tailwind emits", async () => {
-    const classes = [...new Set(optionSource.match(/(?<![\w-])(?:hover:)?(?:from|to|bg|text|border)-ds-[a-z0-9-]+(?:\/\d+)?/g))];
-    expect(classes.length).toBeGreaterThan(40);
+    const source = read("app", "design", "option-data.ts");
+    const classes = [...new Set(source.match(/(?<![\w-])(?:hover:)?(?:from|to|bg|text|border)-ds-[a-z0-9-]+(?:\/\d+)?/g))];
+    expect(classes.length).toBeGreaterThan(25);
     const css = (
       await postcss([tailwindcss({ ...tailwindConfig, content: [{ raw: classes.join(" ") }] })]).process(
         "@tailwind utilities;",
@@ -101,51 +110,27 @@ describe("C2 option data matches the palette and app/globals.css (#190)", () => 
       )
     ).css.replace(/\\/g, "");
     for (const cls of classes) expect(css, `${cls} compiles`).toContain(`.${cls}`);
-    expect(css).toContain("--tw-gradient-from: rgb(var(--ds-grad-exact-blue-500))");
+    expect(css).toContain("--tw-gradient-from: hsl(var(--ds-grad-blue-500))");
     expect(css).toContain("--tw-gradient-to: hsl(var(--ds-grad-teal-800))");
   });
 });
 
-describe("C2 gradient options (#190)", () => {
-  it("renders all 9 icon hues and 5 tiers in every option", () => {
-    expect(GRADIENT_OPTIONS.map((o) => o.id)).toEqual(["current", "a", "b", "c"]);
-    for (const option of GRADIENT_OPTIONS) {
-      expect(option.icons.map((i) => i.hue), option.id).toEqual([
-        "blue", "purple", "green", "orange", "pink", "indigo", "teal", "red", "gray",
-      ]);
-      expect(option.tiers.map((t) => t.tier), option.id).toEqual(["S", "A", "B", "C", "D"]);
+describe("C2 shipped fills meet their contrast minimum (#190)", () => {
+  it.each(MODES)("%s mode", (mode) => {
+    expect(ICON_SWATCHES.map((s) => s.hue)).toEqual(["blue", "purple", "green", "orange", "pink", "indigo", "teal", "red", "gray"]);
+    for (const swatch of ICON_SWATCHES) {
+      const ratio = worstContrast({ token: "ds-text-on-fill" }, swatch.stops, mode);
+      expect(ratio, `${swatch.hue} icon = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(GRAPHIC_MINIMUM);
     }
-  });
-
-  it("lists exactly the fills a white glyph or letter puts below 3:1", () => {
-    const current = GRADIENT_OPTIONS[0];
-    const white = { token: "ds-text-on-fill" } as const;
-    expect(current.icons.filter((i) => worstContrast(white, i.stops, "light") < GRAPHIC_MINIMUM).map((i) => i.hue)).toEqual([
-      ...FAILING_ICON_HUES,
-    ]);
-    // Tier A (blue-500, 3.68) also fails 4.5 but is not in the brief's failing list, so C keeps it on A.
-    expect(current.tiers.filter((t) => worstContrast(white, t.stops, "light") < GRAPHIC_MINIMUM).map((t) => t.tier)).toEqual([
-      ...FAILING_TIERS,
-    ]);
-  });
-
-  it.each(MODES)("A matches Current; B passes everywhere; C's darkened fills pass (%s)", (mode) => {
-    const [current, a, b, c] = GRADIENT_OPTIONS;
-    const ratios = (o: (typeof GRADIENT_OPTIONS)[number]) => ({
-      icons: o.icons.map((i) => worstContrast({ token: "ds-text-on-fill" }, i.stops, mode)),
-      tiers: o.tiers.map((t) => worstContrast(t.text, t.stops, mode)),
-    });
-    expect(ratios(a)).toEqual(ratios(current));
-    for (const r of ratios(b).icons) expect(r).toBeGreaterThanOrEqual(GRAPHIC_MINIMUM);
-    for (const r of ratios(b).tiers) expect(r).toBeGreaterThanOrEqual(TEXT_MINIMUM);
-    const cr = ratios(c);
-    c.icons.forEach((i, n) => FAILING_ICON_HUES.includes(i.hue as never) && expect(cr.icons[n], i.hue).toBeGreaterThanOrEqual(GRAPHIC_MINIMUM));
-    c.tiers.forEach((t, n) => FAILING_TIERS.includes(t.tier) && expect(cr.tiers[n], t.tier).toBeGreaterThanOrEqual(TEXT_MINIMUM));
+    for (const swatch of TIER_SWATCHES) {
+      const ratio = worstContrast(swatch.text, swatch.stops, mode);
+      expect(ratio, `tier ${swatch.tier} = ${ratio.toFixed(2)}`).toBeGreaterThanOrEqual(TEXT_MINIMUM);
+    }
   });
 });
 
-describe("C2 Autonomous Agents card accents (#190)", () => {
-  /** Below AA by design and labelled on /design; must stay below, so the label stays true. */
+describe("C2 Autonomous Agents card accents, pending (#190)", () => {
+  /** Below AA and labelled on /design; must stay below, so the label stays true. */
   const KNOWN_EXCEPTIONS = new Set(["amber light badge"]);
 
   it.each(MODES)("meets AA for link text and badge text, %s mode", (mode) => {
@@ -159,9 +144,11 @@ describe("C2 Autonomous Agents card accents (#190)", () => {
     }
   });
 
-  it("keeps the reference card on the destructive classes and the candidates off them", () => {
+  it("keeps the reference card, and the home page card, on the destructive classes", () => {
     const [current, ...candidates] = AGENT_ACCENTS;
     expect(current.badge).toBe("bg-destructive/10 text-destructive");
     for (const accent of candidates) expect(`${accent.border} ${accent.badge} ${accent.text}`).not.toMatch(/destructive/);
+    // #190 C2: the owner has not picked an accent, so the live card is unchanged.
+    expect(read("app", "[lang]", "page.tsx")).toContain('<Badge className="bg-destructive/10 text-destructive">');
   });
 });

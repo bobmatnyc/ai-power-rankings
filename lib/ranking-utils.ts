@@ -22,17 +22,18 @@ export function calculateTier(rank: number): string {
  * Get tier color classes for badges
  */
 export function getTierColor(tier: string): string {
+  // #190 C2 (Option B): the --ds-score-* bands, text in --ds-score-fg (AA in both modes).
   switch (tier) {
     case "S":
-      return "bg-gradient-to-r from-yellow-500 to-amber-500 text-white border-0";
+      return "bg-ds-score-s text-ds-score-fg border-0";
     case "A":
-      return "bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-0";
+      return "bg-ds-score-a text-ds-score-fg border-0";
     case "B":
-      return "bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0";
+      return "bg-ds-score-b text-ds-score-fg border-0";
     case "C":
-      return "bg-gradient-to-r from-gray-500 to-slate-500 text-white border-0";
+      return "bg-ds-score-c text-ds-score-fg border-0";
     case "D":
-      return "bg-gradient-to-r from-orange-500 to-red-500 text-white border-0";
+      return "bg-ds-score-d text-ds-score-fg border-0";
     default:
       return "bg-muted text-muted-foreground";
   }
