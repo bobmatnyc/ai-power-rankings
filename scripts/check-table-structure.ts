@@ -1,11 +1,13 @@
-import { getDb } from '../lib/db/connection';
+import { getDb, getRawSql } from '../lib/db/connection';
 
 async function checkTables() {
   const db = await getDb();
+  // #103: published_at / published_date are timestamp WITHOUT time zone; read them as UTC.
+  const rawSql = getRawSql();
 
   // Check if article exists in 'news' table
   console.log('\n📊 Checking NEWS table:');
-  const newsResult = await db.execute(`
+  const newsResult = await rawSql(`
     SELECT slug, title, published_at
     FROM news
     WHERE slug = 'algorithm-v76-november-2025-rankings'
@@ -14,7 +16,7 @@ async function checkTables() {
 
   // Check if article exists in 'articles' table
   console.log('\n📊 Checking ARTICLES table:');
-  const articlesResult = await db.execute(`
+  const articlesResult = await rawSql(`
     SELECT slug, title, published_date, status
     FROM articles
     WHERE slug = 'algorithm-v76-november-2025-rankings'

@@ -28,6 +28,7 @@ Deployment guides, checklists, and verification reports.
 - [DEPLOYMENT-STATUS.md](./deployment/DEPLOYMENT-STATUS.md) - Current deployment status
 - [DEPLOYMENT-SUCCESS.md](./deployment/DEPLOYMENT-SUCCESS.md) - Deployment success reports
 - [DEPLOYMENT-VERIFICATION.md](./deployment/DEPLOYMENT-VERIFICATION.md) - Verification procedures
+- [cron-schedules-and-timestamps.md](./deployment/cron-schedules-and-timestamps.md) - Cron schedules are UTC; read timestamp columns as UTC (#103)
 - [releases/](./deployment/releases/) - Release notes and changelogs
   - [RELEASE_NOTES_v0.3.13.md](./deployment/releases/RELEASE_NOTES_v0.3.13.md) - v0.3.13 release notes
   - [CHANGELOG.md](./deployment/releases/CHANGELOG.md) - Complete project changelog

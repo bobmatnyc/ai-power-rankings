@@ -1,12 +1,15 @@
-import { getDb } from '../lib/db/connection';
+import { getDb, getRawSql } from '../lib/db/connection';
 
 async function migrateArticle() {
   const db = await getDb();
+  // #103: news.published_at and articles.published_date are timestamp WITHOUT time
+  // zone; read them as UTC.
+  const rawSql = getRawSql();
 
   console.log('\n🔄 Migrating v7.6 article from news to articles table...\n');
 
   // First, get the article data from news table
-  const newsResult = await db.execute(`
+  const newsResult = await rawSql(`
     SELECT *
     FROM news
     WHERE slug = 'algorithm-v76-november-2025-rankings'
@@ -91,7 +94,7 @@ async function migrateArticle() {
   }
 
   // Verify the migration
-  const verifyResult = await db.execute(`
+  const verifyResult = await rawSql(`
     SELECT slug, title, published_date, status
     FROM articles
     WHERE slug = 'algorithm-v76-november-2025-rankings'
