@@ -270,7 +270,7 @@ export function SignInButton({ children }: { children: ReactNode }) {
       {/* Tooltip */}
       {showTooltip && (
         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50">
-          <div className="bg-gray-900 text-white text-sm rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
+          <div className="bg-ds-surface-footer text-ds-text-on-fill text-sm rounded-lg px-3 py-2 whitespace-nowrap shadow-lg">
             Authentication is disabled in staging environment
             <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
               <div className="w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-gray-900" />
@@ -337,12 +337,12 @@ export function UserButton({ afterSignOutUrl }: { afterSignOutUrl?: string }) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 z-50">
+        <div className="absolute right-0 mt-2 w-48 bg-ds-surface-paper rounded-md shadow-lg border border-ds-border-paper z-50">
           <div className="py-1">
             <div className="px-4 py-2 text-sm text-gray-700 border-b">Dev User</div>
             <a
               href={`/${lang}/admin`}
-              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-ds-surface-paper-sunken"
               onClick={() => setIsOpen(false)}
             >
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -362,7 +362,7 @@ export function UserButton({ afterSignOutUrl }: { afterSignOutUrl?: string }) {
                 context.signOut();
                 setIsOpen(false);
               }}
-              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-ds-surface-paper-sunken"
             >
               Sign Out
             </button>

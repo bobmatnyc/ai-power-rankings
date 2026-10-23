@@ -104,11 +104,13 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
  * 264, the 126 uses in the admin components and SEO dashboard that have an
  * exact token; the 55 without one stay (migration-190e2a.md). #190 ruling
  * Df8: 205, E1's 59 untokenised uses exempted per file below; then 150,
- * E2a's 55 untokenised uses exempted the same way.
+ * E2a's 55 untokenised uses exempted the same way. #190 PR E2b-1: 119, the
+ * 31 auth uses: 15 moved to tokens, 14 exempted per file (Df8) and Clerk's
+ * two colorPrimary values exempted permanently (migration-190e2b.md).
  * Lower it as #190 migrates; never raise it.
  */
-// #190 Df8: lowered from 205 by the 55 E2a uses the allowlist now exempts.
-const HARDCODED_COLOUR_BASELINE = 150;
+// #190 E2b-1: lowered from 150 by the 31 components/auth and (authenticated)/layout.tsx uses.
+const HARDCODED_COLOUR_BASELINE = 119;
 
 /**
  * #190 rulings D2-D4 and Df8: the only places a literal colour is the right
@@ -242,6 +244,44 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{
     path: /^components\/seo\/seo-dashboard\.tsx$/,
     colourCap: 1,
     reason: "Df8: text-red-700 in both modes; --ds-danger is red-700 in light only.",
+  },
+  // #190 E2b-1 (architect, 2026-10-23): permanent, the same class as D2.
+  {
+    path: /^(?:app\/\[lang\]\/\(authenticated\)\/layout\.tsx|components\/auth\/clerk-provider-client\.tsx)$/,
+    literalCap: 2,
+    colourCap: 2,
+    reason:
+      "Permanent (as D2): Clerk's appearance.variables.colorPrimary '#000000' is a value Clerk reads in JavaScript to build its own palette, so it cannot read a --ds-* token.",
+  },
+  // #190 Df8: the 14 E2b-1 auth colours with no exact token (migration-190e2b.md
+  // "Not migrated"), exempted per file and capped at the measured count.
+  {
+    path: /^components\/auth\/no-auth-provider\.tsx$/,
+    colourCap: 5,
+    reason:
+      "Df8: text-gray-700 (only a border token holds #374151) and the dev avatar's bg-gray-300 / hover:bg-gray-400 (only text tokens hold them).",
+  },
+  {
+    path: /^components\/auth\/clerk-header\.tsx$/,
+    colourCap: 3,
+    reason:
+      "Df8: Sign In's text-gray-700 and border-gray-300 (only a border and a text token hold them) and Sign Up's hover:bg-blue-700 (--ds-accent-hover is blue-700 in light only).",
+  },
+  {
+    path: /^components\/auth\/auth-components-simple\.tsx$/,
+    colourCap: 3,
+    reason: "Df8: the dev helper's bg-yellow-100 / border-yellow-300 / text-yellow-800, which no token holds.",
+  },
+  {
+    path: /^components\/auth\/clerk-direct-components\.tsx$/,
+    colourCap: 2,
+    reason:
+      "Df8: hover:bg-gray-100 dark:hover:bg-gray-800; no token is gray-100 in light and gray-800 in dark, and a pair is never half migrated.",
+  },
+  {
+    path: /^components\/auth\/user-button-with-admin\.tsx$/,
+    colourCap: 1,
+    reason: "Df8: the subscription item's onMouseEnter rgba(0, 0, 0, 0.03); no token holds that value.",
   },
 ];
 
