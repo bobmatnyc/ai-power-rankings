@@ -129,6 +129,8 @@ vi.mock("../../lib/cache/invalidation.service", () => ({
 }));
 
 import { GET } from "../../app/api/cron/daily-news/route";
+import { loggers } from "../../lib/logger";
+import { RUN_SUMMARY_MSG } from "../../lib/services/ingestion-run-summary";
 
 const SECRET = "cron-secret-fixture-value";
 const originalCronSecret = process.env["CRON_SECRET"];
@@ -433,5 +435,181 @@ describe("GET /api/cron/daily-news — assessment circuit breaker fails closed (
     expect.soft(outcomes.map((o) => o.outcome)).toEqual(Array(3).fill("assessment_failed"));
     expect.soft(response.status).toBe(500);
     expect(payload.data?.status).toBe("failed");
+  });
+});
+
+// #172: every run logs one counts-only "[AutomatedIngestion] Run summary" line, and the
+// fail-closed path logs it too, before the route answers 500.
+describe("GET /api/cron/daily-news — run summary log line (#172)", () => {
+  let warnSpy: ReturnType<typeof vi.spyOn>;
+  let errorSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    mocks.resetRow();
+    mocks.tavilySearch.mockReset();
+    mocks.braveSearch.mockReset();
+    mocks.braveAvailable.value = false;
+    mocks.tavilyExtract.mockReset();
+    mocks.jinaFetch.mockReset();
+    mocks.openRouterGenerate.mockReset();
+    mocks.ingestArticle.mockReset();
+    process.env["CRON_SECRET"] = SECRET;
+    delete process.env["ALERT_WEBHOOK_URL"];
+    warnSpy = vi.spyOn(loggers.api, "warn");
+    errorSpy = vi.spyOn(loggers.api, "error");
+  });
+
+  afterEach(() => {
+    warnSpy.mockRestore();
+    errorSpy.mockRestore();
+    restoreEnv("CRON_SECRET", originalCronSecret);
+    restoreEnv("ALERT_WEBHOOK_URL", originalWebhookUrl);
+  });
+
+  /** Every summary call, on either level, as `[level, fields]`. */
+  function summaryCalls(): Array<[string, Record<string, unknown>]> {
+    const pick = (level: string, spy: ReturnType<typeof vi.spyOn>) =>
+      spy.mock.calls
+        .filter((call) => call[0] === RUN_SUMMARY_MSG)
+        .map((call) => [level, call[1] as Record<string, unknown>] as [string, Record<string, unknown>]);
+    return [...pick("warn", warnSpy), ...pick("error", errorSpy)];
+  }
+
+  /** A fresh candidate whose title shares no word with the others. */
+  function candidate(tag: string, overrides: Record<string, unknown> = {}) {
+    const template = discoveryResults(true)[0]!;
+    return {
+      ...template,
+      title: `Corvane${tag} Pellith${tag} Draxum${tag}`,
+      url: `https://summary-${tag}.example.org/story`,
+      source: `summary-${tag}.example.org`,
+      ...overrides,
+    };
+  }
+
+  it("logs the real stage counts once for a run that adds 3 articles", async () => {
+    const sixtyDaysAgo = new Date(Date.now() - 60 * 86_400_000).toISOString();
+    const keep = [candidate("k0"), candidate("k1"), candidate("k2")];
+    mocks.tavilySearch.mockResolvedValue([
+      ...keep,
+      candidate("rej"), // quality-rejected below
+      { ...keep[0]!, url: "https://summary-dup.example.org/story" }, // semantic duplicate of k0
+      candidate("blk", { url: "https://www.reuters.com/technology/story", source: "reuters.com" }),
+      candidate("old", { publishedDate: sixtyDaysAgo, discoveredVia: "window" }), // stale
+    ]);
+    mocks.openRouterGenerate.mockImplementation(async (request: { messages: { content: string }[] }) =>
+      request.messages.some((m) => m.content.includes("Corvanerej"))
+        ? lowQualityVerdict()
+        : {
+            content: JSON.stringify({
+              qualityScore: 9,
+              relevanceScore: 9,
+              credibilityScore: 9,
+              reasoning: "Specific AI coding tool news",
+              suggestedCategories: ["Product Launch"],
+            }),
+            metadata: { estimatedCost: 0.001 },
+          }
+    );
+    let nextId = 0;
+    mocks.ingestArticle.mockImplementation(async () => ({ id: `article-${nextId++}` }));
+
+    const response = await GET(cronRequest());
+    const payload = (await response.json()) as RoutePayload & {
+      data?: { articlesIngested: number; articlesDiscovered: number };
+    };
+
+    expect(response.status).toBe(200);
+    const calls = summaryCalls();
+    expect(calls).toHaveLength(1);
+    const [level, fields] = calls[0]!;
+    expect(level).toBe("warn");
+    expect(fields).toMatchObject({
+      runId: RUN_ID,
+      status: "completed",
+      cause: null,
+      dryRun: false,
+      discovered: 7,
+      stale: 1,
+      candidates: 6,
+      urlDuplicates: 0,
+      semanticDuplicates: 1,
+      duplicates: 1,
+      fetched: 4,
+      fetchFailed: 1,
+      blockedDomain: 1,
+      assessed: 4,
+      assessmentFailed: 0,
+      rejected: 1,
+      passedQuality: 3,
+      added: 3,
+      ingestFailed: 0,
+      errorCount: 0,
+    });
+    // The same numbers the run result reports.
+    expect(fields["added"]).toBe(payload.data?.articlesIngested);
+    expect(fields["discovered"]).toBe(payload.data?.articlesDiscovered);
+    // Counts only: no URL, host or provider text in the line.
+    expect(JSON.stringify(fields)).not.toMatch(/https?:|example\.org|reuters/i);
+  });
+
+  it.each([
+    {
+      tag: "u",
+      cause: "assessment_unparseable",
+      arrange: () =>
+        mocks.openRouterGenerate.mockResolvedValue({
+          content: '{"qualityScore": 8, "relevanceScore": 9, "reasoning": "Specific product ne',
+          metadata: { estimatedCost: 0.001 },
+        }),
+    },
+    {
+      tag: "t",
+      cause: "assessment_truncated",
+      arrange: () =>
+        mocks.openRouterGenerate.mockRejectedValue(
+          new Error(
+            "AI response truncated at the token limit (finish_reason=length, model=m, " +
+              "completion_tokens=2000, max_tokens=2000, content_length=10)"
+          )
+        ),
+    },
+  ])("logs counts and cause $cause on the fail-closed path before the 500", async ({ tag, cause, arrange }) => {
+    mocks.tavilySearch.mockResolvedValue([
+      candidate(`${tag}fc0`),
+      candidate(`${tag}fc1`),
+      candidate(`${tag}fc2`),
+      candidate(`${tag}blk`, { url: "https://www.reuters.com/fail-closed", source: "reuters.com" }),
+    ]);
+    arrange();
+
+    const response = await GET(cronRequest());
+    const payload = (await response.json()) as RoutePayload;
+
+    // The failure itself is unchanged: 500, run failed, nothing ingested.
+    expect(response.status).toBe(500);
+    expect(payload.data?.status).toBe("failed");
+    expect(mocks.ingestArticle).not.toHaveBeenCalled();
+
+    const calls = summaryCalls();
+    expect(calls).toHaveLength(1);
+    const [level, fields] = calls[0]!;
+    expect(level).toBe("error");
+    expect(fields).toMatchObject({
+      runId: RUN_ID,
+      status: "failed",
+      cause,
+      discovered: 4,
+      candidates: 4,
+      fetched: 3,
+      fetchFailed: 1,
+      blockedDomain: 1,
+      assessed: 3,
+      assessmentFailed: 3,
+      rejected: 0,
+      passedQuality: 0,
+      added: 0,
+    });
+    expect(JSON.stringify(fields)).not.toMatch(/https?:|example\.org|reuters/i);
   });
 });

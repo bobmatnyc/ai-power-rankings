@@ -36,6 +36,8 @@ import { jinaReaderService } from "./jina-reader.service";
 import { tavilyExtractService } from "./tavily-extract.service";
 import { isDomainBlocked, addBlockedDomain } from "./blocked-domains.config";
 import { ProviderBillingFailures } from "./provider-billing-errors";
+// #172: one counts-only summary line per run.
+import { emptyRunCounts, logRunSummary, type IngestionRunCounts } from "./ingestion-run-summary";
 import { loggers } from "@/lib/logger";
 
 // Unified search result type
@@ -677,10 +679,12 @@ export class AutomatedIngestionService {
     // Track the run id created inside executeDailyDiscovery so the
     // timeout handler can mark it failed in the DB.
     const runIdRef: { current: string } = { current: "" };
+    // #172: stage counts the pipeline fills in as it goes, read by the run summary.
+    const runCounts = emptyRunCounts();
 
     try {
-      return await Promise.race([
-        this.executeDailyDiscovery(options, startTime, runIdRef),
+      const result = await Promise.race([
+        this.executeDailyDiscovery(options, startTime, runIdRef, runCounts),
         new Promise<IngestionResult>((_, reject) =>
           setTimeout(
             () =>
@@ -693,6 +697,9 @@ export class AutomatedIngestionService {
           )
         ),
       ]);
+      // #172: logged after the race settles, so it runs once and before the route answers.
+      logRunSummary({ ...result, dryRun: isDryRun }, runCounts);
+      return result;
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : "Unknown pipeline error";
       loggers.api.error("[AutomatedIngestion] Pipeline failed (top-level)", {
@@ -727,7 +734,7 @@ export class AutomatedIngestionService {
         }
       }
 
-      return {
+      const failedResult: IngestionResult = {
         runId: runIdRef.current,
         status: "failed",
         articlesDiscovered: 0,
@@ -743,6 +750,9 @@ export class AutomatedIngestionService {
         ingestedArticleIds: [],
         durationMs: Date.now() - startTime,
       };
+      // #172: the timeout path still reports the counts the pipeline reached.
+      logRunSummary({ ...failedResult, dryRun: isDryRun }, runCounts);
+      return failedResult;
     }
   }
 
@@ -753,7 +763,8 @@ export class AutomatedIngestionService {
   private async executeDailyDiscovery(
     options: DailyDiscoveryOptions | undefined,
     startTime: number,
-    runIdRef: { current: string }
+    runIdRef: { current: string },
+    runCounts: IngestionRunCounts = emptyRunCounts() // #172: filled for the run summary
   ): Promise<IngestionResult> {
     const isDryRun = options?.dryRun ?? false;
     const maxArticles = options?.maxArticles ?? 20;
@@ -836,6 +847,7 @@ export class AutomatedIngestionService {
         await this.discoverArticles(options, billingFailures);
 
       articlesDiscovered = searchResults.length;
+      runCounts.discovered = articlesDiscovered; // #172
       loggers.api.info("[AutomatedIngestion] Discovered articles", {
         count: articlesDiscovered,
         searchEngine: usedProvider,
@@ -919,6 +931,8 @@ export class AutomatedIngestionService {
         freshnessWindowDays
       );
       articlesSkippedStale = staleResults.length;
+      runCounts.stale = articlesSkippedStale; // #172
+      runCounts.candidates = freshResults.length; // #172
 
       if (articlesSkippedStale > 0) {
         loggers.api.warn("[AutomatedIngestion] Filtered stale articles", {
@@ -964,6 +978,7 @@ export class AutomatedIngestionService {
       const existingUrls = await this.checkDuplicates(urls);
       const articlesWithoutUrlDuplicates = freshResults.filter((r) => !existingUrls.has(r.url));
       const urlDuplicatesCount = freshResults.length - articlesWithoutUrlDuplicates.length;
+      runCounts.urlDuplicates = urlDuplicatesCount; // #172
       // #132: record which candidate died where, not just how many.
       for (const duplicate of freshResults.filter((r) => existingUrls.has(r.url))) {
         recordOutcome(duplicate, "skipped_duplicate", "source URL already ingested");
@@ -981,6 +996,7 @@ export class AutomatedIngestionService {
         recentArticles
       );
       articlesSkippedSemantic = articlesWithoutUrlDuplicates.length - newArticles.length;
+      runCounts.semanticDuplicates = articlesSkippedSemantic; // #172
       articlesSkipped = articlesSkippedStale + urlDuplicatesCount + articlesSkippedSemantic;
       // #132: record which candidate died where, not just how many.
       const survivingUrls = new Set(newArticles.map((a) => a.url));
@@ -1114,6 +1130,11 @@ export class AutomatedIngestionService {
         }
       }
 
+      // #172: fetch-stage counts for the run summary.
+      runCounts.fetched = articlesWithContent.length;
+      runCounts.fetchFailed = failedFetches.length;
+      runCounts.blockedDomain = failedFetches.filter((f) => f.reason === "blocked_domain").length;
+
       // Log failed fetches for monitoring
       if (failedFetches.length > 0) {
         loggers.api.warn("[AutomatedIngestion] Failed to fetch some articles", {
@@ -1165,6 +1186,7 @@ export class AutomatedIngestionService {
         loggers.api.info("[AutomatedIngestion] Skipping quality assessment (skipQualityCheck=true)");
         passingArticles = articlesWithContent;
         articlesPassedQuality = articlesWithContent.length;
+        runCounts.passedQuality = articlesPassedQuality; // #172
       } else {
         // Convert to ArticleToAssess format for quality service
         const articlesToAssess: ArticleToAssess[] = articlesWithContent.map((a) => ({
@@ -1211,6 +1233,13 @@ export class AutomatedIngestionService {
         // #172: when no candidate got a quality verdict, the run did not find a quiet day; it
         // could not assess anything. The error makes the run `failed` and the route answer 500.
         const assessmentErrors = qualityResults.map((r) => r?.error).filter(Boolean);
+        // #172: assessment-stage counts for the run summary, set before the fail-closed check.
+        runCounts.assessed = articlesWithContent.length;
+        runCounts.assessmentFailed = assessmentErrors.length;
+        runCounts.passedQuality = articlesPassedQuality;
+        runCounts.rejected = articlesWithContent.filter(
+          (_, index) => qualityResults[index]?.shouldIngest !== true && !qualityResults[index]?.error
+        ).length;
         if (articlesWithContent.length > 0 && assessmentErrors.length === articlesWithContent.length) {
           errors.push(
             `Quality assessment failed for all ${articlesWithContent.length} candidates: ${assessmentErrors[0]}`
@@ -1281,6 +1310,7 @@ export class AutomatedIngestionService {
             if (fullResult.id) {
               ingestedArticleIds.push(fullResult.id);
               articlesIngested++;
+              runCounts.added++; // #172
               recordOutcome(article, "ingested", undefined, {
                 effectiveDate: fullResult.publishedDate
                   ? new Date(fullResult.publishedDate).toISOString()
@@ -1299,6 +1329,7 @@ export class AutomatedIngestionService {
           const errorMsg = `Failed to ingest ${article.url}: ${error instanceof Error ? error.message : "Unknown error"}`;
           loggers.api.error("[AutomatedIngestion] " + errorMsg);
           errors.push(errorMsg);
+          runCounts.ingestFailed++; // #172
           // #167: article analysis runs on OpenRouter; its credits error fails the run.
           billingFailures.note(/openrouter/i.test(errorMsg) ? "openrouter" : "article_ingestion", errorMsg);
           // #132: an insert failure is the case the run row could not express.
