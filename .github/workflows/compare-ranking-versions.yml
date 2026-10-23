@@ -40,6 +40,20 @@ jobs:
         with:
           persist-credentials: false
 
+      # Fail closed: the script and its libraries exist only on the branch being
+      # dispatched. On a ref without them (for example main) this step exits non-zero
+      # before any install, database access or summary write, so a missing script can
+      # never produce a green run.
+      - name: Require the compare script
+        run: |
+          set -uo pipefail
+          for f in scripts/compare-ranking-versions.ts lib/ranking-version-compare.ts lib/ranking-compare-db-source.ts; do
+            if ! test -f "$f"; then
+              echo "::error::$f is missing on this ref; dispatch with --ref set to the branch that has the compare script"
+              exit 1
+            fi
+          done
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
