@@ -90,7 +90,7 @@
   {
     "id": "unreleased-3a27077d0329",
     "version": "Unreleased",
-    "date": "2026-10-23T22:00:50.000Z",
+    "date": "2026-10-23T22:01:03.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "whats-new",
@@ -497,7 +497,7 @@
   {
     "id": "unreleased-443b29e81938",
     "version": "Unreleased",
-    "date": "2026-10-23T22:00:50.000Z",
+    "date": "2026-10-23T22:01:03.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "whats-new",
