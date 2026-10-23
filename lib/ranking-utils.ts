@@ -23,17 +23,18 @@ export function calculateTier(rank: number): string {
  */
 export function getTierColor(tier: string): string {
   // #190 C2 (Option B): the --ds-score-* bands, text in --ds-score-fg (AA in both modes).
+  // #190: each tier repeats its band as the hover fill, overriding Badge's default primary hover.
   switch (tier) {
     case "S":
-      return "bg-ds-score-s text-ds-score-fg border-0";
+      return "bg-ds-score-s hover:bg-ds-score-s text-ds-score-fg border-0";
     case "A":
-      return "bg-ds-score-a text-ds-score-fg border-0";
+      return "bg-ds-score-a hover:bg-ds-score-a text-ds-score-fg border-0";
     case "B":
-      return "bg-ds-score-b text-ds-score-fg border-0";
+      return "bg-ds-score-b hover:bg-ds-score-b text-ds-score-fg border-0";
     case "C":
-      return "bg-ds-score-c text-ds-score-fg border-0";
+      return "bg-ds-score-c hover:bg-ds-score-c text-ds-score-fg border-0";
     case "D":
-      return "bg-ds-score-d text-ds-score-fg border-0";
+      return "bg-ds-score-d hover:bg-ds-score-d text-ds-score-fg border-0";
     default:
       return "bg-muted text-muted-foreground";
   }

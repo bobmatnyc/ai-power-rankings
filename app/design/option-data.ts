@@ -175,11 +175,11 @@ const tier = (name: TierSwatch["tier"], label: string, className: string): TierS
 });
 
 export const TIER_SWATCHES: readonly TierSwatch[] = [
-  tier("S", "Elite", "bg-ds-score-s text-ds-score-fg"),
-  tier("A", "Excellent", "bg-ds-score-a text-ds-score-fg"),
-  tier("B", "Good", "bg-ds-score-b text-ds-score-fg"),
-  tier("C", "Average", "bg-ds-score-c text-ds-score-fg"),
-  tier("D", "Below Average", "bg-ds-score-d text-ds-score-fg"),
+  tier("S", "Elite", "bg-ds-score-s hover:bg-ds-score-s text-ds-score-fg"),
+  tier("A", "Excellent", "bg-ds-score-a hover:bg-ds-score-a text-ds-score-fg"),
+  tier("B", "Good", "bg-ds-score-b hover:bg-ds-score-b text-ds-score-fg"),
+  tier("C", "Average", "bg-ds-score-c hover:bg-ds-score-c text-ds-score-fg"),
+  tier("D", "Below Average", "bg-ds-score-d hover:bg-ds-score-d text-ds-score-fg"),
 ];
 
 export type AgentAccent = {
