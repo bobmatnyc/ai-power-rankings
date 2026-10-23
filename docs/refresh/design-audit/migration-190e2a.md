@@ -101,8 +101,26 @@ carry over. A `dark:` variant counts as its own use.
 ## Not migrated
 
 No existing token holds these colours with the same light and dark values in
-the same role. They stay as they are; each needs a new token or an owner
-decision.
+the same role. They stay as they are.
+
+**Exempt under ruling Df8 (owner, 2026-10-23).** These 55 uses are exempt
+from the colour ratchet. Each of the 9 files has its own entry in
+`RATCHET_ALLOWLIST` (`tests/unit/globals-consolidation-189.test.ts`) with the
+reason below and a `colourCap` at its current count, so adding a colour to
+one of these files still fails the test. The baseline dropped from 205 to
+150. No colour was mapped and no token was added.
+
+| File | `colourCap` |
+|---|---|
+| `components/admin/generation-stats.tsx` | 24 |
+| `components/admin/rankings-viewer.tsx` | 14 |
+| `components/admin/unified-admin-dashboard.tsx` | 6 |
+| `components/admin/news-ingestion-tool.tsx` | 4 |
+| `components/admin/admin-dashboard.tsx` | 2 |
+| `components/admin/character-counter.tsx` | 2 |
+| `components/admin/article-management.tsx` | 1 |
+| `components/admin/tools-manager.tsx` | 1 |
+| `components/seo/seo-dashboard.tsx` | 1 |
 
 | Uses | Where | Old | Value, light / dark | Nearest token and why it does not match |
 |---|---|---|---|---|
