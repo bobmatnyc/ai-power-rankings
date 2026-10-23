@@ -110,7 +110,7 @@ export function ToolsManager() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       {deleteError && (
-        <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded relative">
+        <div className="bg-ds-danger-fixed-subtle border border-ds-danger-fixed-border text-red-800 px-4 py-3 rounded relative">
           {deleteError}
         </div>
       )}
@@ -284,7 +284,7 @@ export function ToolsManager() {
                             {ranking.position_change !== 0 && (
                               <div
                                 className={`flex items-center gap-1 text-sm ${
-                                  ranking.position_change > 0 ? "text-green-600" : "text-red-600"
+                                  ranking.position_change > 0 ? "text-ds-success-fixed-mid" : "text-ds-danger-fixed"
                                 }`}
                               >
                                 {ranking.position_change > 0 ? (

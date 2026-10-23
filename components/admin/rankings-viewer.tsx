@@ -234,8 +234,8 @@ export function RankingsViewer() {
     <div className="space-y-6">
       {/* Success/Error Messages */}
       {success && (
-        <Alert className="border-green-200 bg-green-50">
-          <CheckCircle2 className="h-4 w-4 text-green-600" />
+        <Alert className="border-ds-success-fixed-border bg-ds-success-fixed-subtle">
+          <CheckCircle2 className="h-4 w-4 text-ds-success-fixed-mid" />
           <AlertDescription className="text-green-800">{success}</AlertDescription>
         </Alert>
       )}
@@ -399,17 +399,17 @@ export function RankingsViewer() {
                       className={cn(
                         "flex items-center justify-between p-3 rounded-lg border relative hover:shadow-md transition-shadow",
                         index < 3 && "bg-yellow-50 border-yellow-200 hover:border-yellow-300",
-                        index >= 3 && index < 10 && "bg-gray-50 hover:bg-gray-100",
-                        index >= 10 && "hover:bg-gray-50"
+                        index >= 3 && index < 10 && "bg-ds-surface-paper-muted hover:bg-ds-surface-paper-sunken",
+                        index >= 10 && "hover:bg-ds-surface-paper-muted"
                       )}
                       style={{ display: "flex" }}
                     >
                       <div className="flex items-center gap-4 flex-1">
                         <div className="text-center">
-                          <div className={cn("text-lg font-bold", index < 3 && "text-yellow-600")}>
+                          <div className={cn("text-lg font-bold", index < 3 && "text-ds-accent-cat-yellow-strong")}>
                             #{entry.position}
                           </div>
-                          {index < 3 && <Star className="h-4 w-4 mx-auto text-yellow-500" />}
+                          {index < 3 && <Star className="h-4 w-4 mx-auto text-ds-accent-cat-yellow" />}
                         </div>
 
                         <div className="flex-1">

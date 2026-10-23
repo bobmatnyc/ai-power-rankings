@@ -106,11 +106,11 @@ export function SEODashboard() {
             // biome-ignore lint/suspicious/noArrayIndexKey: Skeleton placeholders don't have unique data
             <Card key={`skeleton-${i}`} className="animate-pulse">
               <CardHeader className="pb-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                <div className="h-4 bg-ds-surface-skeleton rounded w-3/4"></div>
               </CardHeader>
               <CardContent>
-                <div className="h-8 bg-gray-200 rounded w-1/2 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+                <div className="h-8 bg-ds-surface-skeleton rounded w-1/2 mb-2"></div>
+                <div className="h-3 bg-ds-surface-skeleton rounded w-2/3"></div>
               </CardContent>
             </Card>
           ))}
@@ -122,7 +122,7 @@ export function SEODashboard() {
   if (error) {
     return (
       <div className="container mx-auto p-6">
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-ds-danger-fixed-border bg-ds-danger-fixed-subtle">
           <CardHeader>
             <CardTitle className="text-red-700 flex items-center gap-2">
               <AlertTriangle className="h-5 w-5" />
@@ -130,7 +130,7 @@ export function SEODashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-red-600 mb-4">{error}</p>
+            <p className="text-ds-danger-fixed mb-4">{error}</p>
             <Button onClick={fetchSEOMetrics} variant="outline">
               Retry
             </Button>
@@ -147,7 +147,7 @@ export function SEODashboard() {
   const formatChange = (change: number) => {
     const isPositive = change > 0;
     return (
-      <div className={`flex items-center gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}>
+      <div className={`flex items-center gap-1 ${isPositive ? "text-ds-success-fixed-mid" : "text-ds-danger-fixed"}`}>
         {isPositive ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
         <span className="text-xs font-medium">
           {isPositive ? "+" : ""}

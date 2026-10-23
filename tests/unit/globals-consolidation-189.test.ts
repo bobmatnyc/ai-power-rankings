@@ -99,11 +99,13 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
  * uses on the news, what's-new, SEO and best-* pages and their components.
  * #190 PR E1: 390, the 69 uses in the public modals, contact form, error and
  * not-found pages, chart skeleton, crown icon and image placeholder that have
- * an exact token; the 59 without one stay (migration-190e1.md).
+ * an exact token; the 59 without one stay (migration-190e1.md). #190 PR E2a:
+ * 264, the 126 uses in the admin components and SEO dashboard that have an
+ * exact token; the 55 without one stay (migration-190e2a.md).
  * Lower it as #190 migrates; never raise it.
  */
-// #190: E1 lowered this from 459.
-const HARDCODED_COLOUR_BASELINE = 390;
+// #190: E2a lowered this from 390.
+const HARDCODED_COLOUR_BASELINE = 264;
 
 /**
  * #190 rulings D2-D4: the only places a literal colour is the right tool. An
