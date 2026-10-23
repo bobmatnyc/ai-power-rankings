@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { loadList } from "../../lib/load-list";
+import { DEFAULT_SITE_ORIGIN } from "../../lib/site-origin";
 
 /**
  * Regression tests for #152 — both `/api/whats-new` consumers tell a failed
@@ -17,6 +18,8 @@ import { loadList } from "../../lib/load-list";
  * `loadList` with a stub `fetch`, and its wiring — the error branch, with a
  * retry, before the empty state — is pinned on its source, as
  * `tests/unit/news-content-load.test.ts` does for the news page.
+ * The #219 block pins the page's feed origin: with `NEXT_PUBLIC_BASE_URL`
+ * unset, the server-side read must target `siteOrigin()`, not localhost.
  * Test: `npx vitest run tests/unit/whats-new-feed-load.test.ts`. No network.
  */
 
@@ -74,6 +77,48 @@ describe("whats-new recent page (#152)", () => {
     expect(fetchMock).toHaveBeenCalledWith(expect.stringMatching(/\/api\/whats-new\?days=7$/), {
       cache: "no-store",
     });
+  });
+});
+
+describe("whats-new recent page feed origin (#219)", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it("fetches the feed from siteOrigin(), never localhost, when NEXT_PUBLIC_BASE_URL is unset", async () => {
+    vi.stubEnv("NEXT_PUBLIC_BASE_URL", undefined);
+    const item = {
+      type: "platform",
+      date: new Date().toISOString(),
+      id: "p-219",
+      title: "Feed origin regression item",
+      description: "Rendered from a stubbed 200 feed.",
+      category: "platform",
+      changeType: "fix",
+      version: "1.0.0",
+    };
+    // Production has no server on localhost, so a localhost request fails.
+    const fetchMock = vi.fn(async (url: string) => {
+      if (url.includes("localhost")) throw new TypeError("fetch failed");
+      return json({ feed: [item] });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const { default: RecentUpdatesPage } = await import(
+      "../../app/[lang]/whats-new/recent/page"
+    );
+
+    const html = renderToStaticMarkup(
+      await RecentUpdatesPage({ params: Promise.resolve({ lang: "en" }) })
+    );
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(`${DEFAULT_SITE_ORIGIN}/api/whats-new?days=7`, {
+      cache: "no-store",
+    });
+    expect(html).toContain(item.title);
+    expect(html).not.toContain('role="alert"');
+    expect(html).not.toContain(EMPTY_STATE);
   });
 });
 
