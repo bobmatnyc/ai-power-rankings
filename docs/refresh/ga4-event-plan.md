@@ -73,12 +73,22 @@ Not instrumented: the home-page "Trending" and "Recently Updated" cards in
 
 Fires at:
 
-- `components/layout/app-sidebar.tsx:87`: the shared sender. It is called from
-  the sidebar category links (`:277`) and the tag buttons (`:347`).
-- `components/ranking/rankings-grid.tsx:392`: rankings sort select.
+- `components/layout/app-sidebar.tsx:88`: the shared sender. It is called from
+  the sidebar category links (`:278`) and the tag buttons (`:348`).
+- `components/ranking/rankings-grid.tsx:394`: rankings sort select.
 - `app/[lang]/tools/tools-content.tsx:77`: tools category select.
 - `app/[lang]/tools/tools-content.tsx:157`: tools sort select.
 - `components/ranking/ranking-card.tsx:147`: category badge on a ranking card.
+
+Delivery: every `filter_use` control changes the URL through the App Router
+(`<Link>` or `router.push`), so the page stays loaded after the event. gtag.js
+holds a hit for about five seconds before it sends it. Before the #175 fix, the
+sort select and the tag buttons set `window.location.href`, a full document
+load. Their hit could then leave only in gtag's pagehide flush. A scripted
+production collect capture saw no `filter_use` from either control, and a local
+test showed that a pagehide flush is invisible to that kind of capture. Do not
+set `window.location.href` after `trackEvent()`. The regression test is
+`tests/unit/analytics-filter-delivery.test.tsx`.
 
 ### `tool_outbound_click`
 
@@ -116,23 +126,32 @@ which matches the GA4 `scroll` event.
 | `search_location` | `"rankings"` | |
 
 The site has no search box. Its only search entry point is the schema.org
-`SearchAction` at `app/[lang]/page.tsx:272-277`, which points to
-`/{lang}/rankings?search={term}`. Before this change that URL showed the full,
+`SearchAction` at `app/[lang]/page.tsx:272-278`, which points to
+`/{lang}/rankings?term={term}`. Before this change that URL showed the full,
 unfiltered list.
+
+The query key is `term`, set in `lib/search-param.ts`. It was `search` until
+the #175 follow-up. GA4 enhanced measurement reads `q`, `s`, `search`, `query`
+and `keyword` as a site search, so it sent the raw term as
+`view_search_results.search_term`. The rankings page reads `term` first and
+then `search`, so old `?search=` links still filter the list. The search badge
+clears both keys. The root layout's second SearchAction (`lib/schema.ts:155`,
+`/tools?term={term}`) uses the same key.
 
 - `components/ranking/use-rankings-search.ts` now filters the list by tool
   name, slug or category.
 - `components/ranking/rankings-grid.tsx` shows the term as a clearable badge.
 - The hook sends `site_search` once per distinct term, after the rankings load
-  (`use-rankings-search.ts:41`, called at `rankings-grid.tsx:260`).
+  (`use-rankings-search.ts:50`, called at `rankings-grid.tsx:262`).
 - The raw term is never sent.
 
-PII caveat: the raw term still reaches GA4 in two ways. One is the `page_view`
-`page_location`. The other is enhanced measurement "Site search", which
-reads the `search` query parameter by default and sends `view_search_results`
-with `search_term`. To keep search text out of GA4, the owner must turn off
-Site search in enhanced measurement, or remove `search` from its query
-parameters. This plan does not change the setting.
+PII caveat: the raw term still reaches GA4 in the `page_view`
+`page_location`, because the term is in the URL. Removing it needs a GA4
+property setting or a URL without the term; that is an owner decision.
+Enhanced measurement "Site search" no longer sees a term on a `?term=` URL. It
+still reads `search`, so a visitor who opens an old `?search=` link still sends
+`view_search_results` with `search_term`. Adding `term` to the Site search
+query parameters in the property would bring the term back.
 
 ### page_type values
 
@@ -161,7 +180,7 @@ toggle enabled. Confirm this in Admin > Data streams > Web.
 |---|---|---|
 | `click` with `outbound=true` | `tool_outbound_click` | One tool-link click sends both events. Use `tool_outbound_click` for per-tool attribution and `click` for all outbound traffic. Never add the two counts together. |
 | `scroll` (90%, once per page) | `scroll_depth` (75%) | They measure different depths. A page view that reaches 90% sends both. |
-| `view_search_results` | `site_search` | Both fire on a `?search=` landing. `site_search` adds the result count and leaves out the text. See the PII caveat above. |
+| `view_search_results` | `site_search` | Since #175 only a legacy `?search=` landing sends both; a `?term=` landing sends `site_search` only. `site_search` adds the result count and leaves out the text. See the PII caveat above. |
 | `page_view` on history change | none | No custom event duplicates it. |
 
 ## Verifying in DebugView
@@ -187,8 +206,9 @@ These steps are for whoever gets access to the GA4 property.
    4. `scroll_depth`: scroll any long page past three quarters. Expect one
       event with `percent_scrolled=75`. Scroll further: no second event, and a
       `scroll` event appears at 90%.
-   5. `site_search`: open `/en/rankings?search=cursor`. Expect `query_length=6`,
-      `query_length_bucket=4-10` and a `result_count` equal to the cards shown.
+   5. `site_search`: open `/en/rankings?term=cursor`. Expect `query_length=6`,
+      `query_length_bucket=4-10` and a `result_count` equal to the cards shown,
+      and no `view_search_results` event.
 5. Custom parameters appear in standard reports only after they are
    registered. In Admin > Custom definitions, add event-scoped dimensions:
    - `tool_slug`
