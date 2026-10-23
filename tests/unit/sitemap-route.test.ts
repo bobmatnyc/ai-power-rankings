@@ -12,15 +12,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * and `DATABASE_URL` unset, then checks the exported route config, that each
  * active article is listed once under `/en/news/<slug>` with its own date as
  * `<lastmod>`, the success and failure cache headers, and that a failed read
- * is a `no-store` 503 rather than a 200 without articles.
+ * is a `no-store` 503 rather than a 200 without articles. #54: each stored
+ * monthly report is listed once, under `/en/whats-new/<period>`, and a failed
+ * period read is the same 503.
  * Test: `npx vitest run tests/unit/sitemap-route.test.ts`. No database access,
  * no network.
  */
 
-const { getPublishedSlugs, findAll } = vi.hoisted(() => ({
+const { getPublishedSlugs, findAll, listPeriods } = vi.hoisted(() => ({
   getPublishedSlugs: vi.fn(),
   findAll: vi.fn(),
+  listPeriods: vi.fn(),
 }));
+
+// #54: the sitemap's monthly-report read.
+vi.mock("../../lib/services/whats-new-summary.service", () => ({ listPeriods }));
 
 vi.mock("../../lib/db/repositories/news", () => {
   class NewsRepository {
@@ -76,6 +82,10 @@ describe("GET /sitemap.xml (#162)", () => {
       { slug: "big-launch", publishedAt: new Date("2026-09-20T08:30:00.000Z") },
       { slug: "older-news", publishedAt: new Date("2026-08-01T00:00:00.000Z") },
     ]);
+    listPeriods.mockResolvedValue([
+      { period: "2026-08", updatedAt: new Date("2026-08-30T06:00:00.000Z") },
+      { period: "2026-07", updatedAt: new Date("2026-08-02T06:00:00.000Z") },
+    ]);
   });
 
   afterEach(() => {
@@ -102,13 +112,23 @@ describe("GET /sitemap.xml (#162)", () => {
 
     // Nothing the sitemap already listed is lost: static pages, and the
     // active tool in every locale (the inactive one in none).
-    expect(urls).toHaveLength(STATIC_URL_COUNT + locales.length + news.length);
+    const reports = urls.filter((u) => u.loc.includes("/whats-new/"));
+    expect(urls).toHaveLength(STATIC_URL_COUNT + locales.length + news.length + reports.length);
     expect(urls.filter((u) => u.loc.endsWith("/tools/cursor"))).toHaveLength(locales.length);
     expect(urls.some((u) => u.loc.includes("retired-tool"))).toBe(false);
     for (const { loc } of urls) {
       expect(loc.startsWith(`${ORIGIN}/`), loc).toBe(true);
       expect(loc).not.toContain("vercel.app");
     }
+  });
+
+  it("lists each stored monthly report once, under /en/whats-new/<period> (#54)", async () => {
+    const urls = listedUrls(await (await fetchSitemap()).text());
+
+    expect(urls.filter((u) => u.loc.includes("/whats-new"))).toEqual([
+      { loc: `${ORIGIN}/en/whats-new/2026-08`, lastmod: "2026-08-30T06:00:00.000Z" },
+      { loc: `${ORIGIN}/en/whats-new/2026-07`, lastmod: "2026-08-02T06:00:00.000Z" },
+    ]);
   });
 
   it("lets the CDN cache a complete sitemap for an hour", async () => {
@@ -121,6 +141,7 @@ describe("GET /sitemap.xml (#162)", () => {
   it.each([
     ["the news read", () => getPublishedSlugs.mockRejectedValue(new Error("connection reset"))],
     ["the tools read", () => findAll.mockRejectedValue(new Error("Database not connected"))],
+    ["the report period read (#54)", () => listPeriods.mockRejectedValue(new Error("connection reset"))],
   ])("answers 503 no-store, not an article-less 200, when %s fails", async (_what, fail) => {
     fail();
 

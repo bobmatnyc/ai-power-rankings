@@ -88,9 +88,20 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-3a27077d0329",
+    "version": "Unreleased",
+    "date": "2026-10-23T22:01:03.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "whats-new",
+    "title": "/<locale>/whats-new showed \"No Monthly Summary Available\" while a summary was stored",
+    "description": "`/<locale>/whats-new` showed \"No Monthly Summary Available\" while a summary was stored. The server component fetched the relative URL `/api/whats-new/summary`; a server-side `fetch` cannot resolve a relative URL, so the read rejected and the error was swallowed. The page now reads the latest stored summary through the summary service. The empty state appears only when no summary is stored, and a failed database read shows the error page. Month and generation dates are formatted in UTC, so a server west of UTC no longer names the previous month. Tests: `tests/unit/whats-new-permalink.test.ts` (#54)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-ead2db5206df",
     "version": "Unreleased",
-    "date": "2026-10-23T21:40:21.000Z",
+    "date": "2026-10-23T21:51:20.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "ops",
@@ -482,6 +493,17 @@
     "title": "the daily cron called runDailyDiscovery() with no arguments, so the Tavily days lookback was undefined and omitted from…",
     "description": "the daily cron called `runDailyDiscovery()` with no arguments, so the Tavily `days` lookback was `undefined` and omitted from the request — discovery was relevance-ranked with no date bound at all. It now defaults to the freshness window; an explicit `--days` still wins and widens the gate in step",
     "changeType": "fix"
+  },
+  {
+    "id": "unreleased-443b29e81938",
+    "version": "Unreleased",
+    "date": "2026-10-23T22:01:03.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "whats-new",
+    "title": "each stored monthly report has a permanent URL, /<locale>/whats-new/<YYYY-MM>",
+    "description": "each stored monthly report has a permanent URL, `/<locale>/whats-new/<YYYY-MM>`. The page shows the month as its heading, the report, and links to the other stored reports. It canonicalises to `/en/whats-new/<YYYY-MM>` in every locale, with the month in the title, the report's first sentence as the description, and one JSON-LD `Article` block. A malformed period or a month with no stored report is a 404, never the latest report; a failed database read is an error. The sitemap lists each stored report once, under `/en`, and a failed period read is a 503 like the other sitemap reads. The `/whats-new` index links to the latest report's permalink and canonicalises to it while a report exists. Tests: `tests/unit/whats-new-permalink.test.ts`, `tests/unit/sitemap-route.test.ts`, `tests/unit/seo-canonical-origin.test.ts` (#54)",
+    "changeType": "feature"
   },
   {
     "id": "unreleased-d8430187d1c3",
