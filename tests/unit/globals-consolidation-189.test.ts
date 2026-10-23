@@ -17,7 +17,8 @@ import { describe, expect, it } from "vitest";
  * `app/layout.tsx`; (2) counts hard-coded colours in `components/` and `app/`
  * exactly as docs/refresh/design-audit/one-off-styles.md "Method" describes,
  * less the #190 D2-D4 allowlist, and fails above the baseline or on an empty
- * scan.
+ * scan; (3) caps the colour literals in each allowlisted file set that carries
+ * a `literalCap`, so an exemption cannot grow unseen.
  * Test: `npx vitest run tests/unit/globals-consolidation-189.test.ts`. No network.
  */
 
@@ -104,11 +105,21 @@ const HARDCODED_COLOUR_BASELINE = 459;
  * #190 rulings D2-D4: the only places a literal colour is the right tool. An
  * entry exempts the whole file unless `scope` narrows it to `--shadow*`
  * custom-property declarations, so every other colour in that file counts.
+ * `literalCap` is the measured count of colour literals in the files an
+ * entry matches; lower it when they fall, never raise it.
  */
-const RATCHET_ALLOWLIST: ReadonlyArray<{ path: RegExp; scope?: "shadow-custom-properties"; reason: string }> = [
+const RATCHET_ALLOWLIST: ReadonlyArray<{
+  path: RegExp;
+  scope?: "shadow-custom-properties";
+  literalCap?: number;
+  reason: string;
+}> = [
   {
-    path: /^app\/api\/og\/(?:.+\/)?route\.tsx$/,
-    reason: "D2: open-graph images render through @vercel/og, which cannot read CSS variables.",
+    // #190 option D: the OG exemption is permanent, so its literals are capped
+    // instead of migrated. 36 includes the 9-digit `#059669010` in ranking/route.tsx.
+    path: /^app\/api\/og\//,
+    literalCap: 36,
+    reason: "D2: open-graph images render through next/og (Satori), which cannot read CSS variables.",
   },
   {
     path: /^app\/api\/contact\/route\.ts$/,
@@ -132,10 +143,24 @@ function colourScanFiles(dirs: string[]): string[] {
   return files;
 }
 
+function stripComments(source: string): string {
+  return source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+}
+
 /** Hard-coded colour uses in one file's text, comments stripped first. */
 function countHardcodedColours(source: string): number {
-  const code = source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+  const code = stripComments(source);
   return Object.values(COLOUR_PATTERNS).reduce((sum, re) => sum + (code.match(re)?.length ?? 0), 0);
+}
+
+// #190: literal colours only. Hex takes any run of 3+ digits so a malformed
+// literal such as `#059669010` still counts once.
+const COLOUR_LITERALS = [/#[0-9a-fA-F]{3,}(?![\w-])/g, /\brgba?\(/g, /\bhsla?\(/g];
+
+/** Hex, rgb/rgba and hsl/hsla literals in one file's text, comments stripped first. */
+function countColourLiterals(source: string): number {
+  const code = stripComments(source);
+  return COLOUR_LITERALS.reduce((sum, re) => sum + (code.match(re)?.length ?? 0), 0);
 }
 
 /** One scanned file's uses, split into those the ratchet counts and those the allowlist exempts. */
@@ -196,6 +221,25 @@ describe("hard-coded colour ratchet (#189)", () => {
       expect(hits.reduce((sum, h) => sum + h.exempted, 0), entry.reason).toBeGreaterThan(0);
     },
   );
+
+  it("counts hex, rgb/rgba and hsl/hsla literals, including a malformed 9-digit hex", () => {
+    expect(countColourLiterals('a: "#fff", b: "#1e40af20", c: "#059669010", d: "rgba(0,0,0,.1)"')).toBe(4);
+    expect(countColourLiterals('e: "hsl(0 0% 0%)", f: "hsla(0,0%,0%,.5)" // "#abc"')).toBe(2);
+  });
+
+  // #190 option D: the OG routes stay exempt permanently, so their literal count may fall but not rise.
+  it.each(
+    RATCHET_ALLOWLIST.filter((entry) => entry.literalCap !== undefined).map(
+      (entry) => [entry.path.source, entry] as const,
+    ),
+  )("allowlist entry %s stays at or below its literal cap", (_, entry) => {
+    const files = colourScanFiles([join(root, "app"), join(root, "components")]).filter((file) => entry.path.test(file));
+    expect(files.length, entry.reason).toBeGreaterThan(0);
+    const total = files.reduce((sum, file) => sum + countColourLiterals(readFileSync(join(root, file), "utf8")), 0);
+    expect(total, `colour literals in ${entry.path.source} (lower literalCap when this falls)`).toBeLessThanOrEqual(
+      entry.literalCap ?? 0,
+    );
+  });
 
   it(`stays at or below the ${HARDCODED_COLOUR_BASELINE} baseline`, () => {
     const total = scanRepoColours().reduce((sum, { counted }) => sum + counted, 0);
