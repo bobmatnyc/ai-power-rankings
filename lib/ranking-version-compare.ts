@@ -128,7 +128,30 @@ export function formatComparisonTable(rows: ComparisonRow[]): string {
 // Anything URL-shaped, plus `key=value` pairs that look like credentials.
 const SECRET_PATTERNS = [/[a-z][a-z0-9+.-]*:\/\/\S+/gi, /\b\w*(password|secret|token|key)\w*=\S+/gi];
 
-/** Strip connection strings and credential-like pairs from text bound for stdout. */
-export function redactSecrets(text: string): string {
-  return SECRET_PATTERNS.reduce((out, pattern) => out.replace(pattern, "[redacted]"), text);
+/**
+ * Strip connection strings and credential-like pairs from text bound for stdout.
+ *
+ * `literals` are exact strings to remove as well. #101: a driver error can name
+ * the database host without a URL scheme, which the patterns above miss.
+ */
+export function redactSecrets(text: string, literals: readonly string[] = []): string {
+  const patterned = SECRET_PATTERNS.reduce((out, pattern) => out.replace(pattern, "[redacted]"), text);
+  return literals
+    .filter((literal) => literal.length >= 4)
+    .reduce((out, literal) => out.split(literal).join("[redacted]"), patterned);
+}
+
+/**
+ * The parts of a connection string worth redacting verbatim: the whole string,
+ * host, user and password. An unparseable string yields only itself.
+ */
+export function connectionStringLiterals(connectionString: string | undefined): string[] {
+  if (!connectionString) return [];
+  try {
+    const url = new URL(connectionString);
+    const parts = [url.hostname, decodeURIComponent(url.username), decodeURIComponent(url.password)];
+    return [connectionString, ...parts.filter(Boolean)];
+  } catch {
+    return [connectionString];
+  }
 }

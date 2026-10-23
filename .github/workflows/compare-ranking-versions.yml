@@ -1,0 +1,88 @@
+name: Compare ranking versions (read-only)
+
+# Why: #101 — ranking algorithm v7.10 may merge only after the Architect reviews a
+# real-data before/after table of v7.9 against v7.10. The DATABASE_URL repository
+# secret is the only route to the real tool rows, so the compare runs here.
+#
+# What: a manual dispatch that runs scripts/compare-ranking-versions.ts against the
+# database and writes the table (tool, v7.9 rank and score, v7.10 rank and score,
+# biggest movers first, every tool) to the job summary. It writes nothing anywhere
+# else:
+#   - The script reads one SELECT inside a READ ONLY Postgres transaction
+#     (lib/ranking-compare-db-source.ts); Postgres rejects any write in it. It runs
+#     no migration and never calls the publish path or the regenerate-rankings cron.
+#   - The secret reaches the step only through `env:`, never through `run:` text.
+#   - Script errors are redacted (connection string, host, user, password).
+#   - No artifact is uploaded.
+#
+# Dispatch-only on purpose: it must never run on a schedule, push or pull request.
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Scoring clock as YYYY-MM-DD. Empty means today (UTC).'
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    name: v7.9 vs v7.10 table
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The dispatch input reaches the shell only through `env:` and is shape-checked
+      # before use, so a crafted value cannot become script text.
+      - name: Validate inputs
+        env:
+          SCORING_DATE: ${{ inputs.date }}
+        run: |
+          set -uo pipefail
+          if [ -n "$SCORING_DATE" ] && [[ ! "$SCORING_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "::error::date must be YYYY-MM-DD or empty"
+            exit 1
+          fi
+
+      # stdout is the table alone; the banner and any (redacted) error go to stderr,
+      # which stays in the log. The summary is written only on success.
+      - name: Compare (read-only)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SCORING_DATE: ${{ inputs.date }}
+        run: |
+          set -uo pipefail
+          date_flag=()
+          if [ -n "$SCORING_DATE" ]; then
+            date_flag=("--date=${SCORING_DATE}")
+          fi
+          status=0
+          npx tsx scripts/compare-ranking-versions.ts "${date_flag[@]}" > comparison.md || status=$?
+          if [ "$status" -eq 0 ]; then
+            {
+              echo '## Ranking v7.9 vs v7.10 (read-only, real data)'
+              echo ''
+              cat comparison.md
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Comparison failed; see the step log (errors are redacted).' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          rm -f comparison.md
+          exit "$status"

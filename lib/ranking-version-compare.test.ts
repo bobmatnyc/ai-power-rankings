@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   buildComparisonTable,
+  connectionStringLiterals,
   formatComparisonTable,
   redactSecrets,
 } from "./ranking-version-compare";
@@ -77,11 +78,24 @@ describe("read-only guarantees", () => {
     expect(out).not.toMatch(/postgresql:|hunter2|db\.example/);
   });
 
+  it("redacts the connection string's host, user and password given without a scheme", () => {
+    const url = "postgresql://reader:s3cr3tpass@db-host.internal.example/app?sslmode=require";
+    const out = redactSecrets(
+      "getaddrinfo ENOTFOUND db-host.internal.example for reader (s3cr3tpass)",
+      connectionStringLiterals(url)
+    );
+    expect(out).not.toMatch(/db-host|reader|s3cr3tpass/);
+    expect(connectionStringLiterals(undefined)).toEqual([]);
+    expect(connectionStringLiterals("not a url")).toEqual(["not a url"]);
+  });
+
   it("the script calls no write path", () => {
     const source = readFileSync(join(ROOT, "scripts", "compare-ranking-versions.ts"), "utf8")
       .replace(/\/\*[\s\S]*?\*\//g, "")
       .replace(/^\s*\/\/.*$/gm, "");
-    expect(source).toContain("loadActiveTools()");
+    // #101: the database read goes through the READ ONLY transaction loader.
+    expect(source).toContain("loadActiveToolsReadOnly(");
+    expect(source).not.toMatch(/getDb|createDbPersistence|lib\/db\/connection/);
     expect(source).not.toMatch(
       /saveSnapshot|regenerateRankings|\.insert\(|\.update\(|\.delete\(|writeFile|appendFile|cache/i
     );
