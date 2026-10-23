@@ -73,10 +73,10 @@ const REQUIRED: Record<string, { states: string[]; signature: string }> = {
   alert: { states: ["default", "destructive"], signature: "[role='alert']" },
   "form-control": { states: ["default", "focus"], signature: "input.border-ds-border-strong" },
   "modifier-text": { states: ["default"], signature: ".text-ds-success" },
-  // #190 C2: the option comparison; each gradient option shows icon swatches, each card is a Card.
-  "gradient-option": { states: ["current", "a", "b", "c"], signature: "[data-swatch='icon-teal']" },
+  // #190 C2: the shipped tool-icon and tier fills, and the Agents-card accent candidates.
+  "gradient-fill": { states: ["shipped"], signature: "[data-swatch='icon-teal'] .from-ds-grad-teal-700" },
   "agent-card": { states: ["current", "purple", "teal", "amber"], signature: ".bg-card" },
-  "tier-legend": { states: ["current"], signature: ".bg-card" },
+  "tier-legend": { states: ["shipped"], signature: ".bg-ds-score-s" },
 };
 
 const RANK_CLASS: Record<string, string> = {

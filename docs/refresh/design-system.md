@@ -26,10 +26,11 @@ How to build and change UI on the `--ds-*` tokens. Token values and roles:
 
 `/design` (`app/design/`) shows each core component in each state, once in a
 light panel and once in a `.dark` panel: card, table, badge, nav, footer,
-score pill, rank change, alert, form controls and modifier text. While the
-#190 C2 pick is open it also shows the gradient options (Current, A, B, C)
-and the Autonomous Agents card accents (`app/design/option-sections.tsx`,
-data and contrast maths in `app/design/option-data.ts`). It is
+score pill, rank change, alert, form controls and modifier text, plus the
+tool-icon and tier fills with their contrast (#190 C2). While the owner's
+pick is open it also shows the Autonomous Agents card accent candidates
+(`app/design/option-sections.tsx`, data and contrast maths in
+`app/design/option-data.ts`). It is
 `noindex`, linked from nowhere and not in the sitemap. In production it
 answers 404 unless `DESIGN_PREVIEW` is set before the build
 (`app/design/preview-gate.ts`); dev servers and `npm run test:visual` render it.
@@ -45,10 +46,11 @@ answers 404 unless `DESIGN_PREVIEW` is set before the build
   name it finds in `app/`, so a class used only on `/design` adds CSS to
   every page. Use classes the site already uses, and compare
   `.next/static/css/*.css` before and after `next build`.
-  Exception: the C2 option swatches use their `from-ds-grad-*`,
-  `to-ds-grad-*` and `ds-accent-agent-*` classes, so the comparison
-  exercises the real token utilities. The added rules are unused elsewhere;
-  remove the options not picked when C2 lands.
+  Exception, pending the owner's pick: the Autonomous Agents card
+  candidates use their `ds-accent-agent-purple`, `ds-accent-agent-teal` and
+  `ds-warning` classes, so the comparison exercises the real token
+  utilities. The rules are unused elsewhere; remove the accents not picked
+  when the card changes.
 
 ## Checks
 
