@@ -152,7 +152,7 @@ describe("design-system token layer (#188)", () => {
       }
     }
     for (const fixed of [
-      "--ds-rank-up: 142.1 76.2% 36.3%;",
+      "--ds-rank-up: 142.4 71.8% 29.2%;", // #190: green-700, was green-600
       "--ds-rank-down: 0 72.2% 50.6%;",
       "--ds-rank-steady: 220 8.9% 46.1%;",
       "--ds-space-inline: 0.25rem;",

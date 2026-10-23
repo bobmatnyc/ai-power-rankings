@@ -309,10 +309,11 @@ function RankingsContentInner(): React.JSX.Element {
                       </div>
                     </TableCell>
                     <TableCell>
+                      {/* #190: success/warning use the mode-dependent tokens, AA on the card in both modes. */}
                       <div className="text-sm space-y-1">
                         {ranking.modifiers?.innovation_decay &&
                           ranking.modifiers.innovation_decay < 0.8 && (
-                            <div className="text-ds-warning-fixed">
+                            <div className="text-ds-warning">
                               🔄 Decay: {(ranking.modifiers.innovation_decay * 100).toFixed(0)}%
                             </div>
                           )}
@@ -321,7 +322,7 @@ function RankingsContentInner(): React.JSX.Element {
                             <div
                               className={
                                 ranking.modifiers.platform_risk > 0
-                                  ? "text-ds-success-fixed"
+                                  ? "text-ds-success"
                                   : "text-ds-danger-fixed"
                               }
                             >

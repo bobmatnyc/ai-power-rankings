@@ -483,11 +483,12 @@ export function NewsIngestionTool() {
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="report-select">Select Ingestion Report</Label>
+                    {/* #190: control edge on --ds-border-strong (3:1). */}
                     <select
                       id="report-select"
                       value={selectedReportId}
                       onChange={(e) => setSelectedReportId(e.target.value)}
-                      className="w-full mt-1 p-2 border rounded-md"
+                      className="w-full mt-1 p-2 border border-ds-border-strong rounded-md"
                     >
                       <option value="">Select a report...</option>
                       {reports

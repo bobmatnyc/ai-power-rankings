@@ -70,8 +70,64 @@ not in `AA_PAIRS`; changing them is a visible change for the owner.
 | `--ds-text-on-fill` (white) on the tier S gradient, yellow-500 / amber-500 | 1.92 / 2.15 |
 | `--ds-text-on-fill` on the tier B and D gradient starts, green-500 / orange-500 | 2.28 / 2.80 |
 | `--ds-text-on-fill` on the green, orange and teal tool icons (500 stop) | 2.28 / 2.80 / 2.49 |
-| `--ds-success-fixed` on white (rankings modifiers, comparison tick) | 3.30 |
-| `--ds-warning-fixed` on white (rankings modifiers) | 3.56 |
+
+PR C1 removed the `--ds-success-fixed` and `--ds-warning-fixed` rows; see
+below. The remaining rows are gradient fills, left for PR C2.
+
+## PR C1: accessibility fixes (visible)
+
+PR C1 is the first #190 change that alters pixels. The owner approves it
+from before/after screenshots.
+
+| Change | Pair | Before | After |
+|---|---|---|---|
+| `--ds-rank-up` light: green-600 to green-700 (`--ds-success` value) | on `--ds-surface` and `--ds-surface-raised` (white) | 3.30 | 5.02 |
+| `--ds-success-fixed`: green-600 to green-700 | on white | 3.30 | 5.02 |
+| `--ds-warning-fixed`: orange-600 to orange-700 | on white | 3.56 | 5.18 |
+| `--ds-border-strong` light: slate-300 to `215 16.3% 56%` (`#7d8ca1`) | on surface / raised / muted | 1.48 / 1.48 / 1.36 | 3.42 / 3.42 / 3.12 |
+| `--ds-border-strong` dark: slate-600 to slate-500 | on surface / raised / muted | 2.64 / 2.36 / 1.93 | 4.20 / 3.75 / 3.07 |
+| `destructive` colour added, `--ds-danger` | text on light / dark surface | none (no CSS) | 6.47 / 7.23 |
+| `destructive-foreground`, `--ds-surface` | on a `bg-destructive` fill, light / dark | none (no CSS) | 6.47 / 7.23 |
+
+- **Destructive.** `tailwind.config.js` had no `destructive` colour, so the
+  8 `text-`/`bg-`/`border-destructive` sites (6 files) emitted no CSS:
+  destructive Alerts, the home autonomous-agent card, the error boundary
+  icon and the confirm-dialog button rendered without red. They now
+  resolve to `--ds-danger`. `tests/unit/tailwind-colour-classes-190.test.ts`
+  fails when a `text-`, `bg-` or `border-` class in source compiles to nothing.
+- **Borders.** `--ds-border` stays below 3:1 as a documented decorative
+  exception: it draws dividers and card edges, never the only edge of a
+  control. Form controls move from `border-input` (the same value as
+  `--ds-border`, 1.23 light) to `border-ds-border-strong`: Input, Select
+  trigger, Textarea, the admin tools-manager and news selects, the subscribe
+  checkbox, and the outline button (`components/ui/button.tsx` and the two
+  about-page HTML buttons). 10 sites.
+- **Modifier text in dark mode (resolved).** The rankings table and the
+  comparison table show success/warning text on a card that is white in
+  light mode and `#020817` in dark mode. A one-value `-fixed` token cannot
+  pass on both: the 700 step fell to 3.99 (green) and 3.86 (orange) in dark
+  mode. The three sites (`rankings-content.tsx` decay and positive risk,
+  `comparison-table.tsx` tick) now use the mode-dependent `--ds-success` and
+  `--ds-warning`. On the card, light / dark:
+
+  | Site text | Before C1 | After |
+  |---|---|---|
+  | success (was `--ds-success-fixed`, green-600) | 3.30 / 6.07 | 5.02 / 11.48 |
+  | warning (was `--ds-warning-fixed`, orange-600) | 3.56 / 5.62 | 5.02 / 11.98 |
+
+  On the row hover (`--ds-surface-muted`, the worst case) both are 4.58
+  light; dark is 8.40 (success) and 8.76 (warning), up from 4.44 and 4.11.
+  The light warning hue moves from orange-600 to amber-700, and the dark ones
+  to green-400 and amber-400. `tests/unit/modifier-text-contrast-190.test.ts`
+  checks every `text-ds-success*` / `text-ds-warning*` class in both files
+  against the surface, raised and muted tokens in both modes.
+  `--ds-success-fixed` and `--ds-warning-fixed` have no remaining use; they
+  stay at the 700 values and in `AA_PAIRS` on white.
+- **`/design`.** Answers 404 in production unless `DESIGN_PREVIEW` is set
+  (non-empty) at build time; it keeps its `noindex` metadata. Dev, local and
+  visual-test runs render it. It gains Alert, form-control and modifier-text
+  samples.
+- Ratchet: 708 to 707 (the subscribe checkbox's `border-gray-300`).
 
 ## How parity was checked
 
