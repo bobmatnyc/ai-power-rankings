@@ -88,9 +88,20 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-5cfce997c060",
+    "version": "Unreleased",
+    "date": "2026-10-23T23:09:40.393Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "rankings",
+    "title": "a tool whose info.company or info.company_name is an object, a number or true no longer aborts the ranking run",
+    "description": "a tool whose `info.company` or `info.company_name` is an object, a number or `true` no longer aborts the ranking run. The engine called `.includes` on the value, which threw a TypeError in `calculateCompanyBacking` and stopped `computeRankings()`, including the monthly cron. Such a value now scores exactly as an absent field, in both company backing and data completeness, and the engine logs one warning per affected tool with the tool id and the type found. Every value that did not throw scores as before, including strings and arrays; the algorithm version stays v7.9. The field mapping for the other `info.*` fields is in `docs/algorithms/info-field-mapping.md`. Tests: `lib/ranking-algorithm-v76.company-guard.test.ts` (#241)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-f528db3fa04b",
     "version": "Unreleased",
-    "date": "2026-10-23T22:19:16.000Z",
+    "date": "2026-10-23T22:23:54.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "dates",
