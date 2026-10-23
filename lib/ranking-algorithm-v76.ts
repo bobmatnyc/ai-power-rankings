@@ -1,6 +1,6 @@
 
 import { hasPositiveNumeric, parseNumericOr, parseNumeric } from "./parse-numeric";
-import { describeNonStringCompany, readCompanyString } from "./ranking-company-field";
+import { describeSkippedCompany, readCompany } from "./ranking-company-field";
 import { calculateToolNewsImpact, type NewsArticle } from "./ranking-news-impact";
 import {
   scoreArrContribution,
@@ -280,8 +280,8 @@ function calculateDataCompleteness(metrics: ToolMetricsV76): number {
     hasFeatures: (metrics.info?.features?.length || 0) > 5,
 
     // Company backing indicates stability
-    // #241: a non-string company counts as absent, as calculateCompanyBacking does.
-    hasCompanyInfo: !!readCompanyString(metrics.info),
+    // #241: a company value that threw on `.includes` counts as absent.
+    hasCompanyInfo: !!readCompany(metrics.info),
 
     // Pricing model indicates go-to-market strategy
     hasPricing: !!(metrics.info?.business?.pricing_model || metrics.info?.pricing_model),
@@ -421,8 +421,8 @@ function extractCapabilityScore(text: string): number {
  * Helper function to calculate company backing score
  */
 function calculateCompanyBacking(metrics: ToolMetricsV76): number {
-  // #241: read strings only; an object/number/boolean company threw on `.includes`.
-  const company = readCompanyString(metrics.info);
+  // #241: an object/number/`true` company threw on `.includes`; it reads as absent.
+  const company = readCompany(metrics.info);
   // Coerce at read time: these can arrive as human-written strings
   // (e.g. Devin's "$575M+ total raised"), which previously read as 0.
   const funding = parseNumericOr(metrics.info?.metrics?.funding);
@@ -1129,10 +1129,10 @@ export class RankingEngineV76 {
     // same value for the same logical field (see normalizeInput).
     const metrics = this.normalizeInput(rawMetrics);
 
-    // #241: one warning per tool for a non-string company, which scores as absent.
-    const badCompany = describeNonStringCompany(metrics.info);
+    // #241: one warning per tool for a company value that threw on `.includes`.
+    const badCompany = describeSkippedCompany(metrics.info);
     if (badCompany.length > 0) {
-      console.warn(`⚠️ ${metrics.tool_id}: non-string company scored as absent (${badCompany.join(", ")})`);
+      console.warn(`⚠️ ${metrics.tool_id}: company of unusable type scored as absent (${badCompany.join(", ")})`);
     }
 
     // Calculate news impact if articles provided

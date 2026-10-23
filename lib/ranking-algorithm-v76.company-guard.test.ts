@@ -5,9 +5,10 @@
  * object (or number, or `true`) has no `.includes`, so one malformed tool threw
  * a TypeError and aborted the whole `computeRankings()` run.
  *
- * Fix under test: a non-string `company` / `company_name` scores exactly as if
- * the field were absent, and the engine logs one warning per affected tool
- * naming the tool id and the type found (never the value).
+ * Fix under test: a `company` / `company_name` value that threw on `.includes`
+ * (object, number, `true`) scores exactly as if the field were absent, and the
+ * engine logs one warning per affected tool naming the tool id and the type
+ * found (never the value). Arrays did not throw and still score as on main.
  *
  * DB-free, fake tool data only.
  */
@@ -52,7 +53,6 @@ describe("RankingEngineV76 — non-string company (#241)", () => {
 
   it.each([
     ["object company", { company: { name: "Acme Labs", size: 3 } }, "object"],
-    ["array company", { company: ["Acme Labs"] }, "array"],
     ["number company", { company: 42 }, "number"],
     ["object company_name", { company_name: { name: "Acme Labs" } }, "object"],
   ])("scores a %s exactly as an absent company", (_label, fields, _type) => {
@@ -66,7 +66,6 @@ describe("RankingEngineV76 — non-string company (#241)", () => {
 
   it.each([
     ["object company", { company: { name: "Acme Labs" } }, "object"],
-    ["array company", { company: ["Acme Labs"] }, "array"],
     ["number company", { company: 42 }, "number"],
   ])("logs exactly one warning naming the tool id for a %s", (_label, fields, type) => {
     engine.calculateToolScore(toolWith(fields), FIXED_DATE);
@@ -79,10 +78,22 @@ describe("RankingEngineV76 — non-string company (#241)", () => {
     expect(message).not.toContain("42");
   });
 
-  it("logs nothing for a string or absent company", () => {
+  it("scores an array company as on main (element match) and logs nothing", () => {
+    const asString = engine.calculateToolScore(toolWith({ company: "Google" }), FIXED_DATE);
+
+    const asArray = engine.calculateToolScore(toolWith({ company: ["Google"] }), FIXED_DATE);
+
+    expect(asArray).toEqual(asString);
+    expect(asArray).not.toEqual(absentScore());
+    expect(warn).not.toHaveBeenCalled();
+  });
+
+  it("logs nothing for a string, absent or falsy company", () => {
     engine.calculateToolScore(toolWith({ company: "Acme Labs" }), FIXED_DATE);
     engine.calculateToolScore(toolWith({}), FIXED_DATE);
     engine.calculateToolScore(toolWith({ company: null }), FIXED_DATE);
+    engine.calculateToolScore(toolWith({ company: false, company_name: 0 }), FIXED_DATE);
+    engine.calculateToolScore(toolWith({ company: "" }), FIXED_DATE);
 
     expect(warn).not.toHaveBeenCalled();
   });
