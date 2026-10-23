@@ -500,7 +500,8 @@
       "category": "按分类筛选",
       "all": "全部"
     },
-    "noResults": "未找到结果",
+    "noResults": "没有与“{term}”匹配的工具。",
+    "clearSearch": "清除搜索",
     "showingResults": "显示 {total} 个工具中的 {count} 个",
     "lastUpdated": "最后更新",
     "nextUpdate": "下次更新",

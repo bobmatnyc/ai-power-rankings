@@ -17,7 +17,7 @@ Two loaders exist in the code. Only one of them sends data.
 |---|---|---|
 | Inline gtag, ID hard-coded | `app/layout.tsx:81-96` | Yes. Loads `gtag/js?id=G-5YBL6NPWL6` and calls `gtag('config', ...)` on every page. |
 | `GoogleAnalytics` (Partytown) | `components/analytics/GoogleAnalytics.tsx`, mounted in `app/[lang]/layout.tsx:85` | Mounted, but inert. |
-| `GoogleAnalyticsOptimized` | `components/analytics/GoogleAnalytics-optimized.tsx`, used only by `app/[lang]/layout-optimized.tsx` | Dead. Next.js never routes a file named `layout-optimized.tsx`. |
+| `GoogleAnalyticsOptimized` | `components/analytics/GoogleAnalytics-optimized.tsx`, used only by `app/[lang]/layout-optimized.tsx` | Dead; deleted in #207. Next.js never routed a file named `layout-optimized.tsx`. |
 
 Evidence, taken from production on 2026-10-22:
 
