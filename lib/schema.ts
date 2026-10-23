@@ -2,8 +2,6 @@
  * Schema markup utilities for SEO
  */
 
-import { SEARCH_PARAM } from "@/lib/search-param";
-
 export interface ToolSchemaData {
   name: string;
   description?: string;
@@ -147,15 +145,7 @@ export function generateWebsiteSchema(baseUrl: string) {
     url: baseUrl,
     description:
       "The definitive monthly rankings and analysis of agentic AI coding tools, trusted by developers worldwide.",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        // #175: not a GA4 enhanced-measurement site-search key (see lib/search-param.ts).
-        urlTemplate: `${baseUrl}/tools?${SEARCH_PARAM}={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
+    // #233: no site-search potentialAction; its target URL would put the term in page_location.
     audience: {
       "@type": "Audience",
       audienceType: "Developers and Software Engineers",
