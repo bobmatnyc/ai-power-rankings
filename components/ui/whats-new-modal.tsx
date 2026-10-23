@@ -142,20 +142,20 @@ export function WhatsNewModal({
 
   const getItemTypeIcon = (item: UnifiedFeedItem) => {
     if (item.type === "news") {
-      return <Newspaper className="h-4 w-4 text-purple-600" />;
+      return <Newspaper className="h-4 w-4 text-ds-accent-cat-purple-strong" />;
     } else if (item.type === "tool") {
-      return <Wrench className="h-4 w-4 text-blue-600" />;
+      return <Wrench className="h-4 w-4 text-ds-accent-fixed" />;
     } else {
       // Platform updates
       switch (item.changeType) {
         case "feature":
-          return <Sparkles className="h-4 w-4 text-green-600" />;
+          return <Sparkles className="h-4 w-4 text-ds-accent-cat-green-strong" />;
         case "improvement":
-          return <TrendingUp className="h-4 w-4 text-blue-600" />;
+          return <TrendingUp className="h-4 w-4 text-ds-accent-fixed" />;
         case "fix":
-          return <Wrench className="h-4 w-4 text-orange-600" />;
+          return <Wrench className="h-4 w-4 text-ds-accent-cat-orange-strong" />;
         case "news":
-          return <Newspaper className="h-4 w-4 text-purple-600" />;
+          return <Newspaper className="h-4 w-4 text-ds-accent-cat-purple-strong" />;
         default:
           return <Clock className="h-4 w-4" />;
       }
@@ -165,23 +165,23 @@ export function WhatsNewModal({
   const getItemTypeBadge = (item: UnifiedFeedItem) => {
     if (item.type === "news") {
       return (
-        <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200">
+        <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-ds-border-tag-purple">
           News
         </Badge>
       );
     } else if (item.type === "tool") {
       return (
-        <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-blue-200">
+        <Badge variant="secondary" className="bg-blue-100 text-blue-800 border-ds-border-tag-blue">
           Tool Update
         </Badge>
       );
     } else {
       // Platform updates
       const typeColors = {
-        feature: "bg-green-100 text-green-800 border-green-200",
-        improvement: "bg-blue-100 text-blue-800 border-blue-200",
-        fix: "bg-orange-100 text-orange-800 border-orange-200",
-        news: "bg-purple-100 text-purple-800 border-purple-200",
+        feature: "bg-green-100 text-green-800 border-ds-border-tag-green",
+        improvement: "bg-blue-100 text-blue-800 border-ds-border-tag-blue",
+        fix: "bg-orange-100 text-orange-800 border-ds-border-tag-orange",
+        news: "bg-purple-100 text-purple-800 border-ds-border-tag-purple",
       };
       return (
         <Badge variant="secondary" className={typeColors[item.changeType]}>
@@ -228,8 +228,8 @@ export function WhatsNewModal({
           </DialogHeader>
           <div className="flex-1 overflow-y-auto space-y-4 py-4 scroll-smooth">
             <div className="animate-pulse">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+              <div className="h-4 bg-ds-surface-skeleton rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-ds-surface-skeleton rounded w-1/2"></div>
             </div>
           </div>
         </DialogContent>
@@ -389,10 +389,10 @@ export function WhatsNewModal({
             <div className="space-y-4 py-2">
               {summaryLoading ? (
                 <div className="animate-pulse space-y-4">
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-full"></div>
-                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                  <div className="h-4 bg-gray-200 rounded w-4/5"></div>
+                  <div className="h-4 bg-ds-surface-skeleton rounded w-3/4"></div>
+                  <div className="h-4 bg-ds-surface-skeleton rounded w-full"></div>
+                  <div className="h-4 bg-ds-surface-skeleton rounded w-5/6"></div>
+                  <div className="h-4 bg-ds-surface-skeleton rounded w-4/5"></div>
                 </div>
               ) : monthlySummary ? (
                 <>

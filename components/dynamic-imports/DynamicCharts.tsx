@@ -26,8 +26,8 @@ import { Suspense } from "react";
 
 // Loading placeholder for charts
 export const ChartSkeleton = () => (
-  <div className="w-full h-[300px] bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
-    <span className="text-gray-500">Loading chart...</span>
+  <div className="w-full h-[300px] bg-ds-surface-paper-sunken animate-pulse rounded-lg flex items-center justify-center">
+    <span className="text-ds-text-paper-subtle">Loading chart...</span>
   </div>
 );
 

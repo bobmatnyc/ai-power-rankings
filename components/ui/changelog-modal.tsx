@@ -31,7 +31,7 @@ export function ChangelogModal({ children }: ChangelogModalProps) {
           {/* Version 1.0.0 */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <Badge variant="default" className="bg-green-600 hover:bg-green-700">
+              <Badge variant="default" className="bg-ds-success-fixed-mid hover:bg-ds-success-fixed">
                 v1.0.0
               </Badge>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -40,7 +40,7 @@ export function ChangelogModal({ children }: ChangelogModalProps) {
               </div>
               <Badge
                 variant="secondary"
-                className="bg-orange-100 text-orange-800 border-orange-200"
+                className="bg-orange-100 text-orange-800 border-ds-border-tag-orange"
               >
                 🎉 Major Release
               </Badge>
@@ -54,7 +54,7 @@ export function ChangelogModal({ children }: ChangelogModalProps) {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <div className="flex items-center gap-2 font-medium text-green-700">
+                <div className="flex items-center gap-2 font-medium text-ds-success-fixed">
                   <Plus className="h-4 w-4" />
                   Added
                 </div>
@@ -114,7 +114,7 @@ export function ChangelogModal({ children }: ChangelogModalProps) {
             <h3 className="text-lg font-semibold">Internationalization & Versioning</h3>
 
             <div className="space-y-2">
-              <div className="flex items-center gap-2 font-medium text-green-700">
+              <div className="flex items-center gap-2 font-medium text-ds-success-fixed">
                 <Plus className="h-4 w-4" />
                 Added
               </div>
@@ -154,7 +154,7 @@ export function ChangelogModal({ children }: ChangelogModalProps) {
             <h3 className="text-lg font-semibold">Major UI Redesign</h3>
 
             <div className="space-y-2">
-              <div className="flex items-center gap-2 font-medium text-green-700">
+              <div className="flex items-center gap-2 font-medium text-ds-success-fixed">
                 <Plus className="h-4 w-4" />
                 Added
               </div>
@@ -184,7 +184,7 @@ export function ChangelogModal({ children }: ChangelogModalProps) {
             <h3 className="text-lg font-semibold">Initial Foundation</h3>
 
             <div className="space-y-2">
-              <div className="flex items-center gap-2 font-medium text-green-700">
+              <div className="flex items-center gap-2 font-medium text-ds-success-fixed">
                 <Plus className="h-4 w-4" />
                 Added
               </div>

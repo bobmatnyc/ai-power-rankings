@@ -81,7 +81,7 @@ export function OptimizedImage({
       {isLoading && !priority && (
         <div
           className={cn(
-            "absolute inset-0 bg-gray-200 animate-pulse rounded",
+            "absolute inset-0 bg-ds-surface-skeleton animate-pulse rounded",
             fill ? "w-full h-full" : ""
           )}
           style={!fill ? { width, height } : undefined}
