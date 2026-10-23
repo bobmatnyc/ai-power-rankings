@@ -4,7 +4,8 @@ Status: DRAFT — freezes after #174
 Frozen on: <date, set when #174 supplies the baseline>
 
 Every number here is PROVISIONAL until the owner decides it (see "Decisions log").
-Cells marked "baseline from #174" take their value from the M1-1 baseline.
+Cells marked "baseline from #174" take their value from the M1-1 baseline
+(partial so far: [analytics-baseline-174.md](analytics-baseline-174.md)).
 
 ## 1. Bot-share estimation
 
