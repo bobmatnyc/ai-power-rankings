@@ -125,33 +125,24 @@ which matches the GA4 `scroll` event.
 | `result_count` | number | `1` |
 | `search_location` | `"rankings"` | |
 
-The site has no search box. Its only search entry point is the schema.org
-`SearchAction` at `app/[lang]/page.tsx:272-278`, which points to
-`/{lang}/rankings?term={term}`. Before this change that URL showed the full,
-unfiltered list.
+Since #233 the term lives only in the search box on `/{lang}/rankings`
+(`components/ranking/rankings-grid.tsx`). The box has no `<form>` and no `name`,
+and typing never changes the URL. The schema.org `SearchAction` blocks are
+removed from the home page and both JSON-LD builders.
 
-The query key is `term`, set in `lib/search-param.ts`. It was `search` until
-the #175 follow-up. GA4 enhanced measurement reads `q`, `s`, `search`, `query`
-and `keyword` as a site search, so it sent the raw term as
-`view_search_results.search_term`. The rankings page reads `term` first and
-then `search`, so old `?search=` links still filter the list. The search badge
-clears both keys. The root layout's second SearchAction (`lib/schema.ts:155`,
-`/tools?term={term}`) uses the same key.
+`middleware.ts` calls `searchKeyRedirect` (`lib/search-url-keys.ts`) before any
+other check. A page GET or HEAD that carries `term`, `search`, `q`, `s`, `query`
+or `keyword` (any case, repeats included) gets a 308 to the same URL without
+those keys; other params are kept. `/api` and `/_next` are not touched. A 308
+has no HTML, so gtag never sees a URL with the term, and enhanced measurement
+never sends `view_search_results`.
 
-- `components/ranking/use-rankings-search.ts` now filters the list by tool
-  name, slug or category.
-- `components/ranking/rankings-grid.tsx` shows the term as a clearable badge.
-- The hook sends `site_search` once per distinct term, after the rankings load
-  (`use-rankings-search.ts:50`, called at `rankings-grid.tsx:262`).
+- `components/ranking/use-rankings-search.ts` filters the list by tool name,
+  slug or category as the visitor types.
+- The term badge clears the box; it does not navigate.
+- The hook sends one `site_search` per settled term, 800 ms after typing stops
+  (`SITE_SEARCH_DEBOUNCE_MS`), and nothing for an empty term.
 - The raw term is never sent.
-
-PII caveat: the raw term still reaches GA4 in the `page_view`
-`page_location`, because the term is in the URL. Removing it needs a GA4
-property setting or a URL without the term; that is an owner decision.
-Enhanced measurement "Site search" no longer sees a term on a `?term=` URL. It
-still reads `search`, so a visitor who opens an old `?search=` link still sends
-`view_search_results` with `search_term`. Adding `term` to the Site search
-query parameters in the property would bring the term back.
 
 ### page_type values
 
@@ -180,7 +171,7 @@ toggle enabled. Confirm this in Admin > Data streams > Web.
 |---|---|---|
 | `click` with `outbound=true` | `tool_outbound_click` | One tool-link click sends both events. Use `tool_outbound_click` for per-tool attribution and `click` for all outbound traffic. Never add the two counts together. |
 | `scroll` (90%, once per page) | `scroll_depth` (75%) | They measure different depths. A page view that reaches 90% sends both. |
-| `view_search_results` | `site_search` | Since #175 only a legacy `?search=` landing sends both; a `?term=` landing sends `site_search` only. `site_search` adds the result count and leaves out the text. See the PII caveat above. |
+| `view_search_results` | `site_search` | Since #233 no page URL keeps a search key, so only `site_search` fires. It carries the result count and leaves out the text. |
 | `page_view` on history change | none | No custom event duplicates it. |
 
 ## Verifying in DebugView
@@ -206,9 +197,9 @@ These steps are for whoever gets access to the GA4 property.
    4. `scroll_depth`: scroll any long page past three quarters. Expect one
       event with `percent_scrolled=75`. Scroll further: no second event, and a
       `scroll` event appears at 90%.
-   5. `site_search`: open `/en/rankings?term=cursor`. Expect `query_length=6`,
-      `query_length_bucket=4-10` and a `result_count` equal to the cards shown,
-      and no `view_search_results` event.
+   5. `site_search`: on `/en/rankings`, type `cursor` in the search box and
+      wait one second. Expect `query_length=6`, `query_length_bucket=4-10`, a
+      `result_count` equal to the cards shown, and no `view_search_results`.
 5. Custom parameters appear in standard reports only after they are
    registered. In Admin > Custom definitions, add event-scoped dimensions:
    - `tool_slug`

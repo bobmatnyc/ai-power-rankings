@@ -15,7 +15,6 @@ import { getAllKeywords } from "@/lib/metadata/static-keywords";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
-import { SEARCH_PARAM } from "@/lib/search-param";
 
 // Source homepage category counts from generated data so they never drift.
 const categoryCount = (id: string): number =>
@@ -269,15 +268,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
           "AI tool rankings",
         // #156: an unknown segment renders English; name the /en URLs.
         url: `${baseUrl}/${canonicalLocale(lang)}`,
-        potentialAction: {
-          "@type": "SearchAction",
-          target: {
-            "@type": "EntryPoint",
-            // #175: not a GA4 enhanced-measurement site-search key, so the term is not sent as search_term.
-            urlTemplate: `${baseUrl}/${canonicalLocale(lang)}/rankings?${SEARCH_PARAM}={search_term_string}`,
-          },
-          "query-input": "required name=search_term_string",
-        },
+        // #233: no site-search potentialAction; its target URL would put the term in page_location.
       };
     } catch (error) {
       console.error("[Page] Home: Error creating structured data:", error);

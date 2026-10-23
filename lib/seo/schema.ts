@@ -3,7 +3,6 @@ import type {
   ItemList,
   Organization,
   Review,
-  SearchAction,
   SoftwareApplication,
   WebSite,
   WithContext,
@@ -72,14 +71,7 @@ export function createWebsiteSchema(): WithContext<WebSite> {
     "@type": "WebSite",
     name: "AI Power Rankings",
     url: baseUrl,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${baseUrl}/search?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    } as SearchAction,
+    // #233: no site-search potentialAction; its target URL would put the term in page_location.
     publisher: {
       "@type": "Organization",
       name: "AI Power Rankings",

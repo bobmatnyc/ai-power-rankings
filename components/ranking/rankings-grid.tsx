@@ -7,6 +7,7 @@ import { Suspense, useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -19,7 +20,6 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { trackEvent } from "@/lib/analytics/track";
 import { loggers } from "@/lib/logger-client";
-import { LEGACY_SEARCH_PARAM, SEARCH_PARAM, readSearchTerm } from "@/lib/search-param";
 import { RankingCard } from "./ranking-card";
 import { TierLegend } from "./tier-legend";
 import { useRankingsSearch } from "./use-rankings-search";
@@ -88,8 +88,8 @@ function RankingsGridContent({
   const categoryParam = searchParams.get("category") || "all";
   const tagsParam = searchParams.get("tags")?.split(",") || [];
   const sortParam = searchParams.get("sort") || "rank";
-  // #175: the schema.org SearchAction lands here with ?term=<term>; old ?search= links still work.
-  const searchParam = readSearchTerm(searchParams);
+  // #233: the search term is client state only; it never enters the URL.
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchToolsStatistics = useCallback(async (): Promise<void> => {
     try {
@@ -259,7 +259,7 @@ function RankingsGridContent({
     return true;
   });
   // #175: apply the search term and send site_search once the rankings are loaded.
-  const searchedRankings = useRankingsSearch(filteredRankings, searchParam, !loading);
+  const searchedRankings = useRankingsSearch(filteredRankings, searchTerm, !loading);
 
   // Apply sorting
   const sortedRankings = [...searchedRankings].sort((a, b) => {
@@ -427,6 +427,15 @@ function RankingsGridContent({
               <SelectItem value="name">{dict.rankings.sort.name}</SelectItem>
             </SelectContent>
           </Select>
+          {/* #233: no <form> and no name, so the term can never be submitted into a URL. */}
+          <Input
+            type="search"
+            aria-label={dict.common.search}
+            placeholder={dict.common.search}
+            className="w-[220px]"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
         <div className="flex items-center gap-2">
@@ -448,7 +457,7 @@ function RankingsGridContent({
       </div>
 
       {/* Active Filters */}
-      {(categoryParam !== "all" || tagsParam.length > 0 || searchParam.trim()) && (
+      {(categoryParam !== "all" || tagsParam.length > 0 || searchTerm.trim()) && (
         <div className="flex items-center gap-2 mb-4">
           <span className="text-sm text-muted-foreground">{dict.rankings.activeFilters}:</span>
           {categoryParam !== "all" && (
@@ -464,20 +473,10 @@ function RankingsGridContent({
               {categoryParam.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} ✕
             </Badge>
           )}
-          {searchParam.trim() && (
-            // #175: show the active search term so the filtered list is explained and clearable.
-            <Badge
-              variant="secondary"
-              className="cursor-pointer"
-              onClick={() => {
-                const params = new URLSearchParams(searchParams.toString());
-                // #175: clear the current key and the legacy one.
-                params.delete(SEARCH_PARAM);
-                params.delete(LEGACY_SEARCH_PARAM);
-                window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
-              }}
-            >
-              &ldquo;{searchParam.trim()}&rdquo; ✕
+          {searchTerm.trim() && (
+            // #233: clearing the term resets client state; it does not navigate.
+            <Badge variant="secondary" className="cursor-pointer" onClick={() => setSearchTerm("")}>
+              &ldquo;{searchTerm.trim()}&rdquo; ✕
             </Badge>
           )}
           {tagsParam.map((tag) => (
