@@ -14,10 +14,11 @@ interface SearchableRanking {
 }
 
 /**
- * Filters rankings by the `?search=` term and reports the search to GA4.
+ * Filters rankings by the search term and reports the search to GA4.
  *
  * Why: #175 needs a search event. The site's only search entry point is the
- *   schema.org SearchAction (`/{lang}/rankings?search={term}`, app/[lang]/page.tsx),
+ *   schema.org SearchAction (`/{lang}/rankings?term={term}`, app/[lang]/page.tsx;
+ *   key in `lib/search-param.ts`),
  *   which landed on an unfiltered list. Filtering makes the result count real.
  * What: Case-insensitive substring match on tool name, slug (else id) and
  *   category; a null or undefined field is skipped, not matched.

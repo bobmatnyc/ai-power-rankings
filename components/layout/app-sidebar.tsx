@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 // Note: Using native <img> instead of next/image to avoid Next.js generating invalid preload tags
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -32,6 +32,7 @@ import { cn } from "@/lib/utils";
 function SidebarContent({ categories }: { categories: Category[] }): React.JSX.Element {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const { isMobile, setOpenMobile } = useSidebar();
   const { changes } = useRankingChanges();
   const currentCategory = searchParams.get("category") || "all";
@@ -345,7 +346,8 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
                     onClick={() => {
                       // #175: tag buttons are the feature filter.
                       trackFilter("tag", tag.id);
-                      window.location.href = createFilterUrl("tag", tag.id);
+                      // #175: client-side navigation, like the category links, keeps the page loaded so gtag sends filter_use.
+                      router.push(createFilterUrl("tag", tag.id));
                       handleNavClick();
                     }}
                     className={cn(

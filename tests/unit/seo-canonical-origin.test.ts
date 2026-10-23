@@ -695,7 +695,8 @@ describe("unknown locale segment falls back to English (#156)", () => {
     }>;
     expect(site?.url).toBe(`${ORIGIN}/en`);
     expect(site?.potentialAction?.target?.urlTemplate).toBe(
-      `${ORIGIN}/en/rankings?search={search_term_string}`
+      // #175: `term`, not a GA4 enhanced-measurement site-search key.
+      `${ORIGIN}/en/rankings?term={search_term_string}`
     );
   });
 

@@ -68,6 +68,7 @@ import RankingsGrid from "../../components/ranking/rankings-grid";
 import { useRankingsSearch } from "../../components/ranking/use-rankings-search";
 import { ToolDetailClient } from "../../app/[lang]/tools/[slug]/tool-detail-client";
 import { trackEvent } from "../../lib/analytics/track";
+import { readSearchTerm } from "../../lib/search-param";
 
 const tracked = vi.mocked(trackEvent);
 const dict = en as never;
@@ -241,8 +242,12 @@ describe("site_search", () => {
     ranking(3, "copilot", "GitHub Copilot", "ide-assistant"),
   ];
 
-  it("filters by ?search= and sends length, bucket and result count, never the text", async () => {
-    nav.search = "search=Cursor";
+  // #175: `term` is the key; `search` (a GA4 enhanced-measurement key) is read only for old links.
+  it.each([
+    ["term=Cursor", "the ?term= key"],
+    ["search=Cursor", "a legacy ?search= link"],
+  ])("filters by %s (%s) and sends length, bucket and result count, never the text", async (query) => {
+    nav.search = query;
     await act(async () => {
       render(<RankingsGrid lang="en" dict={dict} initialRankings={rankings as never} />);
     });
@@ -258,6 +263,11 @@ describe("site_search", () => {
     expect(JSON.stringify(tracked.mock.calls)).not.toMatch(/cursor/i);
     expect(screen.queryByText("Claude Code")).toBeNull();
     expect(screen.getAllByText("Cursor").length).toBeGreaterThan(0);
+  });
+
+  it("reads ?term= before a legacy ?search= value", () => {
+    expect(readSearchTerm(new URLSearchParams("search=old&term=new"))).toBe("new");
+    expect(readSearchTerm(new URLSearchParams("q=x"))).toBe("");
   });
 
   it("sends nothing and shows every row without a search term", async () => {
