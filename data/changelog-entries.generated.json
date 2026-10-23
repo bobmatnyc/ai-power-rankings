@@ -90,7 +90,7 @@
   {
     "id": "unreleased-09edc6769832",
     "version": "Unreleased",
-    "date": "2026-10-23T20:47:56.000Z",
+    "date": "2026-10-23T20:58:11.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "whats-new",
@@ -471,6 +471,17 @@
     "title": "the daily cron called runDailyDiscovery() with no arguments, so the Tavily days lookback was undefined and omitted from…",
     "description": "the daily cron called `runDailyDiscovery()` with no arguments, so the Tavily `days` lookback was `undefined` and omitted from the request — discovery was relevance-ranked with no date bound at all. It now defaults to the freshness window; an explicit `--days` still wins and widens the gate in step",
     "changeType": "fix"
+  },
+  {
+    "id": "unreleased-d8430187d1c3",
+    "version": "Unreleased",
+    "date": "2026-10-23T21:13:34.234Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "rankings",
+    "title": "a rankings search that matches no tool now shows \"No tools match \"<term>\".\" (announced as a status message) with a…",
+    "description": "a rankings search that matches no tool now shows \"No tools match \"<term>\".\" (announced as a status message) with a \"Clear search\" button, instead of a blank grid. The button clears the box without navigating. No message appears while rankings load, for an empty term, or for a category filter alone; `site_search` is unchanged. The text comes from the new `rankings.noResults` and `rankings.clearSearch` keys in all ten locales. The unused `components/analytics/GoogleAnalytics-optimized.tsx` loader is deleted; the live `GoogleAnalytics.tsx` stays. Tests: `tests/unit/rankings-empty-state-207.test.tsx` (#207)",
+    "changeType": "feature"
   },
   {
     "id": "unreleased-552ed01a4b84",

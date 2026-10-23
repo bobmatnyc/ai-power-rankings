@@ -205,6 +205,8 @@
     },
     "sortBy": "Sortiraj po",
     "activeFilters": "Aktivni filteri",
+    "noResults": "Nijedan alat ne odgovara pojmu „{term}”.",
+    "clearSearch": "Očisti pretragu",
     "sort": {
       "rank": "Rang",
       "trending": "U trendu",

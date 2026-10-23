@@ -205,6 +205,8 @@
     },
     "sortBy": "Ordina per",
     "activeFilters": "Filtri attivi",
+    "noResults": "Nessuno strumento corrisponde a «{term}».",
+    "clearSearch": "Cancella ricerca",
     "sort": {
       "rank": "Classifica",
       "trending": "In tendenza",
