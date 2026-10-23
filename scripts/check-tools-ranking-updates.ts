@@ -5,6 +5,8 @@
 
 import dotenv from 'dotenv';
 import { neon } from '@neondatabase/serverless';
+// #103: timestamp columns hold UTC with no zone; read them as UTC in any process TZ.
+import { naiveUtcTypes } from '../lib/db/naive-utc-timestamp.mjs';
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
@@ -39,7 +41,7 @@ async function checkToolRankingUpdates() {
     return;
   }
 
-  const sql = neon(DATABASE_URL);
+  const sql = neon(DATABASE_URL, { types: naiveUtcTypes }); // #103: UTC timestamp parse
 
   try {
     // Get tools with recent ranking changes (current_score has 'overallScore' field)

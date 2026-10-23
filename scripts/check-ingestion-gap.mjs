@@ -47,6 +47,9 @@
  */
 
 import { neon } from "@neondatabase/serverless";
+// #103: started_at, published_date and created_at are timestamp WITHOUT time zone
+// holding UTC; read them as UTC whatever the process TZ.
+import { naiveUtcTypes, parseNaiveUtcTimestamp } from "../lib/db/naive-utc-timestamp.mjs";
 
 // ---------------------------------------------------------------------------
 // Named thresholds — tune here, not inline.
@@ -82,6 +85,10 @@ export const PROVIDER_BILLING_ERROR_PATTERN =
 
 // automated_ingestion_runs.status value written when a run fails outright.
 export const FAILED_STATUS = "failed";
+
+// #103: the driver's default parser reads `timestamp` in the process TZ. Exported so
+// the TZ test parses wire values with exactly the parsers main() uses.
+export const NEON_OPTIONS = { types: naiveUtcTypes };
 
 // #138: the whole detail block is embedded verbatim in a public GitHub issue body by
 // cron-gap-detector.yml, which has a 65536-character limit. A run ingests single-digit
@@ -147,7 +154,8 @@ function detailText(value) {
  */
 function toIsoOrNull(value) {
   if (value === null || value === undefined) return "null";
-  const date = value instanceof Date ? value : new Date(value);
+  // #103: a zone-less string is UTC, not process-local time.
+  const date = parseNaiveUtcTimestamp(value);
   return Number.isNaN(date.getTime()) ? "invalid" : date.toISOString();
 }
 
@@ -329,7 +337,9 @@ export function evaluateIngestionRuns(rows, nowMs = Date.now()) {
   }
 
   const latest = rows[0];
-  const lastRunDate = new Date(latest.started_at);
+  // #103: started_at is a UTC wall clock with no zone; `new Date(text)` read it in the
+  // process TZ and put the 06:00 UTC run at 10:00 UTC under America/New_York.
+  const lastRunDate = parseNaiveUtcTimestamp(latest.started_at) ?? new Date(Number.NaN);
   const ageHours = (nowMs - lastRunDate.getTime()) / (1000 * 60 * 60);
   const ageHoursStr = ageHours.toFixed(1);
   const lastRunIso = lastRunDate.toISOString();
@@ -463,7 +473,7 @@ async function main() {
     return;
   }
 
-  const sql = neon(databaseUrl);
+  const sql = neon(databaseUrl, NEON_OPTIONS);
 
   try {
     // Most-recent-first; fetch enough rows to evaluate both the single-latest-run checks

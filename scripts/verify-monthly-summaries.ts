@@ -6,6 +6,8 @@
  */
 
 import { neon } from "@neondatabase/serverless";
+// #103: timestamp columns hold UTC with no zone; read them as UTC in any process TZ.
+import { naiveUtcTypes } from "../lib/db/naive-utc-timestamp.mjs";
 
 // Load environment variables in development
 const NODE_ENV = process.env.NODE_ENV || "development";
@@ -26,7 +28,7 @@ async function verifyTable() {
   }
 
   console.log("🔍 Verifying monthly_summaries table...");
-  const sql = neon(DATABASE_URL);
+  const sql = neon(DATABASE_URL, { types: naiveUtcTypes }); // #103: UTC timestamp parse
 
   try {
     // Query all summaries

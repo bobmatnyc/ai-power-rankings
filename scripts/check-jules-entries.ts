@@ -1,17 +1,19 @@
-import { getDb } from "../lib/db/connection";
+import { getDb, getRawSql } from "../lib/db/connection";
 import { sql } from "drizzle-orm";
 
 async function checkJulesEntries() {
   const db = getDb();
+  // #103: created_at and published_at are timestamp WITHOUT time zone; read them as UTC.
+  const rawSql = getRawSql();
 
   console.log("\n=== CHECKING JULES ENTRIES IN TOOLS TABLE ===\n");
 
   // Find all tools with "Jules" in the name using raw SQL
-  const julesTools = await db.execute(sql`
+  const julesTools = await rawSql`
     SELECT id, slug, name, status, category, created_at
     FROM tools
     WHERE name ILIKE '%jules%'
-  `);
+  `;
 
   console.log(`Found ${julesTools.rows.length} tools with "Jules" in the name:\n`);
   julesTools.rows.forEach((tool: any) => {
@@ -27,11 +29,11 @@ async function checkJulesEntries() {
   console.log("\n=== CHECKING CURRENT RANKINGS FOR JULES ===\n");
 
   // Get current rankings that contain Jules
-  const currentRankings = await db.execute(sql`
+  const currentRankings = await rawSql`
     SELECT period, algorithm_version, published_at, data
     FROM rankings
     WHERE is_current = true
-  `);
+  `;
 
   if (currentRankings.rows.length === 0) {
     console.log("No current rankings found!");
