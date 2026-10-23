@@ -1,4 +1,5 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, relative, sep } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -11,10 +12,12 @@ import { describe, expect, it } from "vitest";
  * one. The 845 hard-coded colours counted by the #188 audit migrate to tokens
  * in #190, so the count may fall but must not rise in the meantime.
  * What: (1) walks the repo (skipping dot-directories and build/output dirs) and
- * requires `app/globals.css` to be the only `.css` file, imported only by
+ * requires `app/globals.css` to be the only `.css` file, loaded (static or
+ * dynamic `import`, `require`, CSS `@import`, `/globals.css` URL) only by
  * `app/layout.tsx`; (2) counts hard-coded colours in `components/` and `app/`
- * exactly as docs/refresh/design-audit/one-off-styles.md "Method" describes and
- * fails above the 845 baseline.
+ * exactly as docs/refresh/design-audit/one-off-styles.md "Method" describes,
+ * less the #190 D2-D4 allowlist, and fails above the baseline or on an empty
+ * scan.
  * Test: `npx vitest run tests/unit/globals-consolidation-189.test.ts`. No network.
  */
 
@@ -31,17 +34,42 @@ function walk(dir: string, keep: (path: string) => boolean, out: string[] = []):
   return out;
 }
 
+// #190: static and dynamic `import`, `require`, CSS `@import` (bare or `url(`),
+// and the public `/globals.css` URL a <link> or fetch would use.
+const GLOBALS_LOADER =
+  /(?:\bimport\s*(?:[\w*{}\s,]+from\s*)?\(?\s*|\brequire\s*\(\s*|@import\s+(?:url\(\s*)?)["'][^"'\n]*globals\.css["']|["']\/globals\.css["']/;
+
+// Every file type that can import a stylesheet.
+const LOADER_SOURCE = /\.(ts|tsx|js|jsx|mjs|cjs|mdx|css|scss|sass|less|pcss)$/;
+// This file holds loader fixtures, so it is the one source the scan skips.
+const SELF = "tests/unit/globals-consolidation-189.test.ts";
+
 describe("single global stylesheet (#189)", () => {
   it("has app/globals.css as the only stylesheet in the repo", () => {
     expect(walk(root, (p) => p.endsWith(".css")).sort()).toEqual(["app/globals.css"]);
   });
 
-  it("loads globals.css only through the app/layout.tsx import", () => {
-    const loaders = /(?:import\s+["'][^"']*globals\.css["']|["']\/globals\.css["'])/;
-    const sources = ["app", "components", "lib"].flatMap((dir) =>
-      walk(join(root, dir), (p) => /\.(ts|tsx|js|jsx|mjs)$/.test(p)),
-    );
-    const readers = sources.filter((file) => loaders.test(readFileSync(join(root, file), "utf8")));
+  it("recognises every way a file can load globals.css", () => {
+    for (const loader of [
+      'import "./globals.css";',
+      "import styles from '../app/globals.css'",
+      'const css = await import("@/app/globals.css");',
+      "import(\n  '../../app/globals.css'\n)",
+      'require("./globals.css")',
+      '@import "../app/globals.css";',
+      "@import url('/app/globals.css') screen;",
+      '<link rel="stylesheet" href="/globals.css" />',
+    ]) {
+      expect(GLOBALS_LOADER.test(loader), loader).toBe(true);
+    }
+    expect(GLOBALS_LOADER.test('readFileSync(join(root, "app", "globals.css"))')).toBe(false);
+  });
+
+  it("loads globals.css only through the app/layout.tsx import, anywhere in the repo", () => {
+    // #190: the whole repo, not only app/, components/ and lib/.
+    const sources = walk(root, (p) => LOADER_SOURCE.test(p)).filter((file) => file !== SELF);
+    expect(sources.length, "files scanned for globals.css loaders").toBeGreaterThan(0);
+    const readers = sources.filter((file) => GLOBALS_LOADER.test(readFileSync(join(root, file), "utf8")));
     expect(readers).toEqual(["app/layout.tsx"]);
   });
 });
@@ -60,13 +88,66 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
   rgb: /\brgba?\(/g,
 };
 
-/** #188 audit total at f9db0a0f (845 in 85 files). Lower it as #190 migrates; never raise it. */
-const HARDCODED_COLOUR_BASELINE = 845;
+/**
+ * Measured count after the allowlist below (#190 PR A): the #188 audit's 845
+ * less 35 (open-graph routes), 8 (contact email) and 11 (globals.css token
+ * definitions). Lower it as #190 migrates; never raise it.
+ */
+const HARDCODED_COLOUR_BASELINE = 791;
+
+/**
+ * #190 rulings D2-D4: the only places a literal colour is the right tool. An
+ * entry exempts the whole file unless `scope` narrows it to custom-property
+ * declarations (`--name: value;`), so other colours in that file still count.
+ */
+const RATCHET_ALLOWLIST: ReadonlyArray<{ path: RegExp; scope?: "custom-properties"; reason: string }> = [
+  {
+    path: /^app\/api\/og\/(?:.+\/)?route\.tsx$/,
+    reason: "D2: open-graph images render through @vercel/og, which cannot read CSS variables.",
+  },
+  {
+    path: /^app\/api\/contact\/route\.ts$/,
+    reason: "D3: the contact email's HTML is read by mail clients, which need literal colours.",
+  },
+  {
+    path: /^app\/globals\.css$/,
+    scope: "custom-properties",
+    reason: "D4: the token definitions themselves; only `--name: value;` declarations are exempt.",
+  },
+];
+
+const CUSTOM_PROPERTY_DECLARATION = /--[\w-]+\s*:[^;{}]*;/g;
+
+/** The files the ratchet scans under `dirs`: sources and CSS, tests excluded. */
+function colourScanFiles(dirs: string[]): string[] {
+  const files = dirs.flatMap((dir) => walk(dir, (p) => /\.(ts|tsx|css)$/.test(p) && !/\.(test|spec)\./.test(p)));
+  // #190: an empty scan counts 0 and would pass any baseline, so it is an error.
+  if (files.length === 0) throw new Error(`colour ratchet scanned no files under ${dirs.join(", ")}`);
+  return files;
+}
 
 /** Hard-coded colour uses in one file's text, comments stripped first. */
 function countHardcodedColours(source: string): number {
   const code = source.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
   return Object.values(COLOUR_PATTERNS).reduce((sum, re) => sum + (code.match(re)?.length ?? 0), 0);
+}
+
+/** One scanned file's uses, split into those the ratchet counts and those the allowlist exempts. */
+function ratchetCount(file: string, source: string): { counted: number; exempted: number } {
+  const total = countHardcodedColours(source);
+  const entry = RATCHET_ALLOWLIST.find(({ path }) => path.test(file));
+  if (!entry) return { counted: total, exempted: 0 };
+  if (!entry.scope) return { counted: 0, exempted: total };
+  const code = source.replace(/\/\*[\s\S]*?\*\//g, "");
+  const counted = countHardcodedColours(code.replace(CUSTOM_PROPERTY_DECLARATION, ""));
+  return { counted, exempted: total - counted };
+}
+
+function scanRepoColours(): Array<{ file: string; counted: number; exempted: number }> {
+  return colourScanFiles(["components", "app"].map((dir) => join(root, dir))).map((file) => ({
+    file,
+    ...ratchetCount(file, readFileSync(join(root, file), "utf8")),
+  }));
 }
 
 describe("hard-coded colour ratchet (#189)", () => {
@@ -76,12 +157,33 @@ describe("hard-coded colour ratchet (#189)", () => {
     expect(countHardcodedColours('className="bg-ds-surface text-primary text-green-600x"')).toBe(0);
   });
 
+  it("fails when the scan finds no files", () => {
+    const empty = mkdtempSync(join(tmpdir(), "ratchet-empty-"));
+    try {
+      expect(() => colourScanFiles([empty])).toThrow(/no files/);
+    } finally {
+      rmSync(empty, { recursive: true, force: true });
+    }
+  });
+
+  it("exempts custom-property declarations only where the allowlist scopes it so", () => {
+    const css = ":root { --shadow: 0 1px 2px rgb(0 0 0 / 0.1); }\n.x { color: #123456; }";
+    expect(ratchetCount("app/globals.css", css)).toEqual({ counted: 1, exempted: 1 });
+    expect(ratchetCount("app/other.css", css)).toEqual({ counted: 2, exempted: 0 });
+    expect(ratchetCount("app/api/og/tool/route.tsx", 'color: "#fff"')).toEqual({ counted: 0, exempted: 1 });
+  });
+
+  it.each(RATCHET_ALLOWLIST.map((entry) => [entry.path.source, entry] as const))(
+    "allowlist entry %s matches a scanned file and exempts at least one use",
+    (_, entry) => {
+      const hits = scanRepoColours().filter(({ file }) => entry.path.test(file));
+      expect(hits.length, entry.reason).toBeGreaterThan(0);
+      expect(hits.reduce((sum, h) => sum + h.exempted, 0), entry.reason).toBeGreaterThan(0);
+    },
+  );
+
   it(`stays at or below the ${HARDCODED_COLOUR_BASELINE} baseline`, () => {
-    const files = ["components", "app"].flatMap((dir) =>
-      walk(join(root, dir), (p) => /\.(ts|tsx|css)$/.test(p) && !/\.(test|spec)\./.test(p)),
-    );
-    const total = files.reduce((sum, f) => sum + countHardcodedColours(readFileSync(join(root, f), "utf8")), 0);
-    expect(total, "hard-coded colours in components/ and app/ (migrate to --ds-* tokens instead)").toBeLessThanOrEqual(
+    const total = scanRepoColours().reduce((sum, { counted }) => sum + counted, 0);    expect(total, "hard-coded colours in components/ and app/ (migrate to --ds-* tokens instead)").toBeLessThanOrEqual(
       HARDCODED_COLOUR_BASELINE,
     );
   });

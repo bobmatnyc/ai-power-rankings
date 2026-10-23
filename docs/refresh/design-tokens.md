@@ -10,6 +10,8 @@ variable or class, so live pages render as before. #189 migrates the
 hard-coded colours onto it ([one-off list](design-audit/one-off-styles.md));
 #190 builds the components and the `/design` page on it.
 
+Contributor guide, `/design` page and checks: [design-system.md](design-system.md).
+
 Inputs: [token inventory](design-audit/token-inventory.md), [one-off
 styles](design-audit/one-off-styles.md), the screenshots described in
 [design-audit/README.md](design-audit/README.md), and the prompt and rubric in

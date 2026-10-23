@@ -115,3 +115,11 @@ export const AA_PAIRS: ReadonlyArray<readonly [string, string]> = [
   ["ds-score-fg", "ds-score-c"],
   ["ds-score-fg", "ds-score-d"],
 ];
+
+/**
+ * #190: non-text pairs that WCAG 1.4.11 holds to 3:1 — the focus ring and the
+ * two border tokens against each surface they are drawn on.
+ * `[foreground, background]`, token names without the `--` prefix.
+ */
+export const NON_TEXT_PAIRS: ReadonlyArray<readonly [string, string]> = ["ds-focus-ring", "ds-border", "ds-border-strong"]
+  .flatMap((fg) => ["ds-surface", "ds-surface-raised", "ds-surface-muted"].map((bg) => [fg, bg] as const));
