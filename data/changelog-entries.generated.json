@@ -1,8 +1,19 @@
 [
   {
+    "id": "unreleased-9d413a3b1cbb",
+    "version": "Unreleased",
+    "date": "2026-10-23T23:56:39.118Z",
+    "dateSource": "build",
+    "section": "Security",
+    "scope": "auth",
+    "title": "harden auth routing for admin and dashboard paths",
+    "description": "harden auth routing for admin and dashboard paths. The middleware `config.matcher` now always includes `/:locale/admin(.*)` and `/:locale/dashboard(.*)`, matching the page entries of `PROTECTED_ROUTE_PATTERNS`, so every request under those trees gets the middleware's sign-in check. The admin and dashboard trees also have server layouts that check the session through `requireAuth()` (Clerk `auth()`) and redirect a signed-out request to `/<locale>/sign-in` with the tree root as `redirect_url`, whether or not the middleware ran (`lib/protected-page-guard.ts`). Tests: `tests/unit/middleware-matcher-protected-trees.test.ts`, `tests/unit/protected-page-guard.test.ts`",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-f231cd61c335",
     "version": "Unreleased",
-    "date": "2026-10-23T23:37:09.000Z",
+    "date": "2026-10-23T23:48:08.000Z",
     "dateSource": "commit",
     "section": "Security",
     "scope": "auth",
@@ -101,8 +112,8 @@
   {
     "id": "unreleased-5cfce997c060",
     "version": "Unreleased",
-    "date": "2026-10-23T23:09:40.393Z",
-    "dateSource": "build",
+    "date": "2026-10-23T23:17:33.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "rankings",
     "title": "a tool whose info.company or info.company_name is an object, a number or true no longer aborts the ranking run",
