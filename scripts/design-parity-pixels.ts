@@ -8,13 +8,15 @@
  * browser with the repo's own stylesheet, so a migration PR can show 0 pixels
  * changed per mapping, and that the check would see a one-step change.
  * What: compiles `app/globals.css` with `tailwind.config.js`, content limited
- * to the chosen set's class strings. For each mapping and mode (light, and
- * `.dark` on `<html>`) it renders one slot on a `bg-background` page, shoots
- * the old class/style, swaps the same element to the token class/style and
- * shoots again, then swaps back to the old one for a control shot. It prints
- * the differing-pixel count for token vs old and control vs old. Exit 0 only
- * when every parity mapping and control is 0 and every `expectDiff` mapping
- * (the deliberate one-step change) is non-zero.
+ * to the chosen set's class strings. For each mapping, mode (light, and
+ * `.dark` on `<html>`) and state (rest, hover, active) it renders one slot on
+ * a `bg-background` page, in the element the page uses (`div`, `a` or
+ * `button`), so global element rules such as `a:hover` apply as they do on
+ * the page. It shoots the old class/style, swaps the same element to the
+ * token class/style and shoots again, then swaps back to the old one for a
+ * control shot. It prints the differing-pixel count for token vs old and
+ * control vs old. Exit 0 only when every parity mapping and control is 0 and
+ * every `expectDiff` mapping (the deliberate one-step change) is non-zero.
  * Test: run by hand (`npx tsx scripts/design-parity-pixels.ts --set 190e1`);
  * it needs a browser, so it has no unit test. Its `expectDiff` mapping is the
  * proof that it can fail.
@@ -36,12 +38,16 @@ interface Look {
   style?: string;
 }
 
+type State = "rest" | "hover" | "active";
+
 interface Mapping {
   name: string;
   old: Look;
   token: Look;
-  /** Shoot with the pointer over the slot, for `hover:` classes. */
-  hover?: boolean;
+  /** The element the page renders; default `div`. */
+  element?: "div" | "a" | "button";
+  /** States to shoot; default rest only. `active` holds the mouse button down. */
+  states?: ReadonlyArray<State>;
   /** A deliberate change: passes only when token and old differ. */
   expectDiff?: boolean;
 }
@@ -51,6 +57,12 @@ const tags = (hue: string): Mapping => ({
   old: { className: `bg-${hue}-100 text-${hue}-800 border-${hue}-200` },
   token: { className: `bg-${hue}-100 text-${hue}-800 border-ds-border-tag-${hue}` },
 });
+
+const LINK_STATES: ReadonlyArray<State> = ["rest", "hover", "active"];
+// The class strings app/error.tsx and both not-found.tsx put on their links.
+const LINK_PRIMARY = "bg-ds-accent-cat-blue text-ds-text-on-fill hover:text-ds-text-on-fill active:text-ds-text-on-fill";
+const LINK_SECONDARY =
+  "border-ds-border-paper bg-ds-surface-paper text-ds-accent-cat-blue hover:text-ds-accent-cat-blue active:text-ds-accent-cat-blue";
 
 /** #190 E1: public modals, contact form, error and not-found pages. */
 const SET_190E1: Mapping[] = [
@@ -67,14 +79,13 @@ const SET_190E1: Mapping[] = [
     name: "badge hover green-700",
     old: { className: "bg-green-600 hover:bg-green-700" },
     token: { className: "bg-ds-success-fixed-mid hover:bg-ds-success-fixed" },
-    hover: true,
+    states: ["rest", "hover"],
   },
   { name: "heading green-700", old: { className: "text-green-700" }, token: { className: "text-ds-success-fixed" } },
   // signup-for-updates-modal and contact-form.
   { name: "tag blue-100 / 900@30", old: { className: "bg-blue-100 dark:bg-blue-900/30" }, token: { className: "bg-ds-surface-tag-blue" } },
   { name: "tag green-100 / 900@30", old: { className: "bg-green-100 dark:bg-green-900/30" }, token: { className: "bg-ds-surface-tag-green" } },
   { name: "check green-600 / 400", old: { className: "text-green-600 dark:text-green-400" }, token: { className: "text-ds-text-callout-success" } },
-  { name: "mail blue-600 / 400", old: { className: "text-blue-600 dark:text-blue-400" }, token: { className: "text-ds-accent" } },
   { name: "alert border green-200", old: { className: "border-green-200" }, token: { className: "border-ds-success-fixed-border" } },
   { name: "alert border red-200", old: { className: "border-red-200" }, token: { className: "border-ds-danger-fixed-border" } },
   { name: "alert icon red-600 / 400", old: { className: "text-red-600 dark:text-red-400" }, token: { className: "text-ds-text-callout-danger" } },
@@ -94,16 +105,29 @@ const SET_190E1: Mapping[] = [
     old: { style: "color: #6b7280; background-color: #f3f4f6" },
     token: { className: "bg-ds-surface-paper-sunken text-ds-text-paper-subtle" },
   },
+  // The pages' links sit under the global `a`, `a:hover` and `a:active`
+  // colour rules, and the error page's button under the button rules.
   {
-    name: "primary #3b82f6 / white",
+    name: "link primary #3b82f6 / white",
+    element: "a",
+    states: LINK_STATES,
+    old: { style: "background-color: #3b82f6; color: white" },
+    token: { className: LINK_PRIMARY },
+  },
+  {
+    name: "button primary #3b82f6 / white",
+    element: "button",
+    states: LINK_STATES,
     old: { style: "background-color: #3b82f6; color: white" },
     token: { className: "bg-ds-accent-cat-blue text-ds-text-on-fill" },
   },
   {
-    name: "secondary white / #3b82f6 / 1px #e5e7eb",
+    name: "link secondary white / #3b82f6 / 1px #e5e7eb",
+    element: "a",
+    states: LINK_STATES,
     old: { style: "background-color: white; color: #3b82f6; border: 1px solid #e5e7eb" },
     token: {
-      className: "border-ds-border-paper bg-ds-surface-paper text-ds-accent-cat-blue",
+      className: LINK_SECONDARY,
       style: "border-width: 1px; border-style: solid",
     },
   },
@@ -136,14 +160,27 @@ async function compileCss(mappings: Mapping[]): Promise<string> {
   return result.css;
 }
 
-/** Applies one look to the slot and returns its screenshot. */
-async function shoot(page: Page, look: Look, hover: boolean): Promise<Buffer> {
+/** Applies one look to the slot, puts it in `state`, and returns its screenshot. */
+async function shoot(page: Page, look: Look, state: State): Promise<Buffer> {
+  await page.mouse.move(0, 0);
   await page.evaluate(
     `(() => { const s = document.getElementById("slot"); s.className = ${JSON.stringify(`${SLOT_CLASS} ${look.className ?? ""}`)}; s.setAttribute("style", ${JSON.stringify(`${SLOT_STYLE} ${look.style ?? ""}`)}); })()`,
   );
-  if (hover) await page.hover("#slot");
-  else await page.mouse.move(0, 0);
-  return page.locator("#slot").screenshot({ animations: "disabled" });
+  if (state !== "rest") await page.hover("#slot");
+  if (state === "active") await page.mouse.down();
+  const shot = await page.locator("#slot").screenshot({ animations: "disabled" });
+  if (state === "active") {
+    await page.mouse.move(0, 0);
+    await page.mouse.up();
+  }
+  return shot;
+}
+
+/** The slot element: an `a` gets an in-page href so a click does not navigate. */
+function slotMarkup(element: NonNullable<Mapping["element"]>): string {
+  if (element === "a") return '<a id="slot" href="#slot">Ag 12 ✓</a>';
+  if (element === "button") return '<button id="slot" type="button">Ag 12 ✓</button>';
+  return '<div id="slot">Ag 12 ✓</div>';
 }
 
 async function main(): Promise<void> {
@@ -156,32 +193,35 @@ async function main(): Promise<void> {
     process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH } : {},
   );
   const failures: string[] = [];
+  let rows = 0;
   try {
     const page = await browser.newPage({ viewport: { width: 400, height: 200 }, deviceScaleFactor: 1 });
     const diffPage = await browser.newPage();
-    console.log("mode\ttoken-vs-old px\tcontrol px\tresult\tmapping");
+    console.log("mode\tstate\ttoken-vs-old px\tcontrol px\tresult\tmapping");
     for (const mapping of mappings) {
       for (const mode of MODES) {
         await page.setContent(
           `<!doctype html><html class="${mode === "dark" ? "dark" : ""}"><head><style>${css}</style></head>` +
-            `<body class="bg-background" style="margin:0;padding:40px"><div id="slot">Ag 12 ✓</div></body></html>`,
+            `<body class="bg-background" style="margin:0;padding:40px">${slotMarkup(mapping.element ?? "div")}</body></html>`,
         );
-        const hover = mapping.hover ?? false;
-        const oldShot = await shoot(page, mapping.old, hover);
-        const tokenShot = await shoot(page, mapping.token, hover);
-        const controlShot = await shoot(page, mapping.old, hover);
-        const diff = await countDiffPixels(diffPage, oldShot, tokenShot);
-        const control = await countDiffPixels(diffPage, oldShot, controlShot);
-        const ok = control === 0 && (mapping.expectDiff ? diff !== 0 : diff === 0);
-        if (!ok) failures.push(`${mapping.name} (${mode})`);
-        console.log(`${mode}\t${diff}\t${control}\t${ok ? "ok" : "FAIL"}\t${mapping.name}`);
+        for (const state of mapping.states ?? ["rest"]) {
+          const oldShot = await shoot(page, mapping.old, state);
+          const tokenShot = await shoot(page, mapping.token, state);
+          const controlShot = await shoot(page, mapping.old, state);
+          const diff = await countDiffPixels(diffPage, oldShot, tokenShot);
+          const control = await countDiffPixels(diffPage, oldShot, controlShot);
+          const ok = control === 0 && (mapping.expectDiff ? diff !== 0 : diff === 0);
+          if (!ok) failures.push(`${mapping.name} (${mode}, ${state})`);
+          rows += 1;
+          console.log(`${mode}\t${state}\t${diff}\t${control}\t${ok ? "ok" : "FAIL"}\t${mapping.name}`);
+        }
       }
     }
   } finally {
     await browser.close();
   }
   const pairs = mappings.filter((m) => !m.expectDiff).length;
-  console.log(`${pairs} parity mappings x ${MODES.length} modes; ${failures.length} failure(s)`);
+  console.log(`${pairs} parity mappings, ${rows} mode/state rows; ${failures.length} failure(s)`);
   if (failures.length > 0) {
     console.error(`FAILED: ${failures.join(", ")}`);
     process.exit(1);

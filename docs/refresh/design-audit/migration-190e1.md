@@ -3,8 +3,8 @@
 Hard-coded colours in the public modals, the contact form, the error and
 not-found pages and three small components move to existing `--ds-*` tokens.
 Nothing on the page changes. No token is added. The ratchet in
-`tests/unit/globals-consolidation-189.test.ts` drops from 459 to 388: 71 of
-the 128 uses in the 12 files below. The other 57 have no token with the
+`tests/unit/globals-consolidation-189.test.ts` drops from 459 to 390: 69 of
+the 128 uses in the 12 files below. The other 59 have no token with the
 exact colour and stay (see "Not migrated").
 
 Mappings reuse the tables in [migration-190b.md](migration-190b.md) and
@@ -21,7 +21,7 @@ the same element, and the rest of the inline style stays.
 | `components/ui/changelog-modal.tsx` | 12 | 7 | 5 |
 | `components/ui/signup-for-updates-modal.tsx` | 8 | 6 | 2 |
 | `components/ui/tech-stack-modal.tsx` | 2 | 0 | 2 |
-| `components/contact/contact-form.tsx` | 35 | 19 | 16 |
+| `components/contact/contact-form.tsx` | 35 | 17 | 18 |
 | `app/error.tsx` | 10 | 7 | 3 |
 | `app/global-error.tsx` | 9 | 0 | 9 |
 | `app/not-found.tsx` | 9 | 5 | 4 |
@@ -53,7 +53,6 @@ Resolved values are the rendered sRGB colour, light / dark.
 | `bg-blue-100 dark:bg-blue-900/30` | `bg-ds-surface-tag-blue` | `#dbeafe` | `#1e3a8a` at 30 % | 4 |
 | `bg-green-100 dark:bg-green-900/30` | `bg-ds-surface-tag-green` | `#dcfce7` | `#14532d` at 30 % | 2 |
 | `text-green-600 dark:text-green-400` | `text-ds-text-callout-success` | `#16a34a` | `#4ade80` | 10 |
-| `text-blue-600 dark:text-blue-400` | `text-ds-accent` | `#2563eb` | `#60a5fa` | 2 |
 | `border-green-200` | `border-ds-success-fixed-border` | `#bbf7d0` | `#bbf7d0` | 1 |
 | `border-red-200` | `border-ds-danger-fixed-border` | `#fecaca` | `#fecaca` | 1 |
 | `text-red-600 dark:text-red-400` | `text-ds-text-callout-danger` | `#dc2626` | `#f87171` | 2 |
@@ -67,16 +66,27 @@ Resolved values are the rendered sRGB colour, light / dark.
 | `color: "#6b7280"` | `text-ds-text-paper-subtle` | `#6b7280` | `#6b7280` | 4 |
 | `backgroundColor: "#f3f4f6"` | `bg-ds-surface-paper-sunken` | `#f3f4f6` | `#f3f4f6` | 1 |
 | `backgroundColor: "#3b82f6"` | `bg-ds-accent-cat-blue` | `#3b82f6` | `#3b82f6` | 3 |
-| `color: "#3b82f6"` | `text-ds-accent-cat-blue` | `#3b82f6` | `#3b82f6` | 3 |
+| `color: "#3b82f6"` (links) | `text-ds-accent-cat-blue hover:text-ds-accent-cat-blue active:text-ds-accent-cat-blue` | `#3b82f6` | `#3b82f6` | 3 |
 | `border: "1px solid #e5e7eb"` | `border-ds-border-paper`, inline `borderWidth: "1px"`, `borderStyle: "solid"` | `#e5e7eb` | `#e5e7eb` | 3 |
 | `backgroundColor: "white"` | `bg-ds-surface-paper` | `#ffffff` | `#ffffff` | not counted |
-| `color: "white"` | `text-ds-text-on-fill` | `#ffffff` | `#ffffff` | not counted |
+| `color: "white"` (not-found links) | `text-ds-text-on-fill hover:text-ds-text-on-fill active:text-ds-text-on-fill` | `#ffffff` | `#ffffff` | not counted |
+| `color: "white"` (error-page button) | `text-ds-text-on-fill` | `#ffffff` | `#ffffff` | not counted |
 
 `<hue>` is purple, blue, green or orange. A `dark:` variant counts as its own
 use. The ratchet does not count the `white` keyword in an inline style; it
 moves with the other colours so each element takes its colours from one
 place.
 
+- **Links and buttons: state variants.** An inline colour on an element
+  that a global element rule colours in another state is not converted to a
+  plain token class. `app/globals.css` sets `a:hover` and `a:active` colours
+  (specificity 0,1,1). An inline style beats them; a utility class (0,1,0)
+  does not, because Tailwind 3.4 emits no cascade layers. The link would turn
+  `--primary-hover` blue on hover. Such an element takes the token class and
+  its `hover:` and `active:` variants (0,2,0), as the three error and
+  not-found links do. Check `a`, `button` and form-control rules in
+  `app/globals.css` before converting an inline colour, and give the parity
+  script the element and states (`element`, `states`) so it renders them.
 - **Border shorthand.** An inline `border: "1px solid"` sets `border-color`
   too, and an inline style beats a class. The width and style stay inline
   and the colour comes from the class.
@@ -99,6 +109,7 @@ They stay as they are; each needs a new token or an owner decision.
 | 2 | changelog "Fixed" | `text-red-700` | `#b91c1c` both | `--ds-danger`, `--ds-score-d`: light only |
 | 2 | signup modal "Coming Soon" | `text-blue-800 dark:text-blue-400` | `#1e40af` / `#60a5fa` | `--ds-text-tag-blue` is `#1e40af` / `#93c5fd` |
 | 4 | contact sign-up card | `from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20` | `#eff6ff`, `#eef2ff` / `#172554`, `#1e1b4b` at 20 % | none; gradient stops |
+| 2 | contact sign-up card, mail icon | `text-blue-600 dark:text-blue-400` | `#2563eb` / `#60a5fa` | `--ds-accent` converts to the same hex, but its HSL (`221.2 83.2% 53.3%` / `213.1 93.9% 67.8%`) is not exact; full Chrome for Testing 1223, 1234 and 1243 antialias the icon differently, 40 px light and 56 px dark |
 | 2 | contact sign-up card | `border-blue-200 dark:border-blue-900` | `#bfdbfe` / `#1e3a8a` | `--ds-border-callout-info` is `#bfdbfe` / `#1e40af` |
 | 2 | contact success alert | `bg-green-50 dark:bg-green-950/20` | `#f0fdf4` / `#052e16` at 20 % | `--ds-surface-callout-success` is opaque in dark |
 | 2 | contact success alert | `text-green-800 dark:text-green-200` | `#166534` / `#bbf7d0` | `--ds-text-tag-green` is `#166534` / `#86efac` |
@@ -129,10 +140,15 @@ the code, not by a render.
 - `scripts/design-parity-pixels.ts --set 190e1`: each old class or inline
   style and its token form rendered in the same element in Chromium with the
   repo's `app/globals.css` and Tailwind config, light and `.dark`, then the
-  old form again as the control. 31 mappings × 2 modes, 0 pixels different;
-  the hover mapping is shot with the pointer over the element. A deliberate
-  one-step change (`text-green-600` to `text-ds-success-fixed`, green-700)
-  reported 935 pixels in each mode.
+  old form again as the control. Each mapping renders in the element the page
+  uses (`div`, `a` or `button`); the link and button mappings are shot at
+  rest, with the pointer over them, and with the mouse button held down.
+  31 mappings, 78 mode/state rows, 0 pixels different, in Chrome for Testing
+  1223, 1234 and 1243 and chrome-headless-shell 1223, 1234 and 1243. A
+  deliberate one-step change (`text-green-600` to `text-ds-success-fixed`,
+  green-700) reported 935 pixels in each mode. Without the `hover:` and
+  `active:` variants, the links differ by 932 to 951 pixels on hover and
+  active.
 - `scripts/design-audit-shots.ts --set states`: the what's-new modal (loading,
   the recent tab with a fixture feed that shows every icon and badge colour,
   and the summary tab loading), the contact page, the sign-up modal, and the
