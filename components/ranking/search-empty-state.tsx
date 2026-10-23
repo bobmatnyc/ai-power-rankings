@@ -26,7 +26,8 @@ export function SearchEmptyState({ term, message, clearLabel, onClear }: SearchE
   return (
     <div className="flex flex-col items-center gap-4 rounded-lg border p-8 text-center">
       <p role="status" className="text-muted-foreground">
-        {message.replace("{term}", term)}
+        {/* #207: a replacer function, so `$&`, `$$` and friends in the term stay literal. */}
+        {message.replace("{term}", () => term)}
       </p>
       <Button type="button" variant="outline" onClick={onClear}>
         {clearLabel}
