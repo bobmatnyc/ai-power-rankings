@@ -1,0 +1,356 @@
+/**
+ * Data for the #190 C2 comparison on `/design`: the gradient options A, B, C
+ * and the Autonomous Agents card accents.
+ *
+ * Why: the owner picks a look from the rendered comparison, and each swatch
+ * states its white-text contrast. The ratios must come from the same colours
+ * the swatches draw, so both read this module.
+ * What: the Tailwind 3.4 palette steps the gradients use (as sRGB channels),
+ * the mode-dependent token values the options use, each option's swatches
+ * with literal class names (Tailwind only emits classes it finds in source),
+ * and WCAG 2.x contrast helpers. Production components do not read it.
+ * Test: `tests/unit/design-options-190.test.ts` checks every value here
+ * against app/globals.css and the Tailwind palette, and the ratios.
+ */
+
+export type Mode = "light" | "dark";
+export type Rgb = readonly [number, number, number];
+
+/** Tailwind 3.4 palette steps, as sRGB channels. */
+export const PALETTE = {
+  "blue-500": [59, 130, 246],
+  "blue-600": [37, 99, 235],
+  "purple-500": [168, 85, 247],
+  "purple-600": [147, 51, 234],
+  "green-500": [34, 197, 94],
+  "green-600": [22, 163, 74],
+  "green-700": [21, 128, 61],
+  "green-800": [22, 101, 52],
+  "orange-500": [249, 115, 22],
+  "orange-600": [234, 88, 12],
+  "orange-700": [194, 65, 12],
+  "orange-800": [154, 52, 18],
+  "pink-500": [236, 72, 153],
+  "pink-600": [219, 39, 119],
+  "indigo-500": [99, 102, 241],
+  "indigo-600": [79, 70, 229],
+  "teal-500": [20, 184, 166],
+  "teal-600": [13, 148, 136],
+  "teal-700": [15, 118, 110],
+  "teal-800": [17, 94, 89],
+  "red-500": [239, 68, 68],
+  "red-600": [220, 38, 38],
+  "gray-500": [107, 114, 128],
+  "gray-600": [75, 85, 99],
+  "yellow-500": [234, 179, 8],
+  "amber-500": [245, 158, 11],
+  "emerald-500": [16, 185, 129],
+  "slate-500": [100, 116, 139],
+} as const satisfies Record<string, Rgb>;
+
+export type PaletteStep = keyof typeof PALETTE;
+
+/** Mode-dependent `--ds-*` values the comparison uses, as written in app/globals.css. */
+export const MODE_TOKENS = {
+  light: {
+    "ds-surface": "0 0% 100%",
+    "ds-text-on-fill": "0 0% 100%",
+    "ds-score-s": "26 90.5% 37.1%",
+    "ds-score-a": "224.3 76.3% 48%",
+    "ds-score-b": "142.4 71.8% 29.2%",
+    "ds-score-c": "215.3 19.3% 34.5%",
+    "ds-score-d": "0 73.7% 41.8%",
+    "ds-score-fg": "0 0% 100%",
+    "ds-danger": "0 73.7% 41.8%",
+    "ds-warning": "26 90.5% 37.1%",
+    "ds-accent-agent-purple": "272.09302326 71.66666667% 47.05882353%",
+    "ds-accent-agent-teal": "175.33980583 77.44360902% 26.07843137%",
+  },
+  dark: {
+    "ds-surface": "222.2 84% 4.9%",
+    "ds-text-on-fill": "0 0% 100%",
+    "ds-score-s": "43.3 96.4% 56.3%",
+    "ds-score-a": "213.1 93.9% 67.8%",
+    "ds-score-b": "141.9 69.2% 58%",
+    "ds-score-c": "215 20.2% 65.1%",
+    "ds-score-d": "0 90.6% 70.8%",
+    "ds-score-fg": "222.2 84% 4.9%",
+    "ds-danger": "0 90.6% 70.8%",
+    "ds-warning": "43.3 96.4% 56.3%",
+    "ds-accent-agent-purple": "270 95.23809524% 75.29411765%",
+    "ds-accent-agent-teal": "172.45508982 66.00790514% 50.39215686%",
+  },
+} as const satisfies Record<Mode, Record<string, string>>;
+
+export type ModeToken = keyof (typeof MODE_TOKENS)["light"];
+
+/** A colour a swatch draws: a fixed palette step, or a token whose value depends on the mode. */
+export type Colour = { palette: PaletteStep } | { token: ModeToken };
+
+const p = (step: PaletteStep): Colour => ({ palette: step });
+const t = (token: ModeToken): Colour => ({ token });
+
+/** `"217 91% 59%"` to 8-bit sRGB channels, rounded as scripts/design-tokens.ts rounds. */
+export function hslToRgb(hsl: string): Rgb {
+  const [h, s, l] = hsl.trim().split(/\s+/).map((part) => Number.parseFloat(part));
+  const sat = s / 100;
+  const light = l / 100;
+  const a = sat * Math.min(light, 1 - light);
+  const channel = (n: number) => {
+    const k = (n + h / 30) % 12;
+    return Math.round((light - a * Math.max(-1, Math.min(k - 3, 9 - k, 1))) * 255);
+  };
+  return [channel(0), channel(8), channel(4)];
+}
+
+export function resolve(colour: Colour, mode: Mode): Rgb {
+  return "palette" in colour ? PALETTE[colour.palette] : hslToRgb(MODE_TOKENS[mode][colour.token]);
+}
+
+function luminance(rgb: Rgb): number {
+  const [r, g, b] = rgb.map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/** WCAG 2.x contrast ratio, 1 to 21. */
+export function contrastRatio(a: Rgb, b: Rgb): number {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
+
+/** `fg` at `alpha` over `bg`, as an opacity-modifier tint (`/10`) composites it. */
+export function mix(fg: Rgb, bg: Rgb, alpha: number): Rgb {
+  return [0, 1, 2].map((i) => Math.round(fg[i] * alpha + bg[i] * (1 - alpha))) as unknown as Rgb;
+}
+
+/** The lowest contrast of `text` against any stop: the worst point of a gradient. */
+export function worstContrast(text: Colour, stops: readonly Colour[], mode: Mode): number {
+  return Math.min(...stops.map((stop) => contrastRatio(resolve(text, mode), resolve(stop, mode))));
+}
+
+/** WCAG minimums: 4.5:1 for the tier letters (text), 3:1 for the icon glyphs (graphics). */
+export const TEXT_MINIMUM = 4.5;
+export const GRAPHIC_MINIMUM = 3;
+
+export type IconSwatch = {
+  hue: string;
+  /** `news` is ToolIcon's news fallback (Newspaper glyph, no border); `tool` the generic glyph. */
+  glyph: "tool" | "news";
+  /** Name that makes the real ToolIcon pick this hue (its name hash); used by the Current column. */
+  sampleName: string;
+  className: string;
+  stops: readonly [Colour, Colour];
+};
+
+export type TierSwatch = {
+  tier: "S" | "A" | "B" | "C" | "D";
+  label: string;
+  className: string;
+  stops: readonly Colour[];
+  text: Colour;
+};
+
+export type GradientOption = {
+  id: "current" | "a" | "b" | "c";
+  title: string;
+  summary: string;
+  icons: readonly IconSwatch[];
+  tiers: readonly TierSwatch[];
+};
+
+const ICON_HUES = [
+  ["blue", "Sample F"],
+  ["purple", "Sample G"],
+  ["green", "Sample H"],
+  ["orange", "Sample A"],
+  ["pink", "Sample B"],
+  ["indigo", "Sample C"],
+  ["teal", "Sample D"],
+  ["red", "Sample E"],
+  ["gray", "news"],
+] as const;
+
+type IconHue = (typeof ICON_HUES)[number][0];
+type TierName = TierSwatch["tier"];
+
+/** The hues whose 500 stop fails 3:1 with a white glyph, and the tiers whose fill fails 4.5:1. */
+export const FAILING_ICON_HUES: readonly IconHue[] = ["green", "orange", "teal"];
+export const FAILING_TIERS: readonly TierName[] = ["S", "B", "D"];
+
+const TIER_LABELS: Record<TierName, string> = { S: "Elite", A: "Excellent", B: "Good", C: "Average", D: "Below Average" };
+
+// Literal class names per hue. Current: the classes ToolIcon uses today.
+const ICON_CLASSES: Record<"a" | "b", Record<IconHue, string>> = {
+  a: {
+    blue: "from-ds-grad-exact-blue-500 to-ds-grad-exact-blue-600",
+    purple: "from-ds-grad-exact-purple-500 to-ds-grad-exact-purple-600",
+    green: "from-ds-grad-exact-green-500 to-ds-grad-exact-green-600",
+    orange: "from-ds-grad-exact-orange-500 to-ds-grad-exact-orange-600",
+    pink: "from-ds-grad-exact-pink-500 to-ds-grad-exact-pink-600",
+    indigo: "from-ds-grad-exact-indigo-500 to-ds-grad-exact-indigo-600",
+    teal: "from-ds-grad-exact-teal-500 to-ds-grad-exact-teal-600",
+    red: "from-ds-grad-exact-red-500 to-ds-grad-exact-red-600",
+    gray: "from-ds-grad-exact-gray-500 to-ds-grad-exact-gray-600",
+  },
+  b: {
+    blue: "from-ds-grad-blue-500 to-ds-grad-blue-600",
+    purple: "from-ds-grad-purple-500 to-ds-grad-purple-600",
+    green: "from-ds-grad-green-700 to-ds-grad-green-800",
+    orange: "from-ds-grad-orange-700 to-ds-grad-orange-800",
+    pink: "from-ds-grad-pink-500 to-ds-grad-pink-600",
+    indigo: "from-ds-grad-indigo-500 to-ds-grad-indigo-600",
+    teal: "from-ds-grad-teal-700 to-ds-grad-teal-800",
+    red: "from-ds-grad-red-500 to-ds-grad-red-600",
+    gray: "from-ds-grad-gray-500 to-ds-grad-gray-600",
+  },
+};
+
+function iconStops(hue: IconHue, darkened: boolean): readonly [Colour, Colour] {
+  return darkened
+    ? [p(`${hue}-700` as PaletteStep), p(`${hue}-800` as PaletteStep)]
+    : [p(`${hue}-500` as PaletteStep), p(`${hue}-600` as PaletteStep)];
+}
+
+function icons(pick: (hue: IconHue) => "current" | "a" | "b"): IconSwatch[] {
+  return ICON_HUES.map(([hue, sampleName]) => {
+    const source = pick(hue);
+    const darkened = source === "b" && FAILING_ICON_HUES.includes(hue);
+    return {
+      hue,
+      glyph: hue === "gray" ? "news" : "tool",
+      sampleName,
+      className: source === "current" ? "" : `bg-gradient-to-br ${ICON_CLASSES[source][hue]}`,
+      stops: iconStops(hue, darkened),
+    };
+  });
+}
+
+// Tier fills. Exact: today's gradient stops as exact-value tokens. Band: B's solid --ds-score-* fill.
+const TIER_EXACT: Record<TierName, { className: string; stops: [PaletteStep, PaletteStep] }> = {
+  S: { className: "bg-gradient-to-r from-ds-grad-exact-yellow-500 to-ds-grad-exact-amber-500", stops: ["yellow-500", "amber-500"] },
+  A: { className: "bg-gradient-to-r from-ds-grad-exact-blue-500 to-ds-grad-exact-indigo-500", stops: ["blue-500", "indigo-500"] },
+  B: { className: "bg-gradient-to-r from-ds-grad-exact-green-500 to-ds-grad-exact-emerald-500", stops: ["green-500", "emerald-500"] },
+  C: { className: "bg-gradient-to-r from-ds-grad-exact-gray-500 to-ds-grad-exact-slate-500", stops: ["gray-500", "slate-500"] },
+  D: { className: "bg-gradient-to-r from-ds-grad-exact-orange-500 to-ds-grad-exact-red-500", stops: ["orange-500", "red-500"] },
+};
+const TIER_BAND: Record<TierName, string> = {
+  S: "bg-ds-score-s text-ds-score-fg",
+  A: "bg-ds-score-a text-ds-score-fg",
+  B: "bg-ds-score-b text-ds-score-fg",
+  C: "bg-ds-score-c text-ds-score-fg",
+  D: "bg-ds-score-d text-ds-score-fg",
+};
+
+function tiers(pick: (tier: TierName) => "current" | "exact" | "band"): TierSwatch[] {
+  return (Object.keys(TIER_EXACT) as TierName[]).map((tier) => {
+    const source = pick(tier);
+    const base = { tier, label: TIER_LABELS[tier] };
+    if (source === "band") {
+      return { ...base, className: TIER_BAND[tier], stops: [t(`ds-score-${tier.toLowerCase()}` as ModeToken)], text: t("ds-score-fg") };
+    }
+    const { className, stops } = TIER_EXACT[tier];
+    return {
+      ...base,
+      className: source === "current" ? "" : `${className} text-ds-text-on-fill`,
+      stops: stops.map(p),
+      text: t("ds-text-on-fill"),
+    };
+  });
+}
+
+export const GRADIENT_OPTIONS: readonly GradientOption[] = [
+  {
+    id: "current",
+    title: "Current (production)",
+    summary: "ToolIcon and getTierColor as they render today, from Tailwind palette classes.",
+    icons: icons(() => "current"),
+    tiers: tiers(() => "current"),
+  },
+  {
+    id: "a",
+    title: "Option A: exact-value tokens",
+    summary:
+      "Same stops as today, moved to --ds-grad-exact-* tokens holding the palette's RGB channels. No pixel change; sub-AA fills stay sub-AA. Exception to the HSL-only token rule.",
+    icons: icons(() => "a"),
+    tiers: tiers(() => "exact"),
+  },
+  {
+    id: "b",
+    title: "Option B: HSL tokens, AA fills",
+    summary:
+      "Icon stops as HSL --ds-grad-* tokens; green, orange and teal darken to 700-800. Tier badges use the solid --ds-score-* bands with --ds-score-fg text, so they change in dark mode.",
+    icons: icons(() => "b"),
+    tiers: tiers(() => "band"),
+  },
+  {
+    id: "c",
+    title: "Option C: hybrid",
+    summary:
+      "Option A for the fills that pass (blue, purple, pink, indigo, red, gray icons; tiers A and C), Option B for the failing ones (green, orange, teal icons; tiers S, B and D).",
+    icons: icons((hue) => (FAILING_ICON_HUES.includes(hue) ? "b" : "a")),
+    tiers: tiers((tier) => (FAILING_TIERS.includes(tier) ? "band" : "exact")),
+  },
+];
+
+export type AgentAccent = {
+  id: "current" | "purple" | "teal" | "amber";
+  title: string;
+  note: string;
+  token: ModeToken;
+  /** Card hover border, count badge, and "Explore" link classes, as app/[lang]/page.tsx writes them. */
+  border: string;
+  badge: string;
+  text: string;
+};
+
+export const AGENT_ACCENTS: readonly AgentAccent[] = [
+  {
+    id: "current",
+    title: "Current: destructive (red)",
+    note: "What production renders since C1 mapped destructive to --ds-danger. Reads as an error.",
+    token: "ds-danger",
+    border: "hover:border-destructive/20",
+    badge: "bg-destructive/10 text-destructive",
+    text: "text-destructive",
+  },
+  {
+    id: "purple",
+    title: "Purple (new --ds-accent-agent-purple)",
+    note: "purple-700 light, purple-400 dark.",
+    token: "ds-accent-agent-purple",
+    border: "hover:border-ds-accent-agent-purple/20",
+    badge: "bg-ds-accent-agent-purple/10 text-ds-accent-agent-purple",
+    text: "text-ds-accent-agent-purple",
+  },
+  {
+    id: "teal",
+    title: "Teal (new --ds-accent-agent-teal)",
+    note: "teal-700 light, teal-400 dark.",
+    token: "ds-accent-agent-teal",
+    border: "hover:border-ds-accent-agent-teal/20",
+    badge: "bg-ds-accent-agent-teal/10 text-ds-accent-agent-teal",
+    text: "text-ds-accent-agent-teal",
+  },
+  {
+    id: "amber",
+    title: "Amber (existing --ds-warning)",
+    note: "Known exception: the badge text fails AA in light mode. Warning semantics.",
+    token: "ds-warning",
+    border: "hover:border-ds-warning/20",
+    badge: "bg-ds-warning/10 text-ds-warning",
+    text: "text-ds-warning",
+  },
+];
+
+/** The 10% badge tint over the card surface. */
+export const BADGE_TINT = 0.1;
+
+/** Text-on-card and badge-text-on-tint ratios for one accent in one mode. */
+export function agentContrast(accent: AgentAccent, mode: Mode): { text: number; badge: number } {
+  const fg = resolve(t(accent.token), mode);
+  const surface = resolve(t("ds-surface"), mode);
+  return { text: contrastRatio(fg, surface), badge: contrastRatio(fg, mix(fg, surface, BADGE_TINT)) };
+}

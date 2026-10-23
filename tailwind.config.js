@@ -1,3 +1,14 @@
+// #190 C2: gradient-option stops on /design (--ds-grad-* in app/globals.css).
+// -exact- tokens are sRGB channels, so they map through rgb(); the rest are HSL.
+const GRAD_EXACT_STOPS = ["blue-500", "blue-600", "purple-500", "purple-600", "green-500", "green-600",
+  "orange-500", "orange-600", "pink-500", "pink-600", "indigo-500", "indigo-600", "teal-500", "teal-600",
+  "red-500", "red-600", "gray-500", "gray-600", "yellow-500", "amber-500", "emerald-500", "slate-500"];
+const GRAD_HSL_STOPS = ["blue-500", "blue-600", "purple-500", "purple-600", "pink-500", "pink-600",
+  "indigo-500", "indigo-600", "red-500", "red-600", "gray-500", "gray-600", "green-700", "green-800",
+  "orange-700", "orange-800", "teal-700", "teal-800"];
+const gradColours = (stops, prefix, fn) =>
+  Object.fromEntries(stops.map((stop) => [stop, `${fn}(var(--ds-${prefix}-${stop}))`]));
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   mode: "jit",
@@ -115,7 +126,13 @@ module.exports = {
             "cat-blue": "hsl(var(--ds-accent-cat-blue))",
             "cat-purple": "hsl(var(--ds-accent-cat-purple))",
             "cat-green": "hsl(var(--ds-accent-cat-green))",
+            // #190 C2: Autonomous Agents card candidates on /design.
+            "agent-purple": "hsl(var(--ds-accent-agent-purple))",
+            "agent-teal": "hsl(var(--ds-accent-agent-teal))",
           },
+          // #190 C2: from-ds-grad-exact-blue-500, to-ds-grad-teal-800, ...
+          "grad-exact": gradColours(GRAD_EXACT_STOPS, "grad-exact", "rgb"),
+          grad: gradColours(GRAD_HSL_STOPS, "grad", "hsl"),
           success: {
             DEFAULT: "hsl(var(--ds-success))",
             subtle: "hsl(var(--ds-success-subtle))",

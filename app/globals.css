@@ -203,7 +203,9 @@
    values on :root and dark values on .dark. Mode-invariant tokens (type,
    spacing, radius, motion) are declared once for both. The #178 rank tokens
    stay where they are, in the blocks above. No raw hex or RGB values in this layer;
-   tests/unit/design-tokens-188.test.ts enforces that.
+   tests/unit/design-tokens-188.test.ts enforces that. One documented exception
+   (#190 C2): --ds-grad-exact-* hold sRGB channels ("59 130 246"), used as
+   rgb(var(--…)), because gradient stops must match the palette exactly.
    ======================================================================== */
 @layer base {
   :root,
@@ -273,6 +275,9 @@
     --ds-accent-hover: 224.3 76.3% 48%;
     --ds-accent-fg: 0 0% 100%;
     --ds-accent-subtle: 214.3 100% 96.9%;
+    /* #190 C2: Autonomous Agents card candidates on /design (purple-700, teal-700). */
+    --ds-accent-agent-purple: 272.09302326 71.66666667% 47.05882353%;
+    --ds-accent-agent-teal: 175.33980583 77.44360902% 26.07843137%;
 
     /* Status: the base colour passes AA as text on surface and on -subtle. */
     --ds-success: 142.4 71.8% 29.2%;
@@ -327,6 +332,9 @@
     --ds-accent-hover: 211.7 96.4% 78.4%;
     --ds-accent-fg: 222.2 84% 4.9%;
     --ds-accent-subtle: 224.4 64.3% 32.9%;
+    /* #190 C2: purple-400, teal-400. */
+    --ds-accent-agent-purple: 270 95.23809524% 75.29411765%;
+    --ds-accent-agent-teal: 172.45508982 66.00790514% 50.39215686%;
 
     /* Status */
     --ds-success: 141.9 69.2% 58%;
@@ -400,6 +408,58 @@
     --ds-warning-fixed: 17.47252747 88.34951456% 40.39215686%; /* orange-700 */
     --ds-danger-fixed: 0 72.2222222% 50.5882353%; /* red-600 */
     --ds-danger-fixed-soft: 0 90.6040268% 70.7843137%; /* red-400 */
+  }
+
+  /* Gradient options (#190 C2), shown side by side on /design until the owner
+     picks one; no production component uses them yet. Fixed in both modes.
+     Option A, --ds-grad-exact-*: the stops ToolIcon, TierLegend and
+     getTierColor use today, as sRGB channels for rgb(var(--…)). Exact values,
+     because a stop that is off by even 1e-7 shifts dithered gradient pixels.
+     Option B, --ds-grad-*: the same hues as HSL; the green, orange and teal
+     icon fills darken to 700-800 so a white glyph meets 3:1. */
+  :root,
+  .dark {
+    --ds-grad-exact-blue-500: 59 130 246;
+    --ds-grad-exact-blue-600: 37 99 235;
+    --ds-grad-exact-purple-500: 168 85 247;
+    --ds-grad-exact-purple-600: 147 51 234;
+    --ds-grad-exact-green-500: 34 197 94;
+    --ds-grad-exact-green-600: 22 163 74;
+    --ds-grad-exact-orange-500: 249 115 22;
+    --ds-grad-exact-orange-600: 234 88 12;
+    --ds-grad-exact-pink-500: 236 72 153;
+    --ds-grad-exact-pink-600: 219 39 119;
+    --ds-grad-exact-indigo-500: 99 102 241;
+    --ds-grad-exact-indigo-600: 79 70 229;
+    --ds-grad-exact-teal-500: 20 184 166;
+    --ds-grad-exact-teal-600: 13 148 136;
+    --ds-grad-exact-red-500: 239 68 68;
+    --ds-grad-exact-red-600: 220 38 38;
+    --ds-grad-exact-gray-500: 107 114 128;
+    --ds-grad-exact-gray-600: 75 85 99;
+    --ds-grad-exact-yellow-500: 234 179 8;
+    --ds-grad-exact-amber-500: 245 158 11;
+    --ds-grad-exact-emerald-500: 16 185 129;
+    --ds-grad-exact-slate-500: 100 116 139;
+
+    --ds-grad-blue-500: 217.21925134 91.2195122% 59.80392157%;
+    --ds-grad-blue-600: 221.21212121 83.19327731% 53.33333333%;
+    --ds-grad-purple-500: 270.74074074 91.01123596% 65.09803922%;
+    --ds-grad-purple-600: 271.47540984 81.33333333% 55.88235294%;
+    --ds-grad-pink-500: 330.36585366 81.18811881% 60.39215686%;
+    --ds-grad-pink-600: 333.33333333 71.42857143% 50.58823529%;
+    --ds-grad-indigo-500: 238.73239437 83.52941176% 66.66666667%;
+    --ds-grad-indigo-600: 243.39622642 75.35545024% 58.62745098%;
+    --ds-grad-red-500: 0 84.2364532% 60.19607843%;
+    --ds-grad-red-600: 0 72.22222222% 50.58823529%;
+    --ds-grad-gray-500: 220 8.93617021% 46.07843137%;
+    --ds-grad-gray-600: 215 13.79310345% 34.11764706%;
+    --ds-grad-green-700: 142.42990654 71.81208054% 29.21568627%;
+    --ds-grad-green-800: 142.78481013 64.22764228% 24.11764706%;
+    --ds-grad-orange-700: 17.47252747 88.34951456% 40.39215686%;
+    --ds-grad-orange-800: 15 79.06976744% 33.7254902%;
+    --ds-grad-teal-700: 175.33980583 77.44360902% 26.07843137%;
+    --ds-grad-teal-800: 176.1038961 69.36936937% 21.76470588%;
   }
 
   @media (prefers-reduced-motion: reduce) {
