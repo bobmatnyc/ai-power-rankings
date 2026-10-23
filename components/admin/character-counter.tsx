@@ -30,12 +30,12 @@ export function CharacterCounter({
   // Determine color based on thresholds
   const getColor = () => {
     if (percentage >= errorThreshold) {
-      return "text-red-600 dark:text-red-400";
+      return "text-ds-text-callout-danger";
     }
     if (percentage >= warningThreshold) {
       return "text-orange-600 dark:text-orange-400";
     }
-    return "text-green-600 dark:text-green-400";
+    return "text-ds-text-callout-success";
   };
 
   // Format numbers with commas

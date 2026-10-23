@@ -387,14 +387,14 @@ export function NewsIngestionTool() {
 
               {uploadResult && (
                 <Alert
-                  className={`mt-4 ${uploadResult.success ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}`}
+                  className={`mt-4 ${uploadResult.success ? "border-ds-success-fixed-border bg-ds-success-fixed-subtle" : "border-ds-danger-fixed-border bg-ds-danger-fixed-subtle"}`}
                 >
                   <AlertDescription>
                     {uploadResult.success ? (
                       <div>
                         <p className="font-medium text-green-800">{uploadResult.message}</p>
                         {uploadResult.report && (
-                          <div className="mt-2 text-sm text-green-700">
+                          <div className="mt-2 text-sm text-ds-success-fixed">
                             <p>
                               Processed: {uploadResult.report.processed_items}/
                               {uploadResult.report.total_items}
@@ -452,13 +452,13 @@ export function NewsIngestionTool() {
                         {report.status}
                       </Badge>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-ds-text-paper-muted">
                       <div>Total: {report.total_items}</div>
                       <div>Processed: {report.processed_items}</div>
                       <div>Tools Created: {report.new_tools_created}</div>
                       <div>Companies Created: {report.new_companies_created}</div>
                     </div>
-                    <div className="text-xs text-gray-500 mt-2">
+                    <div className="text-xs text-ds-text-paper-subtle mt-2">
                       {report.created_at
                         ? new Date(report.created_at).toLocaleString()
                         : "Date not available"}
@@ -583,28 +583,28 @@ export function NewsIngestionTool() {
               <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-red-600">
+                    <div className="text-2xl font-bold text-ds-danger-fixed">
                       {rollbackPreview.news_items_to_delete}
                     </div>
-                    <div className="text-sm text-gray-600">News Items</div>
+                    <div className="text-sm text-ds-text-paper-muted">News Items</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">
+                    <div className="text-2xl font-bold text-ds-accent-cat-orange-strong">
                       {rollbackPreview.tools_to_review}
                     </div>
-                    <div className="text-sm text-gray-600">Tools to Review</div>
+                    <div className="text-sm text-ds-text-paper-muted">Tools to Review</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">
+                    <div className="text-2xl font-bold text-ds-accent-cat-orange-strong">
                       {rollbackPreview.companies_to_review}
                     </div>
-                    <div className="text-sm text-gray-600">Companies to Review</div>
+                    <div className="text-sm text-ds-text-paper-muted">Companies to Review</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-600">
+                    <div className="text-2xl font-bold text-ds-accent-cat-yellow-strong">
                       {rollbackPreview.warnings.length}
                     </div>
-                    <div className="text-sm text-gray-600">Warnings</div>
+                    <div className="text-sm text-ds-text-paper-muted">Warnings</div>
                   </div>
                 </div>
 

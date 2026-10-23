@@ -11,12 +11,15 @@
  * to the chosen set's class strings. For each mapping, mode (light, and
  * `.dark` on `<html>`) and state (rest, hover, active) it renders one slot on
  * a `bg-background` page, in the element the page uses (`div`, `a` or
- * `button`), so global element rules such as `a:hover` apply as they do on
- * the page. It shoots the old class/style, swaps the same element to the
+ * `button`, `input`, or an `svg` icon drawn in `currentColor`), so global
+ * element rules such as `a:hover` apply as they do on the page. It shoots the old class/style, swaps the same element to the
  * token class/style and shoots again, then swaps back to the old one for a
  * control shot. It prints the differing-pixel count for token vs old and
  * control vs old. Exit 0 only when every parity mapping and control is 0 and
  * every `expectDiff` mapping (the deliberate one-step change) is non-zero.
+ * The `190e2a` set builds each mapping from the table in
+ * `scripts/design-class-maps.ts`, so it renders the substitutions the
+ * class-diff check accepts.
  * Test: run by hand (`npx tsx scripts/design-parity-pixels.ts --set 190e1`);
  * it needs a browser, so it has no unit test. Its `expectDiff` mapping is the
  * proof that it can fail.
@@ -30,6 +33,7 @@ import { join } from "node:path";
 import { chromium, type Page } from "playwright";
 import postcss from "postcss";
 import tailwindcss from "tailwindcss";
+import { CLASS_MAPS } from "./design-class-maps";
 import { countDiffPixels } from "./pixel-diff";
 
 /** One side of a mapping: a class string, an inline style, or both. */
@@ -45,7 +49,7 @@ interface Mapping {
   old: Look;
   token: Look;
   /** The element the page renders; default `div`. */
-  element?: "div" | "a" | "button";
+  element?: "div" | "a" | "button" | "input" | "svg";
   /** States to shoot; default rest only. `active` holds the mouse button down. */
   states?: ReadonlyArray<State>;
   /** A deliberate change: passes only when token and old differ. */
@@ -140,7 +144,89 @@ const SET_190E1: Mapping[] = [
   },
 ];
 
-export const SETS: Record<string, Mapping[]> = { "190e1": SET_190E1 };
+const MAP_190E2A = CLASS_MAPS["190e2a"];
+const ALL_STATES: ReadonlyArray<State> = ["rest", "hover", "active"];
+
+/** A class string with each word replaced through the 190e2a table (pairs first; variants and `/opacity` kept). */
+function mapClasses(classes: string): string {
+  let out = ` ${classes} `;
+  for (const [pair, token] of Object.entries(MAP_190E2A.pairs)) out = out.replace(` ${pair} `, ` ${token} `);
+  return out
+    .trim()
+    .split(/\s+/)
+    .map((word) => {
+      const match = /^((?:[^\s:]+:)*)([^/]+)(\/.+)?$/.exec(word);
+      const token = match ? MAP_190E2A.classes[match[2]] : undefined;
+      return match && token ? `${match[1]}${token}${match[3] ?? ""}` : word;
+    })
+    .join(" ");
+}
+
+/** Old class string vs its table mapping, in `element`, at rest, hover and active. */
+function e2a(classes: string, element: NonNullable<Mapping["element"]> = "div"): Mapping {
+  const token = mapClasses(classes);
+  if (token === classes) throw new Error(`190e2a: no table entry maps "${classes}"`);
+  return { name: `${element} ${classes}`, element, states: ALL_STATES, old: { className: classes }, token: { className: token } };
+}
+
+/** An inline style with one hex replaced by its table value. */
+function e2aInline(style: string, hex: string, element: NonNullable<Mapping["element"]> = "div"): Mapping {
+  return {
+    name: `${element} ${style}`,
+    element,
+    states: ALL_STATES,
+    old: { style },
+    token: { style: style.replace(hex, MAP_190E2A.inline[hex]) },
+  };
+}
+
+/** #190 E2a: admin components and the SEO dashboard, each in the element it is used on. */
+const SET_190E2A: Mapping[] = [
+  // Paper surfaces, borders and text: cards, stat tiles, labels, skeletons, overlay.
+  ...["bg-white", "bg-gray-50", "bg-gray-100", "bg-gray-200", "border-gray-200", "bg-black/50"].map((c) => e2a(c)),
+  ...["text-gray-400", "text-gray-500", "text-gray-600"].map((c) => e2a(c)),
+  ...["text-gray-400", "text-gray-600"].map((c) => e2a(c, "svg")),
+  // Status text, icons, dots, and alert and card surfaces.
+  ...["text-green-600", "text-green-700", "text-red-600", "bg-green-50", "bg-red-50", "border-green-200", "border-red-200"].map(
+    (c) => e2a(c),
+  ),
+  ...["text-green-500", "text-green-600", "text-red-600"].map((c) => e2a(c, "svg")),
+  ...["bg-red-500", "bg-blue-500", "bg-yellow-500"].map((c) => e2a(c)),
+  e2a("text-red-600 dark:text-red-400"),
+  e2a("text-green-600 dark:text-green-400"),
+  // Category accents: section tiles (white text on the fill), counts, icons.
+  ...["bg-green-500", "bg-orange-500", "bg-yellow-500", "bg-purple-500"].map((c) => e2a(`${c} text-white`)),
+  ...["text-blue-600", "text-yellow-600", "text-orange-600"].map((c) => e2a(c)),
+  ...["text-blue-600", "text-yellow-500"].map((c) => e2a(c, "svg")),
+  // rankings-viewer rows are links; the article delete control is an outline button.
+  e2a("bg-gray-50 hover:bg-gray-100", "a"),
+  e2a("hover:bg-gray-50", "a"),
+  e2a("text-red-600 hover:text-red-700 hover:bg-red-50", "button"),
+  // Inline colours: the db-status card's left edge, the back-to-website bar and its link.
+  e2aInline("border-left: 4px solid; border-left-color: #3b82f6", "#3b82f6"),
+  e2aInline("border-left: 4px solid; border-left-color: #ef4444", "#ef4444"),
+  e2aInline("border-bottom: 1px solid #e5e7eb", "#e5e7eb"),
+  e2aInline("background: #f0fdf4", "#f0fdf4"),
+  e2aInline("background: #22c55e; color: white; text-decoration: none", "#22c55e", "a"),
+  e2aInline("background: #16a34a; color: white; text-decoration: none", "#16a34a", "a"),
+  // The controls: a one-step change, and the row link losing its hover variant.
+  {
+    name: "CONTROL one step green-600 to --ds-success-fixed (green-700)",
+    old: { className: "text-green-600" },
+    token: { className: "text-ds-success-fixed" },
+    expectDiff: true,
+  },
+  {
+    name: "CONTROL a bg-gray-50 hover:bg-gray-100 without its hover variant",
+    element: "a",
+    states: ["hover"],
+    old: { className: "bg-gray-50 hover:bg-gray-100" },
+    token: { className: "bg-ds-surface-paper-muted" },
+    expectDiff: true,
+  },
+];
+
+export const SETS: Record<string, Mapping[]> = { "190e1": SET_190E1, "190e2a": SET_190E2A };
 
 const ROOT = join(__dirname, "..");
 const MODES = ["light", "dark"] as const;
@@ -164,7 +250,9 @@ async function compileCss(mappings: Mapping[]): Promise<string> {
 async function shoot(page: Page, look: Look, state: State): Promise<Buffer> {
   await page.mouse.move(0, 0);
   await page.evaluate(
-    `(() => { const s = document.getElementById("slot"); s.className = ${JSON.stringify(`${SLOT_CLASS} ${look.className ?? ""}`)}; s.setAttribute("style", ${JSON.stringify(`${SLOT_STYLE} ${look.style ?? ""}`)}); })()`,
+    // The previous `active` shot ends by dragging off the slot with the button
+    // held, which selects a div's text; clear it so it is not in this shot.
+    `(() => { window.getSelection().removeAllRanges(); const s = document.getElementById("slot"); s.setAttribute("class", ${JSON.stringify(`${SLOT_CLASS} ${look.className ?? ""}`)}); s.setAttribute("style", ${JSON.stringify(`${SLOT_STYLE} ${look.style ?? ""}`)}); })()`,
   );
   if (state !== "rest") await page.hover("#slot");
   if (state === "active") await page.mouse.down();
@@ -180,6 +268,9 @@ async function shoot(page: Page, look: Look, state: State): Promise<Buffer> {
 function slotMarkup(element: NonNullable<Mapping["element"]>): string {
   if (element === "a") return '<a id="slot" href="#slot">Ag 12 ✓</a>';
   if (element === "button") return '<button id="slot" type="button">Ag 12 ✓</button>';
+  if (element === "input") return '<input id="slot" value="Ag 12 ✓" readonly>';
+  if (element === "svg")
+    return '<svg id="slot" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>';
   return '<div id="slot">Ag 12 ✓</div>';
 }
 
@@ -192,6 +283,7 @@ async function main(): Promise<void> {
   const browser = await chromium.launch(
     process.env.PLAYWRIGHT_CHROMIUM_PATH ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH } : {},
   );
+  console.log(`browser: ${process.env.PLAYWRIGHT_CHROMIUM_PATH ?? "bundled"} (${browser.version()})`);
   const failures: string[] = [];
   let rows = 0;
   try {
