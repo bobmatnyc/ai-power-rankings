@@ -12,6 +12,7 @@
 
 import { types as driverTypes } from "@neondatabase/serverless";
 import * as gap from "../../../scripts/check-ingestion-gap.mjs";
+import { naiveUtcTypes, toUtcTimestampSql } from "../../../lib/db/naive-utc-timestamp.mjs";
 
 const PG_TIMESTAMP_OID = 1114;
 const parseWire = (gap.NEON_OPTIONS?.types ?? driverTypes).getTypeParser(PG_TIMESTAMP_OID, "text");
@@ -33,5 +34,7 @@ process.stdout.write(
     textLines: viaText.lines,
     driverDetail: gap.formatIngestedArticleLines(["a1"], [article(parseWire(STARTED_WIRE))]),
     textDetail: gap.formatIngestedArticleLines(["a1"], [article(STARTED_WIRE)]),
+    // #103: the published_date literal migrate-v76-to-articles-simple.ts writes.
+    migrateLiteral: toUtcTimestampSql(naiveUtcTypes.getTypeParser(PG_TIMESTAMP_OID, "text")("2025-11-03 00:00:00")),
   })
 );

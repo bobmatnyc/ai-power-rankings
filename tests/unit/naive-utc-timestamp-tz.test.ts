@@ -25,6 +25,7 @@ interface ProbeOutput {
   textLines: string[];
   driverDetail: string[];
   textDetail: string[];
+  migrateLiteral: string;
 }
 
 function probe(tz: string): ProbeOutput {
@@ -67,6 +68,11 @@ describe("check-ingestion-gap under two process time zones", () => {
   it.each(ZONES)("%s: zone-less text started_at gives the same result", (tz) => {
     expect(outputs[tz].textLines).toEqual(EXPECTED_VERDICT);
     expect(outputs[tz].textDetail).toEqual(EXPECTED_DETAIL);
+  });
+
+  // #103: migrate-v76-to-articles-simple.ts writes the instant it read, in any zone.
+  it.each(ZONES)("%s: the migrate script's published_date literal is the UTC instant", (tz) => {
+    expect(outputs[tz].migrateLiteral).toBe("'2025-11-03T00:00:00.000Z'");
   });
 
   it("prints identical verdict and detail lines in both zones", () => {

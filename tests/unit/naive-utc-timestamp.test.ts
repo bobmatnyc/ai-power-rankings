@@ -17,6 +17,7 @@ import {
   PG_TIMESTAMP_OID,
   naiveUtcTypes,
   parseNaiveUtcTimestamp,
+  toUtcTimestampSql,
 } from "../../lib/db/naive-utc-timestamp.mjs";
 import { evaluateIngestionRuns } from "../../scripts/check-ingestion-gap.mjs";
 
@@ -61,6 +62,29 @@ describe("naiveUtcTypes", () => {
     const tz = naiveUtcTypes.getTypeParser(1184, "text");
     expect((tz("2026-10-23 06:00:03.123+00") as Date).toISOString()).toBe("2026-10-23T06:00:03.123Z");
     expect(naiveUtcTypes.getTypeParser(23, "text")("42")).toBe(42);
+  });
+});
+
+// #103: migrate-v76-to-articles-simple.ts interpolated the Date rawSql returned, which
+// printed Date.toString() text that Postgres rejects.
+describe("toUtcTimestampSql", () => {
+  const readTimestamp = naiveUtcTypes.getTypeParser(PG_TIMESTAMP_OID, "text");
+
+  it("writes the instant the driver read as a quoted ISO UTC literal", () => {
+    const read = readTimestamp("2025-11-03 00:00:00");
+    expect(toUtcTimestampSql(read)).toBe("'2025-11-03T00:00:00.000Z'");
+  });
+
+  it.each([
+    ["zone-less text", "2025-11-03 00:00:00", "'2025-11-03T00:00:00.000Z'"],
+    ["null", null, "NULL"],
+    ["undefined", undefined, "NULL"],
+  ])("%s", (_label, input, expected) => {
+    expect(toUtcTimestampSql(input)).toBe(expected);
+  });
+
+  it("throws on a value that is not a timestamp", () => {
+    expect(() => toUtcTimestampSql("infinity")).toThrow(RangeError);
   });
 });
 
