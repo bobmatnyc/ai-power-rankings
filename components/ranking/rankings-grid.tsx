@@ -21,6 +21,7 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 import { trackEvent } from "@/lib/analytics/track";
 import { loggers } from "@/lib/logger-client";
 import { RankingCard } from "./ranking-card";
+import { SearchEmptyState } from "./search-empty-state";
 import { TierLegend } from "./tier-legend";
 import { useRankingsSearch } from "./use-rankings-search";
 
@@ -502,7 +503,16 @@ function RankingsGridContent({
       )}
 
       {/* Rankings Display */}
-      {viewMode === "grid" ? (
+      {/* #207: a typed term that matches no row gets a message and a clear button,
+          not a blank grid. Loading returns early above; a category filter alone shows nothing new. */}
+      {sortedRankings.length === 0 && searchTerm.trim() ? (
+        <SearchEmptyState
+          term={searchTerm.trim()}
+          message={dict.rankings.noResults}
+          clearLabel={dict.rankings.clearSearch}
+          onClear={() => setSearchTerm("")}
+        />
+      ) : viewMode === "grid" ? (
         <div className="grid md:grid-cols-2 gap-3 md:gap-6">
           {sortedRankings.map((ranking) => (
             <RankingCard key={ranking.tool.id} ranking={ranking} />

@@ -205,6 +205,8 @@
     },
     "sortBy": "정렬 기준",
     "activeFilters": "활성 필터",
+    "noResults": "\"{term}\"과(와) 일치하는 도구가 없습니다.",
+    "clearSearch": "검색 지우기",
     "sort": {
       "rank": "랭크",
       "trending": "트렌딩",
