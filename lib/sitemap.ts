@@ -7,7 +7,8 @@
  * route file may only export route fields, so the list and the serialiser live
  * here.
  * What: `buildSitemapEntries` returns the static pages, category pages, active
- * tools and active news articles, and throws when either database read fails.
+ * tools, active news articles and monthly What's New reports, and throws when
+ * any database read fails.
  * `renderSitemapXml` serialises entries as a sitemaps.org 0.9 `<urlset>`.
  * Test: `tests/unit/sitemap-route.test.ts`, `tests/unit/seo-canonical-origin.test.ts`.
  */
@@ -15,6 +16,7 @@ import type { MetadataRoute } from "next";
 import { i18n, locales } from "@/i18n/config";
 import { newsRepository } from "@/lib/db/repositories/news";
 import { toolsRepository } from "@/lib/db/repositories/tools.repository";
+import { listPeriods } from "@/lib/services/whats-new-summary.service";
 
 // Category page slugs based on existing app structure
 const categoryPages = [
@@ -53,8 +55,9 @@ const staticPages = [
  * were complete (#162), so a failed read propagates instead of being skipped.
  * What: Static pages in every locale (English-only pages under `/en` only),
  * category pages under `/en`, each active tool in every locale, and each active
- * article once under `/en/news/<slug>` with `lastModified` set to its date. All
- * URLs start with `baseUrl`. Rejects when either repository read rejects.
+ * article once under `/en/news/<slug>` with `lastModified` set to its date, and
+ * each stored monthly report once under `/en/whats-new/<period>` (#54). All
+ * URLs start with `baseUrl`. Rejects when any database read rejects.
  * Test: `tests/unit/sitemap-route.test.ts`, `tests/unit/seo-canonical-origin.test.ts`.
  */
 export async function buildSitemapEntries(
@@ -88,11 +91,12 @@ export async function buildSitemapEntries(
     });
   }
 
-  // #162: both reads throw on failure; neither is caught here, so a partial
-  // list never reaches a cache.
-  const [tools, articles] = await Promise.all([
+  // #162: every read throws on failure; none is caught here, so a partial
+  // list never reaches a cache. #54 adds the report periods to that rule.
+  const [tools, articles, reportPeriods] = await Promise.all([
     toolsRepository.findAll(),
     newsRepository.getPublishedSlugs(),
+    listPeriods(),
   ]);
 
   // 3. Active tool pages, one per locale
@@ -114,6 +118,17 @@ export async function buildSitemapEntries(
     routes.push({
       url: `${baseUrl}/${i18n.defaultLocale}/news/${article.slug}`,
       lastModified: article.publishedAt,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    });
+  }
+
+  // 5. Monthly What's New reports. #54: one permalink per stored period; the
+  // body is English, so only the /en URL is listed (#156).
+  for (const report of reportPeriods) {
+    routes.push({
+      url: `${baseUrl}/${i18n.defaultLocale}/whats-new/${report.period}`,
+      lastModified: report.updatedAt,
       changeFrequency: "monthly",
       priority: 0.6,
     });

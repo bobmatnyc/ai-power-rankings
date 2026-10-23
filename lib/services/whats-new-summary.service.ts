@@ -48,6 +48,68 @@ export const MIN_GENERATION_BUDGET_MS = 60_000;
 /** Completion budget for the ~1,500-word summary (~2,000 tokens); unchanged by #172. */
 const WHATS_NEW_MAX_TOKENS = 16000;
 
+/** One stored summary period and when its row last changed (#54). */
+export interface StoredSummaryPeriod {
+  period: string;
+  updatedAt: Date;
+}
+
+// #54: the read functions below need no OpenRouter key, so rendering a page
+// never depends on the LLM credential the class constructor requires.
+function requireDb(): NonNullable<ReturnType<typeof getDb>> {
+  const db = getDb();
+  if (!db) {
+    throw new Error("Database connection not available");
+  }
+  return db;
+}
+
+/**
+ * The stored summary for `period` (`YYYY-MM`), or null when no row exists.
+ *
+ * Why: #54: the `/whats-new` pages read rows directly. The old index fetched
+ * a relative `/api` URL from a server component, which rejects on the server,
+ * so it always rendered the empty state.
+ * What: One exact-period read. Never falls back to another period and never
+ * generates. Throws when the database is unavailable or the read fails.
+ * Test: `tests/unit/whats-new-permalink.test.ts`.
+ */
+export async function getStoredSummary(period: string): Promise<MonthlySummary | null> {
+  const rows = await requireDb()
+    .select()
+    .from(monthlySummaries)
+    .where(eq(monthlySummaries.period, period))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+/** Most recent stored summary by period, or null; throws on a failed read (#54). */
+export async function getLatestStoredSummary(): Promise<MonthlySummary | null> {
+  const rows = await requireDb()
+    .select()
+    .from(monthlySummaries)
+    .orderBy(desc(monthlySummaries.period))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+/**
+ * Every stored summary period, newest first, with its row's `updatedAt`.
+ *
+ * Why: #54: the sitemap lists one permalink per stored report, and the
+ * permalink page lists past reports. A sitemap must not silently drop them
+ * (#162), so a failed read throws instead of returning an empty list.
+ * What: Reads `period` and `updatedAt` from `monthly_summaries`, ordered by
+ * period descending (`YYYY-MM` sorts chronologically).
+ * Test: `tests/unit/whats-new-permalink.test.ts`, `tests/unit/sitemap-route.test.ts`.
+ */
+export async function listPeriods(): Promise<StoredSummaryPeriod[]> {
+  return requireDb()
+    .select({ period: monthlySummaries.period, updatedAt: monthlySummaries.updatedAt })
+    .from(monthlySummaries)
+    .orderBy(desc(monthlySummaries.period));
+}
+
 export class WhatsNewSummaryService {
   private apiKey: string;
   private aggregationService: WhatsNewAggregationService;
@@ -169,20 +231,8 @@ export class WhatsNewSummaryService {
    * Use this for quick reads where stale data is acceptable
    */
   async getCachedSummary(period?: string): Promise<MonthlySummary | null> {
-    const db = getDb();
-    if (!db) {
-      throw new Error("Database connection not available");
-    }
-
-    const targetPeriod = period || new Date().toISOString().slice(0, 7);
-
-    const existing = await db
-      .select()
-      .from(monthlySummaries)
-      .where(eq(monthlySummaries.period, targetPeriod))
-      .limit(1);
-
-    return existing.length > 0 ? existing[0] : null;
+    // #54: shares the key-free read the /whats-new pages use.
+    return getStoredSummary(period || new Date().toISOString().slice(0, 7));
   }
 
   /**
@@ -190,18 +240,7 @@ export class WhatsNewSummaryService {
    * or null when none is stored. Reads only; never generates.
    */
   async getLatestSummary(): Promise<MonthlySummary | null> {
-    const db = getDb();
-    if (!db) {
-      throw new Error("Database connection not available");
-    }
-
-    const latest = await db
-      .select()
-      .from(monthlySummaries)
-      .orderBy(desc(monthlySummaries.period))
-      .limit(1);
-
-    return latest.length > 0 ? latest[0] : null;
+    return getLatestStoredSummary(); // #54: shared key-free read
   }
 
   /**

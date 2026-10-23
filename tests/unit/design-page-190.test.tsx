@@ -48,6 +48,10 @@ vi.mock("../../lib/db/repositories/news", () => ({
 vi.mock("../../lib/db/repositories/tools.repository", () => ({
   toolsRepository: { findAll: vi.fn(async () => []) },
 }));
+// #54: the sitemap also reads the stored monthly-report periods.
+vi.mock("../../lib/services/whats-new-summary.service", () => ({
+  listPeriods: vi.fn(async () => []),
+}));
 
 import DesignPage, { metadata } from "../../app/design/page";
 import { designPreviewEnabled } from "../../app/design/preview-gate";
