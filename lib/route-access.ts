@@ -40,6 +40,8 @@ export const PUBLIC_ROUTE_PATTERNS = [
   "/sign-up(.*)",
   `/${LOCALE}/sign-in(.*)`,
   `/${LOCALE}/sign-up(.*)`,
+  // #226: static page for signed-out visitors; exact match, no session lookup.
+  `/${LOCALE}/unauthorized`,
   "/api/public(.*)",
   "/api/health(.*)",
   "/api/rankings(.*)",

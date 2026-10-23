@@ -295,7 +295,8 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{
   // #190 Df8: the 42 E2b-2 page colours with no exact token (migration-190e2b.md
   // "E2b-2", "Not migrated"), exempted per file and capped at the measured count.
   {
-    path: /^app\/\[lang\]\/\(authenticated\)\/unauthorized\/page\.tsx$/,
+    // #226: the Go Back button's 6 colours moved unchanged into go-back-button.tsx; the cap still covers both files.
+    path: /^app\/\[lang\]\/\(authenticated\)\/unauthorized\/(page|go-back-button)\.tsx$/,
     colourCap: 19,
     reason:
       "Df8: light/dark pairs no token holds in both modes (red-100 / red-900 at 20 %, gray-900 / white, gray-600 / gray-400, gray-500 / gray-500, gray-200 / gray-700, gray-300 / gray-600, gray-50 / gray-800) and hover:bg-blue-700 (--ds-accent-hover is blue-700 in light only).",
