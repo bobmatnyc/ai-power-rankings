@@ -8,6 +8,7 @@ Contributor guide: [../design-system.md](../design-system.md).
 | [token-inventory.md](token-inventory.md) | Colours, type scale, spacing, radius, shadows and motion in use, with class counts |
 | [migration-190b.md](migration-190b.md) | #190 PR B: core-component classes mapped to fixed tokens, with resolved values |
 | [migration-190d.md](migration-190d.md) | #190 PR D: news, what's-new, SEO and best-* classes mapped to tokens, with resolved values |
+| [migration-190e1.md](migration-190e1.md) | #190 PR E1: public modals, contact form, error and not-found pages mapped to tokens, and the colours left unmapped |
 | [one-off-styles.md](one-off-styles.md) | Hard-coded colours (palette classes, hex, `rgb(`) per file under `components/` and `app/` |
 | `tmp/design-audit/<label>/` | Screenshots, local only (gitignored, never committed) |
 
@@ -40,6 +41,16 @@ npx tsx scripts/design-audit-shots.ts --label before --base-url http://localhost
 npx tsx scripts/design-audit-shots.ts --label after --base-url http://localhost:3007
 npx tsx scripts/design-audit-shots.ts --compare before,after
 ```
+
+`--set states` captures interactive states instead of the 9 page types: the
+what's-new modal (loading, a fixture feed, summary loading), the contact page
+and its sign-up modal, and the root and localized not-found pages. Modal
+shots cover the viewport only. Feed requests are answered or held by the
+script, so they need no database.
+
+For one migration's class pairs, `npx tsx scripts/design-parity-pixels.ts
+--set <set>` renders each old and token form in the same element, light and
+dark, and exits non-zero on any pixel difference.
 
 `--compare` prints one line per file (`identical-bytes`,
 `identical-pixels` or `DIFFERENT` with a pixel count), writes

@@ -16,19 +16,19 @@ export default function ErrorBoundary({
 
   return (
     <div
+      className="bg-ds-surface-paper-muted"
       style={{
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#f9fafb",
         padding: "1rem",
         fontFamily: "system-ui, -apple-system, sans-serif",
       }}
     >
       <div
+        className="bg-ds-surface-paper"
         style={{
-          backgroundColor: "white",
           borderRadius: "0.5rem",
           padding: "2rem",
           maxWidth: "28rem",
@@ -48,20 +48,19 @@ export default function ErrorBoundary({
           Oops! Something went wrong
         </h1>
         <p
+          className="text-ds-text-paper-subtle"
           style={{
             marginBottom: "1rem",
             textAlign: "center",
-            color: "#6b7280",
           }}
         >
           We encountered an error while processing your request.
         </p>
         {error.message && (
           <p
+            className="bg-ds-surface-paper-sunken text-ds-text-paper-subtle"
             style={{
               fontSize: "0.875rem",
-              color: "#6b7280",
-              backgroundColor: "#f3f4f6",
               padding: "0.5rem",
               borderRadius: "0.25rem",
               marginBottom: "1rem",
@@ -81,10 +80,9 @@ export default function ErrorBoundary({
           <button
             type="button"
             onClick={reset}
+            className="bg-ds-accent-cat-blue text-ds-text-on-fill"
             style={{
               padding: "0.5rem 1rem",
-              backgroundColor: "#3b82f6",
-              color: "white",
               borderRadius: "0.375rem",
               border: "none",
               cursor: "pointer",
@@ -95,12 +93,12 @@ export default function ErrorBoundary({
           </button>
           <a
             href="/"
+            className="border-ds-border-paper bg-ds-surface-paper text-ds-accent-cat-blue"
             style={{
               padding: "0.5rem 1rem",
-              backgroundColor: "white",
-              color: "#3b82f6",
               borderRadius: "0.375rem",
-              border: "1px solid #e5e7eb",
+              borderWidth: "1px",
+              borderStyle: "solid",
               textDecoration: "none",
               textAlign: "center",
               fontSize: "1rem",
