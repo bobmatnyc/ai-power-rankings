@@ -29,6 +29,7 @@ import {
   filterChromeLinks,
   stripRelatedLinksSection,
 } from "@/lib/article-content-links";
+import { formatUtcDate } from "@/lib/format-utc-date";
 import ArticleScoringImpact from "./article-scoring-impact";
 
 interface NewsArticle {
@@ -137,7 +138,8 @@ export default function NewsDetailContent({
       return "Date unavailable";
     }
 
-    return date.toLocaleDateString("en-US", {
+    // #239: UTC, so a browser west of UTC shows the server's day (no #418).
+    return formatUtcDate(date, "en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",

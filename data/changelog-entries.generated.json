@@ -88,9 +88,20 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-f528db3fa04b",
+    "version": "Unreleased",
+    "date": "2026-10-23T22:19:16.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "dates",
+    "title": "article pages showed the previous day in browsers west of UTC, and React threw hydration error #418",
+    "description": "article pages showed the previous day in browsers west of UTC, and React threw hydration error #418. An article dated `2026-10-21T00:00:00Z` rendered \"October 20, 2026\" in America/Los_Angeles while the server rendered \"October 21, 2026\". Client components now format stored UTC dates with `formatUtcDate()` in `lib/format-utc-date.ts`, which forces `timeZone: \"UTC\"`: the news article header, the news list and news card dates (whose year check now uses the UTC year), the home news card, the rankings \"last updated\" and \"Rankings as of\" dates, and the What's New modal month and generated date. Formats and relative labels (\"2 days ago\") are unchanged. Tests: `tests/unit/utc-client-dates-239.test.tsx` (#239)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-3a27077d0329",
     "version": "Unreleased",
-    "date": "2026-10-23T22:01:03.000Z",
+    "date": "2026-10-23T22:08:09.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "whats-new",
@@ -497,7 +508,7 @@
   {
     "id": "unreleased-443b29e81938",
     "version": "Unreleased",
-    "date": "2026-10-23T22:01:03.000Z",
+    "date": "2026-10-23T22:08:09.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "whats-new",
