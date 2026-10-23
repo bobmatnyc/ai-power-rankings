@@ -44,56 +44,56 @@ const SCORING_FACTORS: ScoringFactor[] = [
     key: "agentic_capability",
     name: "Agentic",
     icon: Bot,
-    color: "text-blue-600",
+    color: "text-ds-accent-fixed",
     description: "Multi-file editing, task planning, autonomous operation",
   },
   {
     key: "innovation",
     name: "Innovation",
     icon: Lightbulb,
-    color: "text-yellow-600",
+    color: "text-ds-accent-cat-yellow-strong",
     description: "Breakthrough features, novel approaches",
   },
   {
     key: "technical_performance",
     name: "Technical",
     icon: Zap,
-    color: "text-purple-600",
+    color: "text-ds-accent-cat-purple-strong",
     description: "Performance benchmarks, technical capabilities",
   },
   {
     key: "developer_adoption",
     name: "Adoption",
     icon: Users,
-    color: "text-green-600",
+    color: "text-ds-accent-cat-green-strong",
     description: "User growth, community engagement",
   },
   {
     key: "market_traction",
     name: "Market",
     icon: TrendingUp,
-    color: "text-emerald-600",
+    color: "text-ds-accent-cat-emerald-strong",
     description: "Revenue, funding, business growth",
   },
   {
     key: "business_sentiment",
     name: "Sentiment",
     icon: MessageCircle,
-    color: "text-indigo-600",
+    color: "text-ds-accent-cat-indigo-strong",
     description: "Market perception, competitive position",
   },
   {
     key: "development_velocity",
     name: "Velocity",
     icon: Rocket,
-    color: "text-orange-600",
+    color: "text-ds-accent-cat-orange-strong",
     description: "Release frequency, development speed",
   },
   {
     key: "platform_resilience",
     name: "Resilience",
     icon: Shield,
-    color: "text-slate-600",
+    color: "text-ds-accent-cat-slate-strong",
     description: "Independence, multi-provider support",
   },
 ];
@@ -119,10 +119,10 @@ export default function ArticleScoringImpact({
 
   const getImpactColor = (impact: number): string => {
     if (impact > 0) {
-      return "text-green-600 bg-green-50 border-green-200";
+      return "text-ds-success-fixed-mid bg-ds-success-fixed-subtle border-ds-success-fixed-border";
     }
     if (impact < 0) {
-      return "text-red-600 bg-red-50 border-red-200";
+      return "text-ds-danger-fixed bg-ds-danger-fixed-subtle border-ds-danger-fixed-border";
     }
     return "text-muted-foreground bg-muted border-muted";
   };

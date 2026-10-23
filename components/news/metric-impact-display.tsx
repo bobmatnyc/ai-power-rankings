@@ -60,19 +60,19 @@ const factorLabels: Record<keyof RankingFactors, string> = {
 
 const impactColors = {
   positive: {
-    high: "text-green-600 bg-green-50 border-green-200",
-    medium: "text-green-500 bg-green-50 border-green-200",
-    low: "text-green-400 bg-green-50 border-green-200",
+    high: "text-ds-success-fixed-mid bg-ds-success-fixed-subtle border-ds-success-fixed-border",
+    medium: "text-ds-success-solid bg-ds-success-fixed-subtle border-ds-success-fixed-border",
+    low: "text-ds-success-fixed-soft bg-ds-success-fixed-subtle border-ds-success-fixed-border",
   },
   negative: {
-    high: "text-red-600 bg-red-50 border-red-200",
-    medium: "text-red-500 bg-red-50 border-red-200",
-    low: "text-red-400 bg-red-50 border-red-200",
+    high: "text-ds-danger-fixed bg-ds-danger-fixed-subtle border-ds-danger-fixed-border",
+    medium: "text-ds-danger-solid bg-ds-danger-fixed-subtle border-ds-danger-fixed-border",
+    low: "text-ds-danger-fixed-soft bg-ds-danger-fixed-subtle border-ds-danger-fixed-border",
   },
   neutral: {
-    high: "text-gray-600 bg-gray-50 border-gray-200",
-    medium: "text-gray-500 bg-gray-50 border-gray-200",
-    low: "text-gray-400 bg-gray-50 border-gray-200",
+    high: "text-ds-text-paper-muted bg-ds-surface-paper-muted border-ds-border-paper",
+    medium: "text-ds-text-paper-subtle bg-ds-surface-paper-muted border-ds-border-paper",
+    low: "text-ds-text-paper-faint bg-ds-surface-paper-muted border-ds-border-paper",
   },
 };
 
@@ -122,19 +122,19 @@ export default function MetricImpactDisplay({ impacts, toolName }: MetricImpactD
             <div className="text-sm text-muted-foreground">Overall Impact</div>
             <div className="flex items-center gap-2 mt-1">
               {overallScore > 0 ? (
-                <TrendingUp className="h-4 w-4 text-green-600" />
+                <TrendingUp className="h-4 w-4 text-ds-success-fixed-mid" />
               ) : overallScore < 0 ? (
-                <TrendingDown className="h-4 w-4 text-red-600" />
+                <TrendingDown className="h-4 w-4 text-ds-danger-fixed" />
               ) : (
-                <Minus className="h-4 w-4 text-gray-600" />
+                <Minus className="h-4 w-4 text-ds-text-paper-muted" />
               )}
               <span
                 className={`font-semibold ${
                   overallScore > 0
-                    ? "text-green-600"
+                    ? "text-ds-success-fixed-mid"
                     : overallScore < 0
-                      ? "text-red-600"
-                      : "text-gray-600"
+                      ? "text-ds-danger-fixed"
+                      : "text-ds-text-paper-muted"
                 }`}
               >
                 {overallScore > 0 ? "+" : ""}

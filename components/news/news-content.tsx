@@ -155,9 +155,9 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
       case "partnership":
         return "bg-accent/10 text-accent border-accent/20";
       case "update":
-        return "bg-blue-500/10 text-blue-500 border-blue-500/20";
+        return "bg-ds-accent-cat-blue/10 text-ds-accent-cat-blue border-ds-accent-cat-blue/20";
       case "announcement":
-        return "bg-orange-500/10 text-orange-500 border-orange-500/20";
+        return "bg-ds-accent-cat-orange/10 text-ds-accent-cat-orange border-ds-accent-cat-orange/20";
       default:
         return "bg-muted text-muted-foreground";
     }
@@ -415,13 +415,13 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                         {item.metrics.score_change && (
                           <div className="flex items-center gap-1">
                             {item.metrics.score_change > 0 ? (
-                              <TrendingUp className="h-4 w-4 text-green-500" />
+                              <TrendingUp className="h-4 w-4 text-ds-success-solid" />
                             ) : (
-                              <TrendingDown className="h-4 w-4 text-red-500" />
+                              <TrendingDown className="h-4 w-4 text-ds-danger-solid" />
                             )}
                             <span
                               className={
-                                item.metrics.score_change > 0 ? "text-green-500" : "text-red-500"
+                                item.metrics.score_change > 0 ? "text-ds-success-solid" : "text-ds-danger-solid"
                               }
                             >
                               {item.metrics.score_change > 0 ? "+" : ""}
@@ -433,13 +433,13 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                         {item.metrics.rank_change && (
                           <div className="flex items-center gap-1">
                             {item.metrics.rank_change > 0 ? (
-                              <TrendingUp className="h-4 w-4 text-green-500" />
+                              <TrendingUp className="h-4 w-4 text-ds-success-solid" />
                             ) : (
-                              <TrendingDown className="h-4 w-4 text-red-500" />
+                              <TrendingDown className="h-4 w-4 text-ds-danger-solid" />
                             )}
                             <span
                               className={
-                                item.metrics.rank_change > 0 ? "text-green-500" : "text-red-500"
+                                item.metrics.rank_change > 0 ? "text-ds-success-solid" : "text-ds-danger-solid"
                               }
                             >
                               {item.metrics.rank_change > 0 ? "+" : ""}
