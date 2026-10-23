@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ShieldAlert, Home, ArrowLeft } from "lucide-react";
+import { ShieldAlert, Home } from "lucide-react";
+import { GoBackButton } from "./go-back-button";
 
 // Force dynamic rendering
 export const dynamic = "force-dynamic";
@@ -43,13 +44,8 @@ export default async function UnauthorizedPage({ params }: PageProps) {
             <Home className="w-4 h-4" />
             Go to Home
           </Link>
-          <button
-            onClick={() => window.history.back()}
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Go Back
-          </button>
+          {/* #226: client component; a Server Component cannot pass onClick to a DOM element. */}
+          <GoBackButton />
         </div>
 
         {/* Additional Info */}
