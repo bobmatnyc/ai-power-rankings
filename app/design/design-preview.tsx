@@ -26,7 +26,7 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 import { getTierColor } from "@/lib/ranking-utils";
 import { cn } from "@/lib/utils";
 import { ForceStates } from "./force-states";
-import { AgentCardOptions, GradientFills } from "./option-sections";
+import { AgentCardSample, GradientFills } from "./option-sections";
 
 /**
  * The `/design` state sheet (#190).
@@ -346,9 +346,9 @@ function ModePanel({ mode, dict }: { mode: Mode; dict: Dictionary }) {
     <section data-design-mode={mode} className={cn("bg-background text-foreground py-8", mode === "dark" && "dark")}>
       <div className="container mx-auto px-4 space-y-8">
         <h2 className="text-2xl font-bold">{mode === "light" ? "Light" : "Dark"}</h2>
-        {/* #190 C2: shipped fills, and the Agents-card accents pending the owner's pick. */}
+        {/* #190 C2: shipped fills and the Agents-card accent. */}
         <GradientFills mode={mode} />
-        <AgentCardOptions mode={mode} dict={dict} />
+        <AgentCardSample mode={mode} dict={dict} />
         <Samples />
       </div>
     </section>

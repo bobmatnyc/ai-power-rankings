@@ -120,9 +120,8 @@ module.exports = {
             "cat-blue": "hsl(var(--ds-accent-cat-blue))",
             "cat-purple": "hsl(var(--ds-accent-cat-purple))",
             "cat-green": "hsl(var(--ds-accent-cat-green))",
-            // #190 C2: Autonomous Agents card candidates on /design.
-            "agent-purple": "hsl(var(--ds-accent-agent-purple))",
-            "agent-teal": "hsl(var(--ds-accent-agent-teal))",
+            // #190 C2: the home page's Autonomous Agents card.
+            agent: "hsl(var(--ds-accent-agent))",
           },
           // #190 C2: from-ds-grad-blue-500, to-ds-grad-teal-800, ...
           grad: Object.fromEntries(GRAD_STOPS.map((stop) => [stop, `hsl(var(--ds-grad-${stop}))`])),

@@ -273,9 +273,8 @@
     --ds-accent-hover: 224.3 76.3% 48%;
     --ds-accent-fg: 0 0% 100%;
     --ds-accent-subtle: 214.3 100% 96.9%;
-    /* #190 C2: Autonomous Agents card candidates on /design (purple-700, teal-700). */
-    --ds-accent-agent-purple: 272.09302326 71.66666667% 47.05882353%;
-    --ds-accent-agent-teal: 175.33980583 77.44360902% 26.07843137%;
+    /* #190 C2: Autonomous Agents card accent (purple-700). */
+    --ds-accent-agent: 272.09302326 71.66666667% 47.05882353%;
 
     /* Status: the base colour passes AA as text on surface and on -subtle. */
     --ds-success: 142.4 71.8% 29.2%;
@@ -330,9 +329,8 @@
     --ds-accent-hover: 211.7 96.4% 78.4%;
     --ds-accent-fg: 222.2 84% 4.9%;
     --ds-accent-subtle: 224.4 64.3% 32.9%;
-    /* #190 C2: purple-400, teal-400. */
-    --ds-accent-agent-purple: 270 95.23809524% 75.29411765%;
-    --ds-accent-agent-teal: 172.45508982 66.00790514% 50.39215686%;
+    /* #190 C2: Autonomous Agents card accent (purple-400). */
+    --ds-accent-agent: 270 95.23809524% 75.29411765%;
 
     /* Status */
     --ds-success: 141.9 69.2% 58%;
