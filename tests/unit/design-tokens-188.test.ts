@@ -45,6 +45,8 @@ const RUBRIC: Record<string, RegExp> = {
   accent: /^--ds-accent/,
   status: /^--ds-(success|warning|danger|info)/,
   "score bands": /^--ds-score-/,
+  // #190 C2: ToolIcon gradient stops.
+  gradient: /^--ds-grad-/,
   "type scale": /^--ds-(font-size|line-height|font-weight)-/,
   spacing: /^--ds-space-/,
   radius: /^--ds-radius-/,
@@ -52,7 +54,7 @@ const RUBRIC: Record<string, RegExp> = {
   motion: /^--ds-(duration|ease)-/,
 };
 
-const COLOUR_CATEGORIES = ["surface", "text", "border", "accent", "status", "score bands"];
+const COLOUR_CATEGORIES = ["surface", "text", "border", "accent", "status", "score bands", "gradient"];
 const HSL_COMPONENTS = /^\d+(\.\d+)? \d+(\.\d+)?% \d+(\.\d+)?%$/;
 
 function isColour(name: string): boolean {

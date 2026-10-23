@@ -273,6 +273,8 @@
     --ds-accent-hover: 224.3 76.3% 48%;
     --ds-accent-fg: 0 0% 100%;
     --ds-accent-subtle: 214.3 100% 96.9%;
+    /* #190 C2: Autonomous Agents card accent (purple-700). */
+    --ds-accent-agent: 272.09302326 71.66666667% 47.05882353%;
 
     /* Status: the base colour passes AA as text on surface and on -subtle. */
     --ds-success: 142.4 71.8% 29.2%;
@@ -327,6 +329,8 @@
     --ds-accent-hover: 211.7 96.4% 78.4%;
     --ds-accent-fg: 222.2 84% 4.9%;
     --ds-accent-subtle: 224.4 64.3% 32.9%;
+    /* #190 C2: Autonomous Agents card accent (purple-400). */
+    --ds-accent-agent: 270 95.23809524% 75.29411765%;
 
     /* Status */
     --ds-success: 141.9 69.2% 58%;
@@ -362,8 +366,8 @@
   /* Fixed colours (#190 PR B): one value in both modes, for components that
      do not change with dark mode today. Each is a Tailwind palette colour
      written as HSL precise to 1e-7 of a channel, so a solid fill or text
-     colour renders the same pixels. Gradients stay on palette classes: the
-     unrounded HSL stops shift dithered pixels. Map and reasons in
+     colour renders the same pixels. Gradient stops are in the block below
+     (#190 C2). Map and reasons in
      docs/refresh/design-audit/migration-190b.md. */
   :root,
   .dark {
@@ -400,6 +404,32 @@
     --ds-warning-fixed: 17.47252747 88.34951456% 40.39215686%; /* orange-700 */
     --ds-danger-fixed: 0 72.2222222% 50.5882353%; /* red-600 */
     --ds-danger-fixed-soft: 0 90.6040268% 70.7843137%; /* red-400 */
+  }
+
+  /* Gradient stops (#190 C2, Option B): ToolIcon's fills, fixed in both
+     modes. Tailwind palette colours as HSL; the green, orange and teal fills
+     use the 700-800 steps so a white glyph meets 3:1. Tier badges use the
+     --ds-score-* bands, not these. */
+  :root,
+  .dark {
+    --ds-grad-blue-500: 217.21925134 91.2195122% 59.80392157%;
+    --ds-grad-blue-600: 221.21212121 83.19327731% 53.33333333%;
+    --ds-grad-purple-500: 270.74074074 91.01123596% 65.09803922%;
+    --ds-grad-purple-600: 271.47540984 81.33333333% 55.88235294%;
+    --ds-grad-pink-500: 330.36585366 81.18811881% 60.39215686%;
+    --ds-grad-pink-600: 333.33333333 71.42857143% 50.58823529%;
+    --ds-grad-indigo-500: 238.73239437 83.52941176% 66.66666667%;
+    --ds-grad-indigo-600: 243.39622642 75.35545024% 58.62745098%;
+    --ds-grad-red-500: 0 84.2364532% 60.19607843%;
+    --ds-grad-red-600: 0 72.22222222% 50.58823529%;
+    --ds-grad-gray-500: 220 8.93617021% 46.07843137%;
+    --ds-grad-gray-600: 215 13.79310345% 34.11764706%;
+    --ds-grad-green-700: 142.42990654 71.81208054% 29.21568627%;
+    --ds-grad-green-800: 142.78481013 64.22764228% 24.11764706%;
+    --ds-grad-orange-700: 17.47252747 88.34951456% 40.39215686%;
+    --ds-grad-orange-800: 15 79.06976744% 33.7254902%;
+    --ds-grad-teal-700: 175.33980583 77.44360902% 26.07843137%;
+    --ds-grad-teal-800: 176.1038961 69.36936937% 21.76470588%;
   }
 
   @media (prefers-reduced-motion: reduce) {
