@@ -9,7 +9,9 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatUtcDate } from "@/lib/format-utc-date";
 import { loadList } from "@/lib/load-list";
+import { formatPeriod } from "@/lib/whats-new-period";
 
 interface WhatsNewModalProps {
   open: boolean;
@@ -399,15 +401,14 @@ export function WhatsNewModal({
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="font-semibold text-lg">
-                        {new Date(monthlySummary.period + "-01").toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "long",
-                        })}
+                        {/* #239: UTC month; "<period>-01" is UTC midnight, the prior month west of UTC. */}
+                        {formatPeriod(monthlySummary.period)}
                       </h3>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
                         <Calendar className="h-3 w-3" />
                         <span>
-                          Generated {new Date(monthlySummary.generatedAt).toLocaleDateString()}
+                          {/* #239: UTC day, matching the /whats-new page. */}
+                          Generated {formatUtcDate(monthlySummary.generatedAt, undefined)}
                         </span>
                         {monthlySummary.metadata.article_count !== undefined && (
                           <>

@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import { formatUtcDate } from "@/lib/format-utc-date";
 import { loggers } from "@/lib/logger-client";
 import ArticleScoringImpact from "./article-scoring-impact";
 import ScoringMetrics from "./scoring-metrics";
@@ -210,10 +211,11 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
           : dict.news.time?.daysAgo || "{count} days ago";
       return daysText.replace("{count}", diffDays.toString());
     } else {
-      return date.toLocaleDateString("en-US", {
+      // #239: UTC day and year, so every browser zone matches the server render.
+      return formatUtcDate(date, "en-US", {
         month: "short",
         day: "numeric",
-        year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+        year: date.getUTCFullYear() !== now.getUTCFullYear() ? "numeric" : undefined,
       });
     }
   };

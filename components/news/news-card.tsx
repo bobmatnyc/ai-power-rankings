@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
+import { formatUtcDate } from "@/lib/format-utc-date";
 
 export interface NewsItem {
   id: string;
@@ -71,10 +72,11 @@ export function NewsCard({ item }: NewsCardProps) {
     } else if (diffDays < 7) {
       return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
     } else {
-      return date.toLocaleDateString("en-US", {
+      // #239: UTC day and year, so every browser zone matches the server render.
+      return formatUtcDate(date, "en-US", {
         month: "short",
         day: "numeric",
-        year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
+        year: date.getUTCFullYear() !== now.getUTCFullYear() ? "numeric" : undefined,
       });
     }
   };

@@ -5,6 +5,7 @@ import { memo, useCallback, useEffect, useMemo, useState, useTransition } from "
 import type { Locale } from "@/i18n/config";
 import { HomeContent } from "./home-content";
 import { NewsUpdateCard } from "@/components/news/news-update-card";
+import { formatUtcDate } from "@/lib/format-utc-date";
 
 interface RankingData {
   rank: number;
@@ -514,7 +515,8 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
                     const updateDate = new Date(fallbackData.algorithm.date);
                     if (!Number.isNaN(updateDate.getTime())) {
                       setLastUpdateDate(
-                        updateDate.toLocaleDateString("en-US", {
+                        // #239: UTC, so the stored algorithm date names the same day in every zone.
+                        formatUtcDate(updateDate, "en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
@@ -542,7 +544,8 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
               setLastUpdateDate("Daily");
             } else {
               setLastUpdateDate(
-                updateDate.toLocaleDateString("en-US", {
+                // #239: UTC, so the stored algorithm date names the same day in every zone.
+                formatUtcDate(updateDate, "en-US", {
                   month: "short",
                   day: "numeric",
                   year: "numeric",
@@ -570,7 +573,8 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
                     const updateDate = new Date(fallbackData.algorithm.date);
                     if (!Number.isNaN(updateDate.getTime())) {
                       setLastUpdateDate(
-                        updateDate.toLocaleDateString("en-US", {
+                        // #239: UTC, so the stored algorithm date names the same day in every zone.
+                        formatUtcDate(updateDate, "en-US", {
                           month: "short",
                           day: "numeric",
                           year: "numeric",
@@ -596,7 +600,8 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
               setLastUpdateDate("Daily");
             } else {
               setLastUpdateDate(
-                updateDate.toLocaleDateString("en-US", {
+                // #239: UTC, so the stored algorithm date names the same day in every zone.
+                formatUtcDate(updateDate, "en-US", {
                   month: "short",
                   day: "numeric",
                   year: "numeric",
