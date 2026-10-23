@@ -16,7 +16,7 @@ function SignupCTA({ onOpenModal }: { onOpenModal: () => void }) {
     <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-900">
       <CardHeader className="text-center">
         <div className="mx-auto w-16 h-16 bg-ds-surface-tag-blue rounded-full flex items-center justify-center mb-4">
-          <Mail className="h-8 w-8 text-ds-accent" />
+          <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400" />
         </div>
         <CardTitle className="text-2xl">Stay Updated with AI Power Rankings</CardTitle>
         <CardDescription className="text-base">

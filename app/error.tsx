@@ -91,9 +91,10 @@ export default function ErrorBoundary({
           >
             Try Again
           </button>
+          {/* #190: hover/active variants hold the colour against globals.css a:hover and a:active. */}
           <a
             href="/"
-            className="border-ds-border-paper bg-ds-surface-paper text-ds-accent-cat-blue"
+            className="border-ds-border-paper bg-ds-surface-paper text-ds-accent-cat-blue hover:text-ds-accent-cat-blue active:text-ds-accent-cat-blue"
             style={{
               padding: "0.5rem 1rem",
               borderRadius: "0.375rem",

@@ -57,9 +57,10 @@ export default function NotFound() {
             gap: "0.5rem",
           }}
         >
+          {/* #190: hover/active variants hold the colour against globals.css a:hover and a:active. */}
           <a
             href="/"
-            className="bg-ds-accent-cat-blue text-ds-text-on-fill"
+            className="bg-ds-accent-cat-blue text-ds-text-on-fill hover:text-ds-text-on-fill active:text-ds-text-on-fill"
             style={{
               padding: "0.5rem 1rem",
               borderRadius: "0.375rem",
@@ -71,7 +72,7 @@ export default function NotFound() {
           </a>
           <a
             href="/en"
-            className="border-ds-border-paper bg-ds-surface-paper text-ds-accent-cat-blue"
+            className="border-ds-border-paper bg-ds-surface-paper text-ds-accent-cat-blue hover:text-ds-accent-cat-blue active:text-ds-accent-cat-blue"
             style={{
               padding: "0.5rem 1rem",
               borderRadius: "0.375rem",

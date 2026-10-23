@@ -51,7 +51,6 @@ const PARITY: ReadonlyArray<readonly [string, string, string]> = [
   ["ds-surface-tag-blue", "blue-100", "blue-900"],
   ["ds-surface-tag-green", "green-100", "green-900"],
   ["ds-text-callout-success", "green-600", "green-400"],
-  ["ds-accent", "blue-600", "blue-400"],
   ["ds-success-fixed-border", "green-200", "green-200"],
   ["ds-danger-fixed-border", "red-200", "red-200"],
   ["ds-text-callout-danger", "red-600", "red-400"],
