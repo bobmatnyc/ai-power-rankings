@@ -75,7 +75,9 @@ function utilityFor(name: string): [string, string] {
   for (const [prefix, utility] of prefixed) {
     if (prefix.test(rest)) return [`${utility}${rest.replace(prefix, "")}`, `var(${name})`];
   }
-  return [`bg-ds-${rest}`, `hsl(var(${name}))`];
+  // #190: no closing paren, so a token mapped with `/ <alpha-value>` (the
+  // overlay, used as `bg-ds-surface-overlay/80`) also matches.
+  return [`bg-ds-${rest}`, `hsl(var(${name})`];
 }
 
 async function compile(classes: string[]): Promise<string> {

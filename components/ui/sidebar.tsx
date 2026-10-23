@@ -185,7 +185,7 @@ const Sidebar = React.forwardRef<
           {openMobile && (
             <button
               type="button"
-              className="fixed inset-0 z-40 bg-black/50"
+              className="fixed inset-0 z-40 bg-ds-surface-overlay/50"
               onClick={() => setOpenMobile(false)}
               aria-label="Close sidebar"
             />

@@ -64,18 +64,18 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
           </p>
 
           {showDetails && this.state.error && (
-            <details className="mt-4 p-4 bg-gray-100 rounded max-w-2xl w-full">
+            <details className="mt-4 p-4 bg-ds-surface-paper-sunken rounded max-w-2xl w-full">
               <summary className="cursor-pointer font-semibold">Error Details</summary>
               <div className="mt-2 space-y-2">
                 <div>
                   <strong>Message:</strong>
-                  <pre className="mt-1 p-2 bg-white rounded text-xs overflow-x-auto">
+                  <pre className="mt-1 p-2 bg-ds-surface-paper rounded text-xs overflow-x-auto">
                     {this.state.error.message}
                   </pre>
                 </div>
                 <div>
                   <strong>Stack:</strong>
-                  <pre className="mt-1 p-2 bg-white rounded text-xs overflow-x-auto max-h-48 overflow-y-auto">
+                  <pre className="mt-1 p-2 bg-ds-surface-paper rounded text-xs overflow-x-auto max-h-48 overflow-y-auto">
                     {this.state.error.stack}
                   </pre>
                 </div>

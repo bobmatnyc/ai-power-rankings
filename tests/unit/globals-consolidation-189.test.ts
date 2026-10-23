@@ -89,18 +89,19 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
 };
 
 /**
- * Measured count after the allowlist below (#190 PR A): the #188 audit's 845
- * less 35 (open-graph routes), 8 (contact email) and 11 (globals.css token
- * definitions). Lower it as #190 migrates; never raise it.
+ * Measured count after the allowlist below. #190 PR A: 791, the #188 audit's
+ * 845 less 35 (open-graph routes), 8 (contact email) and 11 (globals.css
+ * `--shadow*` values). #190 PR B: 708, after 83 core-component uses moved to
+ * tokens. Lower it as #190 migrates; never raise it.
  */
-const HARDCODED_COLOUR_BASELINE = 791;
+const HARDCODED_COLOUR_BASELINE = 708;
 
 /**
  * #190 rulings D2-D4: the only places a literal colour is the right tool. An
- * entry exempts the whole file unless `scope` narrows it to custom-property
- * declarations (`--name: value;`), so other colours in that file still count.
+ * entry exempts the whole file unless `scope` narrows it to `--shadow*`
+ * custom-property declarations, so every other colour in that file counts.
  */
-const RATCHET_ALLOWLIST: ReadonlyArray<{ path: RegExp; scope?: "custom-properties"; reason: string }> = [
+const RATCHET_ALLOWLIST: ReadonlyArray<{ path: RegExp; scope?: "shadow-custom-properties"; reason: string }> = [
   {
     path: /^app\/api\/og\/(?:.+\/)?route\.tsx$/,
     reason: "D2: open-graph images render through @vercel/og, which cannot read CSS variables.",
@@ -111,12 +112,13 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{ path: RegExp; scope?: "custom-propertie
   },
   {
     path: /^app\/globals\.css$/,
-    scope: "custom-properties",
-    reason: "D4: the token definitions themselves; only `--name: value;` declarations are exempt.",
+    scope: "shadow-custom-properties",
+    reason: "D4: the `--shadow*` definitions' rgb() values; any other colour in the file counts.",
   },
 ];
 
-const CUSTOM_PROPERTY_DECLARATION = /--[\w-]+\s*:[^;{}]*;/g;
+// #190: `--shadow*` only, so a new `--brand: #f00;` in globals.css still counts.
+const SHADOW_PROPERTY_DECLARATION = /--shadow[\w-]*\s*:[^;{}]*;/g;
 
 /** The files the ratchet scans under `dirs`: sources and CSS, tests excluded. */
 function colourScanFiles(dirs: string[]): string[] {
@@ -139,7 +141,7 @@ function ratchetCount(file: string, source: string): { counted: number; exempted
   if (!entry) return { counted: total, exempted: 0 };
   if (!entry.scope) return { counted: 0, exempted: total };
   const code = source.replace(/\/\*[\s\S]*?\*\//g, "");
-  const counted = countHardcodedColours(code.replace(CUSTOM_PROPERTY_DECLARATION, ""));
+  const counted = countHardcodedColours(code.replace(SHADOW_PROPERTY_DECLARATION, ""));
   return { counted, exempted: total - counted };
 }
 
@@ -173,6 +175,15 @@ describe("hard-coded colour ratchet (#189)", () => {
     expect(ratchetCount("app/api/og/tool/route.tsx", 'color: "#fff"')).toEqual({ counted: 0, exempted: 1 });
   });
 
+  it("exempts only --shadow* declarations in app/globals.css", () => {
+    // #190: a non-shadow custom property holding a literal colour still counts.
+    expect(ratchetCount("app/globals.css", ":root { --brand: #f00; }")).toEqual({ counted: 1, exempted: 0 });
+    expect(ratchetCount("app/globals.css", ":root { --shadow-lg: 0 0 1px rgb(0 0 0); }")).toEqual({
+      counted: 0,
+      exempted: 1,
+    });
+  });
+
   it.each(RATCHET_ALLOWLIST.map((entry) => [entry.path.source, entry] as const))(
     "allowlist entry %s matches a scanned file and exempts at least one use",
     (_, entry) => {
@@ -183,7 +194,8 @@ describe("hard-coded colour ratchet (#189)", () => {
   );
 
   it(`stays at or below the ${HARDCODED_COLOUR_BASELINE} baseline`, () => {
-    const total = scanRepoColours().reduce((sum, { counted }) => sum + counted, 0);    expect(total, "hard-coded colours in components/ and app/ (migrate to --ds-* tokens instead)").toBeLessThanOrEqual(
+    const total = scanRepoColours().reduce((sum, { counted }) => sum + counted, 0);
+    expect(total, "hard-coded colours in components/ and app/ (migrate to --ds-* tokens instead)").toBeLessThanOrEqual(
       HARDCODED_COLOUR_BASELINE,
     );
   });

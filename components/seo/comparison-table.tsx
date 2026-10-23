@@ -126,9 +126,9 @@ export const ComparisonTable = memo(function ComparisonTable({
                       }`}
                     >
                       {tool.keyFeatures.includes(feature) ? (
-                        <CheckCircle className="h-5 w-5 text-green-600 mx-auto" />
+                        <CheckCircle className="h-5 w-5 text-ds-success-fixed mx-auto" />
                       ) : (
-                        <XCircle className="h-5 w-5 text-red-400 mx-auto" />
+                        <XCircle className="h-5 w-5 text-ds-danger-fixed-soft mx-auto" />
                       )}
                     </td>
                   ))}
