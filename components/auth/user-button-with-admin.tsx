@@ -46,7 +46,7 @@ interface UserButtonWithAdminProps {
 // Fallback component when Clerk is not available
 function FallbackUserButton() {
   return (
-    <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" title="User menu unavailable" />
+    <div className="w-8 h-8 rounded-full bg-ds-surface-skeleton animate-pulse" title="User menu unavailable" />
   );
 }
 
