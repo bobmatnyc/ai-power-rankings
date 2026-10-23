@@ -165,8 +165,8 @@ export default function WhatsNewSummaryClient() {
 
       {/* Success Display */}
       {result && (
-        <Alert className="mb-6 border-green-200 bg-green-50">
-          <CheckCircle className="h-4 w-4 text-green-600" />
+        <Alert className="mb-6 border-ds-success-fixed-border bg-ds-success-fixed-subtle">
+          <CheckCircle className="h-4 w-4 text-ds-success-fixed-mid" />
           <AlertDescription className="text-green-800">
             Summary generated successfully in {(generationTimeMs / 1000).toFixed(2)} seconds
           </AlertDescription>
@@ -240,7 +240,7 @@ export default function WhatsNewSummaryClient() {
               )}
             </Button>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="bg-blue-50 border border-ds-border-tag-blue rounded-lg p-3">
               <p className="text-sm text-blue-800">
                 <strong>Note:</strong> This will force regeneration even if a summary already
                 exists for the selected period.
@@ -356,7 +356,7 @@ export default function WhatsNewSummaryClient() {
       )}
 
       {/* Help Section */}
-      <Card className="mt-6 border-blue-200 bg-blue-50/50">
+      <Card className="mt-6 border-ds-border-tag-blue bg-blue-50/50">
         <CardHeader>
           <CardTitle className="text-base">How it works</CardTitle>
         </CardHeader>

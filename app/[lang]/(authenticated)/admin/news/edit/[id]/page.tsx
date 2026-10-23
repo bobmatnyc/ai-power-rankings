@@ -587,11 +587,11 @@ export default function EditNewsPage() {
                 </>
               ) : autoSaveError ? (
                 <>
-                  <span className="text-red-600">Failed to auto-save</span>
+                  <span className="text-ds-danger-fixed">Failed to auto-save</span>
                 </>
               ) : lastSaved ? (
                 <>
-                  <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  <CheckCircle2 className="h-4 w-4 text-ds-success-fixed-mid" />
                   {formatTimeSince(lastSaved)}
                 </>
               ) : hasUnsavedChanges ? (
@@ -880,7 +880,7 @@ export default function EditNewsPage() {
 
       {/* Ranking Preview Modal */}
       {showPreviewModal && previewData && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-ds-surface-overlay/50 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
             <CardHeader>
               <CardTitle>Preview Ranking Changes</CardTitle>

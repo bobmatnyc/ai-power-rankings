@@ -140,21 +140,21 @@ function RunTypeLabel({ type }: { type: IngestionRun["runType"] }) {
     case "daily_news":
       return (
         <span className="flex items-center gap-1.5">
-          <Clock className="h-3.5 w-3.5 text-blue-500" />
+          <Clock className="h-3.5 w-3.5 text-ds-accent-cat-blue" />
           Daily News
         </span>
       );
     case "monthly_summary":
       return (
         <span className="flex items-center gap-1.5">
-          <FileText className="h-3.5 w-3.5 text-purple-500" />
+          <FileText className="h-3.5 w-3.5 text-ds-accent-cat-purple" />
           Monthly
         </span>
       );
     case "manual":
       return (
         <span className="flex items-center gap-1.5">
-          <Zap className="h-3.5 w-3.5 text-orange-500" />
+          <Zap className="h-3.5 w-3.5 text-ds-accent-cat-orange" />
           Manual
         </span>
       );
@@ -344,8 +344,8 @@ export default function AutomatedIngestionClient() {
 
       {/* Success Display */}
       {triggerSuccess && (
-        <Alert className="bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800">
-          <CheckCircle className="h-4 w-4 text-green-600 dark:text-green-400" />
+        <Alert className="bg-ds-surface-callout-success border-ds-border-callout-success">
+          <CheckCircle className="h-4 w-4 text-ds-text-callout-success" />
           <AlertDescription className="text-green-800 dark:text-green-200">
             {triggerSuccess}
           </AlertDescription>

@@ -250,9 +250,9 @@ export function CacheManagementClient() {
                       {file.type}.json
                     </span>
                     {file.exists ? (
-                      <CheckCircle className="h-5 w-5 text-green-500" />
+                      <CheckCircle className="h-5 w-5 text-ds-success-solid" />
                     ) : (
-                      <AlertCircle className="h-5 w-5 text-red-500" />
+                      <AlertCircle className="h-5 w-5 text-ds-danger-solid" />
                     )}
                   </CardTitle>
                   <CardDescription className="flex items-center gap-2">
