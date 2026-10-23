@@ -1,4 +1,5 @@
 import type {
+  Article,
   BreadcrumbList,
   ItemList,
   Organization,
@@ -291,4 +292,51 @@ export function createComparisonSchema(
 export function generateSchemaScript(schema: WithContext<any> | WithContext<any>[]): string {
   const schemas = Array.isArray(schema) ? schema : [schema];
   return JSON.stringify(schemas);
+}
+
+/** The stored-report fields `createMonthlyReportSchema` reads (#54). */
+export interface MonthlyReportSchemaInput {
+  headline: string;
+  description: string;
+  /** The report permalink's canonical URL. */
+  canonical: string;
+  createdAt: Date;
+  generatedAt: Date;
+}
+
+/**
+ * JSON-LD `Article` for one monthly What's New report permalink.
+ *
+ * Why: #54: a report permalink is a dated article; search engines read its
+ * publish and update dates from this block.
+ * What: `@type` Article with `headline`, `description`, `url` and
+ * `mainEntityOfPage` = `canonical`, `inLanguage` en, the site Organization as
+ * `author` and `publisher`, `datePublished` = `createdAt` and `dateModified` =
+ * the later of `generatedAt` and `createdAt`, so it is never before
+ * `datePublished`.
+ * Test: `tests/unit/whats-new-permalink.test.ts`.
+ */
+export function createMonthlyReportSchema(input: MonthlyReportSchemaInput): WithContext<Article> {
+  const baseUrl = siteOrigin();
+  const organization = { "@type": "Organization" as const, name: "AI Power Rankings", url: baseUrl };
+  // #54: a regeneration rewrites `generatedAt`; guard against a row whose
+  // clocks disagree so `dateModified` never precedes `datePublished`.
+  const modified =
+    input.generatedAt.getTime() >= input.createdAt.getTime() ? input.generatedAt : input.createdAt;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.headline,
+    description: input.description,
+    url: input.canonical,
+    mainEntityOfPage: input.canonical,
+    inLanguage: "en",
+    datePublished: input.createdAt.toISOString(),
+    dateModified: modified.toISOString(),
+    author: organization,
+    publisher: {
+      ...organization,
+      logo: { "@type": "ImageObject", url: `${baseUrl}/logo-1200x630.png` },
+    },
+  };
 }
