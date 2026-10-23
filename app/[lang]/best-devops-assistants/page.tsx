@@ -73,7 +73,7 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-          <Button size="lg" className="gradient-primary text-white px-8 py-3" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8 py-3" asChild>
             <Link href={`/${lang}/rankings?category=devops-assistant`}>
               View DevOps Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -86,15 +86,15 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
         {/* Trust indicators */}
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Star className="h-4 w-4 text-yellow-500" />
+            <Star className="h-4 w-4 text-ds-accent-cat-yellow" />
             <span>12+ DevOps Tools Ranked</span>
           </div>
           <div className="flex items-center gap-2">
-            <Cloud className="h-4 w-4 text-blue-500" />
+            <Cloud className="h-4 w-4 text-ds-accent-cat-blue" />
             <span>Multi-Cloud Support</span>
           </div>
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-green-500" />
+            <Users className="h-4 w-4 text-ds-accent-cat-green" />
             <span>Enterprise-Ready Solutions</span>
           </div>
         </div>
@@ -247,7 +247,7 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
                 incident response capabilities.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-green rounded-full"></div>
                 <span>Full-stack monitoring, APM</span>
               </div>
             </CardContent>
@@ -266,7 +266,7 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
                 monitoring, and cost optimization for AWS infrastructure.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-orange rounded-full"></div>
                 <span>CodePipeline, CloudWatch, X-Ray</span>
               </div>
             </CardContent>
@@ -285,7 +285,7 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
                 and intelligent project insights.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-purple rounded-full"></div>
                 <span>Full DevOps lifecycle, Security</span>
               </div>
             </CardContent>
@@ -302,7 +302,7 @@ export default async function BestDevOpsAssistantsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="gradient-primary text-white px-8" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8" asChild>
             <Link href={`/${lang}/rankings?category=devops-assistant`}>
               View Complete Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

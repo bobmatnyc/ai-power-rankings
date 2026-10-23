@@ -73,7 +73,7 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-          <Button size="lg" className="gradient-primary text-white px-8 py-3" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8 py-3" asChild>
             <Link href={`/${lang}/rankings?category=testing-tool`}>
               View Testing Tool Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -86,15 +86,15 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
         {/* Trust indicators */}
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Star className="h-4 w-4 text-yellow-500" />
+            <Star className="h-4 w-4 text-ds-accent-cat-yellow" />
             <span>10+ Testing Tools Ranked</span>
           </div>
           <div className="flex items-center gap-2">
-            <FlaskConical className="h-4 w-4 text-blue-500" />
+            <FlaskConical className="h-4 w-4 text-ds-accent-cat-blue" />
             <span>All Testing Types Covered</span>
           </div>
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-green-500" />
+            <Users className="h-4 w-4 text-ds-accent-cat-green" />
             <span>Trusted by QA Teams</span>
           </div>
         </div>
@@ -240,7 +240,7 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
                 intelligent test creation and maintenance.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-green rounded-full"></div>
                 <span>Web, Mobile, API Testing</span>
               </div>
             </CardContent>
@@ -259,7 +259,7 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
                 testing, and intelligent insights for continuous testing.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-blue rounded-full"></div>
                 <span>E2E, Visual, Accessibility</span>
               </div>
             </CardContent>
@@ -278,7 +278,7 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
                 across all devices and browsers automatically.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-purple rounded-full"></div>
                 <span>Visual AI, Cross-browser</span>
               </div>
             </CardContent>
@@ -295,7 +295,7 @@ export default async function BestTestingToolsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="gradient-primary text-white px-8" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8" asChild>
             <Link href={`/${lang}/rankings?category=testing-tool`}>
               View Complete Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

@@ -73,7 +73,7 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-          <Button size="lg" className="gradient-primary text-white px-8 py-3" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8 py-3" asChild>
             <Link href={`/${lang}/rankings?category=code-review`}>
               View Code Review Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -86,15 +86,15 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
         {/* Trust indicators */}
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Star className="h-4 w-4 text-yellow-500" />
+            <Star className="h-4 w-4 text-ds-accent-cat-yellow" />
             <span>15+ Review Tools Ranked</span>
           </div>
           <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-blue-500" />
+            <Shield className="h-4 w-4 text-ds-accent-cat-blue" />
             <span>Security & Quality Focus</span>
           </div>
           <div className="flex items-center gap-2">
-            <Users className="h-4 w-4 text-green-500" />
+            <Users className="h-4 w-4 text-ds-accent-cat-green" />
             <span>Enterprise-Grade Solutions</span>
           </div>
         </div>
@@ -246,7 +246,7 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
                 debt management for teams.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-green rounded-full"></div>
                 <span>27+ Languages, CI/CD Integration</span>
               </div>
             </CardContent>
@@ -265,7 +265,7 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
                 engineering intelligence.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-blue rounded-full"></div>
                 <span>GitHub, GitLab Integration</span>
               </div>
             </CardContent>
@@ -284,7 +284,7 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
                 intelligent security and quality insights.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-purple rounded-full"></div>
                 <span>VS Code, JetBrains, Web</span>
               </div>
             </CardContent>
@@ -301,7 +301,7 @@ export default async function BestCodeReviewToolsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="gradient-primary text-white px-8" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8" asChild>
             <Link href={`/${lang}/rankings?category=code-review`}>
               View Complete Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

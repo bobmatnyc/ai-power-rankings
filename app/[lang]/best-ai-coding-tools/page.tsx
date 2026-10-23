@@ -75,7 +75,7 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-          <Button size="lg" className="gradient-primary text-white px-8 py-3" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8 py-3" asChild>
             <Link href={`/${lang}/rankings`}>
               View Complete Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -88,15 +88,15 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
         {/* Trust indicators */}
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Star className="h-4 w-4 text-yellow-500" />
+            <Star className="h-4 w-4 text-ds-accent-cat-yellow" />
             <span>50+ Tools Ranked</span>
           </div>
           <div className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4 text-green-500" />
+            <TrendingUp className="h-4 w-4 text-ds-accent-cat-green" />
             <span>Updated Monthly</span>
           </div>
           <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-blue-500" />
+            <Shield className="h-4 w-4 text-ds-accent-cat-blue" />
             <span>Independent Analysis</span>
           </div>
         </div>
@@ -306,7 +306,7 @@ export default async function BestAICodingToolsPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="gradient-primary text-white px-8" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8" asChild>
             <Link href={`/${lang}/rankings`}>
               View Complete Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

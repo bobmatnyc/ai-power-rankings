@@ -88,7 +88,7 @@ export function ToolOverview({ tool }: ToolOverviewProps) {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
+              <CheckCircle className="h-5 w-5 text-ds-success-fixed-mid" />
               Key Features of {tool.name}
             </CardTitle>
           </CardHeader>
@@ -109,9 +109,9 @@ export function ToolOverview({ tool }: ToolOverviewProps) {
       {(tool.pros?.length || tool.cons?.length) && (
         <div className="grid md:grid-cols-2 gap-4">
           {tool.pros && tool.pros.length > 0 && (
-            <Card className="border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950">
+            <Card className="border-ds-border-callout-success bg-ds-surface-callout-success">
               <CardHeader>
-                <CardTitle className="text-green-700 dark:text-green-300 flex items-center gap-2">
+                <CardTitle className="text-ds-text-callout-success-title flex items-center gap-2">
                   <CheckCircle className="h-5 w-5" />
                   Pros
                 </CardTitle>
@@ -121,7 +121,7 @@ export function ToolOverview({ tool }: ToolOverviewProps) {
                   {tool.pros.map((pro) => (
                     <li
                       key={`pro-${pro.substring(0, 30)}`}
-                      className="text-sm text-green-600 dark:text-green-400"
+                      className="text-sm text-ds-text-callout-success"
                     >
                       • {pro}
                     </li>
@@ -132,9 +132,9 @@ export function ToolOverview({ tool }: ToolOverviewProps) {
           )}
 
           {tool.cons && tool.cons.length > 0 && (
-            <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-950">
+            <Card className="border-ds-border-callout-danger bg-ds-surface-callout-danger">
               <CardHeader>
-                <CardTitle className="text-red-700 dark:text-red-300 flex items-center gap-2">
+                <CardTitle className="text-ds-text-callout-danger-title flex items-center gap-2">
                   <XCircle className="h-5 w-5" />
                   Cons
                 </CardTitle>
@@ -144,7 +144,7 @@ export function ToolOverview({ tool }: ToolOverviewProps) {
                   {tool.cons.map((con) => (
                     <li
                       key={`con-${con.substring(0, 30)}`}
-                      className="text-sm text-red-600 dark:text-red-400"
+                      className="text-sm text-ds-text-callout-danger"
                     >
                       • {con}
                     </li>

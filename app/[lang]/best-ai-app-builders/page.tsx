@@ -74,7 +74,7 @@ export default async function BestAIAppBuildersPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-          <Button size="lg" className="gradient-primary text-white px-8 py-3" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8 py-3" asChild>
             <Link href={`/${lang}/rankings?category=app-builder`}>
               View Builder Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -87,15 +87,15 @@ export default async function BestAIAppBuildersPage({ params }: PageProps) {
         {/* Trust indicators */}
         <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Star className="h-4 w-4 text-yellow-500" />
+            <Star className="h-4 w-4 text-ds-accent-cat-yellow" />
             <span>4+ Builders Ranked</span>
           </div>
           <div className="flex items-center gap-2">
-            <Layers className="h-4 w-4 text-blue-500" />
+            <Layers className="h-4 w-4 text-ds-accent-cat-blue" />
             <span>Visual Development</span>
           </div>
           <div className="flex items-center gap-2">
-            <Globe className="h-4 w-4 text-green-500" />
+            <Globe className="h-4 w-4 text-ds-accent-cat-green" />
             <span>Production Ready</span>
           </div>
         </div>
@@ -390,7 +390,7 @@ export default async function BestAIAppBuildersPage({ params }: PageProps) {
                 integration into modern React and Next.js workflows.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-blue rounded-full"></div>
                 <span>React/Next.js • Shadcn UI • Vercel deployment</span>
               </div>
             </CardContent>
@@ -409,7 +409,7 @@ export default async function BestAIAppBuildersPage({ params }: PageProps) {
                 development environment and instant preview capabilities.
               </p>
               <div className="flex items-center gap-2 text-sm">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="w-2 h-2 bg-ds-accent-cat-green rounded-full"></div>
                 <span>Full-stack • Browser IDE • Instant deployment</span>
               </div>
             </CardContent>
@@ -426,7 +426,7 @@ export default async function BestAIAppBuildersPage({ params }: PageProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="gradient-primary text-white px-8" asChild>
+          <Button size="lg" className="gradient-primary text-ds-text-on-fill px-8" asChild>
             <Link href={`/${lang}/rankings?category=app-builder`}>
               View Complete Rankings <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

@@ -92,6 +92,22 @@ classes for now (see the map). Values, the class each one replaced, and the
 contrast pairs below AA they keep:
 [design-audit/migration-190b.md](design-audit/migration-190b.md).
 
+### News, what's-new and SEO colours (#190 PR D)
+
+The same approach for the news, what's-new, SEO and best-* pages. Fixed:
+`--ds-accent-cat-{yellow, orange}` (500 step) and
+`--ds-accent-cat-<hue>-strong` (600 step; purple, green, orange, yellow,
+emerald, indigo, slate) for category icons and dots; `--ds-success-fixed-{mid,
+soft, subtle, border}`, `--ds-danger-fixed-{subtle, border}`,
+`--ds-text-paper-{subtle, faint}` and `--ds-border-paper` for the news impact
+panels; `--ds-border-tag-<hue>`. Light and dark: `--ds-surface-tag-<hue>`,
+`--ds-text-tag-<hue>` (what's-new kind badges; purple, blue, green, orange),
+`--ds-border-neutral{,-hover}`, and `--ds-{surface, border, text}-callout-*`
+for the SEO callouts. `--ds-opacity-tag-surface` (1 light, 0.3 dark) is the
+tag fill's alpha, applied in the Tailwind mapping
+(`opacity-ds-tag-surface` also exists). Values and the class each one
+replaced: [design-audit/migration-190d.md](design-audit/migration-190d.md).
+
 ## Contrast (WCAG 2.x, AA = 4.5:1)
 
 Computed from the token values by `contrast()` in `scripts/design-tokens.ts`;

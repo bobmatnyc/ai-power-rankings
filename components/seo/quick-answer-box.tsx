@@ -17,20 +17,20 @@ export function QuickAnswerBox({
   const getIcon = () => {
     switch (type) {
       case "highlight":
-        return <CheckCircle className="h-5 w-5 text-green-600" />;
+        return <CheckCircle className="h-5 w-5 text-ds-success-fixed-mid" />;
       case "definition":
-        return <Info className="h-5 w-5 text-blue-600" />;
+        return <Info className="h-5 w-5 text-ds-accent-fixed" />;
       default:
-        return <Info className="h-5 w-5 text-blue-600" />;
+        return <Info className="h-5 w-5 text-ds-accent-fixed" />;
     }
   };
 
   const getCardStyle = () => {
     switch (type) {
       case "highlight":
-        return "border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-950";
+        return "border-ds-border-callout-success bg-ds-surface-callout-success";
       case "definition":
-        return "border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950";
+        return "border-ds-border-callout-info bg-ds-surface-callout-info";
       default:
         return "border-muted";
     }
