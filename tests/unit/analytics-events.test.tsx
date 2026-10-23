@@ -4,7 +4,7 @@
  * documented name and parameters (docs/refresh/ga4-event-plan.md).
  * `trackEvent` is mocked; the pure helpers stay real.
  */
-import { act, cleanup, fireEvent, render, renderHook, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, renderHook, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import en from "../../i18n/dictionaries/en.json";
@@ -65,10 +65,9 @@ import { ScrollDepthTracker } from "../../components/analytics/scroll-depth-trac
 import { AppSidebar } from "../../components/layout/app-sidebar";
 import { RankingCard } from "../../components/ranking/ranking-card";
 import RankingsGrid from "../../components/ranking/rankings-grid";
-import { useRankingsSearch } from "../../components/ranking/use-rankings-search";
+import { SITE_SEARCH_DEBOUNCE_MS, useRankingsSearch } from "../../components/ranking/use-rankings-search";
 import { ToolDetailClient } from "../../app/[lang]/tools/[slug]/tool-detail-client";
 import { trackEvent } from "../../lib/analytics/track";
-import { readSearchTerm } from "../../lib/search-param";
 
 const tracked = vi.mocked(trackEvent);
 const dict = en as never;
@@ -96,6 +95,7 @@ beforeEach(() => {
   tracked.mockClear();
   nav.pathname = "/en/rankings";
   nav.search = "";
+  nav.push = () => {};
   vi.stubGlobal(
     "fetch",
     vi.fn(async () => new Response(JSON.stringify({}), { status: 200 }))
@@ -242,32 +242,75 @@ describe("site_search", () => {
     ranking(3, "copilot", "GitHub Copilot", "ide-assistant"),
   ];
 
-  // #175: `term` is the key; `search` (a GA4 enhanced-measurement key) is read only for old links.
-  it.each([
-    ["term=Cursor", "the ?term= key"],
-    ["search=Cursor", "a legacy ?search= link"],
-  ])("filters by %s (%s) and sends length, bucket and result count, never the text", async (query) => {
-    nav.search = query;
+  const siteSearches = () => tracked.mock.calls.filter(([name]) => name === "site_search");
+
+  async function renderGrid() {
     await act(async () => {
       render(<RankingsGrid lang="en" dict={dict} initialRankings={rankings as never} />);
     });
-    await waitFor(() =>
-      expect(tracked).toHaveBeenCalledWith("site_search", {
-        query_length: 6,
-        query_length_bucket: "4-10",
-        result_count: 1,
-        search_location: "rankings",
-      })
-    );
-    expect(tracked.mock.calls.filter(([name]) => name === "site_search")).toHaveLength(1);
+    return screen.getByRole("searchbox", { name: en.common.search });
+  }
+
+  // #233: the term is typed into the box; it never enters the URL.
+  it("filters as you type and sends one site_search after the debounce, never the text", async () => {
+    const push = vi.fn();
+    nav.push = push;
+    const pushState = vi.spyOn(window.history, "pushState");
+    const replaceState = vi.spyOn(window.history, "replaceState");
+    const box = await renderGrid();
+    vi.useFakeTimers();
+    try {
+      for (const value of ["C", "Cu", "Cur", "Cursor"]) {
+        fireEvent.change(box, { target: { value } });
+        act(() => vi.advanceTimersByTime(SITE_SEARCH_DEBOUNCE_MS - 100));
+      }
+      expect(screen.queryByText("Claude Code")).toBeNull();
+      expect(screen.getAllByText("Cursor").length).toBeGreaterThan(0);
+      expect(siteSearches()).toHaveLength(0);
+
+      act(() => vi.advanceTimersByTime(100));
+      expect(siteSearches()).toEqual([
+        [
+          "site_search",
+          { query_length: 6, query_length_bucket: "4-10", result_count: 1, search_location: "rankings" },
+        ],
+      ]);
+      act(() => vi.advanceTimersByTime(SITE_SEARCH_DEBOUNCE_MS * 3));
+      expect(siteSearches()).toHaveLength(1);
+    } finally {
+      vi.useRealTimers();
+    }
     expect(JSON.stringify(tracked.mock.calls)).not.toMatch(/cursor/i);
-    expect(screen.queryByText("Claude Code")).toBeNull();
-    expect(screen.getAllByText("Cursor").length).toBeGreaterThan(0);
+    expect(push).not.toHaveBeenCalled();
+    expect(pushState).not.toHaveBeenCalled();
+    expect(replaceState).not.toHaveBeenCalled();
+    pushState.mockRestore();
+    replaceState.mockRestore();
   });
 
-  it("reads ?term= before a legacy ?search= value", () => {
-    expect(readSearchTerm(new URLSearchParams("search=old&term=new"))).toBe("new");
-    expect(readSearchTerm(new URLSearchParams("q=x"))).toBe("");
+  it("renders the box with no form ancestor and no name", async () => {
+    const box = await renderGrid();
+    expect(box.closest("form")).toBeNull();
+    expect(box.hasAttribute("name")).toBe(false);
+    expect(document.querySelector("form")).toBeNull();
+  });
+
+  it("the term badge clears the box and shows every row again", async () => {
+    const box = await renderGrid();
+    fireEvent.change(box, { target: { value: "Cursor" } });
+    expect(screen.queryByText("Claude Code")).toBeNull();
+    fireEvent.click(screen.getByText(/Cursor.*✕/));
+    expect((box as HTMLInputElement).value).toBe("");
+    expect(screen.getByText("Claude Code")).toBeTruthy();
+  });
+
+  // #233: ?term= and ?search= were the #175 entry points; middleware now strips them, and the grid ignores them.
+  it.each(["term=Cursor", "search=Cursor"])("ignores ?%s in the URL", async (query) => {
+    nav.search = query;
+    await renderGrid();
+    await new Promise((resolve) => setTimeout(resolve, SITE_SEARCH_DEBOUNCE_MS + 50));
+    expect(screen.getByText("Claude Code")).toBeTruthy();
+    expect(siteSearches()).toHaveLength(0);
   });
 
   it("sends nothing and shows every row without a search term", async () => {
