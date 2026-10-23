@@ -451,7 +451,8 @@
       "category": "カテゴリでフィルター",
       "all": "すべて"
     },
-    "noResults": "結果が見つかりません",
+    "noResults": "「{term}」に一致するツールはありません。",
+    "clearSearch": "検索をクリア",
     "showingResults": "{total}個中{count}個のツールを表示",
     "tierLegend": {
       "title": "ランキング階層",

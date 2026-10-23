@@ -205,6 +205,8 @@
     },
     "sortBy": "Trier par",
     "activeFilters": "Filtres actifs",
+    "noResults": "Aucun outil ne correspond à « {term} ».",
+    "clearSearch": "Effacer la recherche",
     "sort": {
       "rank": "Rang",
       "trending": "Tendance",
