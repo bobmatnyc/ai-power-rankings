@@ -322,7 +322,7 @@ export function RankingsManager() {
                           <div className="text-sm font-medium">
                             {preview.biggest_movers.up[0].tool_name}
                           </div>
-                          <div className="text-lg font-bold text-green-600">
+                          <div className="text-lg font-bold text-ds-success-fixed-mid">
                             +{preview.biggest_movers.up[0].position_change}
                           </div>
                         </>
@@ -342,7 +342,7 @@ export function RankingsManager() {
                           <div className="text-sm font-medium">
                             {preview.biggest_movers.down[0].tool_name}
                           </div>
-                          <div className="text-lg font-bold text-red-600">
+                          <div className="text-lg font-bold text-ds-danger-fixed">
                             {preview.biggest_movers.down[0].position_change}
                           </div>
                         </>
@@ -388,10 +388,10 @@ export function RankingsManager() {
                                       {factor.replace(/([A-Z])/g, " $1").trim()}
                                     </span>
                                     <div className="flex items-center gap-2">
-                                      <span className="text-sm text-green-600">
+                                      <span className="text-sm text-ds-success-fixed-mid">
                                         +{trend.improving}
                                       </span>
-                                      <span className="text-sm text-red-600">
+                                      <span className="text-sm text-ds-danger-fixed">
                                         -{trend.declining}
                                       </span>
                                       <Badge
@@ -438,9 +438,9 @@ export function RankingsManager() {
                                 <div className="font-medium">{tool.tool_name}</div>
                                 <div className="flex items-center gap-2">
                                   {tool.position_change > 0 ? (
-                                    <TrendingUp className="h-4 w-4 text-green-600" />
+                                    <TrendingUp className="h-4 w-4 text-ds-success-fixed-mid" />
                                   ) : (
-                                    <TrendingDown className="h-4 w-4 text-red-600" />
+                                    <TrendingDown className="h-4 w-4 text-ds-danger-fixed" />
                                   )}
                                   <Badge
                                     variant={tool.position_change > 0 ? "default" : "destructive"}
@@ -475,7 +475,7 @@ export function RankingsManager() {
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
                         <div className="flex items-center gap-3 flex-1">
-                          <TrendingUp className="h-5 w-5 text-green-600" />
+                          <TrendingUp className="h-5 w-5 text-ds-success-fixed-mid" />
                           <div className="flex-1">
                             <div className="font-medium">{tool.tool_name}</div>
                             <div className="text-sm text-muted-foreground">
@@ -509,7 +509,7 @@ export function RankingsManager() {
                         className="flex items-center justify-between p-3 border rounded-lg"
                       >
                         <div className="flex items-center gap-3 flex-1">
-                          <TrendingDown className="h-5 w-5 text-red-600" />
+                          <TrendingDown className="h-5 w-5 text-ds-danger-fixed" />
                           <div className="flex-1">
                             <div className="font-medium">{tool.tool_name}</div>
                             <div className="text-sm text-muted-foreground">
@@ -540,7 +540,7 @@ export function RankingsManager() {
                     .map((tool, idx) => (
                       <div
                         key={`new-${tool.tool_id}-${idx}`}
-                        className="flex items-center justify-between p-3 border rounded-lg bg-green-50"
+                        className="flex items-center justify-between p-3 border rounded-lg bg-ds-success-fixed-subtle"
                       >
                         <div>
                           <div className="font-medium">{tool.tool_name}</div>
@@ -563,7 +563,7 @@ export function RankingsManager() {
                     .map((tool, idx) => (
                       <div
                         key={`dropped-${tool.tool_id}-${idx}`}
-                        className="flex items-center justify-between p-3 border rounded-lg bg-red-50"
+                        className="flex items-center justify-between p-3 border rounded-lg bg-ds-danger-fixed-subtle"
                       >
                         <div>
                           <div className="font-medium">{tool.tool_name}</div>

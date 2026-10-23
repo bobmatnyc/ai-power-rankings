@@ -315,7 +315,7 @@ export function ImageUploader({
             </div>
 
             {error && (
-              <div className="text-sm text-red-600 dark:text-red-400 text-center">{error}</div>
+              <div className="text-sm text-ds-text-callout-danger text-center">{error}</div>
             )}
           </>
         ) : (

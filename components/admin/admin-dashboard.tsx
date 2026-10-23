@@ -39,7 +39,7 @@ export function AdminDashboard() {
       description: "Advanced tools interface with search, filtering, and rankings",
       icon: FileText,
       href: "/dashboard/tools",
-      color: "bg-green-500",
+      color: "bg-ds-success-solid",
       disabled: false,
     },
     {
@@ -47,7 +47,7 @@ export function AdminDashboard() {
       description: "Upload and manage news articles",
       icon: FileUp,
       href: "/dashboard/news-ingestion",
-      color: "bg-orange-500",
+      color: "bg-ds-accent-cat-orange",
       disabled: false,
     },
     {
@@ -55,7 +55,7 @@ export function AdminDashboard() {
       description: "Preview and generate AI tool rankings",
       icon: Trophy,
       href: "/dashboard/rankings",
-      color: "bg-yellow-500",
+      color: "bg-ds-accent-cat-yellow",
       disabled: false,
     },
     {
@@ -63,7 +63,7 @@ export function AdminDashboard() {
       description: "Manage static JSON cache files for offline functionality",
       icon: Database,
       href: "/dashboard/cache",
-      color: "bg-purple-500",
+      color: "bg-ds-accent-cat-purple",
       disabled: false,
     },
     {
@@ -106,13 +106,13 @@ export function AdminDashboard() {
             >
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
-                  <div className={`p-2 rounded-lg ${section.color} text-white`}>
+                  <div className={`p-2 rounded-lg ${section.color} text-ds-text-on-fill`}>
                     <Icon className="h-6 w-6" />
                   </div>
                   <div>
                     <CardTitle className="text-xl">{section.title}</CardTitle>
                     {section.disabled && (
-                      <span className="text-xs text-muted-foreground bg-gray-100 px-2 py-1 rounded">
+                      <span className="text-xs text-muted-foreground bg-ds-surface-paper-sunken px-2 py-1 rounded">
                         Coming Soon
                       </span>
                     )}
@@ -151,14 +151,14 @@ export function AdminDashboard() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
-              <Globe className="h-5 w-5 text-green-600" />
+              <Globe className="h-5 w-5 text-ds-success-fixed-mid" />
               <div className="text-2xl font-bold">
                 {isLoadingRanking ? (
                   <span className="text-sm text-muted-foreground">Loading...</span>
                 ) : currentLiveRanking ? (
                   currentLiveRanking
                 ) : (
-                  <span className="text-sm text-red-600">Not Set</span>
+                  <span className="text-sm text-ds-danger-fixed">Not Set</span>
                 )}
               </div>
             </div>
@@ -189,7 +189,7 @@ export function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">Online</div>
+            <div className="text-2xl font-bold text-ds-success-fixed-mid">Online</div>
             <p className="text-xs text-muted-foreground">All systems operational</p>
           </CardContent>
         </Card>
