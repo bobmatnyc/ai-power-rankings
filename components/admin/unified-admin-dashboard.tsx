@@ -143,13 +143,13 @@ export default function UnifiedAdminDashboard() {
           style={{
             borderLeftColor:
               dbStatus?.type === "json"
-                ? "#3b82f6"
+                ? "hsl(var(--ds-accent-cat-blue))"
                 : // Blue for JSON
                   dbStatus?.displayEnvironment === "development"
                   ? "#10b981"
                   : // Green for Dev
                     dbStatus?.displayEnvironment === "production"
-                    ? "#ef4444"
+                    ? "hsl(var(--ds-danger-solid))"
                     : // Red for Prod
                       "#6b7280", // Gray for unknown
           }}
@@ -157,8 +157,8 @@ export default function UnifiedAdminDashboard() {
           <CardContent className="py-3 px-4">
             {isLoadingDbStatus ? (
               <div className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin text-gray-600" />
-                <span className="text-sm text-gray-600">Loading database status...</span>
+                <Loader2 className="h-4 w-4 animate-spin text-ds-text-paper-muted" />
+                <span className="text-sm text-ds-text-paper-muted">Loading database status...</span>
               </div>
             ) : dbStatus ? (
               <>
@@ -167,22 +167,22 @@ export default function UnifiedAdminDashboard() {
                     <Database
                       className={`h-5 w-5 ${
                         dbStatus.type === "json"
-                          ? "text-blue-600"
+                          ? "text-ds-accent-fixed"
                           : dbStatus.displayEnvironment === "development"
-                            ? "text-green-600"
+                            ? "text-ds-success-fixed-mid"
                             : dbStatus.displayEnvironment === "production"
-                              ? "text-red-600"
-                              : "text-gray-600"
+                              ? "text-ds-danger-fixed"
+                              : "text-ds-text-paper-muted"
                       }`}
                     />
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-gray-700">
                         <span className="font-medium">Database:</span>{" "}
                         {dbStatus.type === "json" ? (
-                          <span className="text-blue-600">JSON Files</span>
+                          <span className="text-ds-accent-fixed">JSON Files</span>
                         ) : (
                           <>
-                            <span className="text-gray-500">
+                            <span className="text-ds-text-paper-subtle">
                               ({dbStatus.displayEnvironment === "development" ? "Development" : "Production"})
                             </span>{" "}
                             <span className="font-mono">
@@ -225,7 +225,7 @@ export default function UnifiedAdminDashboard() {
                 {/* Status Messages */}
                 {dbStatus.type === "json" && (
                   <div className="mt-2 flex items-center gap-1.5">
-                    <div className="h-1 w-1 rounded-full bg-blue-500" />
+                    <div className="h-1 w-1 rounded-full bg-ds-accent-cat-blue" />
                     <span className="text-xs text-blue-700">
                       Using local JSON file storage. Database features disabled.
                     </span>
@@ -233,15 +233,15 @@ export default function UnifiedAdminDashboard() {
                 )}
                 {dbStatus.type !== "json" && !dbStatus.connected && dbStatus.configured && (
                   <div className="mt-2 flex items-center gap-1.5">
-                    <div className="h-1 w-1 rounded-full bg-red-500" />
-                    <span className="text-xs text-red-600">
+                    <div className="h-1 w-1 rounded-full bg-ds-danger-solid" />
+                    <span className="text-xs text-ds-danger-fixed">
                       Database is configured but not connected. Check your connection settings.
                     </span>
                   </div>
                 )}
                 {dbStatus.type !== "json" && !dbStatus.configured && (
                   <div className="mt-2 flex items-center gap-1.5">
-                    <div className="h-1 w-1 rounded-full bg-yellow-500" />
+                    <div className="h-1 w-1 rounded-full bg-ds-accent-cat-yellow" />
                     <span className="text-xs text-yellow-700">
                       Database not configured. Set DATABASE_URL to enable PostgreSQL.
                     </span>
@@ -251,8 +251,8 @@ export default function UnifiedAdminDashboard() {
             ) : (
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Database className="h-4 w-4 text-gray-400" />
-                  <span className="text-sm text-gray-600">Database status pending...</span>
+                  <Database className="h-4 w-4 text-ds-text-paper-faint" />
+                  <span className="text-sm text-ds-text-paper-muted">Database status pending...</span>
                 </div>
                 <Button variant="ghost" size="sm" onClick={loadDatabaseStatus} className="h-7 px-2">
                   <History className="h-3 w-3" />
@@ -266,7 +266,7 @@ export default function UnifiedAdminDashboard() {
       <div className="mb-8 flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold mb-2">AI-Powered Admin Dashboard</h1>
-          <p className="text-gray-600">Streamlined news ingestion and ranking management</p>
+          <p className="text-ds-text-paper-muted">Streamlined news ingestion and ranking management</p>
         </div>
         <div className="flex gap-2">
           {!showDbStatus && (
@@ -346,7 +346,7 @@ export default function UnifiedAdminDashboard() {
       )}
 
       {success && (
-        <Alert className="mb-6 border-green-200 bg-green-50">
+        <Alert className="mb-6 border-ds-success-fixed-border bg-ds-success-fixed-subtle">
           <AlertDescription className="text-green-800">{success}</AlertDescription>
         </Alert>
       )}

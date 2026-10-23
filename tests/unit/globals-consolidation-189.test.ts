@@ -16,9 +16,10 @@ import { describe, expect, it } from "vitest";
  * dynamic `import`, `require`, CSS `@import`, `/globals.css` URL) only by
  * `app/layout.tsx`; (2) counts hard-coded colours in `components/` and `app/`
  * exactly as docs/refresh/design-audit/one-off-styles.md "Method" describes,
- * less the #190 D2-D4 allowlist, and fails above the baseline or on an empty
- * scan; (3) caps the colour literals in each allowlisted file set that carries
- * a `literalCap`, so an exemption cannot grow unseen.
+ * less the #190 D2-D4 and Df8 allowlist, and fails above the baseline or on
+ * an empty scan; (3) caps the colour literals (`literalCap`) or every counted
+ * use (`colourCap`) in each allowlisted file set that carries a cap, so an
+ * exemption cannot grow unseen.
  * Test: `npx vitest run tests/unit/globals-consolidation-189.test.ts`. No network.
  */
 
@@ -99,23 +100,31 @@ const COLOUR_PATTERNS: Record<string, RegExp> = {
  * uses on the news, what's-new, SEO and best-* pages and their components.
  * #190 PR E1: 390, the 69 uses in the public modals, contact form, error and
  * not-found pages, chart skeleton, crown icon and image placeholder that have
- * an exact token; the 59 without one stay (migration-190e1.md).
+ * an exact token; the 59 without one stay (migration-190e1.md). #190 PR E2a:
+ * 264, the 126 uses in the admin components and SEO dashboard that have an
+ * exact token; the 55 without one stay (migration-190e2a.md). #190 ruling
+ * Df8: 205, E1's 59 untokenised uses exempted per file below; then 150,
+ * E2a's 55 untokenised uses exempted the same way.
  * Lower it as #190 migrates; never raise it.
  */
-// #190: E1 lowered this from 459.
-const HARDCODED_COLOUR_BASELINE = 390;
+// #190 Df8: lowered from 205 by the 55 E2a uses the allowlist now exempts.
+const HARDCODED_COLOUR_BASELINE = 150;
 
 /**
- * #190 rulings D2-D4: the only places a literal colour is the right tool. An
- * entry exempts the whole file unless `scope` narrows it to `--shadow*`
- * custom-property declarations, so every other colour in that file counts.
- * `literalCap` is the measured count of colour literals in the files an
- * entry matches; lower it when they fall, never raise it.
+ * #190 rulings D2-D4 and Df8: the only places a literal colour is the right
+ * tool, or where no token matches and the owner exempted it. An entry exempts
+ * the whole file unless `scope` narrows it to `--shadow*` custom-property
+ * declarations, so every other colour in that file counts. `literalCap` is
+ * the measured count of colour literals in the files an entry matches;
+ * `colourCap` is the measured count of every use the ratchet counts there
+ * (palette classes, black/white, hex, rgb). Lower a cap when it falls, never
+ * raise it.
  */
 const RATCHET_ALLOWLIST: ReadonlyArray<{
   path: RegExp;
   scope?: "shadow-custom-properties";
   literalCap?: number;
+  colourCap?: number;
   reason: string;
 }> = [
   {
@@ -133,6 +142,106 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{
     path: /^app\/globals\.css$/,
     scope: "shadow-custom-properties",
     reason: "D4: the `--shadow*` definitions' rgb() values; any other colour in the file counts.",
+  },
+  // #190 Df8 (owner, 2026-10-23): the 59 E1 colours with no exact token
+  // (migration-190e1.md "Not migrated"), exempted per file and capped at the
+  // measured count so the exemption cannot grow.
+  {
+    path: /^components\/ui\/whats-new-modal\.tsx$/,
+    colourCap: 12,
+    reason: "Df8: kind badges are bg-<hue>-100 text-<hue>-800 in both modes; the tag tokens switch to 900 at 30 % and 300 in dark.",
+  },
+  {
+    path: /^components\/ui\/changelog-modal\.tsx$/,
+    colourCap: 5,
+    reason:
+      "Df8: a light-only 100/800 badge, and text-blue-700 / text-red-700 in both modes; --ds-accent-hover and --ds-danger hold them in light only.",
+  },
+  {
+    path: /^components\/ui\/signup-for-updates-modal\.tsx$/,
+    colourCap: 2,
+    reason: "Df8: text-blue-800 / dark:text-blue-400; --ds-text-tag-blue is blue-300 in dark.",
+  },
+  {
+    path: /^components\/ui\/tech-stack-modal\.tsx$/,
+    colourCap: 2,
+    reason: "Df8: a bg-green-100 text-green-800 badge in both modes; the tag tokens switch in dark.",
+  },
+  {
+    path: /^components\/contact\/contact-form\.tsx$/,
+    colourCap: 18,
+    reason:
+      "Df8: no exact token for the sign-up card gradient stops, its blue-200/900 border and mail icon (HSL not exact), the alerts' 20 % dark tints and 800/200 text, or the gray-400/800 dots.",
+  },
+  {
+    path: /^app\/error\.tsx$/,
+    colourCap: 3,
+    reason: "Df8: the card's box-shadow rgba values (no matching --shadow token) and the #111827 heading (only a surface token holds it).",
+  },
+  {
+    path: /^app\/global-error\.tsx$/,
+    colourCap: 9,
+    reason: "Df8: renders its own <html> without the root layout, so app/globals.css and the --ds-* tokens may not load.",
+  },
+  {
+    path: /^app\/not-found\.tsx$/,
+    colourCap: 4,
+    reason: "Df8: the card's box-shadow rgba values, and #111827 / #374151 headings that only surface and border tokens hold.",
+  },
+  {
+    path: /^app\/\[lang\]\/not-found\.tsx$/,
+    colourCap: 4,
+    reason: "Df8: the card's box-shadow rgba values, and #111827 / #374151 headings that only surface and border tokens hold.",
+  },
+  // #190 Df8: the 55 E2a colours with no exact token (migration-190e2a.md
+  // "Not migrated"), exempted per file and capped at the measured count.
+  {
+    path: /^components\/admin\/generation-stats\.tsx$/,
+    colourCap: 24,
+    reason:
+      "Df8: the stat tiles' 50-step fills and 900-step values, the red-800/700 error and gray-700 to gray-900 text have no token in either mode.",
+  },
+  {
+    path: /^components\/admin\/rankings-viewer\.tsx$/,
+    colourCap: 14,
+    reason:
+      "Df8: 100/800 badges in both modes (the tag tokens switch in dark) and the top-3 rows' yellow-50/200/300, which no token holds.",
+  },
+  {
+    path: /^components\/admin\/unified-admin-dashboard\.tsx$/,
+    colourCap: 6,
+    reason:
+      "Df8: gray-700, blue-700, yellow-700 and green-800 text in both modes, and the db-status edge's inline #10b981 / #6b7280, which only a text token holds.",
+  },
+  {
+    path: /^components\/admin\/news-ingestion-tool\.tsx$/,
+    colourCap: 4,
+    reason: "Df8: green-800 / red-800 alert text in both modes and the yellow-50/200 warning, which no token holds.",
+  },
+  {
+    path: /^components\/admin\/admin-dashboard\.tsx$/,
+    colourCap: 2,
+    reason: "Df8: the disabled tiles' bg-gray-500; only a text token and a gradient stop hold #6b7280.",
+  },
+  {
+    path: /^components\/admin\/character-counter\.tsx$/,
+    colourCap: 2,
+    reason: "Df8: text-orange-600 / dark:text-orange-400; --ds-accent-cat-orange-strong is orange-600 in both modes.",
+  },
+  {
+    path: /^components\/admin\/article-management\.tsx$/,
+    colourCap: 1,
+    reason: "Df8: hover:text-red-700 in both modes; --ds-danger is red-700 in light only.",
+  },
+  {
+    path: /^components\/admin\/tools-manager\.tsx$/,
+    colourCap: 1,
+    reason: "Df8: text-red-800 alert text in both modes, which no token holds.",
+  },
+  {
+    path: /^components\/seo\/seo-dashboard\.tsx$/,
+    colourCap: 1,
+    reason: "Df8: text-red-700 in both modes; --ds-danger is red-700 in light only.",
   },
 ];
 
@@ -242,6 +351,20 @@ describe("hard-coded colour ratchet (#189)", () => {
     const total = files.reduce((sum, file) => sum + countColourLiterals(readFileSync(join(root, file), "utf8")), 0);
     expect(total, `colour literals in ${entry.path.source} (lower literalCap when this falls)`).toBeLessThanOrEqual(
       entry.literalCap ?? 0,
+    );
+  });
+
+  // #190 Df8: a whole-file exemption is capped on every counted use, so a new colour in the file fails.
+  it.each(
+    RATCHET_ALLOWLIST.filter((entry) => entry.colourCap !== undefined).map(
+      (entry) => [entry.path.source, entry] as const,
+    ),
+  )("allowlist entry %s stays at or below its colour cap", (_, entry) => {
+    const hits = scanRepoColours().filter(({ file }) => entry.path.test(file));
+    expect(hits.length, entry.reason).toBeGreaterThan(0);
+    const total = hits.reduce((sum, h) => sum + h.exempted, 0);
+    expect(total, `colours in ${entry.path.source} (lower colourCap when this falls)`).toBeLessThanOrEqual(
+      entry.colourCap ?? 0,
     );
   });
 

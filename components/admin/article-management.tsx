@@ -1457,7 +1457,7 @@ export function ArticleManagement() {
 
               {workflowStep === "saved" && (
                 <div className="text-center py-12">
-                  <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+                  <CheckCircle className="h-16 w-16 text-ds-success-solid mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">Article Saved Successfully!</h3>
                   <p className="text-muted-foreground">Rankings have been updated.</p>
                 </div>
@@ -1590,7 +1590,7 @@ export function ArticleManagement() {
                                 variant="outline"
                                 onClick={() => handleDeleteClick(article.id)}
                                 disabled={loading}
-                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                className="text-ds-danger-fixed hover:text-red-700 hover:bg-ds-danger-fixed-subtle"
                                 title="Delete article and rollback ranking changes"
                               >
                                 <Trash2 className="h-4 w-4 mr-1" />
@@ -1618,7 +1618,7 @@ export function ArticleManagement() {
 
       {/* Recalculation Preview Modal */}
       {showRecalcPreviewModal && recalcPreviewData && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-ds-surface-overlay/50 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
             <CardHeader>
               <CardTitle>Preview Ranking Changes</CardTitle>
@@ -1748,7 +1748,7 @@ export function ArticleManagement() {
 
       {/* Results Modal (for backwards compatibility) */}
       {showResultsModal && recalcResults && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-ds-surface-overlay/50 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
             <CardHeader>
               <CardTitle>Recalculation Results</CardTitle>
@@ -1852,7 +1852,7 @@ export function ArticleManagement() {
 
       {/* Edit Modal */}
       {editingArticle && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-ds-surface-overlay/50 flex items-center justify-center z-50 p-4">
           <Card className="w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
             <CardHeader>
               <CardTitle>Edit Article</CardTitle>

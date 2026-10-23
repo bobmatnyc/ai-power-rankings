@@ -100,7 +100,14 @@ place.
 ## Not migrated
 
 No existing token holds these colours with the same light and dark values.
-They stay as they are; each needs a new token or an owner decision.
+They stay as they are.
+
+**Exempt under ruling Df8 (owner, 2026-10-23).** These 59 uses are exempt
+from the colour ratchet. Each of the 9 files has its own entry in
+`RATCHET_ALLOWLIST` (`tests/unit/globals-consolidation-189.test.ts`) with the
+reason below and a `colourCap` at its current count, so adding a colour to
+one of these files still fails the test. The baseline dropped from 264 to
+205. No token was added.
 
 | Uses | Where | Old | Value, light / dark | Nearest token and why it does not match |
 |---|---|---|---|---|

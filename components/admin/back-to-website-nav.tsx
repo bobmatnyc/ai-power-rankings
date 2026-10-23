@@ -12,8 +12,8 @@ const BackToWebsiteNav: React.FC = () => {
     <div
       style={{
         padding: "1rem",
-        borderBottom: "1px solid #e5e7eb",
-        background: "#f0fdf4",
+        borderBottom: "1px solid hsl(var(--ds-border-paper))",
+        background: "hsl(var(--ds-success-fixed-subtle))",
       }}
     >
       <a
@@ -25,7 +25,7 @@ const BackToWebsiteNav: React.FC = () => {
           alignItems: "center",
           gap: "0.5rem",
           padding: "0.75rem 1rem",
-          background: "#22c55e",
+          background: "hsl(var(--ds-success-solid))",
           color: "white",
           textDecoration: "none",
           borderRadius: "6px",
@@ -34,11 +34,11 @@ const BackToWebsiteNav: React.FC = () => {
           transition: "all 0.2s ease",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = "#16a34a";
+          e.currentTarget.style.background = "hsl(var(--ds-success-fixed-mid))";
           e.currentTarget.style.transform = "translateY(-1px)";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = "#22c55e";
+          e.currentTarget.style.background = "hsl(var(--ds-success-solid))";
           e.currentTarget.style.transform = "translateY(0)";
         }}
       >
