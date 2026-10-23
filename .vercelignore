@@ -17,6 +17,8 @@ trace.zip
 # Documentation and reports
 # Root-level markdown files (docs/reports)
 /*.md
+# #231: CHANGELOG.md is the input of the build-time changelog module
+!/CHANGELOG.md
 /docs/*.md
 /scripts/*.md
 QA_*.md
@@ -28,6 +30,8 @@ BEFORE_AFTER_*.md
 # Note: Keep generate-static-categories.ts for build process
 scripts/*
 !scripts/generate-static-categories.ts
+# #231: runs first in `npm run build`
+!scripts/generate-changelog-data.ts
 
 # TypeScript build info
 *.tsbuildinfo

@@ -9,8 +9,7 @@ import { articles } from "@/lib/db/article-schema";
 import { rankings, tools } from "@/lib/db/schema";
 import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
 import { loggers } from "@/lib/logger";
-import * as fs from "fs/promises";
-import * as path from "path";
+import { CHANGELOG_ENTRIES } from "@/lib/data/changelog-entries";
 
 export interface MonthlyDataSources {
   newsArticles: Array<{
@@ -87,93 +86,33 @@ export class WhatsNewAggregationService {
   }
 
   /**
-   * Parse CHANGELOG.md to extract recent site changes
+   * Recent site changes from the build-time changelog module.
+   *
+   * #231: this read CHANGELOG.md from disk, which the deploy did not ship, so
+   * every summary saw no site changes. Entries now come from
+   * `data/changelog-entries.generated.json`, grouped by version; an
+   * `[Unreleased]` entry is kept when its own date is on or after `startDate`.
    */
-  private async parseSiteChanges(startDate: Date): Promise<MonthlyDataSources["siteChanges"]> {
-    try {
-      const changelogPath = path.join(process.cwd(), "CHANGELOG.md");
-      const content = await fs.readFile(changelogPath, "utf-8");
-
-      // Parse changelog entries
-      const versionRegex = /## \[([^\]]+)\] - (\d{4}-\d{2}-\d{2})/g;
-      const changes: MonthlyDataSources["siteChanges"] = [];
-
-      let match;
-      let currentVersion: string | null = null;
-      let currentDate: string | null = null;
-      let currentChanges: Array<{ type: string; description: string }> = [];
-
-      const lines = content.split("\n");
-      let i = 0;
-
-      while (i < lines.length) {
-        const line = lines[i];
-
-        // Check for version header
-        const versionMatch = line.match(/## \[([^\]]+)\] - (\d{4}-\d{2}-\d{2})/);
-        if (versionMatch) {
-          // Save previous version if exists and within date range
-          if (currentVersion && currentDate) {
-            const changeDate = new Date(currentDate);
-            if (changeDate >= startDate) {
-              changes.push({
-                version: currentVersion,
-                date: currentDate,
-                changes: [...currentChanges],
-              });
-            }
-          }
-
-          currentVersion = versionMatch[1];
-          currentDate = versionMatch[2];
-          currentChanges = [];
-          i++;
-          continue;
-        }
-
-        // Check for change type headers (Added, Changed, Fixed, etc.)
-        const typeMatch = line.match(/### (Added|Changed|Fixed|Removed|Security|Performance|Deprecated)/);
-        if (typeMatch && currentVersion) {
-          const type = typeMatch[1];
-          i++;
-
-          // Collect all items under this type
-          while (i < lines.length && lines[i].startsWith("- ")) {
-            const description = lines[i].substring(2).trim();
-            if (description) {
-              currentChanges.push({
-                type: type.toLowerCase(),
-                description,
-              });
-            }
-            i++;
-          }
-          continue;
-        }
-
-        i++;
-      }
-
-      // Save last version if within range
-      if (currentVersion && currentDate) {
-        const changeDate = new Date(currentDate);
-        if (changeDate >= startDate) {
-          changes.push({
-            version: currentVersion,
-            date: currentDate,
-            changes: [...currentChanges],
-          });
-        }
-      }
-
-      loggers.api.debug(`Parsed ${changes.length} changelog entries from CHANGELOG.md`);
-      return changes;
-    } catch (error) {
-      loggers.api.error("Failed to parse CHANGELOG.md", {
-        error: error instanceof Error ? error.message : "Unknown error",
-      });
+  private parseSiteChanges(startDate: Date): MonthlyDataSources["siteChanges"] {
+    if (CHANGELOG_ENTRIES.length === 0) {
+      // #231: an empty module is a build defect; log it rather than pass silently.
+      loggers.api.error("Generated changelog module has no entries; site changes unavailable");
       return [];
     }
+
+    const byVersion = new Map<string, MonthlyDataSources["siteChanges"][number]>();
+    for (const entry of CHANGELOG_ENTRIES) {
+      if (new Date(entry.date) < startDate) continue;
+      const day = entry.date.slice(0, 10);
+      const group = byVersion.get(entry.version) ?? { version: entry.version, date: day, changes: [] };
+      if (day > group.date) group.date = day;
+      group.changes.push({ type: entry.section.toLowerCase(), description: entry.description });
+      byVersion.set(entry.version, group);
+    }
+
+    const changes = [...byVersion.values()];
+    loggers.api.debug(`Read ${changes.length} changelog versions from the generated module`);
+    return changes;
   }
 
   /**
@@ -257,8 +196,8 @@ export class WhatsNewAggregationService {
           .orderBy(desc(tools.createdAt))
           .limit(20),
 
-        // 4. Site Changes from CHANGELOG.md
-        this.parseSiteChanges(startDate),
+        // 4. Site Changes from the generated changelog module (#231)
+        Promise.resolve(this.parseSiteChanges(startDate)),
       ]);
 
       const monthlyData: MonthlyDataSources = {
