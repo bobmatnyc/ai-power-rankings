@@ -73,10 +73,16 @@ function round3(n: number): number {
 /**
  * Build the v7.9 → v7.10 table for `tools` at clock `date`.
  *
+ * Precondition: `tools` is non-empty. An empty table would clear a release
+ * without comparing anything, so zero tools throws.
  * Postcondition: one row per input tool; rows with `rankDelta !== 0` come
  * first, ordered by `|rankDelta|` descending, then by `newRank`.
  */
 export function buildComparisonTable(tools: RankingSourceTool[], date: Date): ComparisonRow[] {
+  // #101: fail closed; an empty source must not print a passing empty table.
+  if (tools.length === 0) {
+    throw new Error("the tool source returned 0 tools; refusing to print an empty comparison table");
+  }
   const baseline = new RankingEngineV76(ALGORITHM_V76_WEIGHTS, {}, { foldInfoGroups: false });
   const candidate = new RankingEngineV76(ALGORITHM_V76_WEIGHTS);
   const before = rankBoard(tools, baseline, date);
@@ -111,6 +117,25 @@ function signed(n: number, digits = 0): string {
   return n > 0 ? `+${text}` : text;
 }
 
+/**
+ * Parse `--date=YYYY-MM-DD` as a UTC midnight scoring clock.
+ *
+ * #101: `new Date("2026-02-30")` rolls over to 2026-03-02, so the parsed date
+ * must print back as the input. Throws on any other shape or an impossible day.
+ */
+export function parseScoringDate(raw: string): Date {
+  const date = new Date(`${raw}T00:00:00Z`);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(raw) || Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== raw) {
+    throw new Error(`invalid --date: ${raw} (expected a real calendar day, YYYY-MM-DD)`);
+  }
+  return date;
+}
+
+/** #101: the stdout line above the table: which clock scored how many tools. */
+export function formatRunLine(date: Date, toolCount: number): string {
+  return `Scoring date ${date.toISOString().slice(0, 10)} (UTC), ${toolCount} tools.`;
+}
+
 /** Render rows as a Markdown table plus a one-line summary. */
 export function formatComparisonTable(rows: ComparisonRow[]): string {
   const header = [
@@ -143,14 +168,21 @@ export function redactSecrets(text: string, literals: readonly string[] = []): s
 
 /**
  * The parts of a connection string worth redacting verbatim: the whole string,
- * host, user and password. An unparseable string yields only itself.
+ * host, and the user and password in both encoded and decoded form. An unparseable string yields only itself.
  */
 export function connectionStringLiterals(connectionString: string | undefined): string[] {
   if (!connectionString) return [];
   try {
     const url = new URL(connectionString);
-    const parts = [url.hostname, decodeURIComponent(url.username), decodeURIComponent(url.password)];
-    return [connectionString, ...parts.filter(Boolean)];
+    // #101: the URL-encoded user and password are literals too (`p%40ss` and `p@ss`).
+    const parts = [
+      url.hostname,
+      url.username,
+      url.password,
+      decodeURIComponent(url.username),
+      decodeURIComponent(url.password),
+    ];
+    return [...new Set([connectionString, ...parts.filter(Boolean)])];
   } catch {
     return [connectionString];
   }

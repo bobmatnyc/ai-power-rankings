@@ -201,6 +201,56 @@ describe("RankingEngineV76 info-path fold (#101)", () => {
   });
 });
 
+// #101: folded nested leaves reach read sites that assumed `string[]` / `string`.
+describe("malformed technical/business leaves (#101)", () => {
+  const MALFORMED: unknown[] = [null, 0, 7, true, {}, { a: 1 }, [], [1, null], "", "Proprietary, Fork"];
+  const LEAVES = [
+    "ide_integration",
+    "language_support",
+    "llm_providers",
+    "context_window",
+    "max_context_window",
+    "multi_file_support",
+    "subprocess_support",
+    "performance",
+    "swe_bench_score",
+  ];
+  const BUSINESS_LEAVES = ["pricing_model", "base_price", "free_tier", "enterprise_pricing"];
+
+  it("never throws or yields NaN for a malformed leaf at either path", () => {
+    for (const [group, keys] of [["technical", LEAVES], ["business", BUSINESS_LEAVES]] as const) {
+      for (const key of keys) {
+        for (const value of MALFORMED) {
+          for (const placement of ["nested", "top"] as const) {
+            const tool = nestedTool(placement, { [group]: { [key]: value } });
+            for (const e of [engine, v79Engine]) {
+              const label = `${group}.${key}=${JSON.stringify(value)} (${placement})`;
+              const score = (() => {
+                try {
+                  return e.calculateToolScore(tool, FIXED_DATE).overallScore;
+                } catch (error) {
+                  throw new Error(`${label} threw: ${(error as Error).message}`);
+                }
+              })();
+              expect(Number.isFinite(score), label).toBe(true);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  it("counts a comma-separated string by its items, not its characters", () => {
+    const technical = (language_support: unknown, llm_providers: unknown) =>
+      engine.calculateToolScore(nestedTool("nested", { technical: { language_support, llm_providers } }), FIXED_DATE)
+        .factorScores;
+    const asList = technical(["ts", "py", "go"], ["anthropic", "openai"]);
+    expect(technical("ts, py,, go ", "anthropic,openai")).toEqual(asList);
+    // A non-list, non-string leaf counts 0, like an absent one.
+    expect(technical({ length: 50 }, 12)).toEqual(technical(undefined, undefined));
+  });
+});
+
 describe("v7.10 version stamp (#101)", () => {
   it("AC6: engine, score and persisted version all read v7.10", () => {
     expect(ALGORITHM_VERSION).toBe("v7.10");

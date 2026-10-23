@@ -60,6 +60,13 @@ describe("buildComparisonTable", () => {
   });
 });
 
+// #101: an empty table would clear a release without comparing anything.
+describe("buildComparisonTable on an empty source", () => {
+  it("throws instead of returning an empty table", () => {
+    expect(() => buildComparisonTable([], DATE)).toThrow(/0 tools/);
+  });
+});
+
 describe("formatComparisonTable", () => {
   it("prints a header, one row per tool and a summary", () => {
     const text = formatComparisonTable(buildComparisonTable(TOOLS, DATE));
@@ -87,6 +94,13 @@ describe("read-only guarantees", () => {
     expect(out).not.toMatch(/db-host|reader|s3cr3tpass/);
     expect(connectionStringLiterals(undefined)).toEqual([]);
     expect(connectionStringLiterals("not a url")).toEqual(["not a url"]);
+  });
+
+  // #101: a driver error can echo the password still URL-encoded.
+  it("redacts the URL-encoded password on its own", () => {
+    const url = "postgresql://reader:p%40ss%2Fw0rd@db.example.test/app";
+    const out = redactSecrets("auth failed for p%40ss%2Fw0rd and p@ss/w0rd", connectionStringLiterals(url));
+    expect(out).not.toMatch(/p%40ss%2Fw0rd|p@ss\/w0rd/);
   });
 
   it("the script calls no write path", () => {

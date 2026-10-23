@@ -74,3 +74,39 @@ export function canonicalizeInfoGroups(
   }
   return result;
 }
+
+/**
+ * Item count of a list-style technical leaf (`language_support`, `llm_providers`).
+ *
+ * #101: v7.10 folds nested leaves into read sites that assumed `string[]`, and
+ * `scripts/extract-nested-tool-data.ts` types them `string[] | string`.
+ * An array counts its elements; a string counts its non-empty comma-separated
+ * items; any other value (null, number, boolean, object) counts 0.
+ */
+export function countLeafItems(value: unknown): number {
+  if (Array.isArray(value)) return value.length;
+  if (typeof value === "string") return value.split(",").filter((item) => item.trim() !== "").length;
+  return 0;
+}
+
+/**
+ * The v7.9 read of a list-style leaf: `value?.length || 0`, unchanged.
+ *
+ * #101: kept so `{ foldInfoGroups: false }` stays byte-identical to v7.9; a
+ * string scores its character count here. Never throws on a JSON value.
+ */
+export function legacyLeafLength(value: unknown): number {
+  return ((value as { length?: number } | null | undefined)?.length) || 0;
+}
+
+/**
+ * Whether `ide_integration` names a proprietary IDE or a fork.
+ *
+ * #101: `.includes` runs only on a string (substring) or an array (element),
+ * which are the two shapes v7.9 accepted without throwing; any other value is
+ * false instead of a TypeError that aborts the whole ranking run.
+ */
+export function namesProprietaryIde(value: unknown): boolean {
+  if (typeof value !== "string" && !Array.isArray(value)) return false;
+  return value.includes("Proprietary") || value.includes("Fork");
+}

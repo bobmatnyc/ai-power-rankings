@@ -6,7 +6,13 @@ import {
   scoreTerminalBenchContribution,
   scoreUsersContribution,
 } from "./ranking-metric-curves";
-import { canonicalizeInfoGroups, type InfoPathOptions } from "./ranking-info-paths";
+import {
+  canonicalizeInfoGroups,
+  countLeafItems,
+  legacyLeafLength,
+  namesProprietaryIde,
+  type InfoPathOptions,
+} from "./ranking-info-paths";
 
 /**
  * Single source of truth for the ranking algorithm version.
@@ -32,6 +38,8 @@ import { canonicalizeInfoGroups, type InfoPathOptions } from "./ranking-info-pat
  * `business` groups of double-nested tools (`data.info.*`) into the top-level
  * path the factors read, top-level winning per key (see canonicalizeInfoGroups
  * in ./ranking-info-paths). Weights and factor formulas are unchanged.
+ * v7.10 also counts `language_support` / `llm_providers` by list item, not by
+ * string length, and never throws on a malformed technical leaf (#101).
  *
  * NOTE: existing v76 content slugs (e.g. `algorithm-v76-november-2025-rankings`)
  * are historical references and intentionally keep their v7.6 naming.
@@ -573,6 +581,17 @@ export class RankingEngineV76 {
   }
 
   /**
+   * Item count of a list-style technical leaf.
+   *
+   * #101: v7.10 counts list items (`countLeafItems`), so a comma-separated
+   * string scores its items, not its characters. `{ foldInfoGroups: false }`
+   * keeps the v7.9 `.length` read so the compare baseline stays exact.
+   */
+  private countListLeaf(value: unknown): number {
+    return this.infoPaths.foldInfoGroups === false ? legacyLeafLength(value) : countLeafItems(value);
+  }
+
+  /**
    * Helper to safely access nested data
    * Problem: scripts pass `info: toolData` where toolData = {info: {...}, metrics: {...}}
    * So we need to check both metrics.info.* and metrics.info.info.* paths
@@ -768,7 +787,8 @@ export class RankingEngineV76 {
     }
 
     // Language support
-    const languageCount = metrics.info?.technical?.language_support?.length || 0;
+    // #101: folded leaves may be strings or non-lists; count without throwing.
+    const languageCount = this.countListLeaf(metrics.info?.technical?.language_support);
     if (languageCount >= 20) {
       score = Math.min(100, score + 15);
     } else if (languageCount >= 10) {
@@ -778,7 +798,8 @@ export class RankingEngineV76 {
     }
 
     // LLM provider diversity
-    const llmProviders = metrics.info?.technical?.llm_providers?.length || 0;
+    // #101: folded leaves may be strings or non-lists; count without throwing.
+    const llmProviders = this.countListLeaf(metrics.info?.technical?.llm_providers);
     if (llmProviders >= 10) {
       score = Math.min(100, score + 15);
     } else if (llmProviders >= 5) {
@@ -790,8 +811,8 @@ export class RankingEngineV76 {
     }
 
     // IDE integration type matters
-    const ideIntegration = metrics.info?.technical?.ide_integration;
-    if (ideIntegration?.includes("Proprietary") || ideIntegration?.includes("Fork")) {
+    // #101: a non-string ide_integration threw and aborted computeRankings.
+    if (namesProprietaryIde(metrics.info?.technical?.ide_integration)) {
       score = Math.min(100, score + 5);
     }
 
@@ -1073,7 +1094,8 @@ export class RankingEngineV76 {
     let score = 50; // Base score
 
     // Multiple LLM providers = resilience
-    const llmProviders = metrics.info?.technical?.llm_providers?.length || 0;
+    // #101: folded leaves may be strings or non-lists; count without throwing.
+    const llmProviders = this.countListLeaf(metrics.info?.technical?.llm_providers);
     if (llmProviders >= 5) {
       score = 85;
     } else if (llmProviders >= 3) {

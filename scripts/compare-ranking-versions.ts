@@ -15,11 +15,14 @@
  *     Postgres rejects any write in that transaction.
  *   - `--fixtures=<path>`: a JSON array of tool rows instead of the database.
  *     The database modules are never imported in this mode.
- *   - `--date=YYYY-MM-DD`: scoring clock (default: now).
- *   stdout carries only the table, so a workflow can paste it into the job
- *   summary; the banner goes to stderr. Errors print to stderr with the
+ *   - `--date=YYYY-MM-DD`: scoring clock (default: now). An impossible day
+ *     (2026-02-30) exits non-zero.
+ *   Zero tools from either source exits non-zero: an empty table proves nothing.
+ *   stdout carries one run line (scoring date, tool count) and the table, so
+ *   a workflow can paste it into the job summary; the banner goes to stderr. Errors print to stderr with the
  *   connection string, its host, user and password redacted.
- * Test: `lib/ranking-version-compare.test.ts`, `lib/ranking-compare-db-source.test.ts`
+ * Test: `lib/ranking-version-compare.test.ts`, `lib/ranking-compare-db-source.test.ts`,
+ *   `tests/unit/compare-ranking-versions-script-101.test.ts`
  *
  * Run: npx tsx scripts/compare-ranking-versions.ts --fixtures=tests/fixtures/ranking-compare-101.json
  */
@@ -32,6 +35,8 @@ import {
   buildComparisonTable,
   connectionStringLiterals,
   formatComparisonTable,
+  formatRunLine,
+  parseScoringDate,
   redactSecrets,
 } from "@/lib/ranking-version-compare";
 import type { RankingSourceTool } from "@/lib/services/ranking-generation.service";
@@ -42,10 +47,8 @@ function argValue(name: string): string | undefined {
 }
 
 function parseDate(raw: string | undefined): Date {
-  if (!raw) return new Date();
-  const date = new Date(`${raw}T00:00:00Z`);
-  if (Number.isNaN(date.getTime())) throw new Error(`invalid --date: ${raw}`);
-  return date;
+  // #101: strict parse; an impossible day used to roll over silently.
+  return raw === undefined ? new Date() : parseScoringDate(raw);
 }
 
 async function loadFromDatabase(): Promise<RankingSourceTool[]> {
@@ -68,7 +71,10 @@ async function main(): Promise<void> {
   console.error(
     `Ranking compare ${BASELINE_VERSION} -> ${CANDIDATE_VERSION} (read-only; source: ${fixtures ? "fixtures" : "database"}; clock ${date.toISOString().slice(0, 10)})\n`
   );
-  console.log(formatComparisonTable(buildComparisonTable(tools, date)));
+  // #101: buildComparisonTable throws on zero tools; the run line names the clock.
+  const rows = buildComparisonTable(tools, date);
+  console.log(formatRunLine(date, rows.length));
+  console.log(formatComparisonTable(rows));
 }
 
 main().catch((error: unknown) => {
