@@ -53,7 +53,8 @@ function parsedColumns(table: string): ParsedColumn[] {
 function schemaColumns(table: typeof toolMetricsHistory | typeof metricsCollectionRuns): ParsedColumn[] {
   return getTableConfig(table).columns.map((column) => ({
     name: column.name,
-    type: column.getSQLType(),
+    // #237: 0014 creates these as `timestamp`; 0015 converts them to timestamptz.
+    type: column.getSQLType() === "timestamp with time zone" ? "timestamp" : column.getSQLType(),
     notNull: column.notNull,
   }));
 }

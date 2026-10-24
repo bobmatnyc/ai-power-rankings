@@ -284,10 +284,11 @@ describe("NewsRepository.getPublishedSlugs (#162)", () => {
   });
 
   it("reads only active slugs and dates, dating an article by published_date, else created_at", async () => {
+    // #237: the columns are timestamptz, so the driver sends text with an offset.
     fixture.state.responses = [
       [
-        ["big-launch", "2026-09-20 08:30:00", "2026-09-19 00:00:00"],
-        ["undated", null, "2026-08-01 00:00:00"],
+        ["big-launch", "2026-09-20 08:30:00+00", "2026-09-19 00:00:00+00"],
+        ["undated", null, "2026-08-01 00:00:00+00"],
       ],
     ];
 
