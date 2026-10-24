@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
-import { readdirSync, readFileSync } from "node:fs";
+import { mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -15,6 +16,10 @@ import { assertSelectOnly } from "../../lib/ranking-snapshot-diff";
  *   GITHUB_ACTIONS=true (refused, exit 2) and once without (exit 1 with the
  *   script's own message, after the profiles load). Then checks the source's
  *   statements and that no workflow or the local gate names the script.
+ *   One run starts in a temp directory whose fake `.env.local` defines the
+ *   dedicated variable. The script's imports reach lib/db/connection.ts, which
+ *   loads `.env.local` from the working directory, so the run proves the
+ *   script ignores a value an env file supplies on that transitive path.
  * Test: `npx vitest run tests/unit/measure-v8-board-script-185.test.ts`
  */
 
@@ -24,13 +29,19 @@ const script = join(root, "scripts", "measure-v8-board.ts");
 const source = readFileSync(script, "utf8");
 
 const baseEnv = Object.fromEntries(
-  Object.entries(process.env).filter(([key]) => !["DATABASE_URL", "CI", "GITHUB_ACTIONS"].includes(key))
+  Object.entries(process.env).filter(
+    // NODE_ENV is dropped so the child runs as the operator would, with dotenv active.
+    ([key]) => !["DATABASE_URL", "MEASURE_V8_DATABASE_URL", "CI", "GITHUB_ACTIONS", "NODE_ENV"].includes(key)
+  )
 );
 
-function run(env: Record<string, string | undefined>) {
-  const res = spawnSync(tsx, [script], { cwd: root, encoding: "utf8", env });
+function run(env: Record<string, string | undefined>, cwd = root) {
+  const res = spawnSync(tsx, ["--tsconfig", join(root, "tsconfig.json"), script], { cwd, encoding: "utf8", env });
   return { status: res.status, stdout: res.stdout, stderr: res.stderr };
 }
+
+// A local, unreachable address; nothing here is a real host or credential.
+const FAKE_URL = "postgres://fake-user:fake-pass@127.0.0.1:1/fake";
 
 describe("measure-v8-board script (#185)", () => {
   it("refuses to run under GitHub Actions before touching anything", () => {
@@ -48,7 +59,29 @@ describe("measure-v8-board script (#185)", () => {
     const res = run(baseEnv);
     expect(res.status).toBe(1);
     expect(res.stdout).toBe("Result: ERROR\n");
-    expect(res.stderr).toBe("measure-v8-board failed: the database connection variable is not set\n");
+    expect(res.stderr).toBe("measure-v8-board failed: MEASURE_V8_DATABASE_URL is not set\n");
+  }, 30_000);
+
+  it("ignores a connection string that a .env.local file supplies through the transitive dotenv load", () => {
+    const dir = mkdtempSync(join(tmpdir(), "measure-v8-185-"));
+    try {
+      writeFileSync(join(dir, ".env.local"), `MEASURE_V8_DATABASE_URL=${FAKE_URL}\nDATABASE_URL=${FAKE_URL}\n`);
+      const res = run(baseEnv, dir);
+      expect(res.status).toBe(1);
+      expect(res.stdout).toBe("Result: ERROR\n");
+      expect(res.stderr).toBe("measure-v8-board failed: MEASURE_V8_DATABASE_URL is not set\n");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  }, 30_000);
+
+  it("uses the dedicated variable when it is passed at launch", () => {
+    const res = run({ ...baseEnv, MEASURE_V8_DATABASE_URL: FAKE_URL });
+    // It gets past the variable check and fails on the unreachable address.
+    expect(res.status).toBe(1);
+    expect(res.stderr).toMatch(/^measure-v8-board failed: /);
+    expect(res.stderr).not.toMatch(/is not set/);
+    expect(res.stderr).not.toContain("fake-pass");
   }, 30_000);
 
   it("sends only single SELECTs on tools and rankings, in a READ ONLY transaction", () => {

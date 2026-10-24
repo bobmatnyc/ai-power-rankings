@@ -594,14 +594,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-17d0b7dcfd70",
+    "id": "unreleased-2ab7f055dbf8",
     "version": "Unreleased",
-    "date": "2026-10-25T16:19:40.729Z",
+    "date": "2026-10-25T16:19:41.305Z",
     "dateSource": "build",
     "section": "Added",
     "scope": "rankings",
     "title": "scoring profiles and a read-only v8 board measurement",
-    "description": "scoring profiles and a read-only v8 board measurement. `config/scoring-profiles.json` holds the frozen v7.10 weights (legacy, sum 1.02) and a staged v8.0 harness profile (D44: technical and adoption 0.17, sum 1.00); `lib/scoring-profiles.ts` loads it and refuses a file that does not parse, has a missing or unknown factor, or whose weights do not sum to the declared total. `scripts/measure-v8-board.ts` reads the active tools and the current ranking in one READ ONLY transaction, stops with exit 4 unless it reproduces the published v7.10 scores, exits 3 when a harness tool moves more than 2 places within the harness list (D45), prints counts only, and refuses to run under CI. Nothing selects the v8.0 profile: published rankings and the stored version (7.10) are unchanged. Tests: `lib/scoring-profiles.test.ts`, `lib/scoring-profiles.inert-185.test.ts`, `lib/v8-board-measurement.test.ts`, `tests/unit/measure-v8-board-script-185.test.ts` (#185)",
+    "description": "scoring profiles and a read-only v8 board measurement. `config/scoring-profiles.json` holds the frozen v7.10 weights (legacy, sum 1.02) and a staged v8.0 harness profile (D44: technical and adoption 0.17, sum 1.00); `lib/scoring-profiles.ts` loads it and refuses a file that does not parse, has a missing or unknown factor, or whose weights do not sum to the declared total. `scripts/measure-v8-board.ts` reads the active tools and the current ranking in one READ ONLY transaction, stops with exit 4 unless it reproduces the published v7.10 scores and ranks (no duplicated row or rank), exits 5 when the harness list has fewer than 69 tools, an unknown kind, or only harness tools, and exits 3 when a harness tool moves more than 2 places within the harness list against its published rank (D45). It prints counts only, refuses to run under CI, and connects only through `MEASURE_V8_DATABASE_URL` as passed at launch, never a value from a `.env*` file. Nothing selects the v8.0 profile: published rankings and the stored version (7.10) are unchanged. Tests: `lib/scoring-profiles.test.ts`, `lib/scoring-profiles.inert-185.test.ts`, `lib/v8-board-measurement.test.ts`, `tests/unit/measure-v8-board-script-185.test.ts` (#185)",
     "changeType": "feature"
   },
   {

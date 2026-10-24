@@ -42,9 +42,14 @@ function tool(id: string, kind: string, contextWindow: number, users: number): M
 
 /**
  * Harness tools on a line from technical-heavy to adoption-heavy, so the
- * sum of the two factors is close for all of them.
+ * sum of the two factors is close for all of them, plus one model tool (a
+ * board where every tool is harness fails the measurement's kind check).
  */
 export function harnessBoard(count = 24): MeasuredTool[] {
+  return [...harnessLine(count), tool("x-m0", "model", 60_000, 200_000)];
+}
+
+function harnessLine(count: number): MeasuredTool[] {
   return Array.from({ length: count }, (_, i) => {
     const t = i / (count - 1);
     // Technical 52..68 as t rises; users 1M..20K as t rises (adoption falls).
@@ -71,6 +76,18 @@ export function mixedBoard(): MeasuredTool[] {
   const other = tool("m-o0", "other", 30_000, 50_000);
   other.data = { ...other.data, company: 42 };
   return [...harness, ...models, other];
+}
+
+/**
+ * #185: four identical harness tools (an exact tie under any weights) among
+ * distinct ones, in `tool_id` order, so a candidate run ranks the tie in the
+ * same order as the input. Reversing the published order inside the tie moves
+ * one tool 3 places under D45.
+ */
+export function tiedHarnessBoard(): MeasuredTool[] {
+  const tie = ["t-a", "t-b", "t-c", "t-d"].map((id) => tool(id, "harness", 40_000, 300_000));
+  const spread = [tool("t-e", "harness", 80_000, 900_000), tool("t-f", "harness", 20_000, 30_000)];
+  return [...tie, ...spread, tool("t-m0", "model", 60_000, 200_000)];
 }
 
 /** The snapshot `computeRankings()` would have published for `tools` with `weights`. */

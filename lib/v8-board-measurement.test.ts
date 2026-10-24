@@ -6,6 +6,7 @@ import {
   negativeControlWeights,
   publishedFor,
   SENTINEL,
+  tiedHarnessBoard,
 } from "../tests/fixtures/v8-board-185";
 import { loadCheckedInScoringProfiles, profileWeights } from "./scoring-profiles";
 import {
@@ -36,8 +37,16 @@ const v710 = profileWeights(config, "v7.10", "all");
 const v8 = profileWeights(config, "v8.0", "harness");
 const wrong = negativeControlWeights(v710);
 
+/** The fixtures are smaller than the production floor (69), so the floor is set to their harness count. */
+const fixtureFloor = (tools: MeasuredTool[]) => tools.filter((t) => t.kind === "harness").length;
+
 function measure(tools: MeasuredTool[], candidate = v8, published: PublishedSnapshot = quietPublished(tools)) {
-  return measureBoard({ tools, published, baseline: v710, candidate });
+  return measureBoard({ tools, published, baseline: v710, candidate, harnessFloor: fixtureFloor(tools) });
+}
+
+/** The same run at the production floor. */
+function measureAtDefaultFloor(tools: MeasuredTool[]) {
+  return measureBoard({ tools, published: quietPublished(tools), baseline: v710, candidate: v8 });
 }
 
 /** Every string a report must not contain: names, slugs, ids and per-tool scores. */
@@ -98,12 +107,107 @@ describe("measureBoard D45 gate (#185)", () => {
     expect(d44.candidate!.scoreShiftAll.max).toBeLessThan(measure(harnessBoard(), wrong).candidate!.scoreShiftAll.max);
   });
 
+  it("baselines on the published order inside a harness tie: reversing it flips D45 to a breach", () => {
+    const tools = tiedHarnessBoard();
+    const asPublished = quietPublished(tools);
+    const pass = measure(tools, v8, asPublished);
+    expect(pass.exitCode).toBe(EXIT_CODES.ok);
+    expect(pass.candidate!.harnessToolsInTies).toBeGreaterThanOrEqual(4);
+
+    // Reverse the published ranks of the four tied tools; scores are unchanged.
+    const tied = asPublished.rows.filter((r) => /-id-t-[a-d]$/.test(String(r["tool_id"])));
+    expect(tied).toHaveLength(4);
+    const ranks = tied.map((r) => r["rank"]).reverse();
+    const reversed = {
+      ...asPublished,
+      rows: asPublished.rows.map((r) => {
+        const i = tied.indexOf(r);
+        return i >= 0 ? { ...r, rank: ranks[i] } : r;
+      }),
+    };
+    const flipped = measure(tools, v8, reversed);
+    expect(flipped.reproduced).toBe(true);
+    expect(flipped.reproduction.ordinalDiffsInsideTies).toBe(4);
+    expect(flipped.candidate!.harnessRankShift.max).toBe(3);
+    expect(flipped.exitCode).toBe(EXIT_CODES.d45Breach);
+  });
+
+  it("ranks candidate ties by tool_id, not by the order the rows were read", () => {
+    const tools = tiedHarnessBoard();
+    const published = quietPublished(tools);
+    const shuffled = [...tools].reverse();
+    expect(measure(shuffled, v8, published).candidate).toEqual(measure(tools, v8, published).candidate);
+  });
+
   it("counts tools by kind", () => {
     expect(measure(mixedBoard()).candidate!.kindCounts).toEqual({ harness: 12, model: 16, other: 1 });
   });
 });
 
+describe("measureBoard harness list check (#185)", () => {
+  const notHarness = (tools: MeasuredTool[]) => tools.map((t) => (t.kind === "harness" ? { ...t, kind: "model" } : t));
+
+  it.each<[string, () => MeasuredTool[], (r: MeasurementResult) => void]>([
+    ["no harness tools", () => notHarness(mixedBoard()), (r) => expect(r.harness!.harnessTools).toBe(0)],
+    ["fewer harness tools than the floor of 69", () => harnessBoard(), (r) => expect(r.harness!.harnessTools).toBe(24)],
+    [
+      "an unmigrated kind column (null)",
+      () => harnessBoard(80).map((t, i) => (i === 0 ? { ...t, kind: String(null) } : t)),
+      (r) => expect(r.harness!.unknownKinds).toBe(1),
+    ],
+    [
+      "every tool harness (the 0016 default, 0017 not applied)",
+      () => harnessBoard(80).map((t) => ({ ...t, kind: "harness" })),
+      (r) => expect(r.harness!.allHarness).toBe(true),
+    ],
+  ])("does not exit 0 or print PASS with %s", (_label, board, detail) => {
+    const result = measureAtDefaultFloor(board());
+    expect(result.reproduced).toBe(true);
+    expect(result.harness!.ok).toBe(false);
+    detail(result);
+    expect(result.candidate).toBeUndefined();
+    expect(result.exitCode).toBe(EXIT_CODES.harnessCheck);
+    expect(formatMeasurementReport(result)).toMatch(/^Result: FAIL \(harness list check\)/);
+  });
+
+  it("passes the check at the floor of 69 harness tools with other kinds present", () => {
+    const result = measureAtDefaultFloor(harnessBoard(69));
+    expect(result.harness).toMatchObject({ harnessTools: 69, floor: 69, ok: true });
+    expect(result.exitCode).toBe(EXIT_CODES.ok);
+  });
+});
+
 describe("measureBoard v7.10 reproduction gate (#185)", () => {
+  it("refuses a duplicated published row, which an id-keyed diff would hide", () => {
+    const tools = harnessBoard();
+    const published = quietPublished(tools);
+    const withDuplicate = { ...published, rows: [...published.rows, { ...published.rows[3]! }] };
+    const result = measure(tools, v8, withDuplicate);
+    expect(result.reproduction.duplicatePublishedIds).toBe(1);
+    expect(result.reproduction.publishedRows).toBe(result.reproduction.toolsScored + 1);
+    expect(result.exitCode).toBe(EXIT_CODES.notReproduced);
+  });
+
+  it("refuses published rows that share a rank across different scores", () => {
+    const tools = harnessBoard();
+    const published = quietPublished(tools);
+    const rows = published.rows.map((r, i) => (i === 1 ? { ...r, rank: published.rows[0]!["rank"] } : r));
+    const result = measure(tools, v8, { ...published, rows });
+    expect(result.reproduction.duplicatePublishedRanksOutsideTies).toBe(2);
+    expect(result.exitCode).toBe(EXIT_CODES.notReproduced);
+  });
+
+  it("accepts a shared rank inside a block of equal scores", () => {
+    const tools = tiedHarnessBoard();
+    const published = quietPublished(tools);
+    const tied = published.rows.filter((r) => /-id-t-[a-d]$/.test(String(r["tool_id"])));
+    const first = tied[0]!["rank"];
+    const rows = published.rows.map((r) => (tied.includes(r) ? { ...r, rank: first } : r));
+    const result = measure(tools, v8, { ...published, rows });
+    expect(result.reproduction.duplicatePublishedRanksOutsideTies).toBe(0);
+    expect(result.reproduced).toBe(true);
+  });
+
   it("exits non-zero with no candidate numbers when one published score differs", () => {
     const tools = harnessBoard();
     const published = quietPublished(tools);
