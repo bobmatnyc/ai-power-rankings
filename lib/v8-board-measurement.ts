@@ -8,16 +8,20 @@
  * What: `measureBoard()` first recomputes every tool with the baseline (v7.10)
  *   weights through `computeRankings()`, the publish path, and compares the
  *   result to the published snapshot with the #93 `diffSnapshots()`. Any
- *   mismatch stops it there: no candidate number is computed. Otherwise it
+ *   mismatch stops it there: no candidate number is computed. It then checks
+ *   the harness list (at least `HARNESS_FLOOR` harness tools, known kinds
+ *   only, not every tool harness) and stops if that fails. Otherwise it
  *   scores the candidate weights and returns counts and shift statistics. The
  *   D45 gate ranks harness tools within the harness list (basis D2e); global
- *   rank shift is information only. Engine console output, which names tools,
+ *   rank shift is information only. Baseline positions are the published
+ *   ranks renumbered within each list; candidate ties rank in `tool_id` order. Engine console output, which names tools,
  *   is swallowed while it runs and only counted.
  *   `formatMeasurementReport()` renders the result as text that names no tool,
  *   slug, id or per-tool score.
  * Test: `lib/v8-board-measurement.test.ts`
  */
 
+import { TOOL_KINDS } from "./db/schema";
 import type { RankingWeightsV76 } from "./ranking-algorithm-v76";
 import { diffSnapshots, type SnapshotRow } from "./ranking-snapshot-diff";
 import { computeRankings, type RankingEntry, type RankingSourceTool } from "./services/ranking-generation.service";
@@ -41,6 +45,8 @@ export interface MeasureInput {
   baseline: RankingWeightsV76;
   /** The staged profile under test (v8.0 harness). */
   candidate: RankingWeightsV76;
+  /** Fewest harness tools the D45 gate accepts. Default {@link HARNESS_FLOOR}; tests lower it. */
+  harnessFloor?: number;
 }
 
 /** The stored `algorithm_version` the baseline must reproduce. */
@@ -49,8 +55,17 @@ export const EXPECTED_BASELINE_VERSION = "7.10";
 export const D45_MAX_HARNESS_SHIFT = 2;
 /** A recomputed score further than this from the published one is a mismatch. */
 export const SCORE_TOLERANCE = 0.001;
+/**
+ * #185: the D45 gate refuses a harness list shorter than this. The reviewed
+ * 0017 kind sheet has 69 harness rows; a shorter list means the board changed
+ * since that review (or the kinds are wrong) and must be looked at before
+ * D45 can be cleared on it.
+ */
+export const HARNESS_FLOOR = 69;
+/** `tools.kind` values the D45 gate accepts (CHECK `tools_kind_check`). */
+export const KNOWN_KINDS: readonly string[] = TOOL_KINDS;
 
-export const EXIT_CODES = { ok: 0, error: 1, refused: 2, d45Breach: 3, notReproduced: 4 } as const;
+export const EXIT_CODES = { ok: 0, error: 1, refused: 2, d45Breach: 3, notReproduced: 4, harnessCheck: 5 } as const;
 
 const REPRODUCED_FIELDS = ["score", "factor_scores"] as const;
 
@@ -68,6 +83,21 @@ export interface Reproduction {
   rankDiffs: number;
   /** Information: published rank differs but stays inside the tool's equal-score block. */
   ordinalDiffsInsideTies: number;
+  /** #185: published rows beyond the first for a `tool_id` (a Map would hide them). */
+  duplicatePublishedIds: number;
+  /** #185: published rows sharing a rank with a row of a different score. */
+  duplicatePublishedRanksOutsideTies: number;
+}
+
+/** #185: the harness list the D45 gate ranks. It must be checkable before PASS can print. */
+export interface HarnessCheck {
+  harnessTools: number;
+  floor: number;
+  /** Tools whose `kind` is not a known kind (an unmigrated column reads as "null"). */
+  unknownKinds: number;
+  /** True when every tool is harness: the 0016 default, so the 0017 kinds are not applied. */
+  allHarness: boolean;
+  ok: boolean;
 }
 
 export interface ShiftStats {
@@ -105,6 +135,8 @@ export interface CandidateMeasurement {
     tieOrderChanges: number;
   };
   harnessGaps: { minGap: number | null; under03: number; under06: number; under10: number };
+  /** #185: harness tools in a block of equal published scores within the harness list. */
+  harnessToolsInTies: number;
   /** Information only: twice the candidate's delta from baseline, renormalised to 1. */
   stress: { harnessRankShift: ShiftHistogram; breaches: number };
 }
@@ -112,7 +144,9 @@ export interface CandidateMeasurement {
 export interface MeasurementResult {
   reproduction: Reproduction;
   reproduced: boolean;
-  /** Absent unless the baseline reproduced. */
+  /** Absent when the baseline did not reproduce (the harness list is not checked then). */
+  harness?: HarnessCheck;
+  /** Absent unless the baseline reproduced and the harness list passed its check. */
   candidate?: CandidateMeasurement;
   engineLogLinesSuppressed: number;
   exitCode: number;
@@ -191,6 +225,23 @@ function publishedMaps(rows: SnapshotRow[]): { scores: Map<string, number>; rank
   return { scores, ranks };
 }
 
+/** #185: duplicate ids, and duplicate ranks across different scores, in the raw published rows. */
+function publishedDuplicates(rows: SnapshotRow[]) {
+  const ids = rows.map((row) => String(row["tool_id"]));
+  const byRank = new Map<number, Set<number>>();
+  const rankRows = new Map<number, number>();
+  for (const row of rows) {
+    const rank = Number(row["rank"] ?? row["position"]);
+    byRank.set(rank, (byRank.get(rank) ?? new Set()).add(Number(row["score"])));
+    rankRows.set(rank, (rankRows.get(rank) ?? 0) + 1);
+  }
+  const clashing = [...rankRows].filter(([rank, n]) => n > 1 && byRank.get(rank)!.size > 1);
+  return {
+    duplicatePublishedIds: ids.length - new Set(ids).size,
+    duplicatePublishedRanksOutsideTies: clashing.reduce((sum, [, n]) => sum + n, 0),
+  };
+}
+
 function checkReproduction(input: MeasureInput, recomputed: RankingEntry[]): Reproduction {
   const { published } = input;
   const diffs = diffSnapshots(recomputed as unknown as SnapshotRow[], published.rows, REPRODUCED_FIELDS);
@@ -222,6 +273,7 @@ function checkReproduction(input: MeasureInput, recomputed: RankingEntry[]): Rep
     maxAbsScoreDiff: round3(absDiffs.reduce((a, b) => Math.max(a, b), 0)),
     rankDiffs: moved.filter((id) => !insideBlock(id)).length,
     ordinalDiffsInsideTies: moved.filter(insideBlock).length,
+    ...publishedDuplicates(published.rows),
   };
 }
 
@@ -230,6 +282,10 @@ export function isReproduced(r: Reproduction): boolean {
   return (
     r.versionMatches &&
     r.toolsScored > 0 &&
+    // #185: a duplicated published row collapses in any id-keyed comparison, so count rows.
+    r.publishedRows === r.toolsScored &&
+    r.duplicatePublishedIds === 0 &&
+    r.duplicatePublishedRanksOutsideTies === 0 &&
     r.onlyRecomputed === 0 &&
     r.onlyPublished === 0 &&
     r.scoreOrFactorDiffs === 0 &&
@@ -274,10 +330,35 @@ function harnessGaps(harnessBase: RankingEntry[]): CandidateMeasurement["harness
   };
 }
 
+/** #185: tools in `tool_id` order, so equal candidate scores rank the same way every run. */
+function byToolId(tools: MeasuredTool[]): MeasuredTool[] {
+  return [...tools].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+}
+
+/** #185: renumber `ids` 1..n in their published order (ties keep the published order, never the read order). */
+function publishedOrder(ids: string[], published: Map<string, number>): Map<string, number> {
+  const ordered = [...ids].sort((a, b) => published.get(a)! - published.get(b)!);
+  return new Map(ordered.map((id, i) => [id, i + 1]));
+}
+
 function withinHarness(harness: MeasuredTool[], date: Date, before: Map<string, number>, weights: RankingWeightsV76) {
-  const after = rankMap(computeRankings(harness, new Map(), date, weights));
+  const after = rankMap(computeRankings(byToolId(harness), new Map(), date, weights));
   const histogram = shiftHistogram(shiftsBetween(before, after, harness.map((t) => t.id)));
   return { histogram, breaches: histogram.n - histogram.moved0 - histogram.moved1 - histogram.moved2 };
+}
+
+/** #185: the harness list must be non-trivial and the kinds applied, or D45 proves nothing. */
+export function checkHarness(tools: MeasuredTool[], floor = HARNESS_FLOOR): HarnessCheck {
+  const harnessTools = tools.filter((t) => t.kind === "harness").length;
+  const unknownKinds = tools.filter((t) => !KNOWN_KINDS.includes(t.kind)).length;
+  const allHarness = tools.length > 0 && harnessTools === tools.length;
+  return {
+    harnessTools,
+    floor,
+    unknownKinds,
+    allHarness,
+    ok: harnessTools > 0 && harnessTools >= floor && unknownKinds === 0 && !allHarness,
+  };
 }
 
 function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateMeasurement {
@@ -287,18 +368,25 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
   const harnessIds = harness.map((t) => t.id);
   const allIds = tools.map((t) => t.id);
 
-  const cand = computeRankings(tools, new Map(), date, candidate);
-  const baseRanks = rankMap(base);
+  // #185: v7.10 positions are the published ranks; the recomputed order of equal
+  // scores follows the unordered SELECT and is never used as the baseline.
+  const pub = publishedMaps(published.rows);
+  const baseRanks = publishedOrder(allIds, pub.ranks);
+  const cand = computeRankings(byToolId(tools), new Map(), date, candidate);
   const candRanks = rankMap(cand);
   const baseScores = new Map(base.map((e) => [e.tool_id, e.score]));
   const candScores = new Map(cand.map((e) => [e.tool_id, e.score]));
   const scoreShift = (ids: string[]) => shiftStats(ids.map((id) => candScores.get(id)! - baseScores.get(id)!));
 
-  // D2e: harness ranks are counted within the harness list, scored on their own.
-  const harnessBase = computeRankings(harness, new Map(), date, baseline);
-  const harnessBaseRanks = rankMap(harnessBase);
+  // D2e: harness ranks are counted within the harness list.
+  const harnessBaseRanks = publishedOrder(harnessIds, pub.ranks);
   const d45 = withinHarness(harness, date, harnessBaseRanks, candidate);
   const stress = withinHarness(harness, date, harnessBaseRanks, doubledDelta(baseline, candidate));
+
+  const inPublishedOrder = [...base].sort((a, b) => baseRanks.get(a.tool_id)! - baseRanks.get(b.tool_id)!);
+  const harnessBase = inPublishedOrder.filter((e) => harnessBaseRanks.has(e.tool_id));
+  const harnessScoreCounts = new Map<number, number>();
+  for (const e of harnessBase) harnessScoreCounts.set(e.score, (harnessScoreCounts.get(e.score) ?? 0) + 1);
 
   const kindCounts: Record<string, number> = {};
   for (const t of tools) kindCounts[t.kind] = (kindCounts[t.kind] ?? 0) + 1;
@@ -311,33 +399,53 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
     d45Breaches: d45.breaches,
     harnessGlobalRankShift: shiftHistogram(shiftsBetween(baseRanks, candRanks, harnessIds)),
     globalRankShift: shiftHistogram(shiftsBetween(baseRanks, candRanks, allIds)),
-    ties: tieStructure(base, candRanks),
+    ties: tieStructure(inPublishedOrder, candRanks),
     harnessGaps: harnessGaps(harnessBase),
+    harnessToolsInTies: harnessBase.filter((e) => harnessScoreCounts.get(e.score)! > 1).length,
     stress: { harnessRankShift: stress.histogram, breaches: stress.breaches },
   };
 }
 
 /**
- * Reproduce v7.10, then (only if it reproduced) measure the candidate.
+ * Reproduce v7.10, check the harness list, then measure the candidate.
  *
- * Postcondition: `exitCode` is `notReproduced` whenever `reproduced` is false,
- * and then `candidate` is absent; otherwise it is `d45Breach` exactly when
- * `candidate.d45Breaches > 0`, else `ok`.
+ * Postcondition: `exitCode` is `notReproduced` whenever `reproduced` is false;
+ * else `harnessCheck` when `harness.ok` is false; in both cases `candidate`
+ * is absent. Otherwise it is `d45Breach` exactly when `candidate.d45Breaches > 0`,
+ * else `ok`.
  */
 export function measureBoard(input: MeasureInput): MeasurementResult {
   const run = quietly(() => {
     const base = computeRankings(input.tools, new Map(), input.published.publishedAt, input.baseline);
     const reproduction = checkReproduction(input, base);
     const reproduced = isReproduced(reproduction);
-    return { reproduction, reproduced, candidate: reproduced ? measureCandidate(input, base) : undefined };
+    const harness = reproduced ? checkHarness(input.tools, input.harnessFloor) : undefined;
+    const candidate = harness?.ok ? measureCandidate(input, base) : undefined;
+    return { reproduction, reproduced, harness, candidate };
   });
-  const { reproduction, reproduced, candidate } = run.value;
+  const { reproduction, reproduced, harness, candidate } = run.value;
   const exitCode = !reproduced
     ? EXIT_CODES.notReproduced
-    : candidate!.d45Breaches > 0
-      ? EXIT_CODES.d45Breach
-      : EXIT_CODES.ok;
-  return { reproduction, reproduced, ...(candidate ? { candidate } : {}), engineLogLinesSuppressed: run.lines, exitCode };
+    : !harness!.ok
+      ? EXIT_CODES.harnessCheck
+      : candidate!.d45Breaches > 0
+        ? EXIT_CODES.d45Breach
+        : EXIT_CODES.ok;
+  return {
+    reproduction,
+    reproduced,
+    ...(harness ? { harness } : {}),
+    ...(candidate ? { candidate } : {}),
+    engineLogLinesSuppressed: run.lines,
+    exitCode,
+  };
+}
+
+function resultLabel(result: MeasurementResult): string {
+  if (result.exitCode === EXIT_CODES.ok) return "PASS";
+  if (!result.reproduced) return "FAIL (v7.10 not reproduced)";
+  if (result.exitCode === EXIT_CODES.harnessCheck) return "FAIL (harness list check)";
+  return "FAIL (D45 breach)";
 }
 
 function histogramLine(label: string, h: ShiftHistogram): string {
@@ -352,7 +460,7 @@ function statsLine(label: string, s: ShiftStats): string {
 export function formatMeasurementReport(result: MeasurementResult): string {
   const r = result.reproduction;
   const lines = [
-    `Result: ${result.exitCode === EXIT_CODES.ok ? "PASS" : result.reproduced ? "FAIL (D45 breach)" : "FAIL (v7.10 not reproduced)"}`,
+    `Result: ${resultLabel(result)}`,
     "",
     "1. v7.10 reproduction (hard gate)",
     `published algorithm_version: ${r.publishedVersion} (expected ${EXPECTED_BASELINE_VERSION}: ${r.versionMatches ? "yes" : "NO"})`,
@@ -360,11 +468,25 @@ export function formatMeasurementReport(result: MeasurementResult): string {
     `only recomputed: ${r.onlyRecomputed}; only published: ${r.onlyPublished}`,
     `score or factor differences: ${r.scoreOrFactorDiffs}; score off by > ${SCORE_TOLERANCE}: ${r.scoreOverTolerance}; max abs score difference ${r.maxAbsScoreDiff.toFixed(3)}`,
     `rank differences: ${r.rankDiffs}; rank differences inside equal-score blocks (information): ${r.ordinalDiffsInsideTies}`,
+    `duplicate published tool ids: ${r.duplicatePublishedIds}; duplicate published ranks across different scores: ${r.duplicatePublishedRanksOutsideTies}`,
     `reproduced: ${result.reproduced ? "yes" : "NO"}`,
   ];
+  const h = result.harness;
+  if (h) {
+    lines.push(
+      "",
+      "1b. Harness list check",
+      `harness tools: ${h.harnessTools} (floor ${h.floor}); unknown kinds: ${h.unknownKinds}; every tool harness: ${h.allHarness ? "YES" : "no"}; ok: ${h.ok ? "yes" : "NO"}`
+    );
+  }
   const c = result.candidate;
   if (!c) {
-    lines.push("", "No candidate measurement: the v7.10 baseline did not reproduce.");
+    lines.push(
+      "",
+      result.reproduced
+        ? "No candidate measurement: the harness list failed its check."
+        : "No candidate measurement: the v7.10 baseline did not reproduce."
+    );
   } else {
     lines.push(
       "",
@@ -385,6 +507,7 @@ export function formatMeasurementReport(result: MeasurementResult): string {
       histogramLine("all tools on the global board (information)", c.globalRankShift),
       "",
       "5. Ties (v7.10 global board)",
+      `harness tools in equal-score blocks within the harness list: ${c.harnessToolsInTies}`,
       `distinct scores: ${c.ties.distinctScores}; largest tied blocks: ${c.ties.largestBlocks.join(", ") || "none"}; tools in tied blocks: ${c.ties.toolsInTies}; change order under candidate: ${c.ties.tieOrderChanges}`,
       "",
       "6. Harness adjacent-score gaps (v7.10)",
