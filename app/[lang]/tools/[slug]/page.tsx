@@ -12,6 +12,8 @@ import { getToolProfileRankingData } from "@/lib/tools/tool-profile-data";
 import { newsForTool } from "@/lib/tools/tool-news";
 import { getToolNewsBySlug } from "@/lib/tools/tool-news-data";
 import { ToolProfileSections } from "@/components/tools/tool-profile-sections";
+import { ToolLinksBlock } from "@/components/tools/tool-links-block";
+import { getToolLinksForPage } from "@/lib/tools/tool-links-data";
 import {
   generateToolSchema,
   generateToolReviewSchema,
@@ -46,10 +48,12 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
   // #193: the server-rendered profile block. Its ranking read is cached and
   // never rejects, so ranking data trouble shows fallback text, not a 5xx.
   // #193: related news is the same kind of read: cached, shared, never rejects.
-  const [dict, rankingData, newsBySlug] = await Promise.all([
+  // #183 B-2: the model <-> harness links read is fail-soft too: `null` on failure.
+  const [dict, rankingData, newsBySlug, toolLinks] = await Promise.all([
     getDictionary(lang as Locale),
     getToolProfileRankingData(),
     getToolNewsBySlug(),
+    getToolLinksForPage(tool.slug),
   ]);
   const profile = buildToolProfile(tool, rankingData);
   const news = newsBySlug ? newsForTool(newsBySlug, tool.slug) : null;
@@ -138,7 +142,17 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
         lang={lang as Locale}
         dict={dict}
         profile={
-          <ToolProfileSections name={tool.name} lang={canonicalLocale(lang)} profile={profile} news={news} />
+          <>
+            <ToolProfileSections name={tool.name} lang={canonicalLocale(lang)} profile={profile} news={news} />
+            {toolLinks && (
+              <ToolLinksBlock
+                lang={canonicalLocale(lang)}
+                direction={toolLinks.direction}
+                links={toolLinks.links}
+                labels={dict.tools.detail.links}
+              />
+            )}
+          </>
         }
       />
     </>

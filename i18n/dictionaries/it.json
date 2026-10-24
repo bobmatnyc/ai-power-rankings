@@ -395,6 +395,13 @@
         "noHistory": "Nessuna cronologia metriche disponibile per questo strumento.",
         "update": "Aggiornamento",
         "newMetrics": "Nuove metriche riportate per {tool}"
+      },
+      "links": {
+        "modelsHeading": "Modelli che esegue",
+        "harnessesHeading": "Strumenti che offrono questo modello",
+        "native": "Nativo",
+        "supports": "Supportato",
+        "source": "Fonte"
       }
     },
     "status": {

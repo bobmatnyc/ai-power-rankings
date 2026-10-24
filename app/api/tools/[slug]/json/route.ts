@@ -6,6 +6,7 @@ import { NewsRepository } from "@/lib/db/repositories/news";
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { entryRank, matchesTool, rankingEntries } from "@/lib/tools/ranking-entry";
 import { loggers } from "@/lib/logger";
+import { describeReadError, readToolLinks, type ToolLinkEntry } from "@/lib/tools/tool-links";
 import { articles, rankingVersions } from "@/lib/db/schema";
 
 interface RouteParams {
@@ -252,6 +253,15 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       });
     }
 
+    // #183 B-2: model <-> harness links. Fail-soft on this read-only field: a failed read
+    // omits `links` (an empty set is `links: []`) and logs no row content.
+    let links: ToolLinkEntry[] | undefined;
+    try {
+      links = (await readToolLinks(db, tool.slug)).links;
+    } catch (error) {
+      loggers.api.warn("Failed to fetch tool links", { toolId: tool.id, ...describeReadError(error) });
+    }
+
     // Extract metrics from tool.info
     const toolInfo = tool.info || {};
     const metrics = {
@@ -292,6 +302,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       metricHistory: metricHistory.length > 0 ? metricHistory : undefined,
       rankingsHistory: rankingsHistory.length > 0 ? rankingsHistory : undefined,
       newsItems: newsItems.length > 0 ? newsItems : undefined,
+      links,
       _source: "database",
       _timestamp: new Date().toISOString(),
     };

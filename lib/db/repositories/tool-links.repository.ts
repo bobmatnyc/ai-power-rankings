@@ -129,9 +129,11 @@ async function listLinked(db: ToolLinksDb, want: "models" | "harnesses", anchorR
  * What: the raw text must start with `http://` or `https://` (any case) and hold no
  *   whitespace or control character. The WHATWG parser strips tab and newline, so the
  *   raw check runs first; the parse then confirms the scheme and a non-empty host.
- * Test: `tests/unit/tool-links-repository-183.test.ts` ("refuses source URL").
+ *   Exported so the tool page and the API apply the same rule when they render (B-2 step 2).
+ * Test: `tests/unit/tool-links-repository-183.test.ts` ("refuses source URL"),
+ *   `tests/unit/tool-links-page-183.test.tsx` ("source link").
  */
-function isHttpUrl(text: string): boolean {
+export function isHttpUrl(text: string): boolean {
   // eslint-disable-next-line no-control-regex -- #183: control characters are the point
   if (!/^https?:\/\//i.test(text) || /[\s\u0000-\u001f\u007f]/.test(text)) return false;
   try {

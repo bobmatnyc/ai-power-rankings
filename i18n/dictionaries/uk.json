@@ -395,6 +395,13 @@
         "noHistory": "Немає metric history для цього тула.",
         "update": "Оновлення",
         "newMetrics": "Нові metrics reported для {tool}"
+      },
+      "links": {
+        "modelsHeading": "Моделі, які він запускає",
+        "harnessesHeading": "Інструменти з цією моделлю",
+        "native": "Нативна",
+        "supports": "Підтримується",
+        "source": "Джерело"
       }
     },
     "status": {

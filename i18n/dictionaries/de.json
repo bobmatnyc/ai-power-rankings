@@ -387,6 +387,13 @@
         "noHistory": "Kein Metrik-Verlauf für dieses Tool verfügbar.",
         "update": "Update",
         "newMetrics": "Neue Metriken für {tool} gemeldet"
+      },
+      "links": {
+        "modelsHeading": "Modelle, die es ausführt",
+        "harnessesHeading": "Tools mit diesem Modell",
+        "native": "Nativ",
+        "supports": "Unterstützt",
+        "source": "Quelle"
       }
     },
     "status": {

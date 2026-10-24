@@ -395,6 +395,13 @@
         "noHistory": "No metric history available for this tool.",
         "update": "Update",
         "newMetrics": "New metrics reported for {tool}"
+      },
+      "links": {
+        "modelsHeading": "Models it runs",
+        "harnessesHeading": "Harnesses for this model",
+        "native": "Native",
+        "supports": "Supported",
+        "source": "Source"
       }
     },
     "status": {

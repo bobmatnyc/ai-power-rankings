@@ -395,6 +395,13 @@
         "noHistory": "Aucun historique de métriques disponible pour cet outil.",
         "update": "Mise à jour",
         "newMetrics": "Nouvelles métriques rapportées pour {tool}"
+      },
+      "links": {
+        "modelsHeading": "Modèles utilisés",
+        "harnessesHeading": "Outils proposant ce modèle",
+        "native": "Natif",
+        "supports": "Pris en charge",
+        "source": "Source"
       }
     },
     "status": {
