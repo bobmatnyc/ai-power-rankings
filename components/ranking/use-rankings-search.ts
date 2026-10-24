@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { queryLengthBucket, trackEvent } from "@/lib/analytics/track";
+import { type AnalyticsEventMap, queryLengthBucket, trackEvent } from "@/lib/analytics/track";
 
 interface SearchableRanking {
   // #175: typed as the API actually delivers them, not as the UI hopes.
@@ -27,12 +27,14 @@ export const SITE_SEARCH_DEBOUNCE_MS = 800;
  *   (rankings loaded) and the term has not changed for
  *   `SITE_SEARCH_DEBOUNCE_MS`, sends one `site_search` per settled term with
  *   the query length, its bucket and the result count — never the term itself.
+ *   `location` names the search box (#193: the tool 404 page reuses this hook).
  * Test: `tests/unit/analytics-events.test.tsx` ("site_search").
  */
 export function useRankingsSearch<T extends SearchableRanking>(
   rankings: T[],
   rawTerm: string,
-  ready: boolean
+  ready: boolean,
+  location: AnalyticsEventMap["site_search"]["search_location"] = "rankings"
 ): T[] {
   const term = rawTerm.trim().toLowerCase();
   const results = term
@@ -57,11 +59,11 @@ export function useRankingsSearch<T extends SearchableRanking>(
         query_length: term.length,
         query_length_bucket: queryLengthBucket(term.length),
         result_count: resultCount,
-        search_location: "rankings",
+        search_location: location,
       });
     }, SITE_SEARCH_DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [term, ready, resultCount]);
+  }, [term, ready, resultCount, location]);
 
   return results;
 }

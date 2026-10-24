@@ -67,6 +67,7 @@ import { RankingCard } from "../../components/ranking/ranking-card";
 import RankingsGrid from "../../components/ranking/rankings-grid";
 import { SITE_SEARCH_DEBOUNCE_MS, useRankingsSearch } from "../../components/ranking/use-rankings-search";
 import { ToolDetailClient } from "../../app/[lang]/tools/[slug]/tool-detail-client";
+import { ToolNotFoundSearch } from "../../app/[lang]/tools/[slug]/tool-not-found-search";
 import { trackEvent } from "../../lib/analytics/track";
 
 const tracked = vi.mocked(trackEvent);
@@ -332,5 +333,40 @@ describe("site_search", () => {
     ];
     const { result } = renderHook(() => useRankingsSearch(rows as never[], "cursor", true));
     expect(result.current).toEqual([rows[0], rows[1], rows[2]]);
+  });
+});
+
+// #193: the tool 404 page's search box reuses the rankings search hook.
+describe("tool 404 search", () => {
+  const tools = [
+    { slug: "cursor", name: "Cursor" },
+    { slug: "claude-code", name: "Claude Code" },
+  ];
+
+  it("lists matching tools as you type and sends site_search from tool_not_found, never the text", () => {
+    const pushState = vi.spyOn(window.history, "pushState");
+    render(<ToolNotFoundSearch lang="de" tools={tools} />);
+    const box = screen.getByRole("searchbox", { name: "Search tools" });
+    expect(box.closest("form")).toBeNull();
+    expect(box.hasAttribute("name")).toBe(false);
+    expect(screen.queryByRole("link")).toBeNull();
+
+    vi.useFakeTimers();
+    try {
+      fireEvent.change(box, { target: { value: "claude" } });
+      expect(screen.getByRole("link", { name: "Claude Code" }).getAttribute("href")).toBe("/de/tools/claude-code");
+      expect(screen.queryByRole("link", { name: "Cursor" })).toBeNull();
+      act(() => vi.advanceTimersByTime(SITE_SEARCH_DEBOUNCE_MS));
+    } finally {
+      vi.useRealTimers();
+    }
+    expect(tracked.mock.calls).toEqual([
+      [
+        "site_search",
+        { query_length: 6, query_length_bucket: "4-10", result_count: 1, search_location: "tool_not_found" },
+      ],
+    ]);
+    expect(pushState).not.toHaveBeenCalled();
+    pushState.mockRestore();
   });
 });

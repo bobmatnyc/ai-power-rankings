@@ -110,10 +110,21 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-db502ee7eeee",
+    "version": "Unreleased",
+    "date": "2026-10-24T00:58:03.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "tools",
+    "title": "/<locale>/tools/<slug> answers 404 when no tool in the catalogue has that slug",
+    "description": "`/<locale>/tools/<slug>` answers 404 when no tool in the catalogue has that slug. The page rendered for any slug, so an unknown one answered 200 with a client-side \"Tool Not Found\" text and no canonical. The page now calls `notFound()` when the catalogue lookup returns no row; a tool in any status (active, pending_review, inactive) renders as before, and a failed lookup throws to the error page (5xx) instead of rendering. The 404 page is noindex and has a search box held in client state (no form, no `name`; it sends `site_search` with `search_location: \"tool_not_found\"`), up to five links to the nearest active tools by edit distance (`lib/tools/nearest-tools.ts`), and a link to the rankings. The generic not-found page uses the design-system Card and Button and `--ds-*` classes instead of inline styles and hex colours, and the colour ratchet now covers it. Tests: `tests/unit/tool-not-found-193.test.tsx`, `tests/unit/analytics-events.test.tsx`, `tests/unit/globals-consolidation-189.test.ts` (#193)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-f36f633d0b2c",
     "version": "Unreleased",
-    "date": "2026-10-24T00:31:02.848Z",
-    "dateSource": "build",
+    "date": "2026-10-24T00:38:40.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "news",
     "title": "news articles are attributed to tools in the tool catalogue",
