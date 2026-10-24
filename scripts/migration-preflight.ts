@@ -13,8 +13,8 @@
  *   `checkPreflightReport` decides whether a committed report lets the apply proceed.
  *   `summarizeConversion` reads the catalog after the apply so skipped columns are listed
  *   and an unconverted one fails the run.
- * Test: `tests/unit/timestamptz-237-preflight.test.ts`, and the PGlite run in
- *   `tests/unit/timestamptz-237-migration.test.ts`.
+ * Test: `tests/unit/timestamptz-237-preflight.test.ts`, and the PGlite run per process
+ *   zone in `tests/unit/timestamptz-237-tz.test.ts`.
  */
 
 import { createHash } from "crypto";
@@ -179,7 +179,8 @@ function text(value: unknown): string {
  *   infinity values for every in-scope column the catalog has. In-scope tables or
  *   columns the catalog lacks go to `missing`. `acknowledged` is always null here; the
  *   Architect fills it in the committed copy.
- * Test: tests/unit/timestamptz-237-migration.test.ts (PGlite, READ ONLY transaction).
+ * Test: tests/unit/timestamptz-237-preflight.test.ts ("carries no database or role name",
+ *   "present with another type") and tests/unit/timestamptz-237-tz.test.ts (dry run).
  */
 export async function measurePreflight(
   query: ReadOnlyQuery,

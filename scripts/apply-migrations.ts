@@ -300,7 +300,7 @@ function formatColumns(table: string, rows: ColumnRow[]): string[] {
  *
  * Why: criterion 8 — a missing, unreadable or mismatched report refuses; so does a db
  *   that cannot read the catalog back afterwards.
- * Test: `tests/unit/timestamptz-237-migration.test.ts` (apply refusals, PGlite).
+ * Test: `tests/unit/timestamptz-237-preflight.test.ts` (apply refusals, PGlite).
  */
 export function preflightVerdict(deps: MigrationDeps, file: string): ReportVerdict {
   if (!deps.db.readOnlyQueries) return { ok: false, reason: "this database adapter cannot run read-only catalog queries" };

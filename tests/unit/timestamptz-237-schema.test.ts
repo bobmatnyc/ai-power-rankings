@@ -13,7 +13,7 @@
  * Test: `npx vitest run tests/unit/timestamptz-237-schema.test.ts`. No database.
  */
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { is } from "drizzle-orm";
 import { getTableConfig, PgTable } from "drizzle-orm/pg-core";
@@ -84,4 +84,18 @@ describe("#237 schema and migration 0015 parity", () => {
     expect(code).not.toMatch(/::timestamptz/);
     expect(code).not.toMatch(/\b(DROP|DELETE|UPDATE|INSERT|TRUNCATE)\b/i);
   });
+});
+
+// #237 (critic LOW): a `Test:` pointer that names a missing file sends a reviewer nowhere.
+describe("#237 test pointers in the migration scripts", () => {
+  const ROOT = path.resolve(__dirname, "../..");
+  it.each(["scripts/migration-preflight.ts", "scripts/apply-migrations.ts", "tests/unit/fixtures/timestamptz-237-fixture.ts"])(
+    "every tests/ path named in %s exists",
+    (file) => {
+      const source = readFileSync(path.join(ROOT, file), "utf8");
+      const named = [...new Set([...source.matchAll(/tests\/unit\/[\w./-]+\.(?:test\.tsx?|ts|mjs|sql)/g)].map((m) => m[0]))];
+      expect(named.length).toBeGreaterThan(0);
+      expect(named.filter((p) => !existsSync(path.join(ROOT, p)))).toEqual([]);
+    }
+  );
 });
