@@ -20,6 +20,17 @@
 
 import fs from "fs";
 import path from "path";
+import {
+  checkPreflightReport,
+  CONVERSION_STATEMENT,
+  createReportSource,
+  databaseFingerprint,
+  measurePreflight,
+  PREFLIGHT_REPORT_DIR,
+  PREFLIGHT_REQUIRED,
+  type ReadOnlyQuery,
+  summarizeConversion,
+} from "./migration-preflight";
 
 export const MIGRATIONS_DIR = "lib/db/migrations";
 export const TRACKING_TABLE = "_drizzle_migrations";
@@ -50,6 +61,17 @@ export interface MigrationDb {
   executeStatement(statement: string): Promise<void>;
   recordApplied(filename: string): Promise<void>;
   describeColumns(table: string): Promise<ColumnRow[]>;
+  /**
+   * #237: SELECT/SHOW statements in one READ ONLY transaction. Required to dry-run or
+   * apply a migration in PREFLIGHT_REQUIRED; a db without it is refused for those files.
+   */
+  readOnlyQueries?: ReadOnlyQuery;
+}
+
+/** #237: where a gated apply gets this database's fingerprint and the committed report. */
+export interface PreflightDeps {
+  fingerprint: string | null;
+  reports: { read(migration: string): string | null };
 }
 
 export interface MigrationFiles {
@@ -68,6 +90,8 @@ export interface MigrationDeps {
   db: MigrationDb;
   files: MigrationFiles;
   log?: (line: string) => void;
+  /** #237: absent means no fingerprint and no report, so every gated apply refuses. */
+  preflight?: PreflightDeps;
 }
 
 export interface MigrationPlan {
@@ -267,6 +291,53 @@ function formatColumns(table: string, rows: ColumnRow[]): string[] {
 }
 
 /**
+ * #237: the reason a gated apply must not run, or null when it may.
+ *
+ * Why: criterion 8 — a missing, unreadable or mismatched report refuses; so does a db
+ *   that cannot read the catalog back afterwards.
+ * Test: `tests/unit/timestamptz-237-migration.test.ts` (apply refusals, PGlite).
+ */
+export function preflightRefusal(deps: MigrationDeps, file: string): string | null {
+  if (!deps.db.readOnlyQueries) return "this database adapter cannot run read-only catalog queries";
+  if (!deps.preflight) return "no preflight source configured";
+  let raw: string | null;
+  try {
+    raw = deps.preflight.reports.read(file);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    return `the preflight report could not be read (${redactConnectionString(message)})`;
+  }
+  const verdict = checkPreflightReport(raw, file, deps.preflight.fingerprint);
+  return verdict.ok ? null : verdict.reason;
+}
+
+/** #237: measures and prints the read-only preflight report; false when it cannot. */
+async function emitPreflightReport(deps: MigrationDeps, file: string, emit: (line: string) => void): Promise<boolean> {
+  const spec = PREFLIGHT_REQUIRED[file];
+  const fingerprint = deps.preflight?.fingerprint ?? null;
+  if (!spec || !deps.db.readOnlyQueries || fingerprint === null) {
+    emit(`\nERROR: cannot measure the preflight report for ${file} (no read-only query or no database fingerprint).`);
+    return false;
+  }
+  try {
+    const report = await measurePreflight(deps.db.readOnlyQueries, file, spec, fingerprint);
+    emit(`\nPreflight report for ${file} (read-only; SELECT/SHOW only):`);
+    emit(JSON.stringify(report, null, 2));
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    emit(`\nERROR: measuring the preflight report for ${file} failed: ${redactConnectionString(message)}`);
+    return false;
+  }
+  const refusal = preflightRefusal(deps, file);
+  emit(
+    refusal === null
+      ? `Report on file for ${file}: acknowledged for this database; an apply may proceed.`
+      : `Report on file for ${file}: an apply would be refused — ${refusal}.`
+  );
+  return true;
+}
+
+/**
  * #134: Runs the whole flow against injected dependencies and returns an exit code instead
  * of calling process.exit, so tests can assert the outcome and the writes that did or did
  * not happen.
@@ -342,6 +413,13 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
   }
 
   if (options.dryRun) {
+    // #237: a gated migration that is pending (or named) gets its read-only report here.
+    const gated = (options.only !== null ? [options.only] : plan.pending).filter((file) => PREFLIGHT_REQUIRED[file]);
+    for (const file of gated) {
+      if (!(await emitPreflightReport(deps, file, emit))) {
+        return { exitCode: 1, lines, appliedNow };
+      }
+    }
     emit(`\nDry run complete — nothing was written. ${plan.pending.length} migration(s) pending.`);
     return { exitCode: 0, lines, appliedNow };
   }
@@ -349,6 +427,18 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
   if (plan.toApply.length === 0) {
     emit("\nNothing to apply — every migration on disk is already recorded.");
     return { exitCode: 0, lines, appliedNow };
+  }
+
+  // #237 (criterion 8): refuse before any statement runs unless every gated file has an
+  // acknowledged report for this database. Fail closed: no warn-and-continue path.
+  for (const file of plan.toApply.filter((name) => PREFLIGHT_REQUIRED[name])) {
+    const refusal = preflightRefusal(deps, file);
+    if (refusal !== null) {
+      emit(`\nERROR: refusing to apply ${file}: ${refusal}.`);
+      emit(`  Run the dry run, review its preflight report, and commit it acknowledged as ${PREFLIGHT_REPORT_DIR}/${file}.report.json.`);
+      return { exitCode: 1, lines, appliedNow };
+    }
+    emit(`\nPreflight report for ${file}: acknowledged, measured on this database.`);
   }
 
   if (options.only !== null) {
@@ -384,6 +474,19 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
         emit(
           `\nERROR: applying ${file} failed while executing statement ${index + 1} of ${statements.length}: ${redactConnectionString(message)}`
         );
+        return { exitCode: 1, lines, appliedNow };
+      }
+    }
+
+    // #237: the guarded SQL skips with a NOTICE the HTTP driver drops, so list skips from
+    // the catalog and fail (unrecorded) when a present column kept its old type.
+    const spec = PREFLIGHT_REQUIRED[file];
+    if (spec && deps.db.readOnlyQueries) {
+      const [rows] = await deps.db.readOnlyQueries([CONVERSION_STATEMENT]);
+      const summary = summarizeConversion(spec, rows ?? []);
+      emit(`  converted ${summary.converted.length} column(s); skipped ${summary.skipped.length}: ${summary.skipped.join(", ") || "none"}`);
+      if (summary.unconverted.length > 0) {
+        emit(`\nERROR: ${file} left ${summary.unconverted.length} column(s) unconverted: ${summary.unconverted.join(", ")}`);
         return { exitCode: 1, lines, appliedNow };
       }
     }
@@ -447,7 +550,8 @@ async function createNeonDb(): Promise<MigrationDb> {
   const { neon } = await import("@neondatabase/serverless");
   const { drizzle } = await import("drizzle-orm/neon-http");
   const { sql } = await import("drizzle-orm");
-  const db = drizzle(neon(url));
+  const raw = neon(url);
+  const db = drizzle(raw);
 
   // drizzle's neon-http result exposes `rows`; normalise so a plain-array shape also works.
   const rowsOf = (result: unknown): Record<string, unknown>[] => {
@@ -496,6 +600,11 @@ async function createNeonDb(): Promise<MigrationDb> {
         column_default: row["column_default"] === null || row["column_default"] === undefined ? null : String(row["column_default"]),
       }));
     },
+    // #237: the server enforces READ ONLY; a write in `statements` fails the transaction.
+    async readOnlyQueries(statements: string[]) {
+      const results = await raw.transaction(statements.map((statement) => raw(statement)), { readOnly: true });
+      return results.map((rows) => rows as Record<string, unknown>[]);
+    },
   };
 }
 
@@ -513,7 +622,8 @@ async function applyMigrations(argv: string[] = process.argv.slice(2)): Promise<
 
   try {
     const db = await createNeonDb();
-    const result = await runMigrations({ db, files: createFileSource() }, options);
+    const preflight = { fingerprint: databaseFingerprint(process.env["DATABASE_URL"]), reports: createReportSource() };
+    const result = await runMigrations({ db, files: createFileSource(), preflight }, options);
     return result.exitCode;
   } catch (error) {
     // #134: never let a driver error carry the connection string into a public Actions log.
