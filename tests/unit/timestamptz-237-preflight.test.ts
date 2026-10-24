@@ -24,6 +24,7 @@ import {
   countStatement,
   databaseFingerprint,
   type PreflightReport,
+  measurePreflight,
   PREFLIGHT_REQUIRED,
   summarizeConversion,
   TIMESTAMPTZ_COLUMNS,
@@ -47,7 +48,7 @@ function report(overrides: Partial<PreflightReport> = {}): PreflightReport {
       now_tstz: "",
       now_naive: "",
       now_utc_naive: "",
-      role_settings: [],
+      timezone_overrides: [],
       public_tables: [],
       timestamp_columns: [],
       sizes: [],
@@ -204,5 +205,42 @@ describe("#237 criterion 8: the apply of 0015 refuses on PGlite before any ALTER
     expect(result.exitCode).toBe(1);
     expect(result.output).toMatch(/left 42 column\(s\) unconverted/);
     expect(result.recorded).toEqual([]);
+  });
+});
+
+// #237 (scan M1): the report and the job log are public, so the report names no
+// database and no role, and carries no setting other than TimeZone.
+describe("#237 the preflight report carries no database or role name", () => {
+  const ROLE = "zq_role_kumquat_237";
+  let db: PGlite;
+
+  beforeAll(async () => {
+    db = new PGlite();
+    await insertFixtureRows(db, await createNaiveFixture(db));
+    await db.exec(`CREATE ROLE ${ROLE}`);
+    await db.exec(`GRANT SELECT ON ALL TABLES IN SCHEMA public TO ${ROLE}`);
+    await db.exec(`ALTER ROLE ${ROLE} SET TimeZone = 'America/New_York'`);
+    await db.exec(`ALTER ROLE ${ROLE} SET work_mem = '8MB'`);
+    await db.exec(`ALTER DATABASE postgres SET TimeZone = 'Europe/Paris'`);
+    // Overrides for another database: not this database, so not reported.
+    await db.exec(`ALTER DATABASE template1 SET TimeZone = 'Asia/Tokyo'`);
+    await db.exec(`ALTER ROLE ${ROLE} IN DATABASE template1 SET TimeZone = 'Asia/Tokyo'`);
+    await db.exec(`SET SESSION AUTHORIZATION ${ROLE}`);
+  });
+  afterAll(async () => {
+    await db.close();
+  });
+
+  it("labels this database's and this role's TimeZone overrides by scope only", async () => {
+    const mdb = pgliteMigrationDb(db);
+    const report = await measurePreflight(mdb.readOnlyQueries!, FILE, PREFLIGHT_REQUIRED[FILE]!, THIS_DB);
+    expect(report.measurements.timezone_overrides).toEqual([
+      { scope: "database-level", timezone: "Europe/Paris" },
+      { scope: "role-level", timezone: "America/New_York" },
+    ]);
+    const json = JSON.stringify(report);
+    for (const name of [ROLE, "template1", '"postgres"', "work_mem", "Asia/Tokyo"]) {
+      expect(json, name).not.toContain(name);
+    }
   });
 });

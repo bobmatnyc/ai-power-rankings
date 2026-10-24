@@ -80,12 +80,22 @@ export interface TableCounts {
   columns: Record<string, { non_null: number; infinite: number }>;
 }
 
+export interface TimezoneOverride {
+  scope: "database-level" | "role-level" | "role-in-database-level";
+  timezone: string;
+}
+
 export interface PreflightMeasurements {
   session_timezone: string;
   now_tstz: string;
   now_naive: string;
   now_utc_naive: string;
-  role_settings: Record<string, unknown>[];
+  /**
+   * TimeZone settings that apply to this database or the connecting role, labelled by
+   * scope only. #237: no database or role name and no other setting text, because the
+   * report and the job log are public.
+   */
+  timezone_overrides: TimezoneOverride[];
   public_tables: string[];
   timestamp_columns: Record<string, unknown>[];
   sizes: Record<string, unknown>[];
@@ -124,7 +134,9 @@ function ident(name: string): string {
 export const CATALOG_STATEMENTS: readonly string[] = [
   "SHOW timezone",
   "SELECT current_setting('TimeZone') AS tz, now()::text AS now_tstz, now()::timestamp::text AS now_naive, (now() AT TIME ZONE 'UTC')::text AS now_utc_naive",
-  "SELECT d.datname, r.rolname, s.setconfig::text AS setconfig FROM pg_db_role_setting s LEFT JOIN pg_database d ON d.oid = s.setdatabase LEFT JOIN pg_roles r ON r.oid = s.setrole ORDER BY 1, 2",
+  // #237: TimeZone overrides for this database and the connecting role only, as a fixed
+  // scope label and the zone. Never the database or role name, never other settings.
+  "SELECT CASE WHEN s.setdatabase <> 0 AND s.setrole <> 0 THEN 'role-in-database-level' WHEN s.setdatabase <> 0 THEN 'database-level' ELSE 'role-level' END AS scope, substr(c, 10) AS timezone FROM pg_db_role_setting s CROSS JOIN LATERAL unnest(s.setconfig) AS c WHERE lower(c) LIKE 'timezone=%' AND s.setdatabase IN (0, (SELECT oid FROM pg_database WHERE datname = current_database())) AND s.setrole IN (0, (SELECT oid FROM pg_roles WHERE rolname = current_user)) ORDER BY 1, 2",
   "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY 1",
   "SELECT table_name, column_name, data_type, column_default, is_nullable FROM information_schema.columns WHERE table_schema = 'public' AND data_type LIKE 'timestamp%' ORDER BY table_name, ordinal_position",
   "SELECT relname, pg_total_relation_size(oid)::text AS total_bytes, pg_relation_size(oid)::text AS heap_bytes FROM pg_class WHERE relkind = 'r' AND relnamespace = 'public'::regnamespace ORDER BY pg_total_relation_size(oid) DESC",
@@ -220,7 +232,10 @@ export async function measurePreflight(
       now_tstz: text(sessionRow["now_tstz"]),
       now_naive: text(sessionRow["now_naive"]),
       now_utc_naive: text(sessionRow["now_utc_naive"]),
-      role_settings: roles ?? [],
+      timezone_overrides: (roles ?? []).map((row) => ({
+        scope: text(row["scope"]) as TimezoneOverride["scope"],
+        timezone: text(row["timezone"]),
+      })),
       public_tables: [...present],
       timestamp_columns: columns ?? [],
       sizes: sizes ?? [],
