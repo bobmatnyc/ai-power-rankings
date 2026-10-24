@@ -154,12 +154,15 @@ describe("#183 migration 0016 on PGlite", () => {
     expect((await db.query(TOOL_LINK_KIND_VIOLATIONS_SQL)).rows).toEqual([]);
     await link(db, "cursor", "claude-code"); // model side is a harness
     await link(db, "opus-4-5", "opus-4-6"); // harness side is a model
+    await link(db, "opus-4-6", "anthropic"); // harness side is a vendor row (kind 'other'), not a harness
     const found = (await db.query<{ model_kind: string; harness_kind: string }>(TOOL_LINK_KIND_VIOLATIONS_SQL)).rows;
     expect(found.map((r) => [r.model_kind, r.harness_kind]).sort()).toEqual([
       ["harness", "harness"],
       ["model", "model"],
+      ["model", "other"],
     ]);
-    await db.exec(`DELETE FROM public."tool_links" WHERE model_tool_id IN (SELECT id FROM public."tools" WHERE slug IN ('cursor', 'opus-4-5'))`);
+    await db.exec(`DELETE FROM public."tool_links" WHERE model_tool_id IN (SELECT id FROM public."tools" WHERE slug IN ('cursor', 'opus-4-5'))
+      OR harness_tool_id = (SELECT id FROM public."tools" WHERE slug = 'anthropic')`);
     expect((await db.query(TOOL_LINK_KIND_VIOLATIONS_SQL)).rows).toEqual([]);
   });
 

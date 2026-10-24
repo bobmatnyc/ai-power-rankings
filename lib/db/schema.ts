@@ -412,7 +412,7 @@ export const metricsCollectionRuns = pgTable(
  * Why: the models and harness pages cross-link (B-2), and both directions are
  *   many-to-many, so the relation needs its own table rather than a JSON list.
  * What: `model_tool_id` must reference a `kind='model'` tool and `harness_tool_id` a
- *   non-model tool. Postgres cannot CHECK that across tables and there is no trigger
+ *   `kind='harness'` tool. Postgres cannot CHECK that across tables and there is no trigger
  *   (Q-A5): the writer (B-2) checks it, and `TOOL_LINK_KIND_VIOLATIONS_SQL` in
  *   `lib/db/tool-links.ts` finds any row that breaks it. Deleting either tool deletes
  *   the link. Unique per (model, harness) pair; no self-link.

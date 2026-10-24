@@ -8,8 +8,8 @@
 --   nullable or carry a constant default, so Postgres adds them without rewriting
 --   tools. kind defaults to 'harness' on every existing row; the reviewed per-slug
 --   kinds are a separate data step (0017), never part of this file.
---   The kind rule on tool_links (model side kind='model', harness side not a
---   model) is not a constraint here: no trigger (Q-A5). The writer checks it and
+--   The kind rule on tool_links (model side kind='model', harness side
+--   kind='harness') is not a constraint here: no trigger (Q-A5). The writer checks it and
 --   TOOL_LINK_KIND_VIOLATIONS_SQL (lib/db/tool-links.ts) finds violating rows.
 --   Every statement is guarded (IF NOT EXISTS, or a pg_constraint lookup inside a
 --   DO block with a lock_timeout), so a re-run is a no-op.
