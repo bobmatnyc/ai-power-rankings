@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   ALL_ROW_FIELDS,
   assertSelectOnly,
+  checkVerdict,
   diffSnapshots,
   redact,
   SCORE_ROW_FIELDS,
@@ -49,6 +50,28 @@ describe("diffSnapshots", () => {
     const right = [row("a", 1, 9, { movement: { change: 0 } })];
     expect(diffSnapshots(left, right, ALL_ROW_FIELDS)[0]?.fields).toEqual(["movement"]);
     expect(diffSnapshots(left, right, SCORE_ROW_FIELDS)).toEqual([]);
+  });
+});
+
+describe("checkVerdict", () => {
+  const changed = diffSnapshots([row("a", 1, 9)], [row("a", 1, 9.5)], SCORE_ROW_FIELDS);
+
+  it("passes only when both diffs are empty", () => {
+    expect(checkVerdict([], [], new Set())).toEqual({ exitCode: 0, result: "Result: both diffs 0." });
+  });
+
+  // #93: a tool whose updated_at is after publish (news ingestion bumps it) is labelled, not excused.
+  it("fails on a Diff B difference labelled data-changed-after-publish", () => {
+    const verdict = checkVerdict([], changed, new Set(["a"]));
+    expect(verdict.exitCode).toBe(3);
+    expect(verdict.result).toBe(
+      "Result: DIFFERENCES FOUND. Diff A: 0 differences. Diff B: 1 differences (1 labelled data-changed-after-publish)."
+    );
+  });
+
+  it("fails when Diff A differs or Diff B could not run", () => {
+    expect(checkVerdict(changed, [], new Set()).exitCode).toBe(3);
+    expect(checkVerdict([], null, new Set()).result).toContain("Diff B: not run (no current snapshot)");
   });
 });
 

@@ -189,14 +189,21 @@ export class RankingsRepository extends BaseRepository<RankingData> {
         await tx.update(rankings).set({ isCurrent: false });
 
         // Set the specified ranking as current
-        await tx
+        const promoted = await tx
           .update(rankings)
           .set({
             isCurrent: true,
             publishedAt: new Date(),
             updatedAt: new Date(),
           })
-          .where(eq(rankings.id, id));
+          .where(eq(rankings.id, id))
+          .returning();
+
+        // #93: an admin rebuild replaces a draft row (new id). If the id is gone,
+        // throw so the transaction rolls back the demotion above.
+        if (promoted.length === 0) {
+          throw new Error(`Ranking ${id} not found; current ranking left unchanged`);
+        }
       });
 
       return true;

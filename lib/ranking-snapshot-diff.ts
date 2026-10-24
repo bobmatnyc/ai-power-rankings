@@ -76,6 +76,34 @@ export function diffSnapshots(
   });
 }
 
+export interface CheckVerdict {
+  /** 0 when both diffs are empty, else 3. */
+  exitCode: 0 | 3;
+  /** The report's first line. */
+  result: string;
+}
+
+/**
+ * Exit code and result line for the #93 check. `diffB` is null when no current
+ * snapshot is stored. `labelledB` holds tool ids whose row changed after publish.
+ */
+export function checkVerdict(
+  diffA: SnapshotDiff[],
+  diffB: SnapshotDiff[] | null,
+  labelledB: Set<string>
+): CheckVerdict {
+  // #93: every Diff B difference fails the check. `updated_at` also moves when
+  // news ingestion touches a tool, so the label is information, never an excuse.
+  if (diffA.length === 0 && diffB !== null && diffB.length === 0) {
+    return { exitCode: 0, result: "Result: both diffs 0." };
+  }
+  const b =
+    diffB === null
+      ? "not run (no current snapshot)"
+      : `${diffB.length} differences (${diffB.filter((d) => labelledB.has(d.tool_id)).length} labelled data-changed-after-publish)`;
+  return { exitCode: 3, result: `Result: DIFFERENCES FOUND. Diff A: ${diffA.length} differences. Diff B: ${b}.` };
+}
+
 // One SELECT, no statement separator. `WITH … DELETE` starts with WITH and is refused.
 const SINGLE_SELECT = /^\s*select\s[^;]*;?\s*$/i;
 

@@ -9,9 +9,10 @@
  *   READ ONLY Postgres transaction, after a single-SELECT check. Both runs use
  *   an in-memory port whose write methods throw, except that Diff A's publish
  *   run captures its rows in memory. Prints a Markdown report to stdout.
- *   Diff B lists, but does not count, tools whose `tools.updated_at` is after
- *   the snapshot's publish time, and ignores `movement` (it depends on the
- *   snapshot before). Exit 0: both diffs 0. Exit 3: a diff. Exit 1: an error,
+ *   Diff B labels, as information only, tools whose `tools.updated_at` is
+ *   after the snapshot's publish time, and ignores `movement` (it depends on
+ *   the snapshot before). Exit 0: both diffs 0. Exit 3: any diff, labelled or
+ *   not. Exit 1: an error,
  *   printed to stderr with connection details removed.
  * Test: the diff and guards are in `lib/ranking-snapshot-diff.test.ts`. Run by
  *   `.github/workflows/check-admin-regenerate.yml` (dispatch only).
@@ -24,6 +25,7 @@ import { naiveUtcTypes } from "@/lib/db/naive-utc-timestamp.mjs";
 import {
   ALL_ROW_FIELDS,
   assertSelectOnly,
+  checkVerdict,
   diffSnapshots,
   redact,
   SCORE_ROW_FIELDS,
@@ -78,10 +80,10 @@ function parseDate(): Date {
 
 function table(diffs: SnapshotDiff[], expected: Set<string>): string[] {
   if (diffs.length === 0) return ["No differences."];
-  const lines = ["| tool | kind | fields | left rank/score | right rank/score | expected |", "|---|---|---|---|---|---|"];
+  const lines = ["| tool | kind | fields | left rank/score | right rank/score | note |", "|---|---|---|---|---|---|"];
   for (const d of diffs) {
     const side = (r?: SnapshotRow) => (r ? `${r["rank"] ?? r["position"]} / ${r["score"]}` : "-");
-    const why = expected.has(d.tool_id) ? "tool data changed after publish" : "";
+    const why = expected.has(d.tool_id) ? "data-changed-after-publish" : "";
     lines.push(`| ${d.tool_name} | ${d.kind} | ${d.fields.join(", ")} | ${side(d.left)} | ${side(d.right)} | ${why} |`);
   }
   return lines;
@@ -125,10 +127,11 @@ async function main(): Promise<number> {
     "",
   ];
 
-  let unexpectedB = 0;
+  // #93: null when no current snapshot is stored (the check then fails).
+  let diffB: SnapshotDiff[] | null = null;
+  let changedAfter = new Set<string>();
   if (!current) {
     out.push("No current snapshot is stored; Diff B not run.");
-    unexpectedB = 1;
   } else {
     const publishedAt = current["published_at"];
     if (!(publishedAt instanceof Date)) throw new Error("current snapshot has no published_at");
@@ -139,24 +142,25 @@ async function main(): Promise<number> {
       now: () => publishedAt,
     });
     const stored = snapshotRows(current["data"]);
-    const diffB = diffSnapshots(replay.entries as unknown as SnapshotRow[], stored, SCORE_ROW_FIELDS);
-    const changedAfter = new Set(
+    diffB = diffSnapshots(replay.entries as unknown as SnapshotRow[], stored, SCORE_ROW_FIELDS);
+    changedAfter = new Set(
       toolRows
         .filter((row) => row["updated_at"] instanceof Date && (row["updated_at"] as Date) > publishedAt)
         .map((row) => String(row["id"]))
     );
-    unexpectedB = diffB.filter((d) => !changedAfter.has(d.tool_id)).length;
     out.push(
       `Snapshot ${String(current["period"])} (algorithm ${String(current["algorithm_version"])}), replayed at ${publishedAt.toISOString()}.`,
-      `${replay.entries.length} replayed vs ${stored.length} stored rows; ${diffB.length} differences, ${unexpectedB} not explained by a tool edit after publish.`,
+      `${replay.entries.length} replayed vs ${stored.length} stored rows; ${diffB.length} differences.`,
       "Compared: rank, score, tier, factor_scores. Not compared: movement.",
       "",
       ...table(diffB, changedAfter)
     );
   }
 
-  console.log(out.join("\n"));
-  return diffA.length === 0 && unexpectedB === 0 ? 0 : 3;
+  // #93: any difference, labelled or not, fails the check and the result line says so.
+  const verdict = checkVerdict(diffA, diffB, changedAfter);
+  console.log([verdict.result, "", ...out].join("\n"));
+  return verdict.exitCode;
 }
 
 main()
