@@ -1,13 +1,13 @@
 [
   {
-    "id": "unreleased-9d413a3b1cbb",
+    "id": "unreleased-0b3444686b0e",
     "version": "Unreleased",
-    "date": "2026-10-23T23:56:39.118Z",
+    "date": "2026-10-24T00:05:32.778Z",
     "dateSource": "build",
     "section": "Security",
     "scope": "auth",
     "title": "harden auth routing for admin and dashboard paths",
-    "description": "harden auth routing for admin and dashboard paths. The middleware `config.matcher` now always includes `/:locale/admin(.*)` and `/:locale/dashboard(.*)`, matching the page entries of `PROTECTED_ROUTE_PATTERNS`, so every request under those trees gets the middleware's sign-in check. The admin and dashboard trees also have server layouts that check the session through `requireAuth()` (Clerk `auth()`) and redirect a signed-out request to `/<locale>/sign-in` with the tree root as `redirect_url`, whether or not the middleware ran (`lib/protected-page-guard.ts`). Tests: `tests/unit/middleware-matcher-protected-trees.test.ts`, `tests/unit/protected-page-guard.test.ts`",
+    "description": "harden auth routing for admin and dashboard paths. The middleware `config.matcher` now includes `/:locale/admin(.*)` and `/:locale/dashboard(.*)`, matching the page entries of `PROTECTED_ROUTE_PATTERNS`, so every request under those trees gets the middleware's sign-in check. The admin and dashboard trees also have server layouts that check the session through `requireAuth()` (Clerk `auth()`) and redirect a signed-out request to `/<locale>/sign-in` with the tree root as `redirect_url` (`lib/protected-page-guard.ts`). Tests: `tests/unit/middleware-matcher-protected-trees.test.ts`, `tests/unit/protected-page-guard.test.ts`",
     "changeType": "fix"
   },
   {
