@@ -11,6 +11,50 @@
     {
       "path": "/api/cron/regenerate-rankings",
       "schedule": "0 9 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=github&shard=0&of=1",
+      "schedule": "0 1 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=pypi&shard=0&of=2",
+      "schedule": "10 1 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=pypi&shard=1&of=2",
+      "schedule": "20 1 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=npm&shard=0&of=4",
+      "schedule": "0 2 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=npm&shard=1&of=4",
+      "schedule": "10 2 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=npm&shard=2&of=4",
+      "schedule": "20 2 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=npm&shard=3&of=4",
+      "schedule": "30 2 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=vscode&shard=0&of=4",
+      "schedule": "0 3 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=vscode&shard=1&of=4",
+      "schedule": "10 3 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=vscode&shard=2&of=4",
+      "schedule": "20 3 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-metrics?part=vscode&shard=3&of=4",
+      "schedule": "30 3 1 * *"
     }
   ]
 }
