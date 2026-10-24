@@ -1,0 +1,664 @@
+{
+  "kind": "migration-preflight-report",
+  "version": 1,
+  "migration": "0015_timestamptz_utc.sql",
+  "database_fingerprint": "sha256:744b6c67f08ae743",
+  "measured_at": "2026-10-24T08:52:33.298Z",
+  "measurements": {
+    "session_timezone": "GMT",
+    "now_tstz": "2026-10-24 08:52:33.301382+00",
+    "now_naive": "2026-10-24 08:52:33.301382",
+    "now_utc_naive": "2026-10-24 08:52:33.301382",
+    "timezone_overrides": [],
+    "public_tables": [
+      "_drizzle_migrations",
+      "article_processing_logs",
+      "article_rankings_changes",
+      "articles",
+      "automated_ingestion_runs",
+      "companies",
+      "metrics_collection_runs",
+      "migrations",
+      "monthly_summaries",
+      "news",
+      "ranking_versions",
+      "rankings",
+      "state_of_ai_summaries",
+      "tool_metrics_history",
+      "tools"
+    ],
+    "timestamp_columns": [
+      {
+        "table_name": "article_processing_logs",
+        "column_name": "started_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "article_processing_logs",
+        "column_name": "completed_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "article_processing_logs",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "article_rankings_changes",
+        "column_name": "applied_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "article_rankings_changes",
+        "column_name": "rolled_back_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "article_rankings_changes",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "articles",
+        "column_name": "published_date",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "articles",
+        "column_name": "ingested_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "articles",
+        "column_name": "processed_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "articles",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "articles",
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "automated_ingestion_runs",
+        "column_name": "started_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "automated_ingestion_runs",
+        "column_name": "completed_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "automated_ingestion_runs",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "companies",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "companies",
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "metrics_collection_runs",
+        "column_name": "started_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "metrics_collection_runs",
+        "column_name": "finished_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "metrics_collection_runs",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "metrics_collection_runs",
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "migrations",
+        "column_name": "started_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "migrations",
+        "column_name": "completed_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "migrations",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "monthly_summaries",
+        "column_name": "generated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "monthly_summaries",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "monthly_summaries",
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "news",
+        "column_name": "published_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "news",
+        "column_name": "date",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "news",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "news",
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "ranking_versions",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "rankings",
+        "column_name": "published_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      },
+      {
+        "table_name": "rankings",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "rankings",
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "state_of_ai_summaries",
+        "column_name": "generated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "state_of_ai_summaries",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "state_of_ai_summaries",
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "tool_metrics_history",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "tool_metrics_history",
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "tools",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "tools",
+        "column_name": "updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": "now()",
+        "is_nullable": "NO"
+      },
+      {
+        "table_name": "tools",
+        "column_name": "score_updated_at",
+        "data_type": "timestamp without time zone",
+        "column_default": null,
+        "is_nullable": "YES"
+      }
+    ],
+    "sizes": [
+      {
+        "relname": "articles",
+        "total_bytes": "5160960",
+        "heap_bytes": "1097728"
+      },
+      {
+        "relname": "tools",
+        "total_bytes": "2654208",
+        "heap_bytes": "98304"
+      },
+      {
+        "relname": "rankings",
+        "total_bytes": "1712128",
+        "heap_bytes": "8192"
+      },
+      {
+        "relname": "article_rankings_changes",
+        "total_bytes": "974848",
+        "heap_bytes": "679936"
+      },
+      {
+        "relname": "news",
+        "total_bytes": "876544",
+        "heap_bytes": "294912"
+      },
+      {
+        "relname": "automated_ingestion_runs",
+        "total_bytes": "516096",
+        "heap_bytes": "147456"
+      },
+      {
+        "relname": "companies",
+        "total_bytes": "458752",
+        "heap_bytes": "131072"
+      },
+      {
+        "relname": "monthly_summaries",
+        "total_bytes": "409600",
+        "heap_bytes": "8192"
+      },
+      {
+        "relname": "article_processing_logs",
+        "total_bytes": "278528",
+        "heap_bytes": "90112"
+      },
+      {
+        "relname": "ranking_versions",
+        "total_bytes": "163840",
+        "heap_bytes": "8192"
+      },
+      {
+        "relname": "state_of_ai_summaries",
+        "total_bytes": "155648",
+        "heap_bytes": "8192"
+      },
+      {
+        "relname": "migrations",
+        "total_bytes": "81920",
+        "heap_bytes": "8192"
+      },
+      {
+        "relname": "tool_metrics_history",
+        "total_bytes": "49152",
+        "heap_bytes": "0"
+      },
+      {
+        "relname": "_drizzle_migrations",
+        "total_bytes": "32768",
+        "heap_bytes": "8192"
+      },
+      {
+        "relname": "metrics_collection_runs",
+        "total_bytes": "24576",
+        "heap_bytes": "0"
+      }
+    ],
+    "row_counts": {
+      "tools": {
+        "rows": 134,
+        "newest_created_at": "2026-10-04 06:01:40.161478",
+        "columns": {
+          "score_updated_at": {
+            "non_null": 52,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 134,
+            "infinite": 0
+          },
+          "updated_at": {
+            "non_null": 134,
+            "infinite": 0
+          }
+        }
+      },
+      "rankings": {
+        "rows": 17,
+        "newest_created_at": "2026-10-24 05:35:51.767313",
+        "columns": {
+          "published_at": {
+            "non_null": 17,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 17,
+            "infinite": 0
+          },
+          "updated_at": {
+            "non_null": 17,
+            "infinite": 0
+          }
+        }
+      },
+      "news": {
+        "rows": 315,
+        "newest_created_at": "2025-11-03 00:02:30.117384",
+        "columns": {
+          "published_at": {
+            "non_null": 315,
+            "infinite": 0
+          },
+          "date": {
+            "non_null": 315,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 315,
+            "infinite": 0
+          },
+          "updated_at": {
+            "non_null": 315,
+            "infinite": 0
+          }
+        }
+      },
+      "companies": {
+        "rows": 400,
+        "newest_created_at": "2026-10-22 06:01:09.27098",
+        "columns": {
+          "created_at": {
+            "non_null": 400,
+            "infinite": 0
+          },
+          "updated_at": {
+            "non_null": 400,
+            "infinite": 0
+          }
+        }
+      },
+      "migrations": {
+        "rows": 2,
+        "newest_created_at": "2025-09-12 22:45:13.104",
+        "columns": {
+          "started_at": {
+            "non_null": 2,
+            "infinite": 0
+          },
+          "completed_at": {
+            "non_null": 2,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 2,
+            "infinite": 0
+          }
+        }
+      },
+      "monthly_summaries": {
+        "rows": 7,
+        "newest_created_at": "2026-10-01 11:20:49.607",
+        "columns": {
+          "generated_at": {
+            "non_null": 7,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 7,
+            "infinite": 0
+          },
+          "updated_at": {
+            "non_null": 7,
+            "infinite": 0
+          }
+        }
+      },
+      "state_of_ai_summaries": {
+        "rows": 10,
+        "newest_created_at": "2026-10-01 08:00:25.681",
+        "columns": {
+          "generated_at": {
+            "non_null": 10,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 10,
+            "infinite": 0
+          },
+          "updated_at": {
+            "non_null": 10,
+            "infinite": 0
+          }
+        }
+      },
+      "automated_ingestion_runs": {
+        "rows": 226,
+        "newest_created_at": "2026-10-24 06:00:01.066966",
+        "columns": {
+          "started_at": {
+            "non_null": 226,
+            "infinite": 0
+          },
+          "completed_at": {
+            "non_null": 199,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 226,
+            "infinite": 0
+          }
+        }
+      },
+      "tool_metrics_history": {
+        "rows": 0,
+        "newest_created_at": null,
+        "columns": {
+          "created_at": {
+            "non_null": 0,
+            "infinite": 0
+          },
+          "updated_at": {
+            "non_null": 0,
+            "infinite": 0
+          }
+        }
+      },
+      "metrics_collection_runs": {
+        "rows": 0,
+        "newest_created_at": null,
+        "columns": {
+          "started_at": {
+            "non_null": 0,
+            "infinite": 0
+          },
+          "finished_at": {
+            "non_null": 0,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 0,
+            "infinite": 0
+          },
+          "updated_at": {
+            "non_null": 0,
+            "infinite": 0
+          }
+        }
+      },
+      "articles": {
+        "rows": 666,
+        "newest_created_at": "2026-10-22 06:01:37.183",
+        "columns": {
+          "published_date": {
+            "non_null": 666,
+            "infinite": 0
+          },
+          "ingested_at": {
+            "non_null": 666,
+            "infinite": 0
+          },
+          "processed_at": {
+            "non_null": 436,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 666,
+            "infinite": 0
+          },
+          "updated_at": {
+            "non_null": 666,
+            "infinite": 0
+          }
+        }
+      },
+      "article_rankings_changes": {
+        "rows": 1144,
+        "newest_created_at": "2026-10-22 06:01:09.289",
+        "columns": {
+          "applied_at": {
+            "non_null": 1144,
+            "infinite": 0
+          },
+          "rolled_back_at": {
+            "non_null": 192,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 1144,
+            "infinite": 0
+          }
+        }
+      },
+      "article_processing_logs": {
+        "rows": 475,
+        "newest_created_at": "2026-10-22 06:01:37.195001",
+        "columns": {
+          "started_at": {
+            "non_null": 475,
+            "infinite": 0
+          },
+          "completed_at": {
+            "non_null": 475,
+            "infinite": 0
+          },
+          "created_at": {
+            "non_null": 475,
+            "infinite": 0
+          }
+        }
+      },
+      "ranking_versions": {
+        "rows": 4,
+        "newest_created_at": "2025-10-01 16:00:00",
+        "columns": {
+          "created_at": {
+            "non_null": 4,
+            "infinite": 0
+          }
+        }
+      }
+    },
+    "missing": [],
+    "other_type": []
+  },
+  "acknowledged": {
+    "by": "Architect (for Bob, #237 plan)",
+    "at": "2026-10-24T08:56:15.000Z"
+  }
+}
