@@ -1,20 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { ToolMapper } from "./services/article-ingestion.service";
-import { findToolByText } from "./tool-matcher";
 
-// Re-enabled for #76 (bit-rotted before vitest was wired, #10). All
-// ToolMapper.normalizeTool/processToolMentions assertions were verified
-// against the current lib/services/article-ingestion.service.ts and already
-// matched exactly — no changes needed there. The stale assertions were all
-// findToolByText() calls (from ./tool-matcher, a separate/simpler matcher):
-// they expected the finer-grained real tool taxonomy (e.g. "chatgpt-canvas",
-// "claude-artifacts", "amazon-q-developer") but the current
-// `defaultToolMappings` in tool-matcher.ts only knows coarser slugs
-// ("chatgpt", "claude", "amazon-codewhisperer"). See lib/tool-matcher.test.ts
-// for the full writeup of that gap, including a real (separately-reported)
-// production bug: findToolByText is live in app/api/news/route.ts and
-// app/api/news/[slug]/route.ts, so this mismatch can mis-tag news articles'
-// primary tool.
+// Re-enabled for #76 (bit-rotted before vitest was wired, #10). The
+// tool-matcher cases were removed with lib/tool-matcher.ts (#109): news
+// attribution now resolves against the tool catalogue, covered by
+// tests/unit/news-tool-resolver-109.test.ts.
 describe("Tool Detection Integration Tests", () => {
   describe("Required tool mappings from test scenarios", () => {
     it("should verify GPT-4 maps to ChatGPT Canvas", () => {
@@ -85,64 +75,16 @@ describe("Tool Detection Integration Tests", () => {
     });
   });
 
-  describe("Text-based tool detection (findToolByText)", () => {
-    it("should find tools in natural text", () => {
-      expect(findToolByText("I am using ChatGPT Canvas for coding")).toBe("chatgpt");
-      expect(findToolByText("GitHub Copilot helps me code")).toBe("github-copilot");
-      expect(findToolByText("Replit Agent is amazing")).toBe("replit-ai");
-      expect(findToolByText("Devin by Cognition AI")).toBe("devin");
-    });
-
-    it("should handle search term priority correctly", () => {
-      // Note: "Claude" as a standalone word matches the "claude" mapping first
-      // This is due to the search terms mapping order in tool-matcher.ts
-      expect(findToolByText("Claude is great")).toBe("claude");
-      expect(findToolByText("Claude Code is great")).toBe("claude"); // "claude" matches first
-    });
-
-    it("should find tools by alternative search terms", () => {
-      expect(findToolByText("Using claude.ai for development")).toBe("claude");
-      expect(findToolByText("Amazon CodeWhisperer rocks")).toBe("amazon-codewhisperer");
-      expect(findToolByText("Gemini Code helps me")).toBe("gemini");
-    });
-  });
-
-  describe("Real-world article scenarios", () => {
-    it("should extract tools from article-like content", () => {
-      // Note: articleText variable defined but not directly used in tests
-      // Tests below check individual tool extraction from specific strings
-
-      // Test that we can find various tools in article content
-      expect(findToolByText("GitHub Copilot remains popular")).toBe("github-copilot");
-      expect(findToolByText("Anthropic Claude provides")).toBe("claude");
-      expect(findToolByText("Devin by Cognition AI")).toBe("devin");
-      expect(findToolByText("Google Gemini offers")).toBe("gemini");
-    });
-
-    it("should handle tool mentions with possessive forms", () => {
-      expect(findToolByText("Claude's capabilities are amazing")).toBe("claude");
-      expect(findToolByText("Cursor's AI features are great")).toBe("cursor");
-      expect(findToolByText("Devin's autonomous coding")).toBe("devin");
-    });
-  });
-
   describe("Edge cases and robustness", () => {
     it("should handle empty and invalid inputs gracefully", () => {
       expect(ToolMapper.normalizeTool("")).toBe("");
       expect(ToolMapper.normalizeTool(null as unknown as string)).toBe(null);
       expect(ToolMapper.normalizeTool(undefined as unknown as string)).toBe(undefined);
-
-      expect(findToolByText("")).toBeNull();
-      expect(findToolByText(null as unknown as string)).toBeNull();
-      expect(findToolByText(undefined as unknown as string)).toBeNull();
     });
 
     it("should handle whitespace and special characters", () => {
       expect(ToolMapper.normalizeTool("  Claude  ")).toBe("Claude Code");
       expect(ToolMapper.normalizeTool("\tGPT-4\n")).toBe("ChatGPT Canvas");
-
-      expect(findToolByText("I use Claude! It's amazing.")).toBe("claude");
-      expect(findToolByText("v0.dev - rapid prototyping")).toBe("v0");
     });
   });
 
