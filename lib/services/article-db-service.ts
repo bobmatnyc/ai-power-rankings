@@ -16,6 +16,7 @@ import type {
 import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { companies, rankings, tools } from "@/lib/db/schema";
+import { snapshotRows } from "@/lib/rankings/snapshot-rows";
 import type {
   CurrentRanking,
   RankingChange,
@@ -910,9 +911,8 @@ export class ArticleDatabaseService {
           .limit(1);
 
         if (latestRanking?.data) {
-          // Fix Bug 1: Access correct data structure (object with rankings array)
-          const dataObj = latestRanking.data as { rankings: any[] };
-          const rankingArray = dataObj.rankings || [];
+          // #256: the current row is a bare array (cron) or `{ rankings: [...] }`.
+          const rankingArray: any[] = snapshotRows(latestRanking.data);
 
           console.log(
             "[ArticleDatabaseService] Sample raw ranking data:",

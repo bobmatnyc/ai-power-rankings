@@ -110,6 +110,17 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-a3d4fc9a0116",
+    "version": "Unreleased",
+    "date": "2026-10-24T04:22:44.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "admin",
+    "title": "admin rankings readers and writers handle bare-array snapshot rows",
+    "description": "admin rankings readers and writers handle bare-array snapshot rows. The cron and admin-draft writers store `rankings.data` as a bare array, so `GET`/`PUT /api/admin/rankings/[period]`, `/api/admin/rankings/periods`, `/api/admin/check-ranking-periods` and the `periods`, `check-data`, `all` and `sync-current` actions of `/api/admin/rankings` reported 0 rows for those rows, and `check-data` reported `has_scores: false`. They now read rows through `snapshotRows()` (`lib/rankings/snapshot-rows.ts`), which accepts a bare array, `{ rankings }` or `{ data }`, and returns [] for null or malformed data; `has_scores` is false when a period has no rows. `PUT` with no `rankings` in the body keeps the stored rows instead of writing `{ rankings: [] }`, and a non-array `rankings` gets 400. `sync-current` writes `public/data/rankings.json` and the static cache as `{ ...fields, rankings: [...], is_current: true }` instead of spreading the array into numeric keys. Article ingestion reads the current row's rankings the same way. Tests: `tests/unit/admin-rankings-bare-array-256.test.ts` (#256)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-49c664671214",
     "version": "Unreleased",
     "date": "2026-10-24T03:00:40.000Z",

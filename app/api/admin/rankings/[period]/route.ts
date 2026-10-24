@@ -2,12 +2,21 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
+import { snapshotRows } from "@/lib/rankings/snapshot-rows";
 
 type Params = {
   params: Promise<{
     period: string;
   }>;
 };
+
+/** `metadata` of a wrapped snapshot; {} for a bare array or malformed data (#256). */
+function snapshotMetadata(data: unknown): Record<string, unknown> {
+  const metadata = data && !Array.isArray(data) ? (data as { metadata?: unknown }).metadata : undefined;
+  return metadata && typeof metadata === "object" && !Array.isArray(metadata)
+    ? (metadata as Record<string, unknown>)
+    : {};
+}
 
 // GET rankings for a specific period
 export async function GET(_request: NextRequest, { params }: Params) {
@@ -31,8 +40,9 @@ export async function GET(_request: NextRequest, { params }: Params) {
       algorithm_version: periodData.algorithm_version,
       is_current: periodData.is_current,
       published_at: periodData.published_at,
-      rankings: periodData.data?.rankings || [],
-      metadata: periodData.data?.metadata || {},
+      // #256: cron and draft rows store a bare array, older rows `{ rankings }`.
+      rankings: snapshotRows(periodData.data),
+      metadata: snapshotMetadata(periodData.data),
       created_at: periodData.created_at,
       updated_at: periodData.updated_at,
     });
@@ -63,6 +73,11 @@ export async function PUT(request: NextRequest, { params }: Params) {
     const body = await request.json();
     const rankingsRepo = new RankingsRepository();
 
+    // #256: a non-array `rankings` is refused, never written as [].
+    if (body.rankings != null && !Array.isArray(body.rankings)) {
+      return NextResponse.json({ error: "rankings must be an array" }, { status: 400 });
+    }
+
     // Check if period exists
     const existing = await rankingsRepo.getByPeriod(period);
 
@@ -73,8 +88,9 @@ export async function PUT(request: NextRequest, { params }: Params) {
         is_current: body.is_current !== undefined ? body.is_current : existing.is_current,
         published_at: body.published_at ? new Date(body.published_at) : existing.published_at,
         data: {
-          rankings: body.rankings || existing.data?.rankings || [],
-          metadata: body.metadata || existing.data?.metadata || {},
+          // #256: with no `rankings` in the body keep the stored rows in either shape.
+          rankings: body.rankings ?? snapshotRows(existing.data),
+          metadata: body.metadata || snapshotMetadata(existing.data),
           generated_at: new Date().toISOString(),
         },
       });

@@ -13,8 +13,10 @@ import { join } from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { writeRankingsStaticCache } from "@/lib/cache/rankings-static-cache";
-import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
+import { type RankingData, RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
+// #256: readers and the static-file writer accept bare-array and wrapped snapshots.
+import { snapshotDocument } from "@/lib/rankings/snapshot-rows";
 // #93: build and preview run the cron's pipeline in draft / dry-run mode (V6 retired).
 import {
   RANKING_ALGORITHM_VERSION,
@@ -23,6 +25,22 @@ import {
   regenerateRankings,
 } from "@/lib/services/ranking-generation.service";
 import { buildPreviewComparison, previewRankings, snapshotRows } from "@/lib/services/ranking-preview.service";
+
+/**
+ * The current row as the `{ rankings: [...] }` object that `public/data/rankings.json`
+ * and the static cache hold (the shape their readers take), marked `is_current` (#256).
+ */
+function currentSnapshotDocument(row: RankingData): Record<string, unknown> {
+  return snapshotDocument(
+    row.data,
+    {
+      period: row.period,
+      algorithm_version: row.algorithm_version,
+      generated_at: (row.published_at ?? row.created_at).toISOString(),
+    },
+    { is_current: true }
+  );
+}
 
 /**
  * GET /api/admin/rankings
@@ -45,7 +63,7 @@ export async function GET(request: NextRequest) {
         const allRankings = await rankingsRepo.findAll();
         const periodData = allRankings.map((ranking) => ({
           period: ranking.period,
-          tool_count: ranking.data?.rankings?.length || 0,
+          tool_count: snapshotRows(ranking.data).length, // #256
           algorithm_version: ranking.algorithm_version,
           generated_at: ranking.data?.generated_at || ranking.created_at.toISOString(),
           is_current: ranking.is_current,
@@ -63,12 +81,16 @@ export async function GET(request: NextRequest) {
 
         if (!period) {
           const allRankings = await rankingsRepo.findAll();
-          const allData = allRankings.map((ranking) => ({
-            period: ranking.period,
-            rankings: ranking.data?.rankings?.length || 0,
-            has_scores: ranking.data?.rankings?.every((r: any) => r.score !== undefined) || false,
-            algorithm_version: ranking.algorithm_version,
-          }));
+          const allData = allRankings.map((ranking) => {
+            // #256: bare rows carry `score` as well (RankingEntry); no rows means no scores.
+            const rows = snapshotRows(ranking.data);
+            return {
+              period: ranking.period,
+              rankings: rows.length,
+              has_scores: rows.length > 0 && rows.every((r) => r["score"] !== undefined),
+              algorithm_version: ranking.algorithm_version,
+            };
+          });
 
           return NextResponse.json({ periods: allData });
         }
@@ -81,12 +103,14 @@ export async function GET(request: NextRequest) {
           );
         }
 
+        // #256: read rows from either stored shape.
+        const rows = snapshotRows(data.data);
         return NextResponse.json({
           period,
-          tool_count: data.data?.rankings?.length || 0,
+          tool_count: rows.length,
           algorithm_version: data.algorithm_version,
           generated_at: data.data?.generated_at || data.created_at.toISOString(),
-          sample_rankings: data.data?.rankings?.slice(0, 5) || [],
+          sample_rankings: rows.slice(0, 5),
         });
       }
 
@@ -105,7 +129,7 @@ export async function GET(request: NextRequest) {
         const allRankings = await rankingsRepo.findAll();
         const formattedRankings = allRankings.map((ranking) => ({
           period: ranking.period,
-          rankings: ranking.data?.rankings || [],
+          rankings: snapshotRows(ranking.data), // #256
           metadata: {
             algorithm_version: ranking.algorithm_version,
             generated_at: ranking.data?.generated_at || ranking.created_at.toISOString(),
@@ -356,60 +380,34 @@ export async function POST(request: NextRequest) {
             if (latestRanking) {
               await rankingsRepo.setAsCurrent(latestRanking.id);
 
-              // Update public files
+              // #256: write `{ rankings: [...] }`, never a bare array spread into numeric keys.
+              const document = currentSnapshotDocument(latestRanking);
               const publicPath = join(process.cwd(), "public", "data", "rankings.json");
-              writeFileSync(
-                publicPath,
-                JSON.stringify(
-                  {
-                    ...latestRanking?.data,
-                    is_current: true,
-                  },
-                  null,
-                  2
-                )
-              );
-
-              writeRankingsStaticCache({
-                ...latestRanking?.data,
-                is_current: true,
-              });
+              writeFileSync(publicPath, JSON.stringify(document, null, 2));
+              writeRankingsStaticCache(document);
 
               return NextResponse.json({
                 success: true,
-                message: `Synced rankings from period ${latestRanking?.period}`,
-                period: latestRanking?.period,
-                rankings_count: latestRanking?.data?.rankings?.length || 0,
+                message: `Synced rankings from period ${latestRanking.period}`,
+                period: latestRanking.period,
+                rankings_count: (document["rankings"] as unknown[]).length,
               });
             }
           }
           return NextResponse.json({ error: "No rankings data found" }, { status: 404 });
         }
 
-        // Update public files
+        // #256: write `{ rankings: [...] }`, never a bare array spread into numeric keys.
+        const document = currentSnapshotDocument(currentData);
         const publicPath = join(process.cwd(), "public", "data", "rankings.json");
-        writeFileSync(
-          publicPath,
-          JSON.stringify(
-            {
-              ...currentData.data,
-              is_current: true,
-            },
-            null,
-            2
-          )
-        );
-
-        writeRankingsStaticCache({
-          ...currentData.data,
-          is_current: true,
-        });
+        writeFileSync(publicPath, JSON.stringify(document, null, 2));
+        writeRankingsStaticCache(document);
 
         return NextResponse.json({
           success: true,
           message: `Synced current rankings from period ${currentData.period}`,
           period: currentData.period,
-          rankings_count: currentData.data?.rankings?.length || 0,
+          rankings_count: (document["rankings"] as unknown[]).length,
         });
       }
 
