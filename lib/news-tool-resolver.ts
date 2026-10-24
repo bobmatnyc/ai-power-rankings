@@ -112,7 +112,8 @@ function matchTitle<T extends CatalogueTool>(title: string, catalogue: ToolCatal
 }
 
 /**
- * The catalogue tools an article is about, primary tool first.
+ * Every catalogue tool an article names, in mention order. The primary tool
+ * is `primaryArticleTool`, not this list's first item (see #109).
  *
  * What, in order:
  * 1. Each mention's `toolId` (or a string mention) that is a catalogue id.
@@ -135,15 +136,68 @@ export function resolveArticleTools<T extends CatalogueTool>(
   };
 
   const mentions = Array.isArray(article.toolMentions) ? article.toolMentions : [];
-  for (const mention of mentions) {
-    const { id, name } = readMention(mention);
-    const byId = id ? catalogue.byId.get(id) : undefined;
-    add(byId ?? (name ? catalogue.byKey.get(normalizeKey(name)) : undefined));
-  }
+  for (const mention of mentions) add(resolveMention(readMention(mention), catalogue));
 
   if (resolved.length === 0 && typeof article.title === "string") {
     for (const tool of matchTitle(article.title, catalogue)) add(tool);
   }
 
   return resolved;
+}
+
+/** A mention's `toolId` as a catalogue id, else its name as a catalogue name or slug. */
+function resolveMention<T extends CatalogueTool>(
+  { id, name }: { id?: string; name?: string },
+  catalogue: ToolCatalogue<T>
+): T | undefined {
+  const byId = id ? catalogue.byId.get(id) : undefined;
+  return byId ?? (name ? catalogue.byKey.get(normalizeKey(name)) : undefined);
+}
+
+/** A mention's stored `relevance`; a missing or non-finite value ranks below every number. */
+function readRelevance(mention: unknown): number {
+  const value = mention && typeof mention === "object" ? (mention as Record<string, unknown>)["relevance"] : undefined;
+  return typeof value === "number" && Number.isFinite(value) ? value : Number.NEGATIVE_INFINITY;
+}
+
+/**
+ * The one catalogue tool an article is about, or `null` (#109).
+ *
+ * Why: the first RESOLVED mention in stored order was taken as the primary
+ * tool, so when the article's subject is not in the catalogue a passing
+ * competitor mention (relevance 0.3) became its tool.
+ * What: every consumer of "the article's tool" (`/api/news` `tool_slug`,
+ * `/api/news/[slug]` `tool`, the tool page's Related news) calls this, so they
+ * cannot disagree.
+ * 1. Mentions with neither an id nor a name are ignored.
+ * 2. With no mentions left: the first catalogue name in the title, as in
+ *    `resolveArticleTools`.
+ * 3. Otherwise only the mentions with the highest relevance compete; the first
+ *    of them in stored order that resolves wins. When none of them resolves the
+ *    result is `null`, even if a weaker mention resolves. A mention without a
+ *    numeric relevance ranks below every mention that has one, so rows without
+ *    scores keep the stored-order rule.
+ *
+ * Test: `tests/unit/news-primary-tool-109.test.ts`.
+ */
+export function primaryArticleTool<T extends CatalogueTool>(
+  article: { title?: unknown; toolMentions?: unknown },
+  catalogue: ToolCatalogue<T>
+): T | null {
+  const stored = Array.isArray(article.toolMentions) ? article.toolMentions : [];
+  const mentions = stored
+    .map((m) => ({ ...readMention(m), relevance: readRelevance(m) }))
+    .filter((m) => m.id || m.name);
+
+  if (mentions.length === 0) {
+    return typeof article.title === "string" ? (matchTitle(article.title, catalogue)[0] ?? null) : null;
+  }
+
+  const top = Math.max(...mentions.map((m) => m.relevance));
+  for (const mention of mentions) {
+    if (mention.relevance !== top) continue;
+    const tool = resolveMention(mention, catalogue);
+    if (tool) return tool;
+  }
+  return null;
 }

@@ -247,3 +247,35 @@ describe("GET /api/news/[slug] tool attribution (#109)", () => {
     expect(warn).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("primary tool by mention relevance in both routes (#109)", () => {
+  const manus = () =>
+    article("11", {
+      title: "Chinese AI Startup Manus Secures $500M Funding",
+      toolMentions: [
+        { name: "Manus", relevance: 1 },
+        { name: "GitHub Copilot", toolId: "t-copilot", relevance: 0.3 },
+      ],
+    });
+
+  it("reports no tool_slug for an uncatalogued top mention and keeps tool_name", async () => {
+    getPaginatedFiltered.mockResolvedValue({ articles: [manus()], total: 1, hasMore: false });
+    const { getList } = await loadRoutes();
+
+    const { status, body } = await getList();
+
+    expect(status).toBe(200);
+    expect(body.news[0].tool_slug).toBeUndefined();
+    expect(body.news[0].tool_name).toBe("GitHub Copilot");
+  });
+
+  it("returns tool null for the same article", async () => {
+    getBySlug.mockResolvedValue(manus());
+    const { getDetail } = await loadRoutes();
+
+    const { status, body } = await getDetail("article-11");
+
+    expect(status).toBe(200);
+    expect(body.tool).toBeNull();
+  });
+});
