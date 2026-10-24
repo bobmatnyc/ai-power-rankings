@@ -5,14 +5,12 @@ import { requireAuth } from "@/lib/api-auth";
 /**
  * Server-side sign-in check for the admin and dashboard page trees.
  *
- * Why: `middleware.ts` was the only gate for these pages; the route-group
- * layout is a client component. A request the middleware does not process
- * reached the page unchecked.
+ * Why: Admin and dashboard pages check the session on the server as well as
+ * in the middleware; the route-group layout is a client component.
  * What: The tree layouts call `requireSignedInPage()`, which checks the
- * session through `requireAuth()` (Clerk `auth()`). Any refusal, including an
- * `auth()` failure when the middleware did not run, redirects to the locale's
- * sign-in page. Local development with auth bypassed passes, as it does for
- * `requireAuth()`.
+ * session through `requireAuth()` (Clerk `auth()`). Any refusal, including
+ * `auth()` throwing, redirects to the locale's sign-in page. Local development
+ * with auth disabled passes, as it does for `requireAuth()`.
  * Test: `tests/unit/protected-page-guard.test.ts`.
  */
 

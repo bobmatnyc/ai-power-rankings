@@ -7,13 +7,12 @@ import { PROTECTED_ROUTE_PATTERNS } from "../../lib/route-access";
 /**
  * Middleware coverage of the admin and dashboard page trees.
  *
- * Why: The first `config.matcher` entry skips paths that end in a static file
- * suffix. Dynamic admin and dashboard routes accept such a final segment, so
- * those requests reached the page without the middleware's sign-in check.
+ * Why: Every path under the admin and dashboard trees must reach the
+ * middleware; this pins that through the real `config.matcher`.
  * What: Runs each path through the real `config.matcher`
  * (`unstable_doesMiddlewareMatch`) and, when it matches, the real middleware
- * handler with a signed-out session. A suffixed path must get the same
- * sign-in redirect as its unsuffixed form. Controls: static assets stay
+ * handler with a signed-out session. Each path form must get the same
+ * sign-in redirect as the route's base path. Controls: static assets stay
  * unmatched and `/en/rankings` stays public.
  * Test: `npx vitest run tests/unit/middleware-matcher-protected-trees.test.ts`.
  */
@@ -31,8 +30,8 @@ type Handler = (
 const anonymousAuth = vi.fn(async () => ({ userId: null, sessionId: null }));
 
 /**
- * What Next does with a request: `null` when the matcher skips the middleware
- * (the page renders unchecked), else the middleware's response.
+ * What Next does with a request: `null` when the matcher does not match,
+ * else the middleware's response.
  */
 async function dispatch(path: string): Promise<Response | null> {
   const url = `http://localhost${path}`;
@@ -43,7 +42,7 @@ async function dispatch(path: string): Promise<Response | null> {
 
 const SUFFIXES = [".png", ".css", ".js", ".PNG"];
 
-/** Dynamic page routes; `{s}` is where the final-segment suffix goes. */
+/** Dynamic page routes; `{s}` takes each `SUFFIXES` entry. */
 const DYNAMIC_ROUTES: Array<[string, string]> = [
   ["admin news edit [id]", "/en/admin/news/edit/42{s}"],
   ["dashboard tools [slug]", "/en/dashboard/tools/some-tool{s}"],
@@ -60,8 +59,8 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-describe("admin and dashboard paths whose last segment has a file suffix", () => {
-  it.each(DYNAMIC_ROUTES)("protects %s for every suffix", async (_name, template) => {
+describe("every path under the admin and dashboard trees", () => {
+  it.each(DYNAMIC_ROUTES)("redirects a signed-out request for each path form of %s", async (_name, template) => {
     const base = await dispatch(template.replace("{s}", ""));
     expect(base?.status).toBe(307);
     const baseTarget = new URL(base?.headers.get("location") ?? "").pathname;
@@ -69,7 +68,7 @@ describe("admin and dashboard paths whose last segment has a file suffix", () =>
     for (const suffix of SUFFIXES) {
       const path = template.replace("{s}", suffix);
       const res = await dispatch(path);
-      expect(res, `middleware did not run for ${path}`).not.toBeNull();
+      expect(res, `no sign-in redirect for ${path}`).not.toBeNull();
       expect(res?.status, path).toBe(307);
       const location = new URL(res?.headers.get("location") ?? "");
       expect(location.pathname, path).toBe(baseTarget);
