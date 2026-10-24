@@ -45,6 +45,31 @@ export interface PaginatedNewsOptions extends NewsFilters {
   offset?: number;
 }
 
+/**
+ * The columns `getToolNewsRows` selects (#193): attribution and display fields
+ * only. `content` is deliberately absent; a test asserts it stays that way.
+ */
+export const TOOL_NEWS_COLUMNS = {
+  id: articles.id,
+  slug: articles.slug,
+  title: articles.title,
+  sourceName: articles.sourceName,
+  publishedDate: articles.publishedDate,
+  createdAt: articles.createdAt,
+  toolMentions: articles.toolMentions,
+};
+
+/** One row of `getToolNewsRows`. */
+export interface ToolNewsRow {
+  id: string;
+  slug: string;
+  title: string;
+  sourceName: string | null;
+  publishedDate: Date | null;
+  createdAt: Date;
+  toolMentions: unknown;
+}
+
 export class NewsRepository {
   /**
    * Map article from articles table to news format
@@ -120,6 +145,27 @@ export class NewsRepository {
       slug: row.slug,
       publishedAt: row.publishedDate ?? row.createdAt,
     }));
+  }
+
+  /**
+   * Every active article's attribution fields, with failures thrown, not swallowed.
+   *
+   * Why: the tool page's "Related news" section (#193) attributes articles in
+   * memory with the same resolver as `/api/news`, whose title fallback cannot
+   * run in SQL. `getAll()` loads `content` and turns a failure into `[]`.
+   * What: `status = 'active'`, unordered, only `TOOL_NEWS_COLUMNS` (no
+   * `content`, `summary` or other large columns). Throws when no database is
+   * configured or the query fails.
+   * Test: `tests/unit/tool-news-193.test.tsx`.
+   */
+  async getToolNewsRows(): Promise<ToolNewsRow[]> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection unavailable");
+    }
+
+    // #193: slim scan; the caller sorts, so no ORDER BY.
+    return db.select(TOOL_NEWS_COLUMNS).from(articles).where(eq(articles.status, "active"));
   }
 
   // #152: `getPaginated()` is gone. It swallowed a failed read into an empty

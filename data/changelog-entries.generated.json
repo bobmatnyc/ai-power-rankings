@@ -561,9 +561,20 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-2c04693feabd",
+    "version": "Unreleased",
+    "date": "2026-10-24T01:41:38.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "tools",
+    "title": "the tool page's profile block has a fifth section, Related news, in the server HTML",
+    "description": "the tool page's profile block has a fifth section, Related news, in the server HTML. It lists up to five articles whose primary tool is this tool — the same `tool_slug` `/api/news` reports, computed by the same resolver and catalogue read — newest first by published date (else created date), equal dates by id. An article that only mentions the tool as a secondary tool is not listed. Each item shows its title (linked to `/<locale>/news/<slug>`), date and source. A tool with no articles shows \"No news articles about <tool> yet.\"; a failed news read shows \"News is unavailable right now\", is not cached, and the page still answers 200. Non-active tools show the section too. The read is one slim scan of active articles (no `content`), grouped in memory and cached for 30 minutes in one shared entry tagged `news`, `articles` and `tools`, so `invalidateArticleCache()` refreshes it. No generated text, no new table, service, endpoint or env, and no ranking or ingestion code changed. Tests: `tests/unit/tool-news-193.test.tsx` (#193)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-22f4b0c7a0a1",
     "version": "Unreleased",
-    "date": "2026-10-24T01:21:35.000Z",
+    "date": "2026-10-24T01:29:03.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "tools",

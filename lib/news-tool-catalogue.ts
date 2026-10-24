@@ -21,10 +21,23 @@ const CATALOGUE_TTL_MS = 5 * 60 * 1000;
 
 let cached: { loadedAt: number; catalogue: NewsToolCatalogue } | null = null;
 
+/**
+ * The catalogue read straight from the tools table, with no memory cache.
+ *
+ * Why: the tool page's related news (#193) keeps its own tagged cache and must
+ * attribute articles exactly as `/api/news` does, so both build it here.
+ * What: every catalogue row, any status, indexed by `buildToolCatalogue`.
+ * Throws when the read fails.
+ */
+export async function readNewsToolCatalogue(): Promise<NewsToolCatalogue> {
+  return buildToolCatalogue(await new ToolsRepository().findAll());
+}
+
 /** The catalogue, from memory when younger than the TTL. Throws when the read fails. */
 export async function getNewsToolCatalogue(now: number = Date.now()): Promise<NewsToolCatalogue> {
   if (cached && now - cached.loadedAt < CATALOGUE_TTL_MS) return cached.catalogue;
-  const catalogue = buildToolCatalogue(await new ToolsRepository().findAll());
+  // #193: the same uncached read the tool page's related news uses.
+  const catalogue = await readNewsToolCatalogue();
   cached = { loadedAt: now, catalogue };
   return catalogue;
 }

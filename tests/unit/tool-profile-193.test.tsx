@@ -116,9 +116,17 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
   class ToolsRepository {
     findBySlug = async (slug: string) => db.catalogue.find((r) => r.slug === slug) ?? null;
     findByStatus = async (status: string) => db.catalogue.filter((r) => r.status === status);
+    findAll = async () => db.catalogue;
   }
   return { ToolsRepository, toolsRepository: new ToolsRepository() };
 });
+
+// #193 slice 3: the related-news scan, empty here so no test reaches a database.
+vi.mock("../../lib/db/repositories/news", () => ({
+  NewsRepository: class {
+    getToolNewsRows = async () => [];
+  },
+}));
 
 vi.mock("../../lib/db/repositories/rankings.repository", () => {
   const repo = {
@@ -206,10 +214,11 @@ const alternatives = (html: string) => [...html.matchAll(/data-profile-alternati
 const headings = (html: string) =>
   [...html.matchAll(/<section[^>]*data-profile-section[^>]*>\s*<h2[^>]*>([^<]+)<\/h2>/g)].map((m) => m[1]);
 
-const ORDER = ["Verdict", "Score and rank", "Change since last month", "Alternatives"];
+// #193 slice 3 appends "Related news"; tests/unit/tool-news-193.test.tsx covers its content.
+const ORDER = ["Verdict", "Score and rank", "Change since last month", "Alternatives", "Related news"];
 
 describe("tool profile block on the server-rendered page (#193)", () => {
-  it("renders the four headings in fixed order with the verdict in the server HTML", async () => {
+  it("renders the five headings in fixed order with the verdict in the server HTML", async () => {
     const html = await renderPage("cursor");
     expect(headings(html)).toEqual(ORDER);
     expect(section(html, "Verdict")).toContain("Cursor tagline");
@@ -301,7 +310,7 @@ describe("tool profile block on the server-rendered page (#193)", () => {
     await renderPage("windsurf");
     expect(db.rankingReads).toBe(1);
     expect(dataCache.options).toContainEqual(expect.objectContaining({ revalidate: 1800 }));
-    expect(dataCache.options.at(-1)?.tags).toContain("rankings");
+    expect(dataCache.options).toContainEqual(expect.objectContaining({ tags: ["rankings", "tools"] }));
   });
 });
 
