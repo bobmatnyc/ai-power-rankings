@@ -5,23 +5,32 @@ name: Check metrics history (read-only)
 # stopped at its deadline, is visible only in the metrics_collection_runs ledger,
 # and nobody can reach the production database from a laptop.
 #
-# What: a manual dispatch that runs scripts/check-metrics-history.ts and writes its
-# report to the job summary. It writes nothing anywhere:
-#   - The script sends two SELECTs inside one READ ONLY Postgres transaction;
+# What: runs scripts/check-metrics-history.ts and writes its report to the job
+# summary. Scheduled at 06:00 UTC on the 2nd, it checks the current month's
+# collection (collected_date YYYY-MM-01 UTC, via --scheduled); a manual dispatch
+# checks the `date` input, or today when empty. It writes nothing anywhere:
+#   - The script sends four SELECTs inside one READ ONLY Postgres transaction;
 #     Postgres rejects any write there. It never calls the cron route or a migration.
 #   - The existing repository database secret reaches the step only through `env:`,
 #     never through `run:` text, and is never printed.
 #   - Script errors are redacted (connection strings and the secret value).
 #   - No artifact is uploaded.
 #   - #95: the repository is public and the history is private, so the log and the
-#     summary carry counts only: rows per collected_date and the ledger status and
-#     counts per shard. No tool name, slug, id or metric value.
-# Exit 0: every configured shard has an `ok` ledger row for the date. Exit 3: a shard
-# is missing or not ok. Exit 1: an error.
+#     summary carry counts, dates and part names only: rows per collected_date,
+#     coverage against the tool count, the ledger status and counts per shard, and
+#     unchanged-value counts per part. No tool name, slug, id or metric value.
+# Exit 0: pass (WARN lines allowed). Exit 3: a shard is missing or not ok, or a part
+# attempted tools and recorded none, or coverage is under a set floor (none is set
+# yet: coverage only WARNs). Exit 1: an error, including a failed query.
+# Exit 1 and 3 fail the job, and the failed-workflow email is the alert. There is
+# no issue, no other channel and no retry.
 #
-# Dispatch-only on purpose: it must never run on a schedule, push or pull request.
+# Never on push or pull request.
 
 on:
+  # #95: 06:00 UTC on the 2nd, a day after the last collector shard on the 1st.
+  schedule:
+    - cron: '0 6 2 * *'
   workflow_dispatch:
     inputs:
       date:
@@ -83,12 +92,15 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           CHECK_DATE: ${{ inputs.date }}
+          EVENT_NAME: ${{ github.event_name }}
           NODE_ENV: test
           LOG_LEVEL: silent
         run: |
           set -uo pipefail
           date_flag=()
-          if [ -n "$CHECK_DATE" ]; then
+          if [ "$EVENT_NAME" = "schedule" ]; then
+            date_flag=("--scheduled")
+          elif [ -n "$CHECK_DATE" ]; then
             date_flag=("--date=${CHECK_DATE}")
           fi
           status=0
