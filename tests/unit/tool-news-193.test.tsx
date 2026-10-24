@@ -327,13 +327,13 @@ describe("cached news read (#193)", () => {
 
 describe("groupNewsByPrimaryTool (#193)", () => {
   it("matches the slug /api/news reports as each article's tool_slug", async () => {
-    const { buildToolCatalogue, resolveArticleTools } = await import("../../lib/news-tool-resolver");
+    const { buildToolCatalogue, primaryArticleTool } = await import("../../lib/news-tool-resolver");
     const { groupNewsByPrimaryTool } = await import("../../lib/tools/tool-news");
     const catalogue = buildToolCatalogue(CATALOGUE);
     const grouped = groupNewsByPrimaryTool(NEWS, catalogue, 100);
     for (const row of NEWS) {
       // The /api/news route passes the mapped article ({ title, toolMentions, ... }) to the resolver.
-      const apiSlug = resolveArticleTools({ ...row, toolMentions: row.toolMentions }, catalogue)[0]?.slug;
+      const apiSlug = primaryArticleTool({ ...row, toolMentions: row.toolMentions }, catalogue)?.slug;
       const owner = Object.entries(grouped).find(([, items]) => items.some((i) => i.id === row.id))?.[0];
       expect(owner).toBe(apiSlug);
     }

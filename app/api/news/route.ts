@@ -3,7 +3,7 @@ import { cachedJsonResponse, uncachedJsonResponse } from "@/lib/api-cache";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { loggers } from "@/lib/logger";
 import { loadNewsToolCatalogueOrNull } from "@/lib/news-tool-catalogue";
-import { resolveArticleTools } from "@/lib/news-tool-resolver";
+import { primaryArticleTool, resolveArticleTools } from "@/lib/news-tool-resolver";
 
 /** Largest page the route will serve; the news page asks for exactly this many. */
 const MAX_LIMIT = 100;
@@ -132,7 +132,8 @@ export async function GET(request: NextRequest) {
         // ids, then exact names, then whole-word title matches), so a slug here
         // is always a real catalogue slug. Without a catalogue, no attribution.
         const resolvedTools = catalogue ? resolveArticleTools(article, catalogue) : [];
-        const primaryTool = resolvedTools[0];
+        // See #109: the primary tool is the top-relevance mention, not resolvedTools[0].
+        const primaryTool = catalogue ? primaryArticleTool(article, catalogue) : null;
         const toolNames =
           resolvedTools.length > 0 ? resolvedTools.map((t) => t.name).join(", ") : "Various Tools";
         const toolCategory = "ai-coding-tool";
