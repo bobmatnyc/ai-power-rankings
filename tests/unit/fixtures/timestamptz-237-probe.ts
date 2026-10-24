@@ -49,9 +49,14 @@ async function apply(db: PGlite, sql: string, reportText: string | null, force =
   return { exitCode: result.exitCode, lines: result.lines, executed: mdb.executed.length, notices: mdb.notices };
 }
 
-/** Dry run, then the acknowledged copy an Architect would commit. */
+/**
+ * Dry run, then the acknowledged copy an Architect would commit. #237: the gate needs a
+ * UTC session in the report, so the dry run measures in UTC; the apply that follows runs
+ * in America/New_York to show the conversion does not depend on the session zone.
+ */
 async function dryRunReport(db: PGlite) {
   const mdb = pgliteMigrationDb(db);
+  await db.exec(`SET TIME ZONE 'UTC'`);
   const result = await runMigrations(
     {
       db: mdb,
@@ -61,6 +66,7 @@ async function dryRunReport(db: PGlite) {
     },
     { dryRun: true, only: null, showColumns: null, force: false }
   );
+  await db.exec(`SET TIME ZONE 'America/New_York'`);
   const start = result.lines.findIndex((l) => l.startsWith("{"));
   const report = JSON.parse(result.lines[start] as string);
   return {

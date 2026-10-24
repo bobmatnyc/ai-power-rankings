@@ -246,7 +246,22 @@ export async function measurePreflight(
   };
 }
 
-export type ReportVerdict = { ok: true; report: PreflightReport } | { ok: false; reason: string };
+/** #237: zone names Postgres treats as UTC, lower-cased. */
+const UTC_ZONES = new Set(
+  ["utc", "uct", "gmt", "gmt0", "gmt+0", "gmt-0", "greenwich", "universal", "zulu"].flatMap((z) => [z, `etc/${z}`])
+);
+
+/** #237: true when `zone` names UTC (UTC, Etc/UTC, GMT, Zulu, ...), case-insensitively. */
+export function isUtcZone(zone: string): boolean {
+  return UTC_ZONES.has(zone.trim().toLowerCase());
+}
+
+/** #237: `role-level=America/New_York, ...`, or `none`. */
+export function describeOverrides(overrides: readonly TimezoneOverride[]): string {
+  return overrides.length === 0 ? "none" : overrides.map((o) => `${o.scope}=${o.timezone}`).join(", ");
+}
+
+export type ReportVerdict ={ ok: true; report: PreflightReport } | { ok: false; reason: string };
 
 function isDateText(value: unknown): value is string {
   return typeof value === "string" && value.length > 0 && !Number.isNaN(Date.parse(value));
@@ -259,8 +274,9 @@ function isDateText(value: unknown): value is string {
  *   report for another database or another migration is no report at all.
  * What: `raw` is the file text, or null when there is none. Returns ok only when the text
  *   parses as a v1 report for `migration` and `fingerprint`, carries the measurements
- *   (session zone and row counts), and has `acknowledged.by` plus an `acknowledged.at`
- *   no earlier than `measured_at`. Every other input gives `ok: false` with the reason.
+ *   (session zone and row counts), measured a UTC session zone with no TimeZone override,
+ *   and has `acknowledged.by` plus an `acknowledged.at` no earlier than `measured_at`.
+ *   Every other input gives `ok: false` with the reason.
  * Test: `checkPreflightReport` cases in tests/unit/timestamptz-237-preflight.test.ts.
  */
 export function checkPreflightReport(raw: string | null, migration: string, fingerprint: string | null): ReportVerdict {
@@ -294,6 +310,17 @@ export function checkPreflightReport(raw: string | null, migration: string, fing
   }
   if (typeof m.row_counts !== "object" || m.row_counts === null) {
     return { ok: false, reason: "the preflight report has no row_counts measurement" };
+  }
+  // #237: `DEFAULT now()` rows hold the session wall clock, and 0015 reads every value as
+  // UTC. That is only right when the session zone was UTC with nothing overriding it.
+  if (!isUtcZone(m.session_timezone)) {
+    return { ok: false, reason: `the measured session TimeZone is ${m.session_timezone}, not UTC; 0015 needs a re-plan` };
+  }
+  if (!Array.isArray(m.timezone_overrides)) {
+    return { ok: false, reason: "the preflight report has no timezone_overrides measurement" };
+  }
+  if (m.timezone_overrides.length > 0) {
+    return { ok: false, reason: `TimeZone overrides are set (${describeOverrides(m.timezone_overrides)}); 0015 needs a re-plan` };
   }
   const ack = report.acknowledged;
   if (typeof ack !== "object" || ack === null || typeof ack.by !== "string" || ack.by.trim() === "") {
