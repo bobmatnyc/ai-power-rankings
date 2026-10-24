@@ -6,8 +6,9 @@
  *   snapshot. Both checks compare rows by `tool_id`.
  * What: `diffSnapshots()` lists every tool that is missing from one side or
  *   differs in a compared field, with the fields that differ. `rank` falls
- *   back to `position` for older rows. `assertSelectOnly()` guards the compare
- *   script's statements.
+ *   back to `position` for older rows. `renderCheckReport()` turns the diffs
+ *   into the counts-only public report. `assertSelectOnly()` guards the
+ *   compare script's statements.
  * Test: `lib/ranking-snapshot-diff.test.ts`
  */
 
@@ -76,32 +77,45 @@ export function diffSnapshots(
   });
 }
 
-export interface CheckVerdict {
+export interface CheckReportInput {
+  /** Active tools the checks scored. */
+  toolsCompared: number;
+  diffA: SnapshotDiff[];
+  /** Null when no current snapshot is stored (check B not run). */
+  diffB: SnapshotDiff[] | null;
+  /** Tool ids whose row changed after the snapshot was published. */
+  labelledB: Set<string>;
+}
+
+export interface CheckReport {
   /** 0 when both diffs are empty, else 3. */
   exitCode: 0 | 3;
-  /** The report's first line. */
-  result: string;
+  /** Counts only: the text the public workflow writes to its summary. */
+  report: string;
 }
 
 /**
- * Exit code and result line for the #93 check. `diffB` is null when no current
- * snapshot is stored. `labelledB` holds tool ids whose row changed after publish.
+ * The #93 check's public report.
+ *
+ * #93: the workflow runs in a public repository and a dry-run computes ranks
+ * that are not published yet, so the report carries counts and one PASS/FAIL
+ * line only: no tool name, slug, id, rank, score, tier or row. Any difference,
+ * labelled data-changed-after-publish or not, fails the check (`updated_at`
+ * also moves when news ingestion touches a tool).
  */
-export function checkVerdict(
-  diffA: SnapshotDiff[],
-  diffB: SnapshotDiff[] | null,
-  labelledB: Set<string>
-): CheckVerdict {
-  // #93: every Diff B difference fails the check. `updated_at` also moves when
-  // news ingestion touches a tool, so the label is information, never an excuse.
-  if (diffA.length === 0 && diffB !== null && diffB.length === 0) {
-    return { exitCode: 0, result: "Result: both diffs 0." };
-  }
-  const b =
+export function renderCheckReport({ toolsCompared, diffA, diffB, labelledB }: CheckReportInput): CheckReport {
+  const passed = diffA.length === 0 && diffB !== null && diffB.length === 0;
+  const checkB =
     diffB === null
       ? "not run (no current snapshot)"
-      : `${diffB.length} differences (${diffB.filter((d) => labelledB.has(d.tool_id)).length} labelled data-changed-after-publish)`;
-  return { exitCode: 3, result: `Result: DIFFERENCES FOUND. Diff A: ${diffA.length} differences. Diff B: ${b}.` };
+      : `${diffB.length} differences, ${diffB.filter((d) => labelledB.has(d.tool_id)).length} labelled data-changed-after-publish`;
+  const report = [
+    `Result: ${passed ? "PASS" : "FAIL"}`,
+    `Tools compared: ${toolsCompared}`,
+    `Check A (admin dry-run vs scheduled path): ${diffA.length} differences`,
+    `Check B (admin dry-run vs stored current snapshot): ${checkB}`,
+  ].join("\n");
+  return { exitCode: passed ? 0 : 3, report };
 }
 
 // One SELECT, no statement separator. `WITH … DELETE` starts with WITH and is refused.

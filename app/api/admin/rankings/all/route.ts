@@ -39,7 +39,8 @@ export async function GET(_request: NextRequest) {
           id: `${periodData.period}-${ranking.tool_id}`,
           period: periodData.period,
           tool_id: ranking.tool_id,
-          position: ranking.position ?? 0,
+          // #93: cron and draft rows carry `rank`, not `position`.
+          position: ranking.position ?? ranking.rank ?? 0,
           score: ranking.score ?? 0,
           movement: ranking.movement?.direction || "same",
           movement_positions: ranking.movement?.change || 0,

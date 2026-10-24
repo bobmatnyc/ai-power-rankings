@@ -3,11 +3,13 @@ import { describe, expect, it } from "vitest";
 import {
   ALL_ROW_FIELDS,
   assertSelectOnly,
-  checkVerdict,
   diffSnapshots,
   redact,
+  renderCheckReport,
   SCORE_ROW_FIELDS,
+  type SnapshotRow,
 } from "./ranking-snapshot-diff";
+import golden from "./services/__fixtures__/regenerate-publish.golden.json";
 
 /**
  * Snapshot diff and guards for the #93 read-only check.
@@ -53,25 +55,56 @@ describe("diffSnapshots", () => {
   });
 });
 
-describe("checkVerdict", () => {
+describe("renderCheckReport", () => {
   const changed = diffSnapshots([row("a", 1, 9)], [row("a", 1, 9.5)], SCORE_ROW_FIELDS);
 
   it("passes only when both diffs are empty", () => {
-    expect(checkVerdict([], [], new Set())).toEqual({ exitCode: 0, result: "Result: both diffs 0." });
+    expect(renderCheckReport({ toolsCompared: 2, diffA: [], diffB: [], labelledB: new Set() })).toEqual({
+      exitCode: 0,
+      report: [
+        "Result: PASS",
+        "Tools compared: 2",
+        "Check A (admin dry-run vs scheduled path): 0 differences",
+        "Check B (admin dry-run vs stored current snapshot): 0 differences, 0 labelled data-changed-after-publish",
+      ].join("\n"),
+    });
   });
 
   // #93: a tool whose updated_at is after publish (news ingestion bumps it) is labelled, not excused.
   it("fails on a Diff B difference labelled data-changed-after-publish", () => {
-    const verdict = checkVerdict([], changed, new Set(["a"]));
-    expect(verdict.exitCode).toBe(3);
-    expect(verdict.result).toBe(
-      "Result: DIFFERENCES FOUND. Diff A: 0 differences. Diff B: 1 differences (1 labelled data-changed-after-publish)."
-    );
+    const { exitCode, report } = renderCheckReport({ toolsCompared: 1, diffA: [], diffB: changed, labelledB: new Set(["a"]) });
+    expect(exitCode).toBe(3);
+    expect(report).toContain("Result: FAIL");
+    expect(report).toContain("1 differences, 1 labelled data-changed-after-publish");
   });
 
   it("fails when Diff A differs or Diff B could not run", () => {
-    expect(checkVerdict(changed, [], new Set()).exitCode).toBe(3);
-    expect(checkVerdict([], null, new Set()).result).toContain("Diff B: not run (no current snapshot)");
+    expect(renderCheckReport({ toolsCompared: 1, diffA: changed, diffB: [], labelledB: new Set() }).exitCode).toBe(3);
+    const notRun = renderCheckReport({ toolsCompared: 1, diffA: [], diffB: null, labelledB: new Set() });
+    expect(notRun.exitCode).toBe(3);
+    expect(notRun.report).toContain("not run (no current snapshot)");
+  });
+
+  // #93: the public workflow output carries counts only (unpublished dry-run ranks).
+  it("names no tool, slug, id or score when rows differ", () => {
+    const entries = golden.saveSnapshotCalls[0]!.data as SnapshotRow[];
+    const moved = entries.slice(1).map((r) => ({ ...r, score: (r["score"] as number) + 1.234 }));
+    const diffA = diffSnapshots(entries, moved, ALL_ROW_FIELDS);
+    const diffB = diffSnapshots(entries, [...moved].reverse(), SCORE_ROW_FIELDS);
+    const labelledB = new Set([String(entries[1]!["tool_id"])]);
+
+    const { exitCode, report } = renderCheckReport({ toolsCompared: entries.length, diffA, diffB, labelledB });
+
+    expect(exitCode).toBe(3);
+    expect(diffA.length).toBeGreaterThan(0);
+    const leaks = [...entries, ...moved].flatMap((r) => [
+      String(r["tool_name"]),
+      String(r["tool_slug"]),
+      String(r["tool_id"]),
+      String(r["score"]),
+    ]);
+    expect(leaks.filter((value) => report.includes(value))).toEqual([]);
+    expect(report.split("\n")).toHaveLength(4);
   });
 });
 
