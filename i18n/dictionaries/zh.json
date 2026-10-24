@@ -122,6 +122,14 @@
       "newEntries": "新上榜",
       "fastRising": "快速上升"
     },
+    "movers": {
+      "title": "排名变动最大",
+      "sinceLastUpdate": "自上次更新以来",
+      "sinceLastUpdateOn": "自上次更新（{date}）以来",
+      "up": "上升",
+      "down": "下降",
+      "empty": "自上次更新以来排名没有变化。"
+    },
     "recentlyUpdated": {
       "title": "[TRANSLATE] Recently Updated",
       "subtitle": "[TRANSLATE] Latest updates and new features from top AI tools",

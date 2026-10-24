@@ -82,6 +82,14 @@
       "viewAll": "Alle Trending anzeigen",
       "viewAllButton": "Alle Trending anzeigen"
     },
+    "movers": {
+      "title": "Größte Veränderungen",
+      "sinceLastUpdate": "Seit dem letzten Update",
+      "sinceLastUpdateOn": "Seit dem letzten Update am {date}",
+      "up": "Aufsteiger",
+      "down": "Absteiger",
+      "empty": "Seit dem letzten Update keine Rangänderungen."
+    },
     "recentlyUpdated": {
       "title": "Kürzlich aktualisiert",
       "subtitle": "Neueste Updates und Features von Top-KI-Tools",

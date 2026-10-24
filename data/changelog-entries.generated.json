@@ -110,10 +110,21 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-49c664671214",
+    "version": "Unreleased",
+    "date": "2026-10-24T02:46:55.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "home",
+    "title": "the home page movers strip lists the biggest rank changes",
+    "description": "the home page movers strip lists the biggest rank changes. The \"Trending Tools\" strip was filled in client effects only, read the first 30 ranks, took the first 3 risers in rank order, never listed a faller, and showed the top 3 tools under \"Tools gaining momentum this week\" when no tool moved. It is now \"Biggest movers\", labelled \"Since last update\" (with the snapshot date when one is given) instead of a week: up to 3 risers and 3 fallers, each with a signed delta, chosen from every rank by size of move, then better current rank, then name (`lib/rankings/select-movers.ts`). A row with no previous rank is not a mover. With no movers the strip shows one line and no tool names. It renders from the rows the server passes, so it is in the server HTML; the labels are new `home.movers` keys in every locale. The home page read a hardcoded three-row list (\"Algorithm v7.6 rankings (November 2025)\") with no rank changes, so its top 3 was stale and the strip was always empty. It now reads the current published snapshot on the server through `loadCurrentRankings()` in `lib/rankings/current-rankings.ts`, which `/api/rankings` also uses, so both show the same rows, ranks and rank changes; the strip's date is the snapshot's `published_at` (else `created_at`). When the read fails or no snapshot is current, the page still renders, logs a warning and shows the empty state with no tool names. The client-side rankings fetch and its `public/data/rankings.json` fallback are removed. `/rankings` and the `/api/rankings` response shape are unchanged. Tests: `lib/rankings/select-movers.test.ts`, `tests/unit/home-movers-192.test.tsx`, `tests/unit/home-live-rankings-192.test.tsx` (#192)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-55a0662feb4b",
     "version": "Unreleased",
-    "date": "2026-10-24T02:00:49.089Z",
-    "dateSource": "build",
+    "date": "2026-10-24T02:07:04.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "news",
     "title": "an article's primary tool follows mention relevance",
