@@ -1,0 +1,49 @@
+{
+  "$comment": "#185: scoring profile sets, read by lib/scoring-profiles.ts. Nothing in the publish path reads this file yet: the engine still scores with ALGORITHM_V76_WEIGHTS, and activeProfileSet records that v7.10 is the published set. Weights are fractions. A set with status legacy is frozen and may declare a total other than 1.00; every other set must declare 1.00.",
+  "schemaVersion": 1,
+  "activeProfileSet": "v7.10",
+  "profileSets": {
+    "v7.10": {
+      "label": "v7.10",
+      "status": "legacy",
+      "frozen": true,
+      "description": "Published v7.10 weights, one table for every tool. Weights unchanged since v7.6 (81c6b1d1); v7.10 is the info.technical / info.business fold in engine code (#101, 4e8b329a). Sums to 1.02 (#92); kept as-is so D45 can compare against it.",
+      "profiles": {
+        "all": {
+          "declaredTotal": 1.02,
+          "weights": {
+            "agenticCapability": 0.12,
+            "innovation": 0.1,
+            "technicalPerformance": 0.18,
+            "developerAdoption": 0.18,
+            "marketTraction": 0.12,
+            "businessSentiment": 0.12,
+            "developmentVelocity": 0.12,
+            "platformResilience": 0.08
+          }
+        }
+      }
+    },
+    "v8.0": {
+      "label": "v8.0",
+      "status": "staged",
+      "frozen": false,
+      "description": "Staged v8 harness profile, ruling D44: technical and adoption each 0.18 -> 0.17, other factors unchanged, sum 1.00. Not selected by anything; the model profile awaits a ruling.",
+      "profiles": {
+        "harness": {
+          "declaredTotal": 1,
+          "weights": {
+            "agenticCapability": 0.12,
+            "innovation": 0.1,
+            "technicalPerformance": 0.17,
+            "developerAdoption": 0.17,
+            "marketTraction": 0.12,
+            "businessSentiment": 0.12,
+            "developmentVelocity": 0.12,
+            "platformResilience": 0.08
+          }
+        }
+      }
+    }
+  }
+}
