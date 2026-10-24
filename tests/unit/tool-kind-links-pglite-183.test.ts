@@ -20,27 +20,12 @@ import { buildKindBackfillSql, KIND_COUNT_SQL, parseKindSheet } from "../../lib/
 import { TOOL_LINK_KIND_VIOLATIONS_SQL } from "../../lib/db/tool-links";
 import { runMigrations, splitStatements } from "../../scripts/apply-migrations";
 import { pgliteMigrationDb, relfilenodes } from "./fixtures/timestamptz-237-fixture";
+import { TOOLS_AT_0015 } from "./fixtures/tool-links-183-fixture";
 
 const FILE = "0016_add_tool_kind_and_links.sql";
 const SQL_TEXT = readFileSync(path.resolve(__dirname, "../../lib/db/migrations", FILE), "utf8");
 const PRIOR = ["0014_add_tool_metrics_history.sql", "0015_timestamptz_utc.sql"];
 
-// `tools` as lib/db/schema.ts declared it after 0015, before 0016.
-const TOOLS_AT_0015 = `CREATE TABLE public."tools" (
-  "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-  "slug" text NOT NULL UNIQUE,
-  "name" text NOT NULL,
-  "category" text NOT NULL,
-  "status" text DEFAULT 'active' NOT NULL,
-  "company_id" text,
-  "baseline_score" jsonb DEFAULT '{}',
-  "delta_score" jsonb DEFAULT '{}',
-  "current_score" jsonb DEFAULT '{}',
-  "score_updated_at" timestamptz,
-  "data" jsonb DEFAULT '{}' NOT NULL,
-  "created_at" timestamptz DEFAULT now() NOT NULL,
-  "updated_at" timestamptz DEFAULT now() NOT NULL
-)`;
 const SLUGS = ["claude-code", "opus-4-6", "opus-4-5", "cursor", "anthropic"];
 
 async function apply(db: PGlite, migrationDb: ReturnType<typeof pgliteMigrationDb>, force = false) {

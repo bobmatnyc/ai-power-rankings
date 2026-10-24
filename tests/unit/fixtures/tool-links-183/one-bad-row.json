@@ -1,0 +1,5 @@
+[
+  { "model_slug": "opus-4-6", "harness_slug": "claude-code", "relation": "native", "source_url": "https://example.com/a" },
+  { "model_slug": "sonnet-4-5", "harness_slug": "cursor", "relation": "supports", "source_url": "https://example.com/b" },
+  { "model_slug": "cursor", "harness_slug": "claude-code", "relation": "supports", "source_url": "https://example.com/c" }
+]

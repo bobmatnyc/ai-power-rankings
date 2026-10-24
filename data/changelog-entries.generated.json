@@ -594,9 +594,20 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-e279e3b65b90",
+    "version": "Unreleased",
+    "date": "2026-10-24T10:37:32.478Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "db",
+    "title": "a writer and two reads for model-to-harness links",
+    "description": "a writer and two reads for model-to-harness links. `lib/db/repositories/tool-links.repository.ts` adds `getModelsForHarness` and `getHarnessesForModel`, which list the active linked tools of the right kind, native links first, then by name, and return `[]` when there are none. `upsertToolLink` inserts or updates one `tool_links` row on the (model, harness) pair. It refuses, with a typed `ToolLinkRefusedError` and no write, an empty slug, a relation other than `native` or `supports`, a self-link, an unknown slug, a model side that is not `kind='model'` and a harness side that is not `kind='harness'`. The kind check, a `FOR SHARE` lock on both tools and the insert run in one statement, so a concurrent kind change cannot produce a wrong-kind row. A re-run with the same data writes nothing; a changed relation or source URL sets `updated_at`. Until the 0017 kind backfill runs, every tool is `kind='harness'`, so the writer refuses every link. The admin script `scripts/load-tool-links.ts <seed.csv|seed.json>` checks every row first and is a dry run by default; with `--apply` it writes all rows in one transaction, or none and exits 1 when any row is refused. No seed file, API field or page block ships yet. Tests: `tests/unit/tool-links-repository-183.test.ts` (#183)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-f2585d4bf993",
     "version": "Unreleased",
-    "date": "2026-10-24T10:16:03.000Z",
+    "date": "2026-10-24T10:26:54.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "db",
