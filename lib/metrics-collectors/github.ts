@@ -2,12 +2,13 @@
  * GitHub REST collector, moved unchanged from scripts/collect-github-metrics.ts (#95).
  *
  * Why: the CLI and the collect-metrics cron route share one class, so both use
- *   the same matching heuristics. The only change is a per-fetch timeout.
+ *   the same matching heuristics. The only changes are a per-fetch timeout and
+ *   a rate-limit wait that the caller's signal ends early.
  * What: see scripts/collect-github-metrics.ts for the CLI that drives it.
  * Test: `tests/unit/metrics-collectors-95.test.ts`
  */
 
-import { type CollectorOptions, fetchSignal } from "./fetch-signal";
+import { abortableSleep, type CollectorOptions, fetchSignal } from "./fetch-signal";
 
 export interface GitHubMetrics {
   stars: number;
@@ -119,7 +120,8 @@ export class GitHubMetricsCollector {
       const waitTime = this.rateLimit.reset * 1000 - Date.now();
       if (waitTime > 0) {
         console.log(`⏳ Rate limit low, waiting ${Math.ceil(waitTime / 1000)}s...`);
-        await new Promise((resolve) => setTimeout(resolve, waitTime + 1000));
+        // #95: the shard deadline ends the wait; the next fetch then aborts at once.
+        await abortableSleep(waitTime + 1000, this.signal);
       }
     }
 

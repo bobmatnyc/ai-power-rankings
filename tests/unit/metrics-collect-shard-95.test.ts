@@ -198,8 +198,8 @@ describe("#95 runMetricsShard", () => {
     );
 
     expect(result.status).toBe("partial");
-    expect(result.counts.recorded).toBe(3);
-    expect(result.counts.skipped_timeout).toBe(5);
+    expect(result.counts.recorded).toBe(2);
+    expect(result.counts.skipped_timeout).toBe(6);
     expect(sum(result.counts)).toBe(result.counts.attempted);
     expect(store.runs.get("2026-11-01|vscode|0")?.status).toBe("partial");
   });
@@ -218,6 +218,45 @@ describe("#95 runMetricsShard", () => {
       }
     );
     expect(result.counts).toMatchObject({ attempted: 1, not_found: 0, skipped_timeout: 1 });
+  });
+
+  it("a deadline crossed mid-shard keeps every count, summing to attempted", async () => {
+    // #95 fix round: the loop-top break overwrote skipped_timeout, dropping the in-loop count.
+    let clock = DAY;
+    const { result } = await runMetricsShard(
+      { part: "npm", shard: 0, of: 1 },
+      {
+        store: new MemoryStore(),
+        createAdapter: adapter(async () => {
+          clock += 100_000;
+          return { kind: "not_found" };
+        }),
+        now: () => clock,
+        deadlineMs: 270_000,
+      }
+    );
+    expect(result.counts).toEqual({ attempted: 8, recorded: 0, flagged: 0, not_found: 2, failed: 0, skipped_timeout: 6 });
+    expect(sum(result.counts)).toBe(result.counts.attempted);
+  });
+
+  it("a found result returned after the deadline writes no row and counts as skipped_timeout", async () => {
+    // #95 fix round: collectors turn aborted sub-fetches into 0, so a late `found` may hold false zeros.
+    let clock = DAY;
+    const store = new MemoryStore([tool("alpha")]);
+    const { result } = await runMetricsShard(
+      { part: "github", shard: 0, of: 1 },
+      {
+        store,
+        createAdapter: adapter(async () => {
+          clock += 300_000;
+          return { kind: "found", metrics: { stars: 0, commit_count_30d: 0 } };
+        }),
+        now: () => clock,
+      }
+    );
+    expect(store.rows.size).toBe(0);
+    expect(result.counts).toMatchObject({ attempted: 1, recorded: 0, skipped_timeout: 1 });
+    expect(result.status).toBe("partial");
   });
 
   it("aborts the adapter's signal at the deadline", async () => {

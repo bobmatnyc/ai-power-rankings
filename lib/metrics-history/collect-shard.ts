@@ -7,7 +7,8 @@
  * What: picks the tools whose `shardOf(slug, of)` is this shard, collects each
  *   with the part's adapter, and upserts one history row per found tool. It
  *   stops starting tools at the deadline (270 s) and counts the rest as
- *   `skipped_timeout`; the deadline also aborts in-flight fetches. A store
+ *   `skipped_timeout`; the deadline also aborts in-flight fetches, so a tool
+ *   whose collect returns after it is `skipped_timeout` and writes no row. A store
  *   throw is fatal: the shard is `failed` and the unreached tools count as
  *   failed, so recorded + not_found + failed + skipped_timeout = attempted
  *   always holds. The result is then written to the ledger; a ledger throw
@@ -159,7 +160,8 @@ export async function runMetricsShard(request: ShardRequest, deps: ShardDeps): P
 
     for (const tool of members) {
       if (pastDeadline()) {
-        counts.skipped_timeout = members.length - done;
+        // #95: add, never assign, so a tool already counted skipped in the loop is kept.
+        counts.skipped_timeout += members.length - done;
         break;
       }
       let outcome;
@@ -169,7 +171,11 @@ export async function runMetricsShard(request: ShardRequest, deps: ShardDeps): P
         outcome = { kind: "failed" as const, error: message(collectError) };
       }
 
-      if (outcome.kind === "found") {
+      if (pastDeadline()) {
+        // #95: the deadline aborted this tool's fetches, and the collectors turn an
+        // aborted sub-fetch into 0, so no result after it is real: write no row.
+        counts.skipped_timeout++;
+      } else if (outcome.kind === "found") {
         const { leaves, flagged } = buildLeaves(request.part, outcome.metrics, new Date(now()).toISOString());
         // A store throw propagates: the shard fails rather than reporting a row it did not write.
         await deps.store.upsertMetrics({
@@ -181,9 +187,6 @@ export async function runMetricsShard(request: ShardRequest, deps: ShardDeps): P
         });
         counts.recorded++;
         if (flagged) counts.flagged++;
-      } else if (pastDeadline()) {
-        // The deadline aborted this tool's fetches, so its miss is not a real result.
-        counts.skipped_timeout++;
       } else if (outcome.kind === "not_found") {
         counts.not_found++;
       } else {

@@ -152,3 +152,24 @@ describe("#95 CLI scripts share the lib class and keep their writes", () => {
     }
   });
 });
+
+describe("#95 GitHub rate-limit wait", () => {
+  it("ends when the caller's signal aborts, instead of sleeping until the reset", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "log").mockImplementation(() => {});
+    stubFetch();
+    const controller = new AbortController();
+    const collector = new GitHubMetricsCollector("t", { signal: controller.signal });
+    // Rate limit nearly spent, resetting in an hour.
+    (collector as unknown as { rateLimit: { remaining: number; reset: number } }).rateLimit = {
+      remaining: 0,
+      reset: Math.ceil(Date.now() / 1000) + 3600,
+    };
+
+    const call = collector.collectMetrics("o", "r").then(() => "returned");
+    setTimeout(() => controller.abort(), 20);
+    const outcome = await Promise.race([call, new Promise((r) => setTimeout(() => r("still sleeping"), 1000))]);
+
+    expect(outcome).toBe("returned");
+  });
+});

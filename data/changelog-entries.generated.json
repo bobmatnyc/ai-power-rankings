@@ -596,8 +596,8 @@
   {
     "id": "unreleased-c6cdd8dbf3c2",
     "version": "Unreleased",
-    "date": "2026-10-24T05:34:10.000Z",
-    "dateSource": "commit",
+    "date": "2026-10-24T05:42:30.359Z",
+    "dateSource": "build",
     "section": "Added",
     "scope": null,
     "title": "a manual workflow, .github/workflows/publish-rankings.yml, publishes the rankings on demand (Bob D24)",
@@ -605,14 +605,14 @@
     "changeType": "feature"
   },
   {
-    "id": "unreleased-d69ca23784e2",
+    "id": "unreleased-ec7e5b0cbabb",
     "version": "Unreleased",
-    "date": "2026-10-24T05:29:20.601Z",
-    "dateSource": "build",
+    "date": "2026-10-24T05:42:07.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "metrics",
     "title": "monthly tool metrics are kept as private history",
-    "description": "monthly tool metrics are kept as private history. On the 1st of each month, 11 cron entries run `/api/cron/collect-metrics` once per collector shard (GitHub 1, PyPI 2, npm 4, VS Code Marketplace 4), between 01:00 and 03:30 UTC. Each shard writes one row per tool per UTC day to `tool_metrics_history` and one result row to the `metrics_collection_runs` ledger (migration 0014, applied through `apply-migration.yml`). The route never writes `tools`, so published scores do not change. A partial or failed shard, or any database error, answers 500 and sends an alert. The four `scripts/collect-*-metrics.ts` CLIs keep their flags and their `tools.data` writes, and share the collector classes in `lib/metrics-collectors/`, which now time out each fetch after 10 s. The dispatch-only `check-metrics-history.yml` workflow prints rows per day and each shard's ledger status, and fails when a shard is missing or not ok. Tests: `tests/unit/metrics-collect-route-95.test.ts`, `tests/unit/metrics-collect-shard-95.test.ts`, `tests/unit/metrics-collectors-95.test.ts`, `tests/unit/metrics-history-migration-95.test.ts`, `tests/unit/metrics-history-private-95.test.ts`, `tests/unit/metrics-cron-config-95.test.ts`",
+    "description": "monthly tool metrics are kept as private history. On the 1st of each month, 11 cron entries run `/api/cron/collect-metrics` once per collector shard (GitHub 1, PyPI 2, npm 4, VS Code Marketplace 4), between 01:00 and 03:30 UTC. A shard stops at 270 s: a tool whose collection finishes after that writes no row and counts as `skipped_timeout`, and the deadline also ends a GitHub rate-limit wait. Each shard writes one row per tool per UTC day to `tool_metrics_history` and one result row to the `metrics_collection_runs` ledger (migration 0014, applied through `apply-migration.yml`). The route never writes `tools`, so published scores do not change. A partial or failed shard, or any database error, answers 500 and sends an alert. The four `scripts/collect-*-metrics.ts` CLIs keep their flags and their `tools.data` writes, and share the collector classes in `lib/metrics-collectors/`, which now time out each fetch after 10 s. The dispatch-only `check-metrics-history.yml` workflow prints rows per day and each shard's ledger status, and fails when a shard is missing or not ok. Tests: `tests/unit/metrics-collect-route-95.test.ts`, `tests/unit/metrics-collect-shard-95.test.ts`, `tests/unit/metrics-collectors-95.test.ts`, `tests/unit/metrics-history-migration-95.test.ts`, `tests/unit/metrics-history-private-95.test.ts`, `tests/unit/metrics-cron-config-95.test.ts`",
     "changeType": "feature"
   },
   {

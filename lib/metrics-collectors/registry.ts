@@ -12,7 +12,7 @@
  * Test: `tests/unit/metrics-collect-route-95.test.ts`
  */
 
-import type { CollectorOptions } from "./fetch-signal";
+import { abortableSleep, type CollectorOptions } from "./fetch-signal";
 import { GitHubMetricsCollector } from "./github";
 import { NpmMetricsCollector } from "./npm";
 import { PyPIMetricsCollector } from "./pypi";
@@ -63,20 +63,6 @@ export interface CollectorAdapter {
 
 export interface AdapterOptions extends CollectorOptions {
   env: Record<string, string | undefined>;
-}
-
-/** Sleeps `ms`, or less if `signal` aborts first. */
-export function abortableSleep(ms: number, signal?: AbortSignal): Promise<void> {
-  return new Promise((resolve) => {
-    if (signal?.aborted) return resolve();
-    const timer = setTimeout(done, ms);
-    function done() {
-      clearTimeout(timer);
-      signal?.removeEventListener("abort", done);
-      resolve();
-    }
-    signal?.addEventListener("abort", done, { once: true });
-  });
 }
 
 function asRecord(value: unknown): Record<string, unknown> {
