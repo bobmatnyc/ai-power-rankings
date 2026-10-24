@@ -496,8 +496,10 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
       const [rows] = await deps.db.readOnlyQueries([CONVERSION_STATEMENT]);
       const summary = summarizeConversion(spec, rows ?? []);
       emit(`  converted ${summary.converted.length} column(s); skipped ${summary.skipped.length}: ${summary.skipped.join(", ") || "none"}`);
-      if (summary.unconverted.length > 0) {
-        emit(`\nERROR: ${file} left ${summary.unconverted.length} column(s) unconverted: ${summary.unconverted.join(", ")}`);
+      // #237: a column present with another type is a failure, never a skip.
+      const failed = [...summary.unconverted, ...summary.otherType];
+      if (failed.length > 0) {
+        emit(`\nERROR: ${file} left ${failed.length} column(s) unconverted: ${failed.join(", ")}`);
         return { exitCode: 1, lines, appliedNow };
       }
     }
