@@ -25,10 +25,14 @@ import {
   CONVERSION_STATEMENT,
   createReportSource,
   databaseFingerprint,
+  describeOverrides,
   measurePreflight,
+  type PreflightMeasurements,
+  type PreflightReport,
   PREFLIGHT_REPORT_DIR,
   PREFLIGHT_REQUIRED,
   type ReadOnlyQuery,
+  type ReportVerdict,
   summarizeConversion,
 } from "./migration-preflight";
 
@@ -291,24 +295,28 @@ function formatColumns(table: string, rows: ColumnRow[]): string[] {
 }
 
 /**
- * #237: the reason a gated apply must not run, or null when it may.
+ * #237: whether a gated apply may run, with the acknowledged report when it may.
  *
  * Why: criterion 8 — a missing, unreadable or mismatched report refuses; so does a db
  *   that cannot read the catalog back afterwards.
  * Test: `tests/unit/timestamptz-237-migration.test.ts` (apply refusals, PGlite).
  */
-export function preflightRefusal(deps: MigrationDeps, file: string): string | null {
-  if (!deps.db.readOnlyQueries) return "this database adapter cannot run read-only catalog queries";
-  if (!deps.preflight) return "no preflight source configured";
+export function preflightVerdict(deps: MigrationDeps, file: string): ReportVerdict {
+  if (!deps.db.readOnlyQueries) return { ok: false, reason: "this database adapter cannot run read-only catalog queries" };
+  if (!deps.preflight) return { ok: false, reason: "no preflight source configured" };
   let raw: string | null;
   try {
     raw = deps.preflight.reports.read(file);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return `the preflight report could not be read (${redactConnectionString(message)})`;
+    return { ok: false, reason: `the preflight report could not be read (${redactConnectionString(message)})` };
   }
-  const verdict = checkPreflightReport(raw, file, deps.preflight.fingerprint);
-  return verdict.ok ? null : verdict.reason;
+  return checkPreflightReport(raw, file, deps.preflight.fingerprint);
+}
+
+/** #237: the measured zone line printed by the dry run and the apply. */
+function zoneLine(m: PreflightMeasurements): string {
+  return `measured session TimeZone ${m.session_timezone}; TimeZone overrides: ${describeOverrides(m.timezone_overrides)}`;
 }
 
 /** #237: measures and prints the read-only preflight report; false when it cannot. */
@@ -323,16 +331,17 @@ async function emitPreflightReport(deps: MigrationDeps, file: string, emit: (lin
     const report = await measurePreflight(deps.db.readOnlyQueries, file, spec, fingerprint);
     emit(`\nPreflight report for ${file} (read-only; SELECT/SHOW only):`);
     emit(JSON.stringify(report, null, 2));
+    emit(`Preflight for ${file}: ${zoneLine(report.measurements)}.`);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     emit(`\nERROR: measuring the preflight report for ${file} failed: ${redactConnectionString(message)}`);
     return false;
   }
-  const refusal = preflightRefusal(deps, file);
+  const verdict = preflightVerdict(deps, file);
   emit(
-    refusal === null
+    verdict.ok
       ? `Report on file for ${file}: acknowledged for this database; an apply may proceed.`
-      : `Report on file for ${file}: an apply would be refused — ${refusal}.`
+      : `Report on file for ${file}: an apply would be refused — ${verdict.reason}.`
   );
   return true;
 }
@@ -431,14 +440,16 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
 
   // #237 (criterion 8): refuse before any statement runs unless every gated file has an
   // acknowledged report for this database. Fail closed: no warn-and-continue path.
+  const acknowledged = new Map<string, PreflightReport>();
   for (const file of plan.toApply.filter((name) => PREFLIGHT_REQUIRED[name])) {
-    const refusal = preflightRefusal(deps, file);
-    if (refusal !== null) {
-      emit(`\nERROR: refusing to apply ${file}: ${refusal}.`);
+    const verdict = preflightVerdict(deps, file);
+    if (!verdict.ok) {
+      emit(`\nERROR: refusing to apply ${file}: ${verdict.reason}.`);
       emit(`  Run the dry run, review its preflight report, and commit it acknowledged as ${PREFLIGHT_REPORT_DIR}/${file}.report.json.`);
       return { exitCode: 1, lines, appliedNow };
     }
-    emit(`\nPreflight report for ${file}: acknowledged, measured on this database.`);
+    acknowledged.set(file, verdict.report);
+    emit(`\nPreflight report for ${file}: acknowledged, measured on this database; ${zoneLine(verdict.report.measurements)}.`);
   }
 
   if (options.only !== null) {

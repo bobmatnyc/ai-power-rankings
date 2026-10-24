@@ -179,7 +179,11 @@ describe("#237 migration 0015 under two process time zones", () => {
     const d = outputs[tz].dryRun;
     expect(d.exitCode).toBe(0);
     expect(d.executed).toBe(0);
-    expect(d.report.measurements.session_timezone).toBe("America/New_York");
+    expect(d.report.measurements.session_timezone).toBe("UTC");
+    // #237: the apply prints the zone the acknowledged report measured.
+    expect(outputs[tz].first.lines).toContain(
+      `\nPreflight report for 0015_timestamptz_utc.sql: acknowledged, measured on this database; measured session TimeZone UTC; TimeZone overrides: none.`
+    );
     expect(d.report.measurements.missing).toEqual([]);
   });
 

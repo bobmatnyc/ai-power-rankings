@@ -86,6 +86,33 @@ describe("#237 preflight helpers", () => {
     ["acknowledged before measured", JSON.stringify(report({ acknowledged: { by: "a", at: "2026-10-23T00:00:00Z" } })), THIS_DB, /earlier than measured_at/],
     ["no session zone", JSON.stringify(report({ measurements: { ...report().measurements, session_timezone: "" } })), THIS_DB, /session_timezone/],
     ["no database fingerprint", JSON.stringify(report()), null, /no fingerprint/],
+    // #237 (critic HIGH): DEFAULT now() rows are only UTC when the session zone was UTC.
+    [
+      "an America/New_York session",
+      JSON.stringify(report({ measurements: { ...report().measurements, session_timezone: "America/New_York" } })),
+      THIS_DB,
+      /measured session TimeZone is America\/New_York, not UTC/,
+    ],
+    [
+      "a role-level TimeZone override",
+      JSON.stringify(
+        report({ measurements: { ...report().measurements, timezone_overrides: [{ scope: "role-level", timezone: "America/New_York" }] } })
+      ),
+      THIS_DB,
+      /TimeZone overrides are set \(role-level=America\/New_York\)/,
+    ],
+    [
+      "a database-level TimeZone override, even to UTC",
+      JSON.stringify(report({ measurements: { ...report().measurements, timezone_overrides: [{ scope: "database-level", timezone: "UTC" }] } })),
+      THIS_DB,
+      /TimeZone overrides are set \(database-level=UTC\)/,
+    ],
+    [
+      "no timezone_overrides measurement",
+      JSON.stringify({ ...report(), measurements: { ...report().measurements, timezone_overrides: undefined } }),
+      THIS_DB,
+      /no timezone_overrides measurement/,
+    ],
   ])("checkPreflightReport refuses %s", (_name, raw, fingerprint, reason) => {
     const verdict = checkPreflightReport(raw, FILE, fingerprint);
     expect(verdict.ok).toBe(false);
@@ -95,6 +122,14 @@ describe("#237 preflight helpers", () => {
   it("checkPreflightReport accepts an acknowledged report for this database and migration", () => {
     expect(checkPreflightReport(JSON.stringify(report()), FILE, THIS_DB).ok).toBe(true);
   });
+
+  it.each(["UTC", "Etc/UTC", "GMT", "etc/utc", "Etc/GMT", "Zulu", "UCT", "Universal"])(
+    "checkPreflightReport accepts the UTC alias %s",
+    (zone) => {
+      const raw = JSON.stringify(report({ measurements: { ...report().measurements, session_timezone: zone } }));
+      expect(checkPreflightReport(raw, FILE, THIS_DB).ok).toBe(true);
+    }
+  );
 
   it("databaseFingerprint ignores the password and hides the host", () => {
     const a = databaseFingerprint("postgresql://user:one@db-a.example.test/main?sslmode=require");
@@ -164,6 +199,19 @@ describe("#237 criterion 8: the apply of 0015 refuses on PGlite before any ALTER
     ["a report for another database", () => JSON.stringify(report({ database_fingerprint: OTHER_DB })), /different database/],
     ["an unacknowledged report", () => JSON.stringify(report({ acknowledged: null })), /not acknowledged/],
     [
+      "a report that measured an America/New_York session",
+      () => JSON.stringify(report({ measurements: { ...report().measurements, session_timezone: "America/New_York" } })),
+      /measured session TimeZone is America\/New_York, not UTC/,
+    ],
+    [
+      "a report that measured a TimeZone override",
+      () =>
+        JSON.stringify(
+          report({ measurements: { ...report().measurements, timezone_overrides: [{ scope: "database-level", timezone: "Europe/Paris" }] } })
+        ),
+      /TimeZone overrides are set \(database-level=Europe\/Paris\)/,
+    ],
+    [
       "an unreadable report",
       () => {
         throw new Error("EACCES: permission denied");
@@ -193,6 +241,15 @@ describe("#237 criterion 8: the apply of 0015 refuses on PGlite before any ALTER
     expect(result.exitCode).toBe(1);
     expect(result.executed).toEqual([]);
     expect(await allNaive()).toBe(true);
+  });
+
+  it("the dry run prints the measured session zone and that an apply would be refused outside UTC", async () => {
+    await db.exec(`SET TIME ZONE 'America/New_York'`);
+    const result = await run(() => null, { dryRun: true, only: FILE, showColumns: null, force: false });
+    await db.exec(`SET TIME ZONE 'UTC'`);
+    expect(result.exitCode).toBe(0);
+    expect(result.lines).toContain(`Preflight for ${FILE}: measured session TimeZone America/New_York; TimeZone overrides: none.`);
+    expect(result.executed).toEqual([]);
   });
 
   it("the dry run's READ ONLY transaction rejects a write", async () => {
