@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db/connection";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
+import { entryRank, matchesTool, rankingEntries } from "@/lib/tools/ranking-entry";
 import { loggers } from "@/lib/logger";
 import { articles, rankingVersions } from "@/lib/db/schema";
 
@@ -77,25 +78,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       const currentRankings = await rankingsRepository.getCurrentRankings();
 
       if (currentRankings) {
-        const rankingsData = currentRankings.data;
-        let rankings = [];
-
-        // Handle different data structures
-        if (Array.isArray(rankingsData)) {
-          rankings = rankingsData;
-        } else if (rankingsData && typeof rankingsData === "object") {
-          if (rankingsData["rankings"] && Array.isArray(rankingsData["rankings"])) {
-            rankings = rankingsData["rankings"];
-          } else if (rankingsData["data"] && Array.isArray(rankingsData["data"])) {
-            rankings = rankingsData["data"];
-          }
-        }
-
-        // Find this tool's ranking
-        const toolRanking = rankings.find((r: any) =>
-          r["tool_id"] === tool.id ||
-          r["tool_slug"] === slug ||
-          r["tool_name"]?.toLowerCase() === tool.name.toLowerCase()
+        // #193: the tool page's server profile block reads the same row through
+        // the same helpers, so the header rank and the block's rank agree.
+        const toolRanking: any = rankingEntries(currentRankings.data).find((r) =>
+          matchesTool(r, { id: tool.id, slug, name: tool.name })
         );
 
         if (toolRanking) {
@@ -106,7 +92,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           const completeScores = deriveCompleteScores(partialFactorScores, overallScore);
 
           ranking = {
-            rank: toolRanking["rank"] || toolRanking["position"] || 0,
+            rank: entryRank(toolRanking),
             previousRank: toolRanking["movement"]?.["previous_position"] || toolRanking["previous_rank"],
             rankChange: toolRanking["movement"]?.["change"] || toolRanking["rank_change"] || 0,
             scores: completeScores,

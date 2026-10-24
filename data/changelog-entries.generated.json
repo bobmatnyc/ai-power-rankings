@@ -112,7 +112,7 @@
   {
     "id": "unreleased-db502ee7eeee",
     "version": "Unreleased",
-    "date": "2026-10-24T00:58:03.000Z",
+    "date": "2026-10-24T01:06:09.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "tools",
@@ -559,6 +559,17 @@
     "title": "the daily cron called runDailyDiscovery() with no arguments, so the Tavily days lookback was undefined and omitted from…",
     "description": "the daily cron called `runDailyDiscovery()` with no arguments, so the Tavily `days` lookback was `undefined` and omitted from the request — discovery was relevance-ranked with no date bound at all. It now defaults to the freshness window; an explicit `--days` still wins and widens the gate in step",
     "changeType": "fix"
+  },
+  {
+    "id": "unreleased-22f4b0c7a0a1",
+    "version": "Unreleased",
+    "date": "2026-10-24T01:21:35.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "tools",
+    "title": "each tool page has a server-rendered profile block under the Overview card with four sections, always present and in…",
+    "description": "each tool page has a server-rendered profile block under the Overview card with four sections, always present and in this order: Verdict (the stored tagline, else description, else summary, else a fixed sentence), Score and rank, Change since last month, and Alternatives. The rest of the page still renders in the browser, so the server HTML previously held only \"Loading\". The change compares the current ranking period with the latest one before it: the rank change shows whenever the tool is in both, the score change only when both periods use the same algorithm version, and a tool new this month or a site with a single period shows explicit text instead of a delta. Alternatives are up to three active tools in the same category, highest score first, never the tool itself; non-active tool pages show them too. Rank and score come from the same `is_current` snapshot row as the page header, through the helpers in `lib/tools/ranking-entry.ts` that `/api/tools/[slug]/json` now also uses; the Overview card's duplicate \"Current Ranking\" line moved into the block. The ranking read is cached for 30 minutes (the page's ISR window) and shared by every tool page; when it fails the block shows \"unavailable\" text and the page still answers 200. No generated text, no new table, service or endpoint, and nothing in the ranking algorithm or ranking writes changed. Tests: `tests/unit/tool-profile-193.test.tsx` (#193)",
+    "changeType": "feature"
   },
   {
     "id": "unreleased-443b29e81938",
