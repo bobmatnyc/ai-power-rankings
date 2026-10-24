@@ -596,12 +596,23 @@
   {
     "id": "unreleased-c6cdd8dbf3c2",
     "version": "Unreleased",
-    "date": "2026-10-24T05:30:35.551Z",
-    "dateSource": "build",
+    "date": "2026-10-24T05:34:10.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": null,
     "title": "a manual workflow, .github/workflows/publish-rankings.yml, publishes the rankings on demand (Bob D24)",
     "description": "a manual workflow, `.github/workflows/publish-rankings.yml`, publishes the rankings on demand (Bob D24). It runs on `workflow_dispatch` only, refuses unless the `confirm` input is `publish-v7.10`, and never overlaps a running publish. It sends one GET to `/api/cron/regenerate-rankings` with the `CRON_SECRET` repository secret, which reaches curl through `env:` and stdin, and never retries. It sends nothing unless the origin is `https://aipowerranking.com` (or `www.`), and curl accepts https only. Every run replaces the current period's rankings row. The log and job summary show the HTTP status and the response's `period`, `algorithm_version` and `tool_count` only. Exit 0 is a v7.10 publish, 2 a 401, 3 a 409, 4 another algorithm version, 1 anything else. A signed-out read of `/api/rankings` follows; the CDN can serve the old version for up to 15 minutes. Tests: `tests/unit/publish-rankings-workflow-101.test.ts` (#101)",
+    "changeType": "feature"
+  },
+  {
+    "id": "unreleased-d69ca23784e2",
+    "version": "Unreleased",
+    "date": "2026-10-24T05:29:20.601Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "metrics",
+    "title": "monthly tool metrics are kept as private history",
+    "description": "monthly tool metrics are kept as private history. On the 1st of each month, 11 cron entries run `/api/cron/collect-metrics` once per collector shard (GitHub 1, PyPI 2, npm 4, VS Code Marketplace 4), between 01:00 and 03:30 UTC. Each shard writes one row per tool per UTC day to `tool_metrics_history` and one result row to the `metrics_collection_runs` ledger (migration 0014, applied through `apply-migration.yml`). The route never writes `tools`, so published scores do not change. A partial or failed shard, or any database error, answers 500 and sends an alert. The four `scripts/collect-*-metrics.ts` CLIs keep their flags and their `tools.data` writes, and share the collector classes in `lib/metrics-collectors/`, which now time out each fetch after 10 s. The dispatch-only `check-metrics-history.yml` workflow prints rows per day and each shard's ledger status, and fails when a shard is missing or not ok. Tests: `tests/unit/metrics-collect-route-95.test.ts`, `tests/unit/metrics-collect-shard-95.test.ts`, `tests/unit/metrics-collectors-95.test.ts`, `tests/unit/metrics-history-migration-95.test.ts`, `tests/unit/metrics-history-private-95.test.ts`, `tests/unit/metrics-cron-config-95.test.ts`",
     "changeType": "feature"
   },
   {
@@ -750,8 +761,8 @@
   {
     "id": "unreleased-4af96d002286",
     "version": "Unreleased",
-    "date": "2026-10-24T05:03:01.065Z",
-    "dateSource": "build",
+    "date": "2026-10-24T05:13:26.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "rankings",
     "title": "ranking algorithm v7.10",
