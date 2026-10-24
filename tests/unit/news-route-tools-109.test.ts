@@ -189,6 +189,25 @@ describe("GET /api/news tool attribution (#109)", () => {
   });
 });
 
+describe("GET /api/news catalogue cache (#109)", () => {
+  it("does not cache a failed catalogue read", async () => {
+    findAll.mockRejectedValueOnce(new Error("tools read failed")).mockResolvedValueOnce(CATALOGUE);
+    getPaginatedFiltered.mockResolvedValue({
+      articles: [article("10", { toolMentions: [{ name: "GitHub Copilot", toolId: "t-copilot" }] })],
+      total: 1,
+      hasMore: false,
+    });
+    const { getList } = await loadRoutes();
+
+    const first = await getList();
+    const second = await getList();
+
+    expect(first.body.news[0].tool_slug).toBeUndefined();
+    expect(second.body.news[0].tool_slug).toBe("github-copilot");
+    expect(findAll).toHaveBeenCalledTimes(2);
+  });
+});
+
 describe("GET /api/news/[slug] tool attribution (#109)", () => {
   it("returns the tool named by the mention's toolId", async () => {
     getBySlug.mockResolvedValue(

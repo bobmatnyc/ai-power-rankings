@@ -110,14 +110,14 @@
     "changeType": "improvement"
   },
   {
-    "id": "unreleased-6d4121e3abb3",
+    "id": "unreleased-f36f633d0b2c",
     "version": "Unreleased",
-    "date": "2026-10-24T00:23:55.799Z",
+    "date": "2026-10-24T00:31:02.848Z",
     "dateSource": "build",
     "section": "Fixed",
     "scope": "news",
     "title": "news articles are attributed to tools in the tool catalogue",
-    "description": "news articles are attributed to tools in the tool catalogue. `/api/news` read `mention.tool` while stored mentions carry `name` and `toolId`, so every item showed \"Various Tools\" with no `tool_slug`; both news routes also matched titles against a hand-kept list of 15 coarse slugs (`claude`, `gemini`, `replit-ai`) that are not in the catalogue, and `/api/news/[slug]` ignored `toolId`. Both routes now resolve through `lib/news-tool-resolver.ts`: a mention's `toolId`, then a mention name equal to a catalogue name or slug, then catalogue names found in the title as whole words, with no fuzzy or partial matching. A returned slug is always a catalogue slug. The catalogue is read once per request and cached in memory for 5 minutes (`lib/news-tool-catalogue.ts`); when the read fails, both routes still answer 200 with no attribution and log one warning. `lib/tool-matcher.ts` and its tests are removed. Response shapes are unchanged. Tests: `tests/unit/news-tool-resolver-109.test.ts`, `tests/unit/news-route-tools-109.test.ts` (#109)",
+    "description": "news articles are attributed to tools in the tool catalogue. `/api/news` read `mention.tool` while stored mentions carry `name` and `toolId`, so every item showed \"Various Tools\" with no `tool_slug`; both news routes also matched titles against a hand-kept list of 15 coarse slugs (`claude`, `gemini`, `replit-ai`) that are not in the catalogue, and `/api/news/[slug]` ignored `toolId`. Both routes now resolve through `lib/news-tool-resolver.ts`: a mention's `toolId`, then a mention name equal to a catalogue name or slug, then catalogue names found in the title as whole words, with no fuzzy or partial matching. Title matching uses names only, never slugs, and is case-sensitive; a name that is a single all-letter word (such as Continue, Warp or AI) is never matched in a title and is attributed through mentions only. A returned slug is always a catalogue slug. The catalogue is read once per request and cached in memory for 5 minutes (`lib/news-tool-catalogue.ts`); when the read fails, both routes still answer 200 with no attribution and log one warning. `lib/tool-matcher.ts` and its tests are removed. Response shapes are unchanged. Tests: `tests/unit/news-tool-resolver-109.test.ts`, `tests/unit/news-route-tools-109.test.ts` (#109)",
     "changeType": "fix"
   },
   {

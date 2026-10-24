@@ -26,12 +26,17 @@ export interface ToolCatalogue<T extends CatalogueTool = CatalogueTool> {
   byId: Map<string, T>;
   /** Lower-cased, trimmed name and slug → tool. */
   byKey: Map<string, T>;
-  /** Names and slugs as title patterns, longest first. */
+  /** Multi-word or non-letter catalogue names as case-sensitive title patterns, longest first. */
   titleTerms: Array<{ term: string; pattern: RegExp; tool: T }>;
 }
 
 function normalizeKey(value: string): string {
   return value.trim().toLowerCase();
+}
+
+/** True for a name that is one token of letters only ("Warp", not "v0" or "Bolt.new"). */
+function isSingleWordName(name: string): boolean {
+  return /^\p{L}+$/u.test(name);
 }
 
 function escapeRegExp(value: string): string {
@@ -59,17 +64,21 @@ export function buildToolCatalogue<T extends CatalogueTool>(tools: readonly T[])
       const key = normalizeKey(raw);
       if (!key) continue;
       if (!byKey.has(key)) byKey.set(key, tool);
-      if (!terms.has(key)) terms.set(key, tool);
     }
+    // #109: title terms are catalogue names only, as stored (case-sensitive).
+    // A single all-letter name ("Continue", "Warp", "AI") is an ordinary word
+    // in headlines, so it is attributed through mentions only.
+    const name = tool.name.trim();
+    if (name && !isSingleWordName(name) && !terms.has(name)) terms.set(name, tool);
   }
 
   // A term matches only as a whole word: no letter or digit may touch either
-  // end, so "cursor" does not match "cursory" and "v0" does not match "rev0".
+  // end, so "Claude Code" does not match "Claude Codex" and "v0" not "rev0".
   const titleTerms = [...terms.entries()]
     .sort((a, b) => b[0].length - a[0].length)
     .map(([term, tool]) => ({
       term,
-      pattern: new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(term)}(?![\\p{L}\\p{N}])`, "iu"),
+      pattern: new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(term)}(?![\\p{L}\\p{N}])`, "u"),
       tool,
     }));
 
@@ -109,8 +118,8 @@ function matchTitle<T extends CatalogueTool>(title: string, catalogue: ToolCatal
  * 1. Each mention's `toolId` (or a string mention) that is a catalogue id.
  * 2. Otherwise the mention's name, equal to a catalogue name or slug
  *    (case-insensitive, trimmed).
- * 3. Only when no mention resolves: catalogue names and slugs found in the
- *    title as whole words.
+ * 3. Only when no mention resolves: catalogue names (never slugs) found in the
+ *    title as whole words, case-sensitive. A single all-letter name never matches.
  *
  * A mention that resolves to nothing is dropped. Duplicates are removed.
  * Returns `[]` when nothing resolves.

@@ -27,6 +27,13 @@ const TOOLS = [
   { id: "t-gemini", slug: "gemini-code-assist", name: "Gemini Code Assist" },
   { id: "t-v0", slug: "v0-vercel", name: "v0" },
   { id: "t-windsurf", slug: "windsurf", name: "Windsurf" },
+  { id: "t-bolt", slug: "bolt-new", name: "Bolt.new" },
+  // Catalogue tools named with ordinary English words (critic probes, #109).
+  { id: "t-continue", slug: "continue", name: "Continue" },
+  { id: "t-warp", slug: "warp", name: "Warp" },
+  { id: "t-harness", slug: "harness", name: "Harness" },
+  { id: "t-amp", slug: "amp", name: "Amp" },
+  { id: "t-ai", slug: "ai", name: "AI" },
 ];
 
 async function resolve(article: { title?: unknown; toolMentions?: unknown }) {
@@ -83,15 +90,54 @@ describe("resolveArticleTools (#109)", () => {
     expect(slugs).toEqual(["devin"]);
   });
 
-  it("falls back to whole-word title matches, in title order, longest name first", async () => {
+  it("falls back to whole-word title matches of multi-word or non-letter names, in title order", async () => {
     expect(await resolve({ title: "Using Claude Code daily", toolMentions: [] })).toEqual([
       "claude-code",
     ]);
     expect(
-      await resolve({ title: "Cursor vs Claude Code vs Devin Desktop", toolMentions: [{ name: "Artcraft" }] })
-    ).toEqual(["cursor", "claude-code", "devin"]);
-    expect(await resolve({ title: "Cursor's new agent", toolMentions: [] })).toEqual(["cursor"]);
+      await resolve({
+        title: "Gemini Code Assist vs Claude Code vs Cursor",
+        toolMentions: [{ name: "Artcraft" }],
+      })
+    ).toEqual(["gemini-code-assist", "claude-code"]);
+    expect(await resolve({ title: "Claude Code's new hooks", toolMentions: [] })).toEqual([
+      "claude-code",
+    ]);
     expect(await resolve({ title: "v0 launches templates" })).toEqual(["v0-vercel"]);
+    expect(await resolve({ title: "Bolt.new adds deploys" })).toEqual(["bolt-new"]);
+  });
+
+  // #109 critic probes: names that are ordinary English words never match a
+  // title, in the headline's own case or in Title Case.
+  it.each([
+    "Developers continue to adopt agents",
+    "Developers Continue To Adopt Agents",
+    "Moving at warp speed",
+    "Moving At Warp Speed",
+    "How to harness agents in CI",
+    "How To Harness Agents In CI",
+    "Amp up your workflow",
+    "Amp Up Your Workflow",
+    "What AI means for developers",
+    "What AI Means For Developers",
+  ])("gives no attribution for the headline %j", async (title) => {
+    expect(await resolve({ title, toolMentions: [] })).toEqual([]);
+  });
+
+  it("matches title names case-sensitively and never by slug", async () => {
+    for (const title of ["using claude code daily", "Using claude-code daily", "CLAUDE CODE ships"]) {
+      expect(await resolve({ title, toolMentions: [] }), title).toEqual([]);
+    }
+  });
+
+  it("still attributes a single-word name through a mention", async () => {
+    expect(await resolve({ title: "Moving at warp speed", toolMentions: [{ name: "Warp" }] })).toEqual([
+      "warp",
+    ]);
+    expect(await resolve({ title: "x", toolMentions: [{ name: "?", toolId: "t-continue" }] })).toEqual([
+      "continue",
+    ]);
+    expect(await resolve({ title: "x", toolMentions: ["harness"] })).toEqual(["harness"]);
   });
 
   it("never matches a title partially", async () => {
@@ -108,7 +154,7 @@ describe("resolveArticleTools (#109)", () => {
 
   it("ignores the title when a mention resolves", async () => {
     const slugs = await resolve({
-      title: "Cursor vs Devin",
+      title: "Claude Code vs GitHub Copilot",
       toolMentions: [{ name: "Windsurf" }],
     });
     expect(slugs).toEqual(["windsurf"]);
