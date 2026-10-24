@@ -7,6 +7,9 @@ import { ToolDetailClient } from "./tool-detail-client";
 import { canonicalLocale } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import { findToolBySlug } from "@/lib/tools/tool-page-request";
+import { buildToolProfile } from "@/lib/tools/tool-profile";
+import { getToolProfileRankingData } from "@/lib/tools/tool-profile-data";
+import { ToolProfileSections } from "@/components/tools/tool-profile-sections";
 import {
   generateToolSchema,
   generateToolReviewSchema,
@@ -38,7 +41,10 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
   const tool = await findToolBySlug(slug);
   if (!tool) notFound();
 
-  const dict = await getDictionary(lang as Locale);
+  // #193: the server-rendered profile block. Its ranking read is cached and
+  // never rejects, so ranking data trouble shows fallback text, not a 5xx.
+  const [dict, rankingData] = await Promise.all([getDictionary(lang as Locale), getToolProfileRankingData()]);
+  const profile = buildToolProfile(tool, rankingData);
 
   // Fetch tool data for schema markup
   let toolSchemaData: ToolSchemaData | null = null;
@@ -119,7 +125,12 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
           )}
         </>
       )}
-      <ToolDetailClient slug={slug} lang={lang as Locale} dict={dict} />
+      <ToolDetailClient
+        slug={slug}
+        lang={lang as Locale}
+        dict={dict}
+        profile={<ToolProfileSections name={tool.name} lang={canonicalLocale(lang)} profile={profile} />}
+      />
     </>
   );
 }

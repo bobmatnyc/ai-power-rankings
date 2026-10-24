@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { ToolDetailTabs } from "@/components/tools/tool-detail-tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -113,9 +113,11 @@ interface ToolDetailClientProps {
   slug: string;
   lang: string;
   dict: Dictionary;
+  /** #193: the server-rendered profile block, shown under the Overview card in every state. */
+  profile?: ReactNode;
 }
 
-export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
+export function ToolDetailClient({ slug, lang, dict, profile }: ToolDetailClientProps) {
   const [tool, setTool] = useState<Tool | null>(null);
   const [toolData, setToolData] = useState<ToolDetailData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -148,6 +150,8 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
         <div className="flex items-center justify-center h-64">
           <p className="text-muted-foreground">{dict.common.loading}</p>
         </div>
+        {/* #193: the server HTML carries the profile block before the client data loads. */}
+        {profile}
       </div>
     );
   }
@@ -161,6 +165,7 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
             <Link href={`/${lang}/tools`}>{dict.tools.backToTools}</Link>
           </Button>
         </div>
+        {profile}
       </div>
     );
   }
@@ -299,17 +304,12 @@ export function ToolDetailClient({ slug, lang, dict }: ToolDetailClientProps) {
               <p className="text-sm text-muted-foreground">{dict.tools.detail.company}</p>
               <p className="font-medium">{tool.info?.company?.name || dict.common.notAvailable}</p>
             </div>
-            {toolData?.ranking && (
-              <div>
-                <p className="text-sm text-muted-foreground">Current Ranking</p>
-                <p className="font-medium text-primary">
-                  #{toolData.ranking.rank} ({toolData.ranking.scores["overall"]?.toFixed(1)} score)
-                </p>
-              </div>
-            )}
+            {/* #193: rank and score moved to the profile block's "Score and rank" section. */}
           </div>
         </CardContent>
       </Card>
+
+      {profile}
 
       {/* Tool Detail Tabs */}
       <ToolDetailTabs
