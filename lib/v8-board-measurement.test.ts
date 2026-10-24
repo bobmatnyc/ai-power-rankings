@@ -9,6 +9,7 @@ import {
   mixedBoard,
   negativeControlWeights,
   publishedFor,
+  retiredMoverBoard,
   SENTINEL,
   tiedHarnessBoard,
 } from "../tests/fixtures/v8-board-185";
@@ -18,7 +19,9 @@ import {
   EXIT_CODES,
   formatMeasurementReport,
   HARNESS_FLOOR,
+  type KindSheetView,
   measureBoard,
+  PRIVATE_SECTION_HEADER,
   type MeasuredTool,
   type MeasurementResult,
   type PublishedSnapshot,
@@ -45,24 +48,45 @@ const wrong = negativeControlWeights(v710);
 /** The fixtures are smaller than the production floor (HARNESS_FLOOR, 66), so the floor is set to their harness count. */
 const fixtureFloor = (tools: MeasuredTool[]) => tools.filter((t) => t.kind === "harness").length;
 
-function measure(tools: MeasuredTool[], candidate = v8, published: PublishedSnapshot = quietPublished(tools)) {
-  return measureBoard({ tools, published, baseline: v710, candidate, harnessFloor: fixtureFloor(tools) });
+/** A kind sheet listing every fixture tool, none retired. */
+function fullSheet(tools: MeasuredTool[]): KindSheetView {
+  return { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set() };
+}
+
+function measure(
+  tools: MeasuredTool[],
+  candidate = v8,
+  published: PublishedSnapshot = quietPublished(tools),
+  sheet: KindSheetView = fullSheet(tools)
+) {
+  return measureBoard({ tools, published, baseline: v710, candidate, sheet, harnessFloor: fixtureFloor(tools) });
 }
 
 /** The same run at the production floor. */
 function measureAtDefaultFloor(tools: MeasuredTool[]) {
-  return measureBoard({ tools, published: quietPublished(tools), baseline: v710, candidate: v8 });
+  return measureBoard({ tools, published: quietPublished(tools), baseline: v710, candidate: v8, sheet: fullSheet(tools) });
 }
 
-/** Every string a report must not contain: names, slugs, ids and per-tool scores. */
-function forbidden(tools: MeasuredTool[], published: PublishedSnapshot): string[] {
+/** Per-tool strings no part of a report may contain: slugs, ids and per-tool scores. */
+function neverPrinted(tools: MeasuredTool[], published: PublishedSnapshot): string[] {
   const scores = published.rows.map((row) => Number(row["score"]).toFixed(3));
-  return [SENTINEL, SENTINEL.toLowerCase(), ...tools.flatMap((t) => [t.name, t.slug, t.id]), ...scores];
+  return [SENTINEL.toLowerCase(), ...tools.flatMap((t) => [t.slug, t.id]), ...scores];
 }
 
+/**
+ * D19, narrowed by ruling 12:33Z: names appear only in the closing private
+ * section, which holds exactly a count and the names of tools missing from
+ * the sheet. Slugs, ids and scores appear nowhere.
+ */
 function expectNoToolData(result: MeasurementResult, tools: MeasuredTool[], published: PublishedSnapshot) {
   const report = formatMeasurementReport(result);
-  for (const needle of forbidden(tools, published)) expect(report).not.toContain(needle);
+  const at = report.indexOf(PRIVATE_SECTION_HEADER);
+  expect(at).toBeGreaterThan(0);
+  const [publicPart, privatePart] = [report.slice(0, at), report.slice(at)];
+  for (const needle of neverPrinted(tools, published)) expect(report).not.toContain(needle);
+  for (const needle of [SENTINEL, ...tools.map((t) => t.name)]) expect(publicPart).not.toContain(needle);
+  const names = result.sheet.notInSheetNames;
+  expect(privatePart.split("\n")).toEqual([PRIVATE_SECTION_HEADER, `count: ${names.length}`, ...names.map((n) => `- ${n}`)]);
 }
 
 afterEach(() => vi.restoreAllMocks());
@@ -142,6 +166,25 @@ describe("measureBoard D45 gate (#185)", () => {
     const published = quietPublished(tools);
     const shuffled = [...tools].reverse();
     expect(measure(shuffled, v8, published).candidate).toEqual(measure(tools, v8, published).candidate);
+  });
+
+  it("leaves a retired harness tool out of the D45 list, so its move is no breach, and counts it", () => {
+    const tools = retiredMoverBoard();
+    const published = quietPublished(tools);
+    const mover = tools.find((t) => t.slug.endsWith("-r0"))!;
+    // Control: listed as an ordinary harness tool, the mover breaches D45 under these weights.
+    const control = measure(tools, wrong, published);
+    expect(control.candidate!.d45Breaches).toBeGreaterThan(0);
+    expect(control.exitCode).toBe(EXIT_CODES.d45Breach);
+
+    const sheet = { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set([mover.slug]) };
+    const result = measureBoard({ tools, published, baseline: v710, candidate: wrong, sheet, harnessFloor: fixtureFloor(tools) - 1 });
+    expect(result.sheet.retiredActive).toBe(1);
+    expect(result.harness!.harnessTools).toBe(fixtureFloor(tools) - 1);
+    expect(result.candidate!.harnessRankShift.n).toBe(fixtureFloor(tools) - 1);
+    expect(result.candidate!.d45Breaches).toBe(0);
+    expect(result.exitCode).toBe(EXIT_CODES.ok);
+    expect(formatMeasurementReport(result)).toContain("active tools retired in the kind sheet (left out of the harness list): 1");
   });
 
   it("counts tools by kind", () => {
@@ -239,7 +282,13 @@ describe("measureBoard v7.10 reproduction gate (#185)", () => {
 
   it("recomputes with the baseline weights it is given (a v8 baseline cannot reproduce v7.10)", () => {
     const tools = harnessBoard();
-    const result = measureBoard({ tools, published: publishedFor(tools, v710), baseline: v8, candidate: v8 });
+    const result = measureBoard({
+      tools,
+      published: publishedFor(tools, v710),
+      baseline: v8,
+      candidate: v8,
+      sheet: fullSheet(tools),
+    });
     expect(result.reproduced).toBe(false);
     expect(result.exitCode).toBe(EXIT_CODES.notReproduced);
   });
@@ -308,6 +357,29 @@ describe("measurement output is aggregates only (D19, #185)", () => {
     const tools = board();
     const published = quietPublished(tools);
     expectNoToolData(measure(tools, candidate, published), tools, published);
+  });
+
+  it("names the 2 active tools missing from the kind sheet in the private section only", () => {
+    const tools = mixedBoard();
+    const published = quietPublished(tools);
+    const [a, b] = [tools[3]!, tools[15]!];
+    const sheet = { slugs: new Set(tools.filter((t) => t !== a && t !== b).map((t) => t.slug)), retiredSlugs: new Set<string>() };
+    const result = measure(tools, v8, published, sheet);
+    expect(result.sheet.notInSheetNames).toEqual([a.name, b.name].sort());
+    const report = formatMeasurementReport(result);
+    expect(report).toContain(`${PRIVATE_SECTION_HEADER}\ncount: 2\n`);
+    expect(report).toContain(`- ${a.name}`);
+    expect(report).toContain(`- ${b.name}`);
+    expectNoToolData(result, tools, published);
+  });
+
+  it("prints count 0 and no name when every active tool is in the kind sheet", () => {
+    const tools = mixedBoard();
+    const published = quietPublished(tools);
+    const result = measure(tools, v8, published);
+    expect(result.sheet.notInSheetNames).toEqual([]);
+    expect(formatMeasurementReport(result).endsWith(`${PRIVATE_SECTION_HEADER}\ncount: 0`)).toBe(true);
+    expectNoToolData(result, tools, published);
   });
 
   it("a failed reproduction report names no tool either", () => {
