@@ -5,11 +5,13 @@
  * the production log for that run.
  * What: One structured "[AutomatedIngestion] Run summary" line per run, carrying
  * counts only (never URLs, titles, hosts or provider text) plus the run status and a
- * fixed-vocabulary failure cause.
+ * fixed-vocabulary failure cause. It also breaks `rejected` and `assessmentFailed`
+ * down by fixed reason labels and buckets rejected scores against the thresholds.
  * Test: `tests/unit/ingestion-run-summary.test.ts`.
  */
 
 import { loggers } from "@/lib/logger";
+import { INGEST_THRESHOLDS, type QualityAssessment } from "@/lib/services/article-quality.service";
 
 export const RUN_SUMMARY_MSG = "[AutomatedIngestion] Run summary";
 
@@ -38,6 +40,109 @@ export interface IngestionRunCounts {
   /** Rows actually inserted into the articles table (always 0 on a dry run). */
   added: number;
   ingestFailed: number;
+  /** #172: why the `rejected` candidates were rejected; sums to `rejected`. */
+  rejectReasons: Record<RejectReason, number>;
+  /** #172: how far each rejected candidate's scores fell below the thresholds. */
+  rejectScoreBuckets: { average: Record<ScoreBucket, number>; relevance: Record<ScoreBucket, number> };
+  /** #172: why the `assessmentFailed` candidates got no verdict; sums to `assessmentFailed`. */
+  assessmentFailedReasons: Record<AssessmentFailureReason, number>;
+}
+
+/**
+ * Why a verdict-carrying candidate was rejected. `no_assessment`: no result came
+ * back for the candidate. `other`: scores meet both thresholds yet the verdict is
+ * not to ingest, so a drift between this classifier and the service shows up here.
+ */
+export const REJECT_REASONS = [
+  "below_both_thresholds",
+  "below_relevance_threshold",
+  "below_average_threshold",
+  "no_assessment",
+  "other",
+] as const;
+export type RejectReason = (typeof REJECT_REASONS)[number];
+
+/** Distance below a threshold; `meets` means at or above it. */
+export const SCORE_BUCKETS = ["meets", "within_0.5", "0.5_to_2", "over_2", "no_score"] as const;
+export type ScoreBucket = (typeof SCORE_BUCKETS)[number];
+
+/** Why an assessment produced no verdict (the candidate carries `error`). */
+export const ASSESSMENT_FAILURE_REASONS = [
+  "unparseable",
+  "truncated",
+  "circuit_breaker",
+  "provider_error",
+] as const;
+export type AssessmentFailureReason = (typeof ASSESSMENT_FAILURE_REASONS)[number];
+
+function zeroed<K extends string>(keys: readonly K[]): Record<K, number> {
+  return Object.fromEntries(keys.map((k) => [k, 0])) as Record<K, number>;
+}
+
+/** The fields of a QualityAssessment the breakdown reads: numbers, a flag, an error. */
+export type AssessmentVerdict = Pick<
+  QualityAssessment,
+  "qualityScore" | "relevanceScore" | "credibilityScore" | "shouldIngest" | "error"
+>;
+
+function scoreBucket(score: number, threshold: number): ScoreBucket {
+  if (!Number.isFinite(score)) return "no_score";
+  const gap = threshold - score;
+  if (gap <= 0) return "meets";
+  if (gap <= 0.5) return "within_0.5";
+  if (gap <= 2) return "0.5_to_2";
+  return "over_2";
+}
+
+/** Reads the error text only to pick a label; the text itself never leaves here. */
+function classifyAssessmentFailure(error: string): AssessmentFailureReason {
+  if (error.startsWith("Quality assessment reply unparseable")) return "unparseable";
+  if (/truncated at the token limit/i.test(error)) return "truncated";
+  if (error.startsWith("circuit breaker open")) return "circuit_breaker";
+  return "provider_error";
+}
+
+/**
+ * Counts-only breakdown of the assessment step. `results[i]` is the assessment for
+ * the i-th assessed candidate (undefined when none came back). A candidate is
+ * rejected exactly when the service counts it so: `shouldIngest !== true` and no
+ * `error`. A candidate with `error` is counted under `assessmentFailedReasons` only.
+ */
+export function classifyAssessments(results: ReadonlyArray<AssessmentVerdict | undefined>) {
+  const rejectReasons = zeroed(REJECT_REASONS);
+  const average = zeroed(SCORE_BUCKETS);
+  const relevance = zeroed(SCORE_BUCKETS);
+  const assessmentFailedReasons = zeroed(ASSESSMENT_FAILURE_REASONS);
+  const { minimumAverageScore, minimumRelevanceScore } = INGEST_THRESHOLDS;
+
+  for (const result of results) {
+    if (result?.shouldIngest === true) continue;
+    if (result?.error) {
+      assessmentFailedReasons[classifyAssessmentFailure(result.error)]++;
+      continue;
+    }
+    if (result === undefined) {
+      rejectReasons.no_assessment++;
+      average.no_score++;
+      relevance.no_score++;
+      continue;
+    }
+    // Same formula as ArticleQualityService.parseAssessmentResponse.
+    const avg = (result.qualityScore + result.relevanceScore + result.credibilityScore) / 3;
+    const averageBucket = scoreBucket(avg, minimumAverageScore);
+    const relevanceBucket = scoreBucket(result.relevanceScore, minimumRelevanceScore);
+    average[averageBucket]++;
+    relevance[relevanceBucket]++;
+    const lowAverage = averageBucket !== "meets";
+    const lowRelevance = relevanceBucket !== "meets";
+    if (averageBucket === "no_score" || relevanceBucket === "no_score") rejectReasons.no_assessment++;
+    else if (lowAverage && lowRelevance) rejectReasons.below_both_thresholds++;
+    else if (lowRelevance) rejectReasons.below_relevance_threshold++;
+    else if (lowAverage) rejectReasons.below_average_threshold++;
+    else rejectReasons.other++;
+  }
+
+  return { rejectReasons, rejectScoreBuckets: { average, relevance }, assessmentFailedReasons };
 }
 
 export function emptyRunCounts(): IngestionRunCounts {
@@ -56,6 +161,7 @@ export function emptyRunCounts(): IngestionRunCounts {
     passedQuality: 0,
     added: 0,
     ingestFailed: 0,
+    ...classifyAssessments([]),
   };
 }
 
@@ -111,6 +217,7 @@ export function buildRunSummary(run: RunSummaryInput, counts: IngestionRunCounts
     dryRun: run.dryRun,
     ...counts,
     duplicates: counts.urlDuplicates + counts.semanticDuplicates,
+    rejectThresholds: { ...INGEST_THRESHOLDS }, // #172: what the score buckets measure against
     errorCount: run.errors.length,
     durationMs: run.durationMs,
   };

@@ -37,7 +37,12 @@ import { tavilyExtractService } from "./tavily-extract.service";
 import { isDomainBlocked, addBlockedDomain } from "./blocked-domains.config";
 import { ProviderBillingFailures } from "./provider-billing-errors";
 // #172: one counts-only summary line per run.
-import { emptyRunCounts, logRunSummary, type IngestionRunCounts } from "./ingestion-run-summary";
+import {
+  classifyAssessments,
+  emptyRunCounts,
+  logRunSummary,
+  type IngestionRunCounts,
+} from "./ingestion-run-summary";
 import { loggers } from "@/lib/logger";
 
 // Unified search result type
@@ -1240,6 +1245,11 @@ export class AutomatedIngestionService {
         runCounts.rejected = articlesWithContent.filter(
           (_, index) => qualityResults[index]?.shouldIngest !== true && !qualityResults[index]?.error
         ).length;
+        // #172: counts-only reasons for `rejected` and `assessmentFailed`; reads, never decides.
+        Object.assign(
+          runCounts,
+          classifyAssessments(articlesWithContent.map((_, index) => qualityResults[index]))
+        );
         if (articlesWithContent.length > 0 && assessmentErrors.length === articlesWithContent.length) {
           errors.push(
             `Quality assessment failed for all ${articlesWithContent.length} candidates: ${assessmentErrors[0]}`
