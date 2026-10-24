@@ -6,6 +6,7 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  date,
   decimal,
   index,
   integer,
@@ -303,6 +304,79 @@ export const automatedIngestionRuns = pgTable(
     statusIdx: index("idx_automated_ingestion_runs_status").on(table.status),
     runTypeIdx: index("idx_automated_ingestion_runs_run_type").on(table.runType),
     createdAtIdx: index("idx_automated_ingestion_runs_created_at").on(table.createdAt),
+  })
+);
+
+/**
+ * Tool metrics history (#95) — private, kept forever.
+ *
+ * Why: collector metrics were only ever written over `tools.data.metrics`, so no
+ *   month's values survived the next run. One row per tool per collection day
+ *   keeps them. Nothing under app/ reads this table except the collect-metrics
+ *   cron route, which writes it (`tests/unit/metrics-history-private-95.test.ts`).
+ * What: `metrics` holds one top-level key per collector (`npm`, `pypi`,
+ *   `github`, `vscode`); each leaf is `{ value, source, as_of, flags? }`. The
+ *   route upserts on (tool_id, collected_date) with `metrics || EXCLUDED.metrics`.
+ *   `tool_id` is set to NULL if the tool is deleted, so history outlives it.
+ * Test: `tests/unit/metrics-history-migration-95.test.ts` (matches migration 0014).
+ */
+export const toolMetricsHistory = pgTable(
+  "tool_metrics_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    toolId: uuid("tool_id").references(() => tools.id, { onDelete: "set null" }),
+    toolSlug: text("tool_slug").notNull(),
+    collectedDate: date("collected_date", { mode: "string" }).notNull(), // UTC invocation day, YYYY-MM-DD
+    period: text("period").notNull(), // YYYY-MM
+    metrics: jsonb("metrics").notNull().default(sql`'{}'::jsonb`),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    toolDateIdx: uniqueIndex("tool_metrics_history_tool_date_idx").on(table.toolId, table.collectedDate),
+    periodIdx: index("tool_metrics_history_period_idx").on(table.period),
+    metricsIdx: index("tool_metrics_history_metrics_gin_idx").using("gin", table.metrics),
+  })
+);
+
+/**
+ * Metrics collection ledger (#95): one row per collector shard per collection day.
+ *
+ * Why: each shard runs in its own cron invocation, so a missing or failed shard
+ *   must be visible on its own (`.github/workflows/check-metrics-history.yml`).
+ * What: status is `ok`, `partial` or `failed`; the counts satisfy
+ *   recorded + not_found + failed + skipped_timeout = attempted (flagged is a
+ *   subset of recorded). Upserted on (collected_date, collector, shard).
+ * Test: `tests/unit/metrics-history-migration-95.test.ts`
+ */
+export const metricsCollectionRuns = pgTable(
+  "metrics_collection_runs",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collectedDate: date("collected_date", { mode: "string" }).notNull(),
+    period: text("period").notNull(),
+    collector: text("collector").notNull(),
+    shard: integer("shard").notNull(),
+    shardCount: integer("shard_count").notNull(),
+    status: text("status").notNull(),
+    attempted: integer("attempted").notNull().default(0),
+    recorded: integer("recorded").notNull().default(0),
+    flagged: integer("flagged").notNull().default(0),
+    notFound: integer("not_found").notNull().default(0),
+    failed: integer("failed").notNull().default(0),
+    skippedTimeout: integer("skipped_timeout").notNull().default(0),
+    error: text("error"),
+    startedAt: timestamp("started_at").notNull(),
+    finishedAt: timestamp("finished_at").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    dateCollectorShardIdx: uniqueIndex("metrics_collection_runs_date_collector_shard_idx").on(
+      table.collectedDate,
+      table.collector,
+      table.shard
+    ),
   })
 );
 
