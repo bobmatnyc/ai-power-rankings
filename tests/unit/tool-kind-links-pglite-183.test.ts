@@ -188,41 +188,75 @@ describe("#183 migration 0016 on PGlite", () => {
 });
 
 describe("#183 the 0017 backfill on PGlite", () => {
-  const SHEET = [
-    "slug,kind,subcategory,open_weight,retired,survivor,confidence,note",
+  const HEADER = "slug,kind,subcategory,open_weight,retired,survivor,confidence,note";
+  const SHEET_ROWS = [
     "claude-code,harness,autonomous_agent,,false,,normal,",
     "opus-4-6,model,,false,false,,normal,",
     "opus-4-5,model,,,true,opus-4-6,normal,",
     "anthropic,other,company,,false,,normal,",
-    "not-in-db,harness,,,false,,low,",
-  ].join("\n");
+  ];
 
-  it("sets the sheet's kinds, leaves updated_at alone, and is a no-op on re-run", async () => {
+  async function seeded(): Promise<PGlite> {
     const db = new PGlite();
     await db.exec(TOOLS_AT_0015);
     for (const slug of [...SLUGS, "aider"]) {
       await db.query(`INSERT INTO public."tools" (slug, name, category, updated_at) VALUES ($1, $1, 'other', '2026-01-01T00:00:00Z')`, [slug]);
     }
     for (const statement of splitStatements(SQL_TEXT)) await db.exec(statement);
-    const { rows, errors } = parseKindSheet(SHEET);
-    expect(errors).toEqual([]);
-    const backfill = splitStatements(buildKindBackfillSql(rows));
-    expect(backfill).toHaveLength(1);
+    return db;
+  }
 
-    const counts = async () => (await db.query<{ kind: string; n: number }>(KIND_COUNT_SQL)).rows;
-    expect(await counts()).toEqual([{ kind: "harness", n: 6 }]);
-    const first = await db.query(backfill[0] as string);
-    expect(first.affectedRows).toBe(4); // claude-code, opus-4-6, opus-4-5, anthropic
-    expect(await counts()).toEqual([
+  function backfillFor(rows: string[]): string {
+    const parsed = parseKindSheet([HEADER, ...rows].join("\n"));
+    expect(parsed.errors).toEqual([]);
+    const statements = splitStatements(buildKindBackfillSql(parsed.rows));
+    expect(statements).toHaveLength(1);
+    return statements[0] as string;
+  }
+
+  async function run(db: PGlite, sql: string): Promise<string[]> {
+    const notices: string[] = [];
+    await db.query(sql, [], { onNotice: (n) => void notices.push(n.message ?? "") });
+    return notices;
+  }
+
+  const counts = async (db: PGlite) => (await db.query<{ kind: string; n: number }>(KIND_COUNT_SQL)).rows;
+
+  it("sets the sheet's kinds, leaves updated_at alone, and is a no-op on re-run", async () => {
+    const db = await seeded();
+    const backfill = backfillFor(SHEET_ROWS);
+    expect(await counts(db)).toEqual([{ kind: "harness", n: 6 }]);
+    // claude-code gains a subcategory, so all four sheet rows change.
+    expect(await run(db, backfill)).toEqual(["#183 0017: updated 4 tools rows"]);
+    expect(await counts(db)).toEqual([
       { kind: "harness", n: 3 }, // claude-code, cursor and aider (not in the sheet)
       { kind: "model", n: 2 },
       { kind: "other", n: 1 },
     ]);
     const row = (
-      await db.query(`SELECT kind, subcategory, open_weight, updated_at = '2026-01-01T00:00:00Z'::timestamptz AS kept FROM public."tools" WHERE slug = 'opus-4-6'`)
+      await db.query(
+        `SELECT kind, subcategory, open_weight, updated_at = '2026-01-01T00:00:00Z'::timestamptz AS kept FROM public."tools" WHERE slug = 'opus-4-6'`
+      )
     ).rows[0];
     expect(row).toEqual({ kind: "model", subcategory: null, open_weight: false, kept: true });
-    expect((await db.query(backfill[0] as string)).affectedRows).toBe(0);
+    expect(await run(db, backfill)).toEqual(["#183 0017: updated 0 tools rows"]);
+    await db.close();
+  });
+
+  it("raises, writing nothing, when a sheet slug has no tools row", async () => {
+    const db = await seeded();
+    const backfill = backfillFor([...SHEET_ROWS, "not-in-db,harness,,,false,,low,"]);
+    await expect(run(db, backfill)).rejects.toThrow("#183 0017: sheet slugs missing from tools: not-in-db");
+    expect(await counts(db)).toEqual([{ kind: "harness", n: 6 }]);
+    await db.close();
+  });
+
+  it("raises, rolling the update back, when the counts by kind differ from the sheet", async () => {
+    const db = await seeded();
+    // The same slug twice with two kinds: the UPDATE writes one, the sheet counts both.
+    const backfill = backfillFor([...SHEET_ROWS, "aider,model,,,false,,low,", "aider,other,non_ai,,false,,low,"]);
+    await expect(run(db, backfill)).rejects.toThrow(/#183 0017: counts by kind differ from the sheet: /);
+    expect(await counts(db)).toEqual([{ kind: "harness", n: 6 }]);
     await db.close();
   });
 });
