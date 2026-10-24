@@ -50,14 +50,16 @@ export interface KindSheetContract {
 }
 
 /**
- * #183: plan criterion 2 and D2b, for the 114 active tools of the #177 audit. Harness 75
- * (72 survivors, 3 retired), model 15 (9 survivors, 6 retired), other 24 (23 survivors,
- * 1 retired protocol row).
+ * #183: plan criterion 2 and D2b, for the 114 active tools of the #177 audit. Harness 69
+ * (66 survivors, 3 retired), model 15 (9 survivors, 6 retired), other 30 (29 survivors,
+ * 1 retired protocol row), as the reviewed sheet holds them. D3c: crossbeam, infosys-topaz
+ * and nova-act are other. Architect 2026-10-24: flint stays a harness app builder, so
+ * there are seven app builders.
  */
 export const KIND_SHEET_CONTRACT: KindSheetContract = {
   rowCount: 114,
-  kindCounts: { harness: 75, model: 15, other: 24, productivity: 0 },
-  appBuilders: ["bolt-new", "claude-artifacts", "lovable", "rocket-new", "v0-vercel", "wabi"],
+  kindCounts: { harness: 69, model: 15, other: 30, productivity: 0 },
+  appBuilders: ["bolt-new", "claude-artifacts", "flint", "lovable", "rocket-new", "v0-vercel", "wabi"],
 };
 
 /** RFC 4180 CSV: quoted fields may hold commas, `""` and newlines. Throws on an open quote. */
