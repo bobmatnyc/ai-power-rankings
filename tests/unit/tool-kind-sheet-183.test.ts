@@ -12,11 +12,14 @@
  * Test: `npx vitest run tests/unit/tool-kind-sheet-183.test.ts`. No database.
  */
 
-import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   auditToolSlugs,
+  buildKindBackfillSql,
   KIND_SHEET_CONTRACT,
   type KindSheetContract,
   parseCsv,
@@ -129,5 +132,64 @@ describe("#183 the real contract and audit", () => {
     const slugs = auditToolSlugs(audit);
     expect(slugs.size).toBe(114);
     expect(KIND_SHEET_CONTRACT.appBuilders.filter((s) => !slugs.has(s))).toEqual([]);
+  });
+});
+
+// #183 (critic): each refusal arm of validateKindSheet, with its exact message.
+describe("#183 mapping sheet validator messages", () => {
+  it.each([
+    [
+      "a retired row whose kind differs from its survivor's",
+      withRow("harness-a-old", "harness-a-old,model,,,true,harness-a,normal,"),
+      "harness-a-old: kind model differs from its survivor harness-a (harness)",
+    ],
+    [
+      "app_builder on a slug outside the list",
+      withRow("harness-a", "harness-a,harness,app_builder,,false,,normal,"),
+      "harness-a: app_builder outside the 1 app builders",
+    ],
+    [
+      "a listed app builder missing from the sheet",
+      VALID_ROWS.filter((r) => !r.startsWith("builder-a,")),
+      "builder-a: app builder must be kind harness with subcategory app_builder",
+    ],
+    ["open_weight on a non-model", withRow("other-a", "other-a,other,non_ai,true,false,,low,"), "other-a: open_weight set on a other"],
+    ["a duplicate slug", [...VALID_ROWS, VALID_ROWS[0] as string], "harness-a: duplicate slug"],
+    ["a slug not in the audit", withRow("other-a", "ghost,other,non_ai,,false,,low,"), "ghost: not an active tool in the audit"],
+  ])("refuses %s", (_name, rows, message) => {
+    const parsed = parseKindSheet(sheet(rows as string[]));
+    expect(parsed.errors).toEqual([]);
+    expect(validateKindSheet(parsed.rows, FIXTURE_CONTRACT, AUDIT)).toContain(message);
+  });
+});
+
+describe("#183 the 0017 builder", () => {
+  it("renders one DO block whose guards raise on a missing slug and on a count mismatch", () => {
+    const sql = buildKindBackfillSql(parseKindSheet(sheet(VALID_ROWS)).rows);
+    const statements = sql.split("--> statement-breakpoint").filter((c) => c.trim() !== "");
+    expect(statements).toHaveLength(1);
+    expect(sql).toContain("DO $k183b$");
+    expect(sql).toContain("RAISE EXCEPTION '#183 0017: sheet slugs missing from tools: %', missing;");
+    expect(sql).toContain("RAISE EXCEPTION '#183 0017: counts by kind differ from the sheet: %', mismatched;");
+    expect(sql).toContain("(VALUES ('harness', 3), ('model', 2), ('other', 1)) AS e(kind, n)");
+    // The missing-slug guard runs before the UPDATE.
+    expect(sql.indexOf("sheet slugs missing")).toBeLessThan(sql.indexOf('UPDATE public."tools"'));
+  });
+
+  it("the script exits 1 on an invalid sheet and writes no 0017", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "kind-sheet-183-"));
+    const sheetPath = path.join(dir, "sheet.csv");
+    const outPath = path.join(dir, "0017_backfill_tool_kind.sql");
+    writeFileSync(sheetPath, sheet(VALID_ROWS)); // 6 rows, off the 114-row contract
+    const root = path.resolve(__dirname, "../..");
+    const result = spawnSync(
+      path.join(root, "node_modules/.bin/tsx"),
+      ["scripts/build-tool-kind-backfill.ts", "--sheet", sheetPath, "--out", outPath],
+      { cwd: root, encoding: "utf8" }
+    );
+    expect(result.status).toBe(1);
+    expect(result.stderr).toContain("Refusing to build 0017_backfill_tool_kind.sql");
+    expect(result.stderr).toContain("6 rows, expected 114");
+    expect(existsSync(outPath)).toBe(false);
   });
 });
