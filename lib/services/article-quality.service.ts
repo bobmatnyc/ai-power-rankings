@@ -50,12 +50,13 @@ const DEFAULT_ASSESSMENT: Omit<QualityAssessment, 'estimatedCost'> = {
 };
 
 /**
- * Minimum thresholds for article ingestion
+ * Minimum thresholds for article ingestion. Exported read-only so the run summary
+ * can log the values it buckets rejections against (#172); the values are unchanged.
  */
-const INGEST_THRESHOLDS = {
+export const INGEST_THRESHOLDS = {
   minimumAverageScore: 7.0,
   minimumRelevanceScore: 7,
-};
+} as const;
 
 /**
  * #172: completion budget for one assessment. The verdict is five short JSON fields,
