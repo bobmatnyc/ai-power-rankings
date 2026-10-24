@@ -46,6 +46,7 @@ export type ToolLinkRefusalCode =
   | "empty_slug"
   | "invalid_relation"
   | "self_link"
+  | "invalid_source_url"
   | "unknown_model_slug"
   | "unknown_harness_slug"
   | "model_side_not_model"
@@ -121,14 +122,37 @@ async function listLinked(db: ToolLinksDb, want: "models" | "harnesses", anchorR
 }
 
 /**
- * Checks the parts of a link input that need no database: slugs, relation, self-link.
+ * Says whether a source URL is safe to render as a public href: absolute http(s) only.
+ *
+ * Why: B-2 step 2 renders `source_url` as a link, so `javascript:`, `data:` and the like
+ *   must never reach the table (#183).
+ * What: the raw text must start with `http://` or `https://` (any case) and hold no
+ *   whitespace or control character. The WHATWG parser strips tab and newline, so the
+ *   raw check runs first; the parse then confirms the scheme and a non-empty host.
+ * Test: `tests/unit/tool-links-repository-183.test.ts` ("refuses source URL").
+ */
+function isHttpUrl(text: string): boolean {
+  // eslint-disable-next-line no-control-regex -- #183: control characters are the point
+  if (!/^https?:\/\//i.test(text) || /[\s\u0000-\u001f\u007f]/.test(text)) return false;
+  try {
+    const url = new URL(text);
+    return (url.protocol === "http:" || url.protocol === "https:") && url.hostname !== "";
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Checks the parts of a link input that need no database: slugs, relation, self-link,
+ * and the source URL scheme.
  *
  * Why: these refusals are cheap and certain, so they never reach SQL.
- * What: returns the refusal, or null when the input may go on to the kind check.
+ * What: returns the refusal, or null when the input may go on to the kind check. A
+ *   non-null `sourceUrl` must be an absolute http(s) URL (`invalid_source_url`).
  * Test: `tests/unit/tool-links-repository-183.test.ts` ("writer refusals").
  */
 export function validateToolLinkInput(input: ToolLinkInput): ToolLinkRefusedError | null {
-  const { modelSlug, harnessSlug, relation } = input;
+  const { modelSlug, harnessSlug, relation, sourceUrl } = input;
   if (!modelSlug?.trim() || !harnessSlug?.trim()) {
     return new ToolLinkRefusedError("empty_slug", "model and harness slugs must both be non-empty");
   }
@@ -137,6 +161,9 @@ export function validateToolLinkInput(input: ToolLinkInput): ToolLinkRefusedErro
   }
   if (modelSlug === harnessSlug) {
     return new ToolLinkRefusedError("self_link", `a tool cannot link to itself (${modelSlug})`);
+  }
+  if (sourceUrl != null && !isHttpUrl(sourceUrl)) {
+    return new ToolLinkRefusedError("invalid_source_url", "source URL must be an absolute http or https URL");
   }
   return null;
 }

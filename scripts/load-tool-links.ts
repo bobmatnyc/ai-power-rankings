@@ -125,7 +125,9 @@ export async function loadToolLinks(
       for (const row of rows) await upsertToolLink(tx, row);
     });
   } catch (error) {
-    log(`--apply: rolled back, nothing written: ${error instanceof Error ? error.message : String(error)}`);
+    // #183: same redaction as main's outer catch, so a driver error never prints raw.
+    const message = error instanceof Error ? error.message : String(error);
+    log(`--apply: rolled back, nothing written: ${redactConnectionString(message)}`);
     return 1;
   }
   log(`--apply: wrote ${rows.length} row(s)`);

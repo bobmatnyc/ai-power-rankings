@@ -16,6 +16,7 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   getHarnessesForModel,
   getModelsForHarness,
+  planToolLink,
   type ToolLinkInput,
   ToolLinkRefusedError,
   type ToolLinksDb,
@@ -153,6 +154,38 @@ describe("#183 writer", () => {
     expect(await linkCount()).toBe(0);
   });
 
+  // #183: step 2 renders source_url as an href, so only absolute http(s) URLs may land.
+  it.each<[string]>([
+    ["javascript:alert(1)"],
+    ["JaVaScRiPt:alert(1)"],
+    ["data:text/html,x"],
+    ["vbscript:x"],
+    ["//evil.example/x"],
+    [" https://x.example"],
+    ["java\tscript:x"],
+    ["ftp://x.example"],
+    ["not a url"],
+  ])("refuses source URL %j on the plan and write paths and writes nothing", async (sourceUrl) => {
+    const input = { ...opusOnClaudeCode, sourceUrl };
+    const plan = await planToolLink(db, input);
+    expect(plan.ok).toBe(false);
+    expect(plan.ok ? null : plan.error.code).toBe("invalid_source_url");
+    const attempt = upsertToolLink(db, input);
+    await expect(attempt).rejects.toBeInstanceOf(ToolLinkRefusedError);
+    await expect(attempt).rejects.toMatchObject({ code: "invalid_source_url" });
+    expect(await linkCount()).toBe(0);
+  });
+
+  it.each<[string | null | undefined]>([["https://example.com/a"], ["http://example.com/a"], [null], [undefined]])(
+    "accepts source URL %j",
+    async (sourceUrl) => {
+      const input = { ...opusOnClaudeCode, sourceUrl };
+      expect(await planToolLink(db, input)).toEqual({ ok: true, outcome: "inserted" });
+      expect((await upsertToolLink(db, input)).outcome).toBe("inserted");
+      expect(await linkCount()).toBe(1);
+    }
+  );
+
   it("refuses every link while all tools are kind='harness', as production is before 0017", async () => {
     await pg.query(`UPDATE public."tools" SET kind = 'harness'`);
     await expect(upsertToolLink(db, opusOnClaudeCode)).rejects.toMatchObject({ code: "model_side_not_model" });
@@ -210,6 +243,20 @@ describe("#183 load-tool-links script", () => {
     const { code, lines } = await run("one-bad-row.json", true);
     expect(code).toBe(1);
     expect(lines).toContain("REFUSED: row 3 cursor -> claude-code (supports): cursor has kind 'harness', not 'model'");
+    expect(lines).toContain("--apply: nothing written because a row was refused");
+    expect(await linkCount()).toBe(0);
+  });
+
+  it("--apply with one bad-scheme source URL exits 1 and writes nothing", async () => {
+    const rows: ToolLinkInput[] = [
+      { modelSlug: "opus-4-6", harnessSlug: "claude-code", relation: "native", sourceUrl: "https://example.com/a" },
+      { modelSlug: "sonnet-4-5", harnessSlug: "cursor", relation: "supports", sourceUrl: "javascript:alert(1)" },
+    ];
+    const lines: string[] = [];
+    expect(await loadToolLinks(db, rows, true, (l) => void lines.push(l))).toBe(1);
+    expect(lines).toContain(
+      "REFUSED: row 2 sonnet-4-5 -> cursor (supports): source URL must be an absolute http or https URL"
+    );
     expect(lines).toContain("--apply: nothing written because a row was refused");
     expect(await linkCount()).toBe(0);
   });
