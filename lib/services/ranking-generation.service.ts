@@ -27,7 +27,12 @@ import { existsSync, readFileSync } from "node:fs";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import { rankings, tools } from "@/lib/db/schema";
-import { ALGORITHM_V76_WEIGHTS, ALGORITHM_VERSION, RankingEngineV76 } from "@/lib/ranking-algorithm-v76";
+import {
+  ALGORITHM_V76_WEIGHTS,
+  ALGORITHM_VERSION,
+  RankingEngineV76,
+  type RankingWeightsV76,
+} from "@/lib/ranking-algorithm-v76";
 
 /**
  * The version persisted on `rankings` rows. Derived from the engine's
@@ -202,13 +207,20 @@ export function buildPreviousRankMap(prevData: unknown): Map<string, number> {
 /**
  * PURE: score, sort, rank, and shape a set of tools into ranking entries.
  * No database, no wall-clock, no side effects — safe to unit test directly.
+ *
+ * #185: `weights` lets the read-only v8 measurement score the same board with a
+ * staged profile. Every publish caller omits it, so they score with
+ * `ALGORITHM_V76_WEIGHTS` exactly as before.
+ * Test: `lib/services/ranking-generation.golden.test.ts`,
+ *   `lib/scoring-profiles.inert-185.test.ts`
  */
 export function computeRankings(
   sourceTools: RankingSourceTool[],
   previousRankMap: Map<string, number>,
-  currentDate: Date = new Date()
+  currentDate: Date = new Date(),
+  weights: RankingWeightsV76 = ALGORITHM_V76_WEIGHTS
 ): RankingEntry[] {
-  const engine = new RankingEngineV76(ALGORITHM_V76_WEIGHTS);
+  const engine = new RankingEngineV76(weights);
 
   const scored = sourceTools
     .map((tool) => {
