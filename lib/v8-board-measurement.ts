@@ -16,12 +16,16 @@
  *   rank shift is information only. Baseline positions are the published
  *   ranks renumbered within each list; candidate ties rank in `tool_id` order. Engine console output, which names tools,
  *   is swallowed while it runs and only counted.
- *   `formatMeasurementReport()` renders the result as text that names no tool,
- *   slug, id or per-tool score.
+ *   The harness list leaves out tools the kind sheet marks retired, and the
+ *   result lists active tools missing from the sheet (ruling 12:33Z).
+ *   `formatMeasurementReport()` renders the result as text that names no slug,
+ *   id, rank or per-tool score; tool names appear only in its closing private
+ *   section of tools missing from the sheet.
  * Test: `lib/v8-board-measurement.test.ts`
  */
 
 import { TOOL_KINDS } from "./db/schema";
+import type { KindSheetRow } from "./db/tool-kind-sheet";
 import type { RankingWeightsV76 } from "./ranking-algorithm-v76";
 import { diffSnapshots, type SnapshotRow } from "./ranking-snapshot-diff";
 import { computeRankings, type RankingEntry, type RankingSourceTool } from "./services/ranking-generation.service";
@@ -47,7 +51,37 @@ export interface MeasureInput {
   candidate: RankingWeightsV76;
   /** Fewest harness tools the D45 gate accepts. Default {@link HARNESS_FLOOR}; tests lower it. */
   harnessFloor?: number;
+  /** #185: the reviewed kind sheet (`docs/refresh/tool-kind-mapping.csv`), by slug. */
+  sheet: KindSheetView;
 }
+
+/** #185: the kind sheet as the measurement needs it. */
+export interface KindSheetView {
+  slugs: ReadonlySet<string>;
+  retiredSlugs: ReadonlySet<string>;
+}
+
+/** #185: build the view from parsed sheet rows (`parseKindSheet`). */
+export function kindSheetView(rows: readonly KindSheetRow[]): KindSheetView {
+  return {
+    slugs: new Set(rows.map((r) => r.slug)),
+    retiredSlugs: new Set(rows.filter((r) => r.retired).map((r) => r.slug)),
+  };
+}
+
+/**
+ * #185 (Architect ruling 12:33Z): active tools the sheet does not list. Their
+ * names are the one tool-identifying output, printed in a private section and
+ * never with a score, rank or factor value.
+ */
+export interface SheetCoverage {
+  notInSheetNames: string[];
+  /** Active tools the sheet marks retired; they are left out of the D45 harness list. */
+  retiredActive: number;
+}
+
+/** Header of the only report section that may carry tool names. */
+export const PRIVATE_SECTION_HEADER = "Tools not in the kind sheet (private — do not post)";
 
 /** The stored `algorithm_version` the baseline must reproduce. */
 export const EXPECTED_BASELINE_VERSION = "7.10";
@@ -110,6 +144,7 @@ export interface Reproduction {
 
 /** #185: the harness list the D45 gate ranks. It must be checkable before PASS can print. */
 export interface HarnessCheck {
+  /** Harness tools not marked retired in the kind sheet: the D45 list. */
   harnessTools: number;
   floor: number;
   /** Tools whose `kind` is not a known kind (an unmigrated column reads as "null"). */
@@ -163,6 +198,7 @@ export interface CandidateMeasurement {
 export interface MeasurementResult {
   reproduction: Reproduction;
   reproduced: boolean;
+  sheet: SheetCoverage;
   /** Absent when the baseline did not reproduce (the harness list is not checked then). */
   harness?: HarnessCheck;
   /** Absent unless the baseline reproduced and the harness list passed its check. */
@@ -383,11 +419,16 @@ function withinHarness(harness: MeasuredTool[], date: Date, before: Map<string, 
   return { histogram, breaches: histogram.n - histogram.moved0 - histogram.moved1 - histogram.moved2 };
 }
 
+/** #185: the D45 harness list: harness kind, not retired in the sheet (as the floor counts it). */
+export function d45HarnessList(tools: MeasuredTool[], sheet: KindSheetView): MeasuredTool[] {
+  return tools.filter((t) => t.kind === "harness" && !sheet.retiredSlugs.has(t.slug));
+}
+
 /** #185: the harness list must be non-trivial and the kinds applied, or D45 proves nothing. */
-export function checkHarness(tools: MeasuredTool[], floor = HARNESS_FLOOR): HarnessCheck {
-  const harnessTools = tools.filter((t) => t.kind === "harness").length;
+export function checkHarness(tools: MeasuredTool[], sheet: KindSheetView, floor = HARNESS_FLOOR): HarnessCheck {
+  const harnessTools = d45HarnessList(tools, sheet).length;
   const unknownKinds = tools.filter((t) => !KNOWN_KINDS.includes(t.kind)).length;
-  const allHarness = tools.length > 0 && harnessTools === tools.length;
+  const allHarness = tools.length > 0 && tools.every((t) => t.kind === "harness");
   return {
     harnessTools,
     floor,
@@ -400,7 +441,8 @@ export function checkHarness(tools: MeasuredTool[], floor = HARNESS_FLOOR): Harn
 function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateMeasurement {
   const { tools, published, baseline, candidate } = input;
   const date = published.publishedAt;
-  const harness = tools.filter((t) => t.kind === "harness");
+  // #185: retired sheet rows are out of the harness list for v7.10 and the candidate alike.
+  const harness = d45HarnessList(tools, input.sheet);
   const harnessIds = harness.map((t) => t.id);
   const allIds = tools.map((t) => t.id);
 
@@ -455,11 +497,15 @@ export function measureBoard(input: MeasureInput): MeasurementResult {
     const base = computeRankings(input.tools, new Map(), input.published.publishedAt, input.baseline);
     const reproduction = checkReproduction(input, base);
     const reproduced = isReproduced(reproduction);
-    const harness = reproduced ? checkHarness(input.tools, input.harnessFloor) : undefined;
+    const harness = reproduced ? checkHarness(input.tools, input.sheet, input.harnessFloor) : undefined;
     const candidate = harness?.ok ? measureCandidate(input, base) : undefined;
     return { reproduction, reproduced, harness, candidate };
   });
   const { reproduction, reproduced, harness, candidate } = run.value;
+  const sheet: SheetCoverage = {
+    notInSheetNames: input.tools.filter((t) => !input.sheet.slugs.has(t.slug)).map((t) => t.name).sort(),
+    retiredActive: input.tools.filter((t) => input.sheet.retiredSlugs.has(t.slug)).length,
+  };
   const exitCode = !reproduced
     ? EXIT_CODES.notReproduced
     : !harness!.ok
@@ -470,6 +516,7 @@ export function measureBoard(input: MeasureInput): MeasurementResult {
   return {
     reproduction,
     reproduced,
+    sheet,
     ...(harness ? { harness } : {}),
     ...(candidate ? { candidate } : {}),
     engineLogLinesSuppressed: run.lines,
@@ -492,7 +539,10 @@ function statsLine(label: string, s: ShiftStats): string {
   return `${label}: n=${s.n}, max ${s.max.toFixed(3)}, median ${s.median.toFixed(3)}, p95 ${s.p95.toFixed(3)}`;
 }
 
-/** Counts-only report (D19). Prints no tool name, slug, id or per-tool score. */
+/**
+ * Counts-only report (D19). Prints no slug, id, rank or per-tool score, and no
+ * tool name except in the closing private section (`PRIVATE_SECTION_HEADER`).
+ */
 export function formatMeasurementReport(result: MeasurementResult): string {
   const r = result.reproduction;
   const lines = [
@@ -517,7 +567,7 @@ export function formatMeasurementReport(result: MeasurementResult): string {
     lines.push(
       "",
       "1b. Harness list check",
-      `harness tools: ${h.harnessTools} (floor ${h.floor}); unknown kinds: ${h.unknownKinds}; every tool harness: ${h.allHarness ? "YES" : "no"}; ok: ${h.ok ? "yes" : "NO"}`
+      `harness tools (retired in the sheet excluded): ${h.harnessTools} (floor ${h.floor}); unknown kinds: ${h.unknownKinds}; every tool harness: ${h.allHarness ? "YES" : "no"}; ok: ${h.ok ? "yes" : "NO"}`
     );
   }
   const c = result.candidate;
@@ -559,6 +609,15 @@ export function formatMeasurementReport(result: MeasurementResult): string {
       `breaches at stress: ${c.stress.breaches}`
     );
   }
-  lines.push("", `engine log lines suppressed: ${result.engineLogLinesSuppressed}`);
+  lines.push(
+    "",
+    `active tools retired in the kind sheet (left out of the harness list): ${result.sheet.retiredActive}`,
+    `engine log lines suppressed: ${result.engineLogLinesSuppressed}`,
+    "",
+    // #185 (ruling 12:33Z): the one place a tool name may appear; names only, last.
+    PRIVATE_SECTION_HEADER,
+    `count: ${result.sheet.notInSheetNames.length}`,
+    ...result.sheet.notInSheetNames.map((name) => `- ${name}`)
+  );
   return lines.join("\n");
 }

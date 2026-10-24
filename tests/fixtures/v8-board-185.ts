@@ -90,6 +90,16 @@ export function tiedHarnessBoard(): MeasuredTool[] {
   return [...tie, ...spread, tool("t-m0", "model", 60_000, 200_000)];
 }
 
+/**
+ * #185: `mixedBoard()` plus one technical-heavy harness tool (`-r0`). The other
+ * harness tools share one context window, so they keep their order under any
+ * weights; under the negative-control weights the extra tool drops more than
+ * 2 places among them.
+ */
+export function retiredMoverBoard(): MeasuredTool[] {
+  return [...mixedBoard(), tool("r0", "harness", 95_000, 60_000)];
+}
+
 /** The snapshot `computeRankings()` would have published for `tools` with `weights`. */
 export function publishedFor(tools: MeasuredTool[], weights: RankingWeightsV76, version = "7.10"): PublishedSnapshot {
   const rows = computeRankings(tools, new Map(), FIXTURE_DATE, weights);
