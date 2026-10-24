@@ -594,10 +594,32 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-dbb9f159174b",
+    "version": "Unreleased",
+    "date": "2026-10-24T11:24:17.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "tools",
+    "title": "tool pages list linked models and harnesses",
+    "description": "tool pages list linked models and harnesses. A harness page shows a \"Models it runs\" block and a model page a \"Harnesses for this model\" block, server-rendered under the profile block: each entry links to `/<locale>/tools/<slug>`, shows the relation (native or supported) and, when the stored source URL is an absolute http(s) URL, a source link with `target=\"_blank\"` and `rel=\"noopener noreferrer nofollow\"`. Only active tools of the right kind are listed, native first. With no links the block renders nothing. `GET /api/tools/[slug]/json` gains a `links` array (`slug`, `name`, `relation`, `sourceUrl`); its other fields and `GET /api/tools` are unchanged. A failed links read omits `links` from the API and the block from the page, both still answer 200, and the log carries the error class and SQLSTATE only. Headings and labels are new `tools.detail.links` keys in every locale. Tests: `tests/unit/tool-links-api-183.test.ts`, `tests/unit/tool-links-page-183.test.tsx` (#183)",
+    "changeType": "feature"
+  },
+  {
+    "id": "unreleased-d51e6ebeee06",
+    "version": "Unreleased",
+    "date": "2026-10-24T11:23:57.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "refresh",
+    "title": "the reviewed model-to-harness seed docs/refresh/model-harness-links.csv (17 links, each with a first-party source URL)",
+    "description": "the reviewed model-to-harness seed `docs/refresh/model-harness-links.csv` (17 links, each with a first-party source URL). It is not loaded into any database yet. Tests: `tests/unit/model-harness-links-seed-183.test.ts` plans it with 0 refusals against the kinds from `docs/refresh/tool-kind-mapping.csv` (#183)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-626a069208c9",
     "version": "Unreleased",
-    "date": "2026-10-24T10:58:00.515Z",
-    "dateSource": "build",
+    "date": "2026-10-24T11:08:27.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "db",
     "title": "migration 0017_backfill_tool_kind.sql sets the reviewed kind on every active tool",

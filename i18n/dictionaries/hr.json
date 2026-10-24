@@ -395,6 +395,13 @@
         "noHistory": "Nema povijesti metrika za ovaj alat.",
         "update": "Ažuriranje",
         "newMetrics": "Nove metrike prijavljene za {tool}"
+      },
+      "links": {
+        "modelsHeading": "Modeli koje pokreće",
+        "harnessesHeading": "Alati koji nude ovaj model",
+        "native": "Izvorno",
+        "supports": "Podržano",
+        "source": "Izvor"
       }
     },
     "status": {

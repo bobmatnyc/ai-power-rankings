@@ -393,6 +393,13 @@
         "noHistory": "이 툴에 대한 메트릭 히스토리가 없습니다.",
         "update": "업데이트",
         "newMetrics": "{tool}에 대한 새로운 메트릭 보고됨"
+      },
+      "links": {
+        "modelsHeading": "실행하는 모델",
+        "harnessesHeading": "이 모델을 제공하는 도구",
+        "native": "기본",
+        "supports": "지원",
+        "source": "출처"
       }
     },
     "status": {

@@ -854,6 +854,13 @@
         "support": "专属支持",
         "onboarding": "企业入门",
         "contact": "联系销售"
+      },
+      "links": {
+        "modelsHeading": "可运行的模型",
+        "harnessesHeading": "提供此模型的工具",
+        "native": "原生",
+        "supports": "支持",
+        "source": "来源"
       }
     },
     "status": {
