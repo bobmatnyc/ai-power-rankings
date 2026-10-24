@@ -11,6 +11,7 @@
  * Test: `lib/services/ranking-preview.service.test.ts`
  */
 
+import { snapshotRows } from "@/lib/rankings/snapshot-rows";
 import {
   createDbPersistence,
   type RankingEntry,
@@ -33,12 +34,8 @@ export interface PreviewComparisonRow {
   movement: "new" | "up" | "down" | "same";
 }
 
-/** Rows of a stored snapshot: the cron's bare array or the older `{ rankings: [] }`. */
-export function snapshotRows(data: unknown): Array<Record<string, unknown>> {
-  if (Array.isArray(data)) return data as Array<Record<string, unknown>>;
-  const wrapped = (data as { rankings?: unknown } | null)?.rankings;
-  return Array.isArray(wrapped) ? (wrapped as Array<Record<string, unknown>>) : [];
-}
+// #256: one shape-agnostic reader shared by the admin routes and article ingestion.
+export { snapshotRows };
 
 /**
  * Keep tools whose `data.launch_date` is on or before `previewDate`. A tool
