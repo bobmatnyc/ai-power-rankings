@@ -1,0 +1,182 @@
+name: Publish rankings (manual)
+
+# Why: Bob's ruling D24 on #101 publishes the v7.10 rankings now, without waiting
+# for the monthly cron on the 1st. This workflow is that manual publish.
+#
+# What: a manual dispatch that sends one authorised GET to the production route
+# /api/cron/regenerate-rankings, then reads the public /api/rankings once.
+#   - EVERY RUN PUBLISHES. The route has no dry-run mode: each run REPLACES the
+#     current period's rankings row and makes it the current snapshot.
+#   - Clearance: dispatch only after the Architect clears the publish on #101.
+#     The `confirm` input must equal `publish-v7.10`, or the job stops before
+#     any request.
+#   - The existing CRON_SECRET repository secret reaches the step only through
+#     `env:`. curl reads the Authorization header from stdin (`--header @-`), so
+#     the secret is never in `run:` text, in the process arguments or in the log.
+#   - #101: the repository is public. The log and the job summary carry the HTTP
+#     status and the response's period, algorithm_version and tool_count only:
+#     no response body, no tool, rank or score.
+#   - No automatic retry: a retry after a 409, a 5xx or a timeout can publish twice.
+#   - `concurrency` with cancel-in-progress false queues a second dispatch behind
+#     a running one; two runs never overlap.
+#
+# Exit codes of the publish step: 0 published v7.10; 1 any other outcome (no
+# response, timeout, 5xx); 2 HTTP 401 (secret mismatch); 3 HTTP 409 (a run is in
+# progress); 4 HTTP 200 with another algorithm version: the row WAS replaced, so do
+# not re-dispatch; report to the Architect.
+#
+# The origin is pinned: the publish step sends nothing unless PRODUCTION_BASE_URL
+# is https://aipowerranking.com or https://www.aipowerranking.com, and both curl
+# calls accept https only (`--proto '=https'`).
+#
+# Dispatch-only on purpose: it must never run on a schedule, push or pull request.
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type publish-v7.10 to publish. Every run replaces the current period rankings in production.'
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-rankings
+  cancel-in-progress: false
+
+env:
+  # Same origin rule as cron-gap-detector.yml and lib/site-origin.ts.
+  PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://aipowerranking.com' }}
+  # The route's maxDuration is 300 s; 10 s more covers connection and transfer.
+  PUBLISH_TIMEOUT_SECONDS: '310'
+
+jobs:
+  publish:
+    name: publish v7.10 rankings
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # The dispatch input reaches the shell only through `env:`.
+      - name: Require confirmation
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          set -uo pipefail
+          if [ "$CONFIRM" != "publish-v7.10" ]; then
+            echo "::error::confirm must equal publish-v7.10; nothing was published"
+            exit 1
+          fi
+
+      # No `set -x` and no curl -v: neither the header nor the body is printed.
+      # printf is a bash builtin, so the secret never appears in any process's
+      # argument list; curl reads the header line from stdin.
+      - name: Publish (GET /api/cron/regenerate-rankings)
+        id: publish
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -uo pipefail
+          # Fail closed on any other origin: the secret is never sent elsewhere.
+          if [[ ! "$PRODUCTION_BASE_URL" =~ ^https://(www\.)?aipowerranking\.com/?$ ]]; then
+            echo "::error::PRODUCTION_BASE_URL is not https://aipowerranking.com; nothing was sent"
+            exit 1
+          fi
+          if [ -z "${CRON_SECRET:-}" ]; then
+            echo "::error::CRON_SECRET is empty or not available to this run; nothing was published"
+            exit 1
+          fi
+
+          target="${PRODUCTION_BASE_URL%/}/api/cron/regenerate-rankings"
+          body="${RUNNER_TEMP}/publish-body.json"
+          : > "$body"
+          echo "GET ${target} (timeout ${PUBLISH_TIMEOUT_SECONDS}s, no retry)"
+
+          http_status=$(printf 'Authorization: Bearer %s\n' "$CRON_SECRET" | curl -sS \
+            --proto '=https' \
+            --max-time "${PUBLISH_TIMEOUT_SECONDS}" \
+            --retry 0 \
+            --header @- \
+            -o "$body" \
+            -w '%{http_code}' \
+            "$target") || http_status='000'
+
+          summary() {
+            echo "$1"
+            echo "$1" >> "$GITHUB_STEP_SUMMARY"
+          }
+
+          echo "## Publish rankings" >> "$GITHUB_STEP_SUMMARY"
+          summary "HTTP status: ${http_status}"
+
+          code=1
+          case "$http_status" in
+            200)
+              # Only these three fields leave the body; each must be a short scalar.
+              field() {
+                jq -r --arg k "$1" '.[$k] | if (type == "string" or type == "number") and (tostring | length) <= 32 then tostring else "invalid" end' "$body" 2>/dev/null || echo "invalid"
+              }
+              period=$(field period)
+              version=$(field algorithm_version)
+              tool_count=$(field tool_count)
+              summary "period: ${period}"
+              summary "algorithm_version: ${version}"
+              summary "tool_count: ${tool_count}"
+              if [ "$version" = "7.10" ] || [ "$version" = "v7.10" ]; then
+                summary "Result: published v7.10"
+                code=0
+              else
+                msg="PUBLISHED with algorithm_version ${version}, not v7.10. The current row was replaced. Do not re-dispatch; report to Architect."
+                echo "::error::${msg}"
+                summary "Result: ${msg}"
+                code=4
+              fi
+              ;;
+            401)
+              echo "::error::CRON_SECRET mismatch with production — report to Architect, do not rotate"
+              summary "Result: CRON_SECRET mismatch with production — report to Architect, do not rotate"
+              code=2
+              ;;
+            409)
+              echo "::error::a ranking regeneration is already in progress for this period; do not re-dispatch until it ends"
+              summary "Result: regeneration already in progress (409); nothing new was published by this run"
+              code=3
+              ;;
+            *)
+              echo "::error::publish failed with HTTP ${http_status}; the route may still have published, so read /api/rankings before any re-dispatch"
+              summary "Result: failed (HTTP ${http_status}); check the post-check below before any re-dispatch"
+              code=1
+              ;;
+          esac
+
+          rm -f "$body"
+          exit "$code"
+
+      # Signed-out read of the public rankings. Informational: it never fails the job.
+      - name: Post-check (GET /api/rankings, signed out)
+        if: ${{ !cancelled() && steps.publish.outcome != 'skipped' }}
+        run: |
+          set -uo pipefail
+          target="${PRODUCTION_BASE_URL%/}/api/rankings"
+          body="${RUNNER_TEMP}/rankings-body.json"
+          : > "$body"
+          http_status=$(curl -sS --proto '=https' --max-time 60 --retry 0 -o "$body" -w '%{http_code}' "$target") || http_status='000'
+
+          summary() {
+            echo "$1"
+            echo "$1" >> "$GITHUB_STEP_SUMMARY"
+          }
+
+          echo "## Post-check: /api/rankings" >> "$GITHUB_STEP_SUMMARY"
+          summary "HTTP status: ${http_status}"
+          if [ "$http_status" = "200" ]; then
+            pick() {
+              jq -r "$1"' | if (type == "string" or type == "number") and (tostring | length) <= 40 then tostring else "invalid" end' "$body" 2>/dev/null || echo "invalid"
+            }
+            summary "algorithm.version: $(pick '.algorithm.version')"
+            summary "period: $(pick '.period')"
+            summary "published_at: $(pick '.published_at')"
+          fi
+          summary "Note: the CDN cache lags up to 15 minutes, so a stale 7.9 here does not mean the publish failed."
+          rm -f "$body"
