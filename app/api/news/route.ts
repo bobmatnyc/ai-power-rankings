@@ -2,7 +2,8 @@ import { type NextRequest, NextResponse } from "next/server";
 import { cachedJsonResponse, uncachedJsonResponse } from "@/lib/api-cache";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { loggers } from "@/lib/logger";
-import { findToolByText } from "@/lib/tool-matcher";
+import { loadNewsToolCatalogueOrNull } from "@/lib/news-tool-catalogue";
+import { resolveArticleTools } from "@/lib/news-tool-resolver";
 
 /** Largest page the route will serve; the news page asks for exactly this many. */
 const MAX_LIMIT = 100;
@@ -53,9 +54,11 @@ function readBoundedInt(
  * is missing or either read (page or count) fails. Otherwise a 200 with the
  * page, its `total` and `hasMore`, cached at the edge through `lib/api-cache.ts`;
  * a read that matches nothing is still that 200, with `news: []`. A `?debug=true`
- * response echoes the caller's User-Agent, so it is `no-store`.
+ * response echoes the caller's User-Agent, so it is `no-store`. Each item's
+ * `tool_slug`/`tool_name` come from the tool catalogue (#109); a failed
+ * catalogue read leaves them unset and logs a warning, the response is still 200.
  * Test: `tests/unit/news-route-fail-closed.test.ts`,
- * `tests/unit/news-route-pagination.test.ts`.
+ * `tests/unit/news-route-pagination.test.ts`, `tests/unit/news-route-tools-109.test.ts`.
  */
 export async function GET(request: NextRequest) {
   try {
@@ -119,37 +122,22 @@ export async function GET(request: NextRequest) {
       );
     };
 
+    // #109: one catalogue read per request (cached in memory), not per article.
+    const catalogue = await loadNewsToolCatalogueOrNull("/api/news");
+
     // Transform to expected format
     const transformedNews = await Promise.all(
       allNews.map(async (article) => {
-        // Get tool mentions from database
-        const toolMentions = article.toolMentions || [];
-
-        // Get tool info from tool_mentions or tool associations
-        let toolNames = "Various Tools";
+        // #109: attribution comes from the tool catalogue only (stored mention
+        // ids, then exact names, then whole-word title matches), so a slug here
+        // is always a real catalogue slug. Without a catalogue, no attribution.
+        const resolvedTools = catalogue ? resolveArticleTools(article, catalogue) : [];
+        const primaryTool = resolvedTools[0];
+        const toolNames =
+          resolvedTools.length > 0 ? resolvedTools.map((t) => t.name).join(", ") : "Various Tools";
         const toolCategory = "ai-coding-tool";
         const toolWebsite = "";
-        let primaryToolId = "unknown";
-
-        // Try to extract tool from title using the term mapping
-        const matchedSlug = findToolByText(article.title);
-
-        // Extract tool names from tool_mentions
-        if (toolMentions && toolMentions.length > 0) {
-          // Handle both string array and object array formats
-          const toolNamesList = toolMentions.map((mention: any) =>
-            typeof mention === 'string' ? mention : mention?.tool
-          ).filter(Boolean);
-
-          if (toolNamesList.length > 0) {
-            toolNames = toolNamesList.join(", ");
-            primaryToolId = matchedSlug || toolNamesList[0].toLowerCase().replace(/\s+/g, "-");
-          }
-        } else if (matchedSlug) {
-          // If no tool mentions but we matched from title, use that
-          toolNames = matchedSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-          primaryToolId = matchedSlug;
-        }
+        const primaryToolId = primaryTool ? primaryTool.slug : "unknown";
 
         const tags = article.tags || [];
         // #140: event_type is derived in SQL (lib/db/news-event-type.ts) so the
