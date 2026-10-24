@@ -112,7 +112,7 @@
   {
     "id": "unreleased-49c664671214",
     "version": "Unreleased",
-    "date": "2026-10-24T02:46:55.000Z",
+    "date": "2026-10-24T03:00:40.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "home",
@@ -724,6 +724,17 @@
     "title": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside…",
     "description": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside SWE-bench (best scaffold+model row per tool via a hand-curated allowlist, tunable `TB_BLEND_WEIGHT` default 0.4, no factor-weight change); wired matched `terminal_bench` leaves into `data/historical-metrics/2026-06.json` with full provenance and a curated source capture at `data/historical-metrics/sources/terminal-bench-2.1.json`",
     "changeType": "feature"
+  },
+  {
+    "id": "unreleased-8df61a87cea6",
+    "version": "Unreleased",
+    "date": "2026-10-24T03:23:48.000Z",
+    "dateSource": "commit",
+    "section": "Changed",
+    "scope": "rankings",
+    "title": "POST /api/admin/rankings build and preview score with the engine the monthly cron uses, through regenerateRankings(),…",
+    "description": "`POST /api/admin/rankings` `build` and `preview` score with the engine the monthly cron uses, through `regenerateRankings()`, instead of the V6 engine; `lib/ranking-algorithm-v6.ts` is removed. `regenerateRankings()` takes a `mode`: `publish` (the default, which the cron and `scripts/generate-v76-rankings.ts` use, unchanged), `draft` and `dry-run`. Admin `build` writes a `draft`: a row with `is_current = false` and no `published_at`, labelled with the current algorithm version, in the cron's row shape (`rank`, `tier`, `movement` instead of `position`). It never sets or clears `is_current` and answers 409 for the current period instead of overwriting the published row. `build` with `dry_run: true` and `preview` write nothing. Publishing stays with `set-current`. `preview` reads comparison snapshots in both stored shapes and reports the engine's version; its `preview_date` filter reads `data.launch_date` and keeps tools that have none. `.github/workflows/check-admin-regenerate.yml` (dispatch only, read-only) compares the admin dry-run with the scheduled path and with the stored current snapshot. Tests: `lib/services/ranking-generation.golden.test.ts`, `lib/services/ranking-generation.modes.test.ts`, `lib/services/ranking-preview.service.test.ts`, `lib/ranking-snapshot-diff.test.ts`, `tests/unit/admin-rankings-build-93.test.ts`, `tests/unit/no-v6-engine-93.test.ts`, `tests/unit/admin-api-auth.test.ts` (#93)",
+    "changeType": "improvement"
   },
   {
     "id": "unreleased-cdf6fe1e4956",
