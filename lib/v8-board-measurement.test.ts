@@ -1,4 +1,8 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
+
+import { parseKindSheet } from "./db/tool-kind-sheet";
 
 import {
   harnessBoard,
@@ -13,6 +17,7 @@ import {
   doubledDelta,
   EXIT_CODES,
   formatMeasurementReport,
+  HARNESS_FLOOR,
   measureBoard,
   type MeasuredTool,
   type MeasurementResult,
@@ -37,7 +42,7 @@ const v710 = profileWeights(config, "v7.10", "all");
 const v8 = profileWeights(config, "v8.0", "harness");
 const wrong = negativeControlWeights(v710);
 
-/** The fixtures are smaller than the production floor (69), so the floor is set to their harness count. */
+/** The fixtures are smaller than the production floor (HARNESS_FLOOR, 66), so the floor is set to their harness count. */
 const fixtureFloor = (tools: MeasuredTool[]) => tools.filter((t) => t.kind === "harness").length;
 
 function measure(tools: MeasuredTool[], candidate = v8, published: PublishedSnapshot = quietPublished(tools)) {
@@ -149,7 +154,8 @@ describe("measureBoard harness list check (#185)", () => {
 
   it.each<[string, () => MeasuredTool[], (r: MeasurementResult) => void]>([
     ["no harness tools", () => notHarness(mixedBoard()), (r) => expect(r.harness!.harnessTools).toBe(0)],
-    ["fewer harness tools than the floor of 69", () => harnessBoard(), (r) => expect(r.harness!.harnessTools).toBe(24)],
+    ["fewer harness tools than the floor of 66", () => harnessBoard(), (r) => expect(r.harness!.harnessTools).toBe(24)],
+    ["one harness tool below the floor (65)", () => harnessBoard(65), (r) => expect(r.harness!.harnessTools).toBe(65)],
     [
       "an unmigrated kind column (null)",
       () => harnessBoard(80).map((t, i) => (i === 0 ? { ...t, kind: String(null) } : t)),
@@ -170,9 +176,18 @@ describe("measureBoard harness list check (#185)", () => {
     expect(formatMeasurementReport(result)).toMatch(/^Result: FAIL \(harness list check\)/);
   });
 
-  it("passes the check at the floor of 69 harness tools with other kinds present", () => {
-    const result = measureAtDefaultFloor(harnessBoard(69));
-    expect(result.harness).toMatchObject({ harnessTools: 69, floor: 69, ok: true });
+  it("HARNESS_FLOOR is the sheet's harness rows minus its retired harness rows (69 - 3 = 66)", () => {
+    const sheet = readFileSync(join(__dirname, "..", "docs", "refresh", "tool-kind-mapping.csv"), "utf8");
+    const { rows, errors } = parseKindSheet(sheet);
+    expect(errors).toEqual([]);
+    const harness = rows.filter((r) => r.kind === "harness");
+    const retired = harness.filter((r) => r.retired);
+    expect(HARNESS_FLOOR).toBe(harness.length - retired.length);
+  });
+
+  it("passes the check at the floor of 66 harness tools with other kinds present", () => {
+    const result = measureAtDefaultFloor(harnessBoard(66));
+    expect(result.harness).toMatchObject({ harnessTools: 66, floor: 66, ok: true });
     expect(result.exitCode).toBe(EXIT_CODES.ok);
   });
 });
@@ -260,6 +275,27 @@ describe("measureBoard v7.10 reproduction gate (#185)", () => {
     const result = measure(tools, v8, published);
     expect(result.reproduced).toBe(true);
     expect(result.reproduction.ordinalDiffsInsideTies).toBe(2);
+  });
+
+  it("logs each tie swap anonymously by block, size and positions, and still passes", () => {
+    const tools = tiedHarnessBoard();
+    const published = quietPublished(tools);
+    const tied = published.rows.filter((r) => /-id-t-[a-d]$/.test(String(r["tool_id"])));
+    // Swap the first and last published positions of the four-tool tie.
+    const [first, last] = [tied[0]!, tied[3]!];
+    const rows = published.rows.map((r) =>
+      r === first ? { ...r, rank: last["rank"] } : r === last ? { ...r, rank: first["rank"] } : r
+    );
+    const result = measure(tools, v8, { ...published, rows });
+    expect(result.reproduced).toBe(true);
+    expect(result.reproduction.tieSwaps).toEqual([
+      { block: 1, blockSize: 4, publishedPosition: 1, recomputedPosition: 4 },
+      { block: 1, blockSize: 4, publishedPosition: 4, recomputedPosition: 1 },
+    ]);
+    const report = formatMeasurementReport(result);
+    expect(report).toContain("  tie swap: block 1 (size 4), published position 1, recomputed position 4");
+    expect(report).toContain("  tie swap: block 1 (size 4), published position 4, recomputed position 1");
+    expectNoToolData(result, tools, { ...published, rows });
   });
 });
 
