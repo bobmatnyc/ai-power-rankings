@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatUtcDate } from "@/lib/format-utc-date";
+import { canonicalLocale } from "@/lib/seo/alternates";
 import { formatRankChange, type MoverRow } from "@/lib/rankings/select-movers";
 
 /**
@@ -40,7 +41,9 @@ interface HomeMoversProps {
 function sinceLabel(text: MoversText, lang: string, snapshotDate?: string): string {
   const date = snapshotDate ? new Date(snapshotDate) : null;
   if (!date || Number.isNaN(date.getTime())) return text.sinceLastUpdate;
-  const day = formatUtcDate(date, lang, { month: "short", day: "numeric", year: "numeric" });
+  // See #192: the raw [lang] segment can be any URL text (`xmlrpc.php`), which
+  // `toLocaleDateString` rejects; format in the locale the page renders in.
+  const day = formatUtcDate(date, canonicalLocale(lang), { month: "short", day: "numeric", year: "numeric" });
   return text.sinceLastUpdateOn.replace("{date}", day);
 }
 
