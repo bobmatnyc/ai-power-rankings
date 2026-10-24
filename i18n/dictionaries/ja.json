@@ -627,7 +627,14 @@
       },
       "features": "機能",
       "documentation": "ドキュメント",
-      "website": "ウェブサイト"
+      "website": "ウェブサイト",
+      "links": {
+        "modelsHeading": "対応モデル",
+        "harnessesHeading": "このモデルを使えるツール",
+        "native": "ネイティブ",
+        "supports": "対応",
+        "source": "出典"
+      }
     },
     "status": {
       "active": "アクティブ",
