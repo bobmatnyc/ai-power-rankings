@@ -4,7 +4,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { parseKindSheet } from "./db/tool-kind-sheet";
 
+import { TOOL_KINDS } from "./db/schema";
+import { computeRankings } from "./services/ranking-generation.service";
 import {
+  FIXTURE_DATE,
   harnessBoard,
   mixedBoard,
   negativeControlWeights,
@@ -13,6 +16,8 @@ import {
   SENTINEL,
   tiedHarnessBoard,
 } from "../tests/fixtures/v8-board-185";
+import type { RankingWeightsV76 } from "./ranking-algorithm-v76";
+import { kindRouting, profileRouting } from "./scoring-kind-routing";
 import { loadCheckedInScoringProfiles, profileWeights } from "./scoring-profiles";
 import {
   doubledDelta,
@@ -22,6 +27,7 @@ import {
   type KindSheetView,
   measureBoard,
   PRIVATE_SECTION_HEADER,
+  shiftStats,
   type MeasuredTool,
   type MeasurementResult,
   type PublishedSnapshot,
@@ -42,8 +48,17 @@ import {
 
 const config = loadCheckedInScoringProfiles();
 const v710 = profileWeights(config, "v7.10", "all");
-const v8 = profileWeights(config, "v8.0", "harness");
-const wrong = negativeControlWeights(v710);
+const v8Harness = profileWeights(config, "v8.0", "harness");
+const v8Model = profileWeights(config, "v8.0", "model");
+/** #185 PR-2: the candidate is the v8.0 set routed by kind. */
+const v8 = profileRouting(config, "v8.0");
+
+/** The v8.0 routing with only the harness table replaced (negative controls). */
+function withHarness(weights: RankingWeightsV76) {
+  const profiles = Object.fromEntries(Object.entries(config.profileSets["v8.0"]!.profiles).map(([n, p]) => [n, p.weights]));
+  return kindRouting("v8.0-test", { ...profiles, harness: weights }, "byKind");
+}
+const wrong = withHarness(negativeControlWeights(v710));
 
 /** The fixtures are smaller than the production floor (HARNESS_FLOOR, 66), so the floor is set to their harness count. */
 const fixtureFloor = (tools: MeasuredTool[]) => tools.filter((t) => t.kind === "harness").length;
@@ -128,12 +143,14 @@ describe("measureBoard D45 gate (#185)", () => {
   });
 
   it("scores the candidate weights it is handed, not a fixed table", () => {
-    const same = measure(harnessBoard(), v710);
-    expect(same.candidate!.scoreShiftAll.max).toBe(0);
+    const same = measure(harnessBoard(), withHarness(v710));
+    expect(same.candidate!.scoreShiftHarness.max).toBe(0);
     expect(same.candidate!.harnessRankShift.moved0).toBe(same.candidate!.harnessRankShift.n);
     const d44 = measure(harnessBoard(), v8);
-    expect(d44.candidate!.scoreShiftAll.max).toBeGreaterThan(0);
-    expect(d44.candidate!.scoreShiftAll.max).toBeLessThan(measure(harnessBoard(), wrong).candidate!.scoreShiftAll.max);
+    expect(d44.candidate!.scoreShiftHarness.max).toBeGreaterThan(0);
+    expect(d44.candidate!.scoreShiftHarness.max).toBeLessThan(
+      measure(harnessBoard(), wrong).candidate!.scoreShiftHarness.max
+    );
   });
 
   it("baselines on the published order inside a harness tie: reversing it flips D45 to a breach", () => {
@@ -209,6 +226,64 @@ describe("measureBoard D45 gate (#185)", () => {
 
   it("counts tools by kind", () => {
     expect(measure(mixedBoard()).candidate!.kindCounts).toEqual({ harness: 12, model: 16, other: 1 });
+  });
+});
+
+describe("measureBoard scores the candidate through kind routing (#185 PR-2)", () => {
+  /** v7.10 and one-table scores per tool, each tool on its own. */
+  function scores(tools: MeasuredTool[], weights: RankingWeightsV76) {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      return new Map(tools.map((t) => [t.id, computeRankings([t], new Map(), FIXTURE_DATE, weights)[0]!.score]));
+    } finally {
+      warn.mockRestore();
+    }
+  }
+
+  it("scores model tools with the model profile, not the harness weights", () => {
+    const tools = mixedBoard();
+    const models = tools.filter((t) => t.kind === "model");
+    const [base, model, harness] = [scores(tools, v710), scores(tools, v8Model), scores(tools, v8Harness)];
+    const expected = shiftStats(models.map((t) => model.get(t.id)! - base.get(t.id)!));
+    const ifHarness = shiftStats(models.map((t) => harness.get(t.id)! - base.get(t.id)!));
+    expect(expected).not.toEqual(ifHarness);
+
+    const result = measure(tools);
+    expect(result.candidate!.models.scoreShift).toEqual(expected);
+    // Harness tools still use the D44 harness weights.
+    const harnessTools = tools.filter((t) => t.kind === "harness");
+    expect(result.candidate!.scoreShiftHarness).toEqual(
+      shiftStats(harnessTools.map((t) => harness.get(t.id)! - base.get(t.id)!))
+    );
+  });
+
+  it("differs from a candidate that applies the harness weights to every tool", () => {
+    const allHarness = kindRouting("all-harness", Object.fromEntries(TOOL_KINDS.map((k) => [k, v8Harness])), "byKind");
+    const routed = measure(mixedBoard()).candidate!;
+    const flat = measure(mixedBoard(), allHarness).candidate!;
+    expect(routed.models.scoreShift).not.toEqual(flat.models.scoreShift);
+    expect(routed.scoreShiftAll).not.toEqual(flat.scoreShiftAll);
+    expect(routed.harnessRankShift).toEqual(flat.harnessRankShift);
+  });
+
+  it("ranks models within the model list, leaves out retired models, and prints it as information", () => {
+    const tools = mixedBoard();
+    const published = quietPublished(tools);
+    const retired = tools.find((t) => t.kind === "model")!;
+    const sheet = { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set([retired.slug]) };
+    const result = measure(tools, v8, published, sheet);
+    expect(result.candidate!.models.rankShift.n).toBe(15);
+    expect(result.candidate!.models.scoreShift.n).toBe(15);
+    expect(result.candidate!.d45Breaches).toBe(0);
+    const report = formatMeasurementReport(result);
+    expect(report).toMatch(/models within the model list \(information\): n=15, moved 0\/1\/2\/3\+ = \d+\/\d+\/\d+\/\d+, max \d+/);
+    expect(report).toContain("models (retired excluded), score shift (information): n=15");
+    expectNoToolData(result, tools, published);
+  });
+
+  it("stops with an error, never a fallback, when a candidate kind has no profile", () => {
+    const harnessOnly = kindRouting("partial", { harness: v8Harness }, "byKind");
+    expect(() => measure(mixedBoard(), harnessOnly)).toThrow(/no profile for kind "model"/);
   });
 });
 
@@ -305,7 +380,7 @@ describe("measureBoard v7.10 reproduction gate (#185)", () => {
     const result = measureBoard({
       tools,
       published: publishedFor(tools, v710),
-      baseline: v8,
+      baseline: v8Harness,
       candidate: v8,
       sheet: fullSheet(tools),
     });
@@ -425,7 +500,7 @@ describe("measurement output is aggregates only (D19, #185)", () => {
 
 describe("doubledDelta stress weights (#185)", () => {
   it("doubles the D44 delta and renormalises to 1", () => {
-    const stress = doubledDelta(v710, v8);
+    const stress = doubledDelta(v710, v8Harness);
     expect(stress.technicalPerformance).toBeCloseTo(0.16 / 0.98, 12);
     expect(stress.innovation).toBeCloseTo(0.1 / 0.98, 12);
     expect(Object.values(stress).reduce((a, b) => a + b, 0)).toBeCloseTo(1, 12);
