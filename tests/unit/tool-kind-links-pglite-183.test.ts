@@ -223,7 +223,8 @@ describe("#183 the 0017 backfill on PGlite", () => {
         `SELECT kind, subcategory, open_weight, updated_at = '2026-01-01T00:00:00Z'::timestamptz AS kept FROM public."tools" WHERE slug = 'opus-4-6'`
       )
     ).rows[0];
-    expect(row).toEqual({ kind: "model", subcategory: null, open_weight: false, kept: true });
+    // D38 option 1: 0017 sets kind and subcategory only; the sheet's open_weight is not written.
+    expect(row).toEqual({ kind: "model", subcategory: null, open_weight: null, kept: true });
     expect(await run(db, backfill)).toEqual(["#183 0017: updated 0 tools rows"]);
     await db.close();
   });

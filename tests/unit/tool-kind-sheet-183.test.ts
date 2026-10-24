@@ -2,13 +2,14 @@
  * #183: the mapping sheet parser and validator refuse every sheet the plan rules out.
  *
  * Why: plan 1.8 — the reviewed sheet (`docs/refresh/tool-kind-mapping.csv`, R-1) is the
- *   only source of the 0017 backfill. It is not committed yet, so these tests run the
- *   parser and the validator against a small synthetic fixture and a fixture contract;
- *   the real 114-row contract is checked for internal consistency only.
+ *   only source of the 0017 backfill. The rules run against a small synthetic fixture and
+ *   a fixture contract; the committed sheet runs against the real 114-row contract.
  * What: a valid fixture passes; each rule (header, kind set, unique slugs, audit slugs,
  *   counts by kind, retired rows follow their survivor, open_weight only on models,
  *   app_builder only on the listed harnesses, subcategory pattern) has one failing row.
- *   Also: the CSV reader handles quoted commas, and the real audit CSV yields 114 tools.
+ *   Also: the CSV reader handles quoted commas, the real audit CSV yields 114 tools, the
+ *   committed sheet passes the contract (69/15/30, seven app builders) and a one-row
+ *   drift from it is refused.
  * Test: `npx vitest run tests/unit/tool-kind-sheet-183.test.ts`. No database.
  */
 
@@ -119,12 +120,47 @@ describe("#183 mapping sheet validator", () => {
   });
 });
 
+const ROOT = path.resolve(__dirname, "../..");
+const REAL_SHEET = readFileSync(path.join(ROOT, "docs/refresh/tool-kind-mapping.csv"), "utf8");
+const REAL_AUDIT = auditToolSlugs(readFileSync(path.join(ROOT, "docs/refresh/content-ia-audit.csv"), "utf8"));
+
+/** The committed sheet with one line rewritten, checked against the real contract. */
+function realSheetProblems(edit: (line: string) => string = (line) => line): string[] {
+  const parsed = parseKindSheet(REAL_SHEET.split("\n").map(edit).join("\n"));
+  return [...parsed.errors, ...validateKindSheet(parsed.rows, KIND_SHEET_CONTRACT, REAL_AUDIT)];
+}
+
 describe("#183 the real contract and audit", () => {
-  it("the 114-row contract adds up and names the six app builders (criterion 2, D2b)", () => {
+  it("the 114-row contract adds up and names the seven app builders (criterion 2, D2b)", () => {
     const total = Object.values(KIND_SHEET_CONTRACT.kindCounts).reduce((a, b) => a + b, 0);
     expect(total).toBe(KIND_SHEET_CONTRACT.rowCount);
-    expect(KIND_SHEET_CONTRACT.kindCounts).toEqual({ harness: 75, model: 15, other: 24, productivity: 0 });
-    expect(KIND_SHEET_CONTRACT.appBuilders).toHaveLength(6);
+    expect(KIND_SHEET_CONTRACT.kindCounts).toEqual({ harness: 69, model: 15, other: 30, productivity: 0 });
+    expect([...KIND_SHEET_CONTRACT.appBuilders].sort()).toEqual([
+      "bolt-new",
+      "claude-artifacts",
+      "flint",
+      "lovable",
+      "rocket-new",
+      "v0-vercel",
+      "wabi",
+    ]);
+  });
+
+  it("the committed sheet passes the real contract and the owner rulings (D3c, D38, A86)", () => {
+    expect(realSheetProblems()).toEqual([]);
+    const kinds = new Map(parseKindSheet(REAL_SHEET).rows.map((r) => [r.slug, [r.kind, r.subcategory, r.retired]]));
+    for (const slug of ["crossbeam", "infosys-topaz", "nova-act"]) expect(kinds.get(slug)?.[0]).toBe("other");
+    expect(kinds.get("flint")).toEqual(["harness", "app_builder", false]);
+    for (const slug of ["opus-4-6", "sonnet-4-5", "glm-5-0", "kimi-2-5"]) expect(kinds.get(slug)).toEqual(["model", null, false]);
+  });
+
+  it.each([
+    ["a harness moved to other", (l: string) => (l.startsWith("aider,") ? "aider,other,non_ai,,false,,normal," : l), /kind harness: 68 rows, expected 69/],
+    ["flint without app_builder", (l: string) => (l.startsWith("flint,") ? "flint,harness,,,false,,normal," : l), /flint: app builder must be/],
+    ["an eighth app builder", (l: string) => (l.startsWith("cursor,") ? "cursor,harness,app_builder,,false,,normal," : l), /cursor: app_builder outside the 7/],
+    ["a dropped row", (l: string) => (l.startsWith("zed,") ? "" : l), /113 rows, expected 114/],
+  ])("refuses the committed sheet with %s", (_name, edit, message) => {
+    expect(realSheetProblems(edit).join("\n")).toMatch(message);
   });
 
   it("the #177 audit CSV lists 114 active tools, including every app builder", () => {
