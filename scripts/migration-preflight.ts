@@ -49,11 +49,17 @@ export interface PreflightSpec {
   columns: Readonly<Record<string, readonly string[]>>;
   /** `information_schema.columns.data_type` every listed column must have after the apply. */
   targetType: string;
+  /** The type the migration converts from; any third type is "present, other type". */
+  sourceType: string;
 }
 
 /** #237: migrations whose apply is refused without an acknowledged preflight report. */
 export const PREFLIGHT_REQUIRED: Readonly<Record<string, PreflightSpec>> = {
-  [TIMESTAMPTZ_MIGRATION]: { columns: TIMESTAMPTZ_COLUMNS, targetType: "timestamp with time zone" },
+  [TIMESTAMPTZ_MIGRATION]: {
+    columns: TIMESTAMPTZ_COLUMNS,
+    targetType: "timestamp with time zone",
+    sourceType: "timestamp without time zone",
+  },
 };
 
 /** Committed, acknowledged reports live here: `<dir>/<migration>.report.json`. */
@@ -102,6 +108,8 @@ export interface PreflightMeasurements {
   row_counts: Record<string, TableCounts>;
   /** In-scope tables or `table.column` entries the catalog does not have. */
   missing: string[];
+  /** #237: in-scope columns that exist with a non-timestamp type, as `table.column (type)`. */
+  other_type: string[];
 }
 
 const IDENTIFIER = /^[a-z_][a-z0-9_]*$/;
@@ -138,7 +146,8 @@ export const CATALOG_STATEMENTS: readonly string[] = [
   // scope label and the zone. Never the database or role name, never other settings.
   "SELECT CASE WHEN s.setdatabase <> 0 AND s.setrole <> 0 THEN 'role-in-database-level' WHEN s.setdatabase <> 0 THEN 'database-level' ELSE 'role-level' END AS scope, substr(c, 10) AS timezone FROM pg_db_role_setting s CROSS JOIN LATERAL unnest(s.setconfig) AS c WHERE lower(c) LIKE 'timezone=%' AND s.setdatabase IN (0, (SELECT oid FROM pg_database WHERE datname = current_database())) AND s.setrole IN (0, (SELECT oid FROM pg_roles WHERE rolname = current_user)) ORDER BY 1, 2",
   "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' ORDER BY 1",
-  "SELECT table_name, column_name, data_type, column_default, is_nullable FROM information_schema.columns WHERE table_schema = 'public' AND data_type LIKE 'timestamp%' ORDER BY table_name, ordinal_position",
+  // #237: no type filter, so an in-scope column with another type is seen as present.
+  "SELECT table_name, column_name, data_type, column_default, is_nullable FROM information_schema.columns WHERE table_schema = 'public' ORDER BY table_name, ordinal_position",
   "SELECT relname, pg_total_relation_size(oid)::text AS total_bytes, pg_relation_size(oid)::text AS heap_bytes FROM pg_class WHERE relkind = 'r' AND relnamespace = 'public'::regnamespace ORDER BY pg_total_relation_size(oid) DESC",
 ];
 
@@ -182,22 +191,24 @@ export async function measurePreflight(
   for (const statement of CATALOG_STATEMENTS) assertReadOnlySql(statement);
   const [show, session, roles, tables, columns, sizes] = await query([...CATALOG_STATEMENTS]);
   const present = new Set((tables ?? []).map((row) => text(row["table_name"])));
-  const columnsByTable = new Map<string, Set<string>>();
-  for (const row of columns ?? []) {
-    const table = text(row["table_name"]);
-    if (!columnsByTable.has(table)) columnsByTable.set(table, new Set());
-    columnsByTable.get(table)?.add(text(row["column_name"]));
-  }
+  const typeOf = new Map((columns ?? []).map((row) => [`${text(row["table_name"])}.${text(row["column_name"])}`, text(row["data_type"])]));
+  const inScope = new Set(Object.entries(spec.columns).flatMap(([table, cols]) => cols.map((c) => `${table}.${c}`)));
 
   const missing: string[] = [];
+  const otherType: string[] = [];
   const counted: Array<[string, string[]]> = [];
   for (const [table, wanted] of Object.entries(spec.columns)) {
     if (!present.has(table)) {
       missing.push(table);
       continue;
     }
-    const have = wanted.filter((column) => columnsByTable.get(table)?.has(column));
-    for (const column of wanted) if (!have.includes(column)) missing.push(`${table}.${column}`);
+    const have: string[] = [];
+    for (const column of wanted) {
+      const type = typeOf.get(`${table}.${column}`);
+      if (type === undefined) missing.push(`${table}.${column}`);
+      else if (type.startsWith("timestamp")) have.push(column);
+      else otherType.push(`${table}.${column} (${type})`);
+    }
     counted.push([table, have]);
   }
 
@@ -237,10 +248,14 @@ export async function measurePreflight(
         timezone: text(row["timezone"]),
       })),
       public_tables: [...present],
-      timestamp_columns: columns ?? [],
+      timestamp_columns: (columns ?? []).filter(
+        (row) =>
+          text(row["data_type"]).startsWith("timestamp") || inScope.has(`${text(row["table_name"])}.${text(row["column_name"])}`)
+      ),
       sizes: sizes ?? [],
       row_counts: rowCounts,
       missing,
+      other_type: otherType,
     },
     acknowledged: null,
   };
@@ -370,7 +385,10 @@ export function createReportSource(dir = path.join(process.cwd(), PREFLIGHT_REPO
 export interface ConversionSummary {
   converted: string[];
   skipped: string[];
+  /** Present, still in the source type. */
   unconverted: string[];
+  /** #237: present with a type that is neither source nor target. Fails like unconverted. */
+  otherType: string[];
 }
 
 /**
@@ -380,20 +398,22 @@ export interface ConversionSummary {
  *   does not surface notices. A skip must still show in the apply summary, and a present
  *   column left in the old type must fail the run rather than report success.
  * What: `rows` are `information_schema.columns` rows (table_name, column_name,
- *   data_type). Each spec column is converted (target type), skipped (absent) or
- *   unconverted (present, other type).
+ *   data_type), read with no type filter. Each spec column is converted (target type),
+ *   skipped (absent), unconverted (still the source type) or otherType (present with any
+ *   other type).
  * Test: `summarizeConversion` cases in tests/unit/timestamptz-237-preflight.test.ts.
  */
 export function summarizeConversion(spec: PreflightSpec, rows: Record<string, unknown>[]): ConversionSummary {
   const types = new Map(rows.map((row) => [`${text(row["table_name"])}.${text(row["column_name"])}`, text(row["data_type"])]));
-  const summary: ConversionSummary = { converted: [], skipped: [], unconverted: [] };
+  const summary: ConversionSummary = { converted: [], skipped: [], unconverted: [], otherType: [] };
   for (const [table, columns] of Object.entries(spec.columns)) {
     for (const column of columns) {
       const key = `${table}.${column}`;
       const type = types.get(key);
       if (type === undefined) summary.skipped.push(key);
       else if (type === spec.targetType) summary.converted.push(key);
-      else summary.unconverted.push(`${key} (${type})`);
+      else if (type === spec.sourceType) summary.unconverted.push(`${key} (${type})`);
+      else summary.otherType.push(`${key} (${type})`);
     }
   }
   return summary;
@@ -401,4 +421,4 @@ export function summarizeConversion(spec: PreflightSpec, rows: Record<string, un
 
 /** Catalog read for `summarizeConversion`. */
 export const CONVERSION_STATEMENT =
-  "SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = 'public' AND data_type LIKE 'timestamp%'";
+  "SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = 'public'";

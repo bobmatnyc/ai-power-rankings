@@ -54,6 +54,7 @@ function report(overrides: Partial<PreflightReport> = {}): PreflightReport {
       sizes: [],
       row_counts: {},
       missing: [],
+      other_type: [],
     },
     acknowledged: { by: "architect", at: "2026-10-24T09:00:00.000Z" },
     ...overrides,
@@ -142,16 +143,22 @@ describe("#237 preflight helpers", () => {
     expect(databaseFingerprint("not a url")).toBeNull();
   });
 
-  it("summarizeConversion sorts columns into converted, skipped and unconverted", () => {
-    const spec = { columns: { t: ["a", "b", "c"] }, targetType: "timestamp with time zone" };
+  it("summarizeConversion sorts columns into converted, skipped, unconverted and other type", () => {
+    const spec = {
+      columns: { t: ["a", "b", "c", "d"] },
+      targetType: "timestamp with time zone",
+      sourceType: "timestamp without time zone",
+    };
     const rows = [
       { table_name: "t", column_name: "a", data_type: "timestamp with time zone" },
       { table_name: "t", column_name: "c", data_type: "timestamp without time zone" },
+      { table_name: "t", column_name: "d", data_type: "text" },
     ];
     expect(summarizeConversion(spec, rows)).toEqual({
       converted: ["t.a"],
       skipped: ["t.b"],
       unconverted: ["t.c (timestamp without time zone)"],
+      otherType: ["t.d (text)"],
     });
   });
 
@@ -262,6 +269,47 @@ describe("#237 criterion 8: the apply of 0015 refuses on PGlite before any ALTER
     expect(result.exitCode).toBe(1);
     expect(result.output).toMatch(/left 42 column\(s\) unconverted/);
     expect(result.recorded).toEqual([]);
+  });
+});
+
+// #237 (critic MEDIUM): an in-scope column that exists with another type is neither
+// "missing" in the report nor a "skip" after the apply; the run fails unrecorded.
+describe("#237 an in-scope column present with another type", () => {
+  let db: PGlite;
+
+  beforeAll(async () => {
+    db = new PGlite();
+    await insertFixtureRows(db, await createNaiveFixture(db));
+    await db.exec(`ALTER TABLE news ALTER COLUMN date TYPE text`);
+  });
+  afterAll(async () => {
+    await db.close();
+  });
+
+  it("the dry-run report lists it as other_type, not missing", async () => {
+    const mdb = pgliteMigrationDb(db);
+    const measured = await measurePreflight(mdb.readOnlyQueries!, FILE, PREFLIGHT_REQUIRED[FILE]!, THIS_DB);
+    expect(measured.measurements.missing).toEqual([]);
+    expect(measured.measurements.other_type).toEqual(["news.date (text)"]);
+    expect(Object.keys(measured.measurements.row_counts["news"]!.columns)).not.toContain("date");
+  });
+
+  it("the apply fails and does not record 0015", async () => {
+    const mdb = pgliteMigrationDb(db);
+    const recorded: string[] = [];
+    mdb.recordApplied = async (file) => void recorded.push(file);
+    const result = await runMigrations(
+      {
+        db: mdb,
+        files: { list: () => [FILE], read: () => MIGRATION_SQL },
+        log: () => {},
+        preflight: { fingerprint: THIS_DB, reports: { read: () => JSON.stringify(report()) } },
+      },
+      { dryRun: false, only: FILE, showColumns: null, force: false }
+    );
+    expect(result.exitCode).toBe(1);
+    expect(result.lines.join("\n")).toMatch(/left 1 column\(s\) unconverted: news\.date \(text\)/);
+    expect(recorded).toEqual([]);
   });
 });
 
