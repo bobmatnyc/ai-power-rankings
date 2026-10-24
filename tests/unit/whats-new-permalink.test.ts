@@ -51,9 +51,9 @@ const JULY: FixtureRow = {
   ].join("\n"),
   data_hash: "hash-07",
   metadata: { model: "fixture-model", article_count: 42, new_tool_count: 3 },
-  generated_at: "2026-08-02 06:00:00",
-  created_at: "2026-07-31 06:00:00",
-  updated_at: "2026-08-02 06:00:00",
+  generated_at: "2026-08-02 06:00:00+00",
+  created_at: "2026-07-31 06:00:00+00",
+  updated_at: "2026-08-02 06:00:00+00",
 };
 
 const JUNE: FixtureRow = {
@@ -62,21 +62,24 @@ const JUNE: FixtureRow = {
   period: "2026-06",
   content: "June hid every tool whose score was < 5 from the table.",
   data_hash: "hash-06",
-  generated_at: "2026-06-30 06:00:00",
-  created_at: "2026-06-30 06:00:00",
-  updated_at: "2026-06-30 06:00:00",
+  generated_at: "2026-06-30 06:00:00+00",
+  created_at: "2026-06-30 06:00:00+00",
+  updated_at: "2026-06-30 06:00:00+00",
 };
 
-/** Postgres type OIDs for the `monthly_summaries` columns. */
+/**
+ * Postgres type OIDs for the `monthly_summaries` columns. #237: the timestamps are
+ * timestamptz (1184), sent as text with an offset.
+ */
 const COLUMN_TYPES: Record<string, number> = {
   id: 2950,
   period: 25,
   content: 25,
   data_hash: 25,
   metadata: 3802,
-  generated_at: 1114,
-  created_at: 1114,
-  updated_at: 1114,
+  generated_at: 1184,
+  created_at: 1184,
+  updated_at: 1184,
 };
 
 const db = { rows: [] as FixtureRow[], fail: false, queries: [] as string[] };
@@ -247,7 +250,7 @@ describe("/whats-new/<period> permalink (#54)", () => {
   });
 
   it("AC4: dateModified never precedes datePublished", async () => {
-    db.rows = [{ ...JULY, generated_at: "2026-07-01 00:00:00", created_at: "2026-07-31 06:00:00" }];
+    db.rows = [{ ...JULY, generated_at: "2026-07-01 00:00:00+00", created_at: "2026-07-31 06:00:00+00" }];
     const article = JSON.parse(jsonLdBlocks(await renderReport("2026-07"))[0]!) as Record<string, string>;
     expect(article["datePublished"]).toBe("2026-07-31T06:00:00.000Z");
     expect(article["dateModified"]).toBe("2026-07-31T06:00:00.000Z");
