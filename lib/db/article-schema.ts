@@ -79,14 +79,14 @@ export const articles = pgTable(
 
     // Metadata
     author: varchar("author", { length: 255 }),
-    publishedDate: timestamp("published_date"),
-    ingestedAt: timestamp("ingested_at").defaultNow(),
+    publishedDate: timestamp("published_date", { withTimezone: true }),
+    ingestedAt: timestamp("ingested_at", { withTimezone: true }).defaultNow(),
     ingestedBy: varchar("ingested_by", { length: 255 }).default("admin"),
 
     // Status tracking
     status: varchar("status", { length: 20 }).default("active"),
     isProcessed: boolean("is_processed").default(false),
-    processedAt: timestamp("processed_at"),
+    processedAt: timestamp("processed_at", { withTimezone: true }),
 
     // Automated ingestion tracking
     ingestionRunId: uuid("ingestion_run_id").references(() => automatedIngestionRuns.id, {
@@ -96,8 +96,8 @@ export const articles = pgTable(
     discoverySource: varchar("discovery_source", { length: 50 }).default("manual"),
 
     // Timestamps
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     // Indexes
@@ -150,11 +150,11 @@ export const articleRankingsChanges = pgTable(
 
     // Rollback support
     isApplied: boolean("is_applied").default(true),
-    appliedAt: timestamp("applied_at").defaultNow(),
+    appliedAt: timestamp("applied_at", { withTimezone: true }).defaultNow(),
     rolledBack: boolean("rolled_back").default(false),
-    rolledBackAt: timestamp("rolled_back_at"),
+    rolledBackAt: timestamp("rolled_back_at", { withTimezone: true }),
 
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   },
   (table) => ({
     // Indexes
@@ -183,8 +183,8 @@ export const articleProcessingLogs = pgTable(
     status: varchar("status", { length: 20 }).notNull(),
 
     // Processing metadata
-    startedAt: timestamp("started_at").defaultNow(),
-    completedAt: timestamp("completed_at"),
+    startedAt: timestamp("started_at", { withTimezone: true }).defaultNow(),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
     durationMs: integer("duration_ms"),
 
     // Results
@@ -199,7 +199,7 @@ export const articleProcessingLogs = pgTable(
     // User tracking
     performedBy: varchar("performed_by", { length: 255 }).default("system"),
 
-    createdAt: timestamp("created_at").defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
   },
   (table) => ({
     // Indexes
@@ -237,7 +237,7 @@ export const rankingVersions = pgTable(
 
     // User tracking
     createdBy: varchar("created_by", { length: 255 }).default("system"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 
     // Rollback tracking
     isRollback: boolean("is_rollback").default(false),

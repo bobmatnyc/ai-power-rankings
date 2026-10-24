@@ -40,15 +40,15 @@ export const tools = pgTable(
     baselineScore: jsonb("baseline_score").default("{}"), // Stores baseline scores per factor
     deltaScore: jsonb("delta_score").default("{}"), // Stores delta modifications per factor
     currentScore: jsonb("current_score").default("{}"), // Cached current score calculation
-    scoreUpdatedAt: timestamp("score_updated_at"), // Last time score was recalculated
+    scoreUpdatedAt: timestamp("score_updated_at", { withTimezone: true }), // Last time score was recalculated
 
     // Flexible JSONB storage for all other tool data
     // Preserves the existing JSON structure from /data/json/tools/
     data: jsonb("data").notNull().default("{}"),
 
     // Timestamps
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     // Indexes for common queries
@@ -78,15 +78,15 @@ export const rankings = pgTable(
     // Metadata
     algorithmVersion: text("algorithm_version").notNull().default("v1.0"),
     isCurrent: boolean("is_current").notNull().default(false),
-    publishedAt: timestamp("published_at"),
+    publishedAt: timestamp("published_at", { withTimezone: true }),
 
     // Complete rankings data as JSONB
     // Preserves the structure from /public/data/rankings.json
     data: jsonb("data").notNull().default("[]"),
 
     // Timestamps
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     // Indexes
@@ -118,8 +118,8 @@ export const news = pgTable(
     sourceUrl: text("source_url"),
 
     // Dates
-    publishedAt: timestamp("published_at").notNull(),
-    date: timestamp("date"),
+    publishedAt: timestamp("published_at", { withTimezone: true }).notNull(),
+    date: timestamp("date", { withTimezone: true }),
 
     // Complete article data as JSONB
     // Preserves all fields from /data/json/news/
@@ -132,8 +132,8 @@ export const news = pgTable(
     importanceScore: integer("importance_score").default(0),
 
     // Timestamps
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     // Indexes
@@ -170,8 +170,8 @@ export const companies = pgTable(
     data: jsonb("data").notNull().default("{}"),
 
     // Timestamps
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     slugIdx: uniqueIndex("companies_slug_idx").on(table.slug),
@@ -190,11 +190,11 @@ export const migrations = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     name: text("name").notNull().unique(),
     status: text("status").notNull(), // 'pending', 'running', 'completed', 'failed'
-    startedAt: timestamp("started_at"),
-    completedAt: timestamp("completed_at"),
+    startedAt: timestamp("started_at", { withTimezone: true }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
     error: text("error"),
     metadata: jsonb("metadata").default("{}"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     nameIdx: uniqueIndex("migrations_name_idx").on(table.name),
@@ -214,9 +214,9 @@ export const monthlySummaries = pgTable(
     content: text("content").notNull(), // LLM-generated markdown content
     dataHash: text("data_hash").notNull(), // SHA-256 hash for change detection
     metadata: jsonb("metadata").default("{}"), // article_count, tool_count, model_used, etc.
-    generatedAt: timestamp("generated_at").defaultNow().notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    generatedAt: timestamp("generated_at", { withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     periodIdx: uniqueIndex("monthly_summaries_period_idx").on(table.period),
@@ -236,11 +236,11 @@ export const stateOfAiSummaries = pgTable(
     month: integer("month").notNull(), // 1-12
     year: integer("year").notNull(), // e.g., 2025
     content: text("content").notNull(), // LLM-generated markdown content (400-500 words)
-    generatedAt: timestamp("generated_at").defaultNow().notNull(),
+    generatedAt: timestamp("generated_at", { withTimezone: true }).defaultNow().notNull(),
     generatedBy: text("generated_by").notNull(), // User ID/email who triggered generation
     metadata: jsonb("metadata").default("{}"), // article_count, date_range, model_used, etc.
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     // Unique constraint: only one summary per month/year combination
@@ -283,8 +283,8 @@ export const automatedIngestionRuns = pgTable(
     rankingChanges: integer("ranking_changes").default(0),
 
     // Timing and details
-    startedAt: timestamp("started_at").defaultNow(),
-    completedAt: timestamp("completed_at"),
+    startedAt: timestamp("started_at", { withTimezone: true }).defaultNow(),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
     searchQuery: text("search_query"),
     errorLog: jsonb("error_log").default("[]"),
     ingestedArticleIds: jsonb("ingested_article_ids").default("[]"),
@@ -297,7 +297,7 @@ export const automatedIngestionRuns = pgTable(
     estimatedCostUsd: decimal("estimated_cost_usd", { precision: 10, scale: 4 }).default("0"),
 
     // Timestamps
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     // Indexes
@@ -329,8 +329,8 @@ export const toolMetricsHistory = pgTable(
     collectedDate: date("collected_date", { mode: "string" }).notNull(), // UTC invocation day, YYYY-MM-DD
     period: text("period").notNull(), // YYYY-MM
     metrics: jsonb("metrics").notNull().default(sql`'{}'::jsonb`),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     toolDateIdx: uniqueIndex("tool_metrics_history_tool_date_idx").on(table.toolId, table.collectedDate),
@@ -366,10 +366,10 @@ export const metricsCollectionRuns = pgTable(
     failed: integer("failed").notNull().default(0),
     skippedTimeout: integer("skipped_timeout").notNull().default(0),
     error: text("error"),
-    startedAt: timestamp("started_at").notNull(),
-    finishedAt: timestamp("finished_at").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+    startedAt: timestamp("started_at", { withTimezone: true }).notNull(),
+    finishedAt: timestamp("finished_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => ({
     dateCollectorShardIdx: uniqueIndex("metrics_collection_runs_date_collector_shard_idx").on(
