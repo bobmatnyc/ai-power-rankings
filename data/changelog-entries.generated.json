@@ -596,12 +596,23 @@
   {
     "id": "unreleased-6da38b171707",
     "version": "Unreleased",
-    "date": "2026-10-24T12:18:31.101Z",
-    "dateSource": "build",
+    "date": "2026-10-24T12:18:41.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
     "title": "scoring profiles and a read-only v8 board measurement",
     "description": "scoring profiles and a read-only v8 board measurement. `config/scoring-profiles.json` holds the frozen v7.10 weights (legacy, sum 1.02) and a staged v8.0 harness profile (D44: technical and adoption 0.17, sum 1.00); `lib/scoring-profiles.ts` loads it and refuses a file that does not parse, has a missing or unknown factor, or whose weights do not sum to the declared total. `scripts/measure-v8-board.ts` reads the active tools and the current ranking in one READ ONLY transaction, stops with exit 4 unless it reproduces the published v7.10 scores and ranks (no duplicated row or rank; a rank swapped inside a block of equal scores is counted and logged by block, block size and positions, never by tool), exits 5 when the harness list has fewer than 66 tools (the non-retired harness rows of the kind sheet), an unknown kind, or only harness tools, and exits 3 when a harness tool moves more than 2 places within the harness list against its published rank (D45). Tools the kind sheet marks retired are left out of that harness list and counted. It prints counts only, except a closing private section that names active tools missing from the kind sheet (names only, with no score or rank). It refuses to run under CI, and connects only through `MEASURE_V8_DATABASE_URL` as passed at launch, never a value from a `.env*` file. Nothing selects the v8.0 profile: published rankings and the stored version (7.10) are unchanged. Tests: `lib/scoring-profiles.test.ts`, `lib/scoring-profiles.inert-185.test.ts`, `lib/v8-board-measurement.test.ts`, `tests/unit/measure-v8-board-script-185.test.ts` (#185)",
+    "changeType": "feature"
+  },
+  {
+    "id": "unreleased-81ed08e4004e",
+    "version": "Unreleased",
+    "date": "2026-10-24T12:33:13.843Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "rankings",
+    "title": "v8 scoring routes each tool to the profile for its tools.kind",
+    "description": "v8 scoring routes each tool to the profile for its `tools.kind`. The staged v8.0 set now has four profiles: harness (D44), model (D4b: agentic 0.18, technical 0.22, adoption 0.10, market traction 0.10, development velocity 0.10, the other three as v7.10, sum 1.00; marked provisional pending D4d), and productivity and other, which carry the D44 harness weights and are marked provisional pending an Architect decision. Open-weight status has no weight. `lib/scoring-kind-routing.ts` builds the routing and throws for a null, unknown or unprofiled kind instead of falling back; the frozen v7.10 set keeps one table for every tool. `computeRankings()` accepts a routing and puts every kind on one board: each profile sums to 1.00, scores keep the 0-100 scale with no rescaling, and one sort gives one global rank. `scripts/measure-v8-board.ts` scores the v8.0 candidate through the routing and adds a models-only rank shift (model rank within the model list, retired excluded) as information; D45 is still the gate. The publish path passes no routing and `activeProfileSet` stays v7.10, so published rankings and the stored version (7.10) are unchanged. Tests: `lib/scoring-kind-routing.test.ts`, `lib/scoring-profiles.inert-185.test.ts`, `lib/v8-board-measurement.test.ts` (#185)",
     "changeType": "feature"
   },
   {
