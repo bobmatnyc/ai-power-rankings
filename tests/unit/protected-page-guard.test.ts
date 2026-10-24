@@ -4,12 +4,10 @@ import type { ReactElement } from "react";
 /**
  * Server-side sign-in check in the admin and dashboard tree layouts.
  *
- * Why: The middleware was the only gate for these pages. The tree layouts
- * now check the session themselves, so a request the middleware did not
- * process still gets a sign-in redirect.
+ * Why: Admin and dashboard pages check the session on the server as well as
+ * in the middleware, so a signed-out request always gets a sign-in redirect.
  * What: Renders each layout with Clerk `auth()` mocked as signed out, as
- * throwing (the error Clerk raises when the middleware did not run), and as
- * signed in. Asserts the sign-in redirect, its locale and a same-origin
+ * throwing, and as signed in. Asserts the sign-in redirect, its locale and a same-origin
  * `redirect_url`.
  * Test: `npx vitest run tests/unit/protected-page-guard.test.ts`.
  */
@@ -63,7 +61,7 @@ describe("admin and dashboard tree layouts", () => {
     expect(clerk.auth).toHaveBeenCalledTimes(1);
   });
 
-  it.each(LAYOUTS)("%s redirects to sign-in when auth() fails", async (tree, layout) => {
+  it.each(LAYOUTS)("%s redirects to sign-in when auth() throws", async (tree, layout) => {
     clerk.auth.mockRejectedValue(new Error("auth() was called but clerkMiddleware() was not detected"));
     await expect(render(layout, "en")).rejects.toThrow(
       `REDIRECT:/en/sign-in?redirect_url=%2Fen%2F${tree}`
