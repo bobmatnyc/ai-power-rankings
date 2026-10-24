@@ -5,7 +5,8 @@ import { memo, useCallback, useEffect, useMemo, useState, useTransition } from "
 import type { Locale } from "@/i18n/config";
 import { HomeContent } from "./home-content";
 import { NewsUpdateCard } from "@/components/news/news-update-card";
-import { formatUtcDate } from "@/lib/format-utc-date";
+import { selectMovers } from "@/lib/rankings/select-movers";
+import { HomeMovers, type MoversText } from "./home-movers";
 
 interface RankingData {
   rank: number;
@@ -34,16 +35,6 @@ interface RankingData {
   };
 }
 
-interface AlgorithmData {
-  version?: string;
-  name?: string;
-  date?: string;
-  weights?: {
-    newsImpact?: number;
-    baseScore?: number;
-  };
-}
-
 interface RecentTool {
   id: string;
   slug?: string;
@@ -61,23 +52,12 @@ interface ToolForStats {
   };
 }
 
-interface RankingsResponse {
-  rankings?: RankingData[];
-  algorithm?: AlgorithmData;
-  stats?: {
-    total_tools?: number;
-    tools_with_news?: number;
-    avg_news_boost?: number;
-    max_news_impact?: number;
-  };
-  _source?: string;
-  _timestamp?: string;
-}
-
 interface ClientRankingsProps {
   loadingText: string;
   lang: string;
   initialRankings?: RankingData[];
+  moversText: MoversText; // See #192
+  moversSnapshotDate?: string; // See #192: ISO date of the ranking snapshot
 }
 
 /**
@@ -93,12 +73,10 @@ const RankingCard = memo(
   ({
     tool,
     lang,
-    showRankChange = false,
     showScore = true,
   }: {
     tool: RankingData;
     lang: string;
-    showRankChange?: boolean;
     showScore?: boolean;
   }) => {
     return (
@@ -109,7 +87,7 @@ const RankingCard = memo(
       >
         <div className="absolute -top-2 -right-2 z-10">
           <span className="bg-accent border-0 shadow-lg text-accent-foreground px-2 py-1 rounded text-sm">
-            {showRankChange && tool.rankChange ? `+${tool.rankChange}` : `#${tool.rank}`}
+            #{tool.rank /* See #192: rank deltas moved to the movers strip */}
           </span>
         </div>
         <div className="h-full">
@@ -121,9 +99,6 @@ const RankingCard = memo(
             )}
             {tool.tool.description && (
               <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{tool.tool.description}</p>
-            )}
-            {showRankChange && tool.changeReason && (
-              <p className="mt-2 text-xs text-muted-foreground">{tool.changeReason}</p>
             )}
           </div>
         </div>
@@ -227,16 +202,21 @@ const StatsSection = memo(
 
 StatsSection.displayName = "StatsSection";
 
-function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRankingsProps) {
-  const [topRankings, setTopRankings] = useState<RankingData[]>(initialRankings);
-  const [trendingTools, setTrendingTools] = useState<RankingData[]>([]);
+function ClientRankings({
+  loadingText,
+  lang,
+  initialRankings = [],
+  moversText,
+  moversSnapshotDate,
+}: ClientRankingsProps) {
+  // See #192: the page reads the snapshot on the server; there is no client rankings fetch,
+  // so no rows (a failed read) render the empty state, never fallback rows.
+  const topRankings = useMemo(() => initialRankings.slice(0, 3), [initialRankings]);
   const [recentlyUpdated, setRecentlyUpdated] = useState<RankingData[]>([]);
   const [recentUpdatesLoading, setRecentUpdatesLoading] = useState(true);
-  const [loading, setLoading] = useState(initialRankings.length === 0);
   const [totalTools, setTotalTools] = useState(0);
   const [categoriesCount, setCategoriesCount] = useState(0);
   const [avgScore, setAvgScore] = useState(0);
-  const [lastUpdateDate, setLastUpdateDate] = useState<string>("");
 
   // Use transition API to mark updates as non-urgent
   const [, startTransition] = useTransition();
@@ -328,101 +308,6 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
     }
   }, []);
 
-  /**
-   * Process rankings data in chunks to avoid blocking the main thread.
-   *
-   * WHY: Processing 50+ ranking items synchronously blocks the main thread
-   * for 50-100ms, causing jank during initial render.
-   *
-   * DESIGN DECISION: Use requestIdleCallback to process data in chunks when
-   * the browser is idle, keeping each chunk under 5ms of processing time.
-   */
-  const processRankingsInChunks = useCallback((rankings: RankingData[]) => {
-    // Calculate statistics from rankings data
-    if (rankings && rankings.length > 0) {
-      // Total tools
-      const total = rankings.length;
-
-      // Unique categories
-      const uniqueCats = new Set(rankings.map((r) => r.tool.category).filter(Boolean));
-      const catsCount = uniqueCats.size;
-
-      // Average score
-      const avgScoreVal = rankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / rankings.length;
-
-      startTransition(() => {
-        setTotalTools(total);
-        setCategoriesCount(catsCount);
-        setAvgScore(avgScoreVal);
-      });
-    }
-
-    // Ensure this only runs on the client
-    if (typeof window === "undefined") {
-      // During SSR, just set the data directly without chunking
-      setTopRankings(rankings.slice(0, 3));
-      setTrendingTools(rankings.filter((r) => r.rankChange && r.rankChange > 0).slice(0, 3));
-      // Recently updated is now fetched separately from the API
-      setLoading(false);
-      return;
-    }
-
-    const CHUNK_SIZE = 10;
-    let currentIndex = 0;
-
-    const processChunk = (deadline: IdleDeadline) => {
-      // Process items while we have idle time (target 5ms chunks)
-      while (currentIndex < rankings.length && deadline.timeRemaining() > 5) {
-        const chunk = rankings.slice(currentIndex, currentIndex + CHUNK_SIZE);
-
-        if (currentIndex === 0) {
-          // First chunk: Set top rankings immediately for fast initial render
-          startTransition(() => {
-            setTopRankings(chunk.slice(0, 3));
-          });
-        }
-
-        // Process trending calculations
-        if (currentIndex < 30) {
-          const trendingUp = chunk.filter((r) => r.rankChange && r.rankChange > 0);
-
-          if (trendingUp.length > 0) {
-            startTransition(() => {
-              setTrendingTools((prev) => [...prev, ...trendingUp].slice(0, 3));
-            });
-          }
-        }
-
-        currentIndex += CHUNK_SIZE;
-      }
-
-      // Schedule next chunk if needed
-      if (currentIndex < rankings.length) {
-        requestIdleCallback(processChunk);
-      } else {
-        // Final updates
-        startTransition(() => {
-          setLoading(false);
-        });
-      }
-    };
-
-    // Start processing
-    if ("requestIdleCallback" in window) {
-      requestIdleCallback(processChunk);
-    } else {
-      // Fallback for browsers without requestIdleCallback
-      setTimeout(
-        () =>
-          processChunk({
-            timeRemaining: () => 50,
-            didTimeout: false,
-          } as IdleDeadline),
-        0
-      );
-    }
-  }, []);
-
   // Defer recent updates fetch for better initial performance
   // Wait 2 seconds after mount to fetch non-critical data
   useEffect(() => {
@@ -434,10 +319,8 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
   }, [fetchRecentUpdates]);
 
   useEffect(() => {
-    // Skip client-side fetch if we already have server-side data
+    // See #192: stats from the server rows; no client rankings fetch.
     if (initialRankings.length > 0) {
-      console.log("Using server-side rankings, skipping client fetch");
-      // Calculate stats from initial rankings
       const total = initialRankings.length;
       const uniqueCats = new Set(initialRankings.map((r) => r.tool.category).filter(Boolean));
       const avgScoreVal = initialRankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / initialRankings.length;
@@ -445,224 +328,23 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
       setTotalTools(total);
       setCategoriesCount(uniqueCats.size);
       setAvgScore(avgScoreVal);
-
-      // Defer tools statistics fetch for better initial performance
-      setTimeout(() => {
-        fetchToolsStatistics();
-      }, 1500);
-      return;
     }
 
-    async function fetchRankings() {
-      try {
-        console.log("Starting rankings fetch...");
-        // Mark the start of data fetching for performance tracking
-        performance.mark("rankings-fetch-start");
+    // Defer tools statistics fetch for better initial performance
+    const timer = setTimeout(() => {
+      fetchToolsStatistics();
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [fetchToolsStatistics, initialRankings]);
 
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // Increased timeout to 10s
-
-        // Fetch from API endpoint (database source)
-        const response = await fetch("/api/rankings", {
-          signal: controller.signal,
-          cache: "no-cache",
-          headers: {
-            "Cache-Control": "no-cache",
-            Pragma: "no-cache",
-          },
-        });
-
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          console.error(`Failed to fetch rankings: ${response.status} ${response.statusText}`);
-          throw new Error(`Failed to fetch rankings: ${response.status}`);
-        }
-
-        console.log("Successfully fetched rankings, parsing response...");
-
-        // Mark when data is received
-        performance.mark("rankings-fetch-end");
-
-        // Parse JSON in a non-blocking way
-        const text = await response.text();
-
-        // Use a worker-like pattern for JSON parsing if the data is large
-        if (text.length > 50000) {
-          // For large JSON, parse in chunks
-          const data = await new Promise<RankingsResponse>((resolve) => {
-            setTimeout(() => {
-              resolve(JSON.parse(text));
-            }, 0);
-          });
-
-          performance.mark("rankings-parse-end");
-          const rankings = (data.rankings || []) as RankingData[];
-
-          // Check if we got empty rankings from database, try fallback to public data
-          if (rankings.length === 0) {
-            console.log("No rankings from API, trying fallback to public data");
-            try {
-              const fallbackResponse = await fetch("/data/rankings.json");
-              if (fallbackResponse.ok) {
-                const fallbackData = await fallbackResponse.json();
-                if (fallbackData.rankings && fallbackData.rankings.length > 0) {
-                  console.log("Using fallback rankings from public/data");
-                  processRankingsInChunks(fallbackData.rankings);
-
-                  // Set date from fallback
-                  if (fallbackData.algorithm?.date) {
-                    const updateDate = new Date(fallbackData.algorithm.date);
-                    if (!Number.isNaN(updateDate.getTime())) {
-                      setLastUpdateDate(
-                        // #239: UTC, so the stored algorithm date names the same day in every zone.
-                        formatUtcDate(updateDate, "en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })
-                      );
-                    }
-                  }
-                  return;
-                }
-              }
-            } catch (fallbackError) {
-              console.warn("Failed to load fallback rankings:", fallbackError);
-            }
-          }
-
-          processRankingsInChunks(rankings);
-
-          // Update date immediately
-          const algorithm = data.algorithm;
-          if (algorithm?.date) {
-            const updateDate = new Date(algorithm.date);
-
-            // Check if date is valid
-            if (Number.isNaN(updateDate.getTime())) {
-              setLastUpdateDate("Daily");
-            } else {
-              setLastUpdateDate(
-                // #239: UTC, so the stored algorithm date names the same day in every zone.
-                formatUtcDate(updateDate, "en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              );
-            }
-          }
-        } else {
-          // For smaller JSON, parse directly
-          const data: RankingsResponse = JSON.parse(text);
-
-          // Check if we got empty rankings from database, try fallback to public data
-          if (!data.rankings || data.rankings.length === 0) {
-            console.log("No rankings from API, trying fallback to public data");
-            try {
-              const fallbackResponse = await fetch("/data/rankings.json");
-              if (fallbackResponse.ok) {
-                const fallbackData = await fallbackResponse.json();
-                if (fallbackData.rankings && fallbackData.rankings.length > 0) {
-                  console.log("Using fallback rankings from public/data");
-                  processRankingsInChunks(fallbackData.rankings);
-
-                  // Set date from fallback
-                  if (fallbackData.algorithm?.date) {
-                    const updateDate = new Date(fallbackData.algorithm.date);
-                    if (!Number.isNaN(updateDate.getTime())) {
-                      setLastUpdateDate(
-                        // #239: UTC, so the stored algorithm date names the same day in every zone.
-                        formatUtcDate(updateDate, "en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        })
-                      );
-                    }
-                  }
-                  return;
-                }
-              }
-            } catch (fallbackError) {
-              console.warn("Failed to load fallback rankings:", fallbackError);
-            }
-          }
-
-          processRankingsInChunks(data.rankings || []);
-
-          if (data.algorithm?.date) {
-            const updateDate = new Date(data.algorithm.date);
-
-            // Check if date is valid
-            if (Number.isNaN(updateDate.getTime())) {
-              setLastUpdateDate("Daily");
-            } else {
-              setLastUpdateDate(
-                // #239: UTC, so the stored algorithm date names the same day in every zone.
-                formatUtcDate(updateDate, "en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              );
-            }
-          }
-        }
-
-        // Measure and report performance
-        performance.measure(
-          "rankings-fetch-duration",
-          "rankings-fetch-start",
-          "rankings-fetch-end"
-        );
-
-        // Log performance metrics in development
-        if (process.env.NODE_ENV === "development") {
-          const measure = performance.getEntriesByName("rankings-fetch-duration")[0];
-          if (measure && "duration" in measure) {
-            console.log(`Rankings fetch took ${measure.duration.toFixed(2)}ms`);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch rankings", error);
-
-        // Enhanced error logging for debugging
-        if (error instanceof Error) {
-          console.error("Error name:", error.name);
-          console.error("Error message:", error.message);
-          if (error.name === "AbortError") {
-            console.error("Request timed out after 10 seconds");
-          }
-        }
-
-        // Set loading to false but also try to set some fallback data
-        setLoading(false);
-
-        // Try to set a minimal fallback to show something rather than nothing
-        setTotalTools(0);
-        setTopRankings([]);
-        setTrendingTools([]);
-        setRecentlyUpdated([]);
-      }
-    }
-
-    // Fetch rankings and tools statistics in parallel
-    fetchRankings();
-    fetchToolsStatistics();
-  }, [processRankingsInChunks, fetchToolsStatistics, initialRankings]);
-
-  // Memoize trending tools display to prevent re-computation
-  const trendingDisplay = useMemo(() => {
-    return trendingTools.length > 0 ? trendingTools : topRankings;
-  }, [trendingTools, topRankings]);
+  // See #192: the biggest risers and fallers across all ranks; no top-3 fallback.
+  const movers = useMemo(() => selectMovers(initialRankings), [initialRankings]);
 
   return (
     <>
       <HomeContent
         topRankings={topRankings}
-        loading={loading}
+        loading={false}
         loadingText={loadingText}
         lang={lang as Locale}
       />
@@ -674,38 +356,21 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
 
       {/* Optimized Stats Section */}
       <StatsSection
-        loading={loading}
+        loading={false}
         totalTools={totalTools}
         categoriesCount={categoriesCount}
         avgScore={avgScore}
-        lastUpdateDate={lastUpdateDate}
+        lastUpdateDate=""
       />
 
-      {/* Trending Section */}
-      <section className="px-3 md:px-6 py-12 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center">
-                <span>🔥</span>
-                <span className="ml-2">Trending Tools</span>
-              </h2>
-              <p className="text-muted-foreground">Tools gaining momentum this week</p>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-3 md:gap-6">
-            {trendingDisplay.map((tool) => (
-              <RankingCard
-                key={tool.tool.id}
-                tool={tool}
-                lang={lang as Locale}
-                showRankChange={trendingTools.length > 0}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* See #192: movers strip, rendered from the rows the server passed */}
+      <HomeMovers
+        up={movers.up}
+        down={movers.down}
+        lang={lang}
+        text={moversText}
+        snapshotDate={moversSnapshotDate}
+      />
 
       {/* Recently Updated Section */}
       <section className="px-3 md:px-6 py-12">
@@ -739,7 +404,6 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
                   key={tool.tool.id}
                   tool={tool}
                   lang={lang as Locale}
-                  showRankChange={false}
                   showScore={false}
                 />
               ))}

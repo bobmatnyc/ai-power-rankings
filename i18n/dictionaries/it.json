@@ -82,6 +82,14 @@
       "viewAll": "Visualizza tutti i trend",
       "viewAllButton": "Visualizza tutti i trend"
     },
+    "movers": {
+      "title": "Maggiori variazioni",
+      "sinceLastUpdate": "Dall'ultimo aggiornamento",
+      "sinceLastUpdateOn": "Dall'ultimo aggiornamento del {date}",
+      "up": "In salita",
+      "down": "In discesa",
+      "empty": "Nessuna variazione di posizione dall'ultimo aggiornamento."
+    },
     "recentlyUpdated": {
       "title": "Aggiornati di recente",
       "subtitle": "Ultimi aggiornamenti e nuove funzionalità dai migliori strumenti AI",

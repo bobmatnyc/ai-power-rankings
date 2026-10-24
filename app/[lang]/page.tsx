@@ -15,38 +15,12 @@ import { getAllKeywords } from "@/lib/metadata/static-keywords";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
+import { type CurrentRankingRow, loadCurrentRankings } from "@/lib/rankings/current-rankings";
 
 // Source homepage category counts from generated data so they never drift.
 const categoryCount = (id: string): number =>
   STATIC_CATEGORIES.find((c) => c.id === id)?.count ?? 0;
 
-
-interface RankingData {
-  rank: number;
-  previousRank?: number;
-  rankChange?: number;
-  changeReason?: string;
-  tool: {
-    id: string;
-    slug?: string;
-    name: string;
-    category: string;
-    status: string;
-    website_url?: string;
-    logo?: string;  // Local PNG path (preferred over favicon API)
-    description?: string;
-  };
-  scores: {
-    overall: number;
-    agentic_capability: number;
-    innovation: number;
-  };
-  metrics: {
-    users?: number;
-    monthly_arr?: number;
-    swe_bench_score?: number;
-  };
-}
 
 interface PageProps {
   params: Promise<{ lang: string }>;
@@ -67,7 +41,7 @@ const WhatsNewModalClient = NextDynamic(() => import("@/components/ui/whats-new-
 });
 
 // Enable ISR with 5-minute revalidation for optimal performance
-// Homepage provides static fallback data, so we can use ISR for edge caching
+// See #192: each revalidation re-reads the current rankings snapshot
 // With static categories, layout is now static and ISR works automatically
 export const revalidate = 300; // Revalidate every 5 minutes
 
@@ -145,6 +119,33 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
+/**
+ * The home page's rankings and snapshot date (#192).
+ *
+ * Why: the page showed a hardcoded top 3 with no rank changes, so the movers
+ * strip was always empty and the list went stale.
+ * What: reads the current snapshot through `loadCurrentRankings`, the function
+ * `/api/rankings` uses, and returns its rows with the snapshot's
+ * `published_at` (else `created_at`) as an ISO string. When the read throws or
+ * no snapshot is current, logs a warning and returns no rows, so the page
+ * renders its empty state.
+ * Test: `tests/unit/home-live-rankings-192.test.tsx`.
+ */
+async function readHomeRankings(): Promise<{ rankings: CurrentRankingRow[]; snapshotDate?: string }> {
+  try {
+    const current = await loadCurrentRankings();
+    if (!current) {
+      console.warn("[Page] Home: No current rankings snapshot; rendering the empty state");
+      return { rankings: [] };
+    }
+    const { snapshot, rankings } = current;
+    return { rankings, snapshotDate: (snapshot.published_at ?? snapshot.created_at).toISOString() };
+  } catch (error) {
+    console.warn("[Page] Home: Could not read current rankings; rendering the empty state:", error);
+    return { rankings: [] };
+  }
+}
+
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
   try {
     console.log("[Page] Home: Starting page render");
@@ -189,71 +190,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     // #153: JSON-LD names the production origin, never the VERCEL_URL host.
     const baseUrl = siteOrigin();
 
-    // Provide server-side fallback data to prevent loading state
-    // Updated with Algorithm v7.6 rankings (November 2025)
-    const serverRankings: RankingData[] = [
-      {
-        rank: 1,
-        tool: {
-          id: "2",
-          slug: "github-copilot",
-          name: "GitHub Copilot",
-          category: "ide-assistant",
-          status: "active",
-          website_url: "https://github.com/features/copilot",
-          description:
-            "AI pair programmer with autocomplete, chat, and autonomous coding agent capabilities. Can execute multi-step tasks, run terminal commands, and self-heal errors",
-        },
-        scores: {
-          overall: 68.2,
-          agentic_capability: 61.4,
-          innovation: 87.0,
-        },
-        metrics: {
-          swe_bench_score: 56,
-        },
-      },
-      {
-        rank: 2,
-        tool: {
-          id: "4",
-          slug: "claude-code",
-          name: "Claude Code",
-          category: "autonomous-agent",
-          status: "active",
-          website_url: "https://anthropic.com/claude-code",
-          description:
-            "Terminal-based coding agent with deep codebase understanding and multi-file editing",
-        },
-        scores: {
-          overall: 55.1,
-          agentic_capability: 49.6,
-          innovation: 90.0,
-        },
-        metrics: {
-          swe_bench_score: 80.2,
-        },
-      },
-      {
-        rank: 3,
-        tool: {
-          id: "cline",
-          slug: "cline",
-          name: "Cline",
-          category: "open-source-framework",
-          status: "active",
-          website_url: "https://cline.bot/",
-          description:
-            "Cline is a free, open-source autonomous coding agent for VS Code that leverages Claude Sonnet's agentic capabilities to handle complex software development tasks",
-        },
-        scores: {
-          overall: 55.0,
-          agentic_capability: 49.5,
-          innovation: 100.0,
-        },
-        metrics: {},
-      },
-    ];
+    // See #192: the current published snapshot, read as /api/rankings reads it.
+    const { rankings: serverRankings, snapshotDate } = await readHomeRankings();
 
     // Create structured data for SEO
     let structuredData = null;
@@ -350,6 +288,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
               loadingText={dict.common.loading}
               lang={lang as Locale}
               initialRankings={serverRankings}
+              moversText={dict.home.movers} // See #192
+              moversSnapshotDate={snapshotDate} // See #192: snapshot published_at
             />
           </div>
         </section>

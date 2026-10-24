@@ -119,6 +119,14 @@
       "viewAll": "すべてのトレンドを見る",
       "viewAllButton": "すべてのトレンドを見る"
     },
+    "movers": {
+      "title": "大きく順位が動いたツール",
+      "sinceLastUpdate": "前回の更新以降",
+      "sinceLastUpdateOn": "前回の更新（{date}）以降",
+      "up": "上昇",
+      "down": "下降",
+      "empty": "前回の更新以降、順位の変動はありません。"
+    },
     "recentlyUpdated": {
       "title": "最近の更新",
       "subtitle": "トップAIツールの最新アップデートと新機能",

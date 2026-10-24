@@ -82,6 +82,14 @@
       "viewAll": "Vidi sve što je u trendu",
       "viewAllButton": "Vidi sve što je u trendu"
     },
+    "movers": {
+      "title": "Najveće promjene",
+      "sinceLastUpdate": "Od posljednjeg ažuriranja",
+      "sinceLastUpdateOn": "Od posljednjeg ažuriranja {date}",
+      "up": "Rastu",
+      "down": "Padaju",
+      "empty": "Nema promjena poretka od posljednjeg ažuriranja."
+    },
     "recentlyUpdated": {
       "title": "Nedavno ažurirani",
       "subtitle": "Najnoviji updates i features od top AI alata",

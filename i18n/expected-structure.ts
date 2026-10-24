@@ -80,6 +80,15 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
       viewAll: "",
       viewAllButton: "",
     },
+    // See #192: the home movers strip.
+    movers: {
+      title: "",
+      sinceLastUpdate: "",
+      sinceLastUpdateOn: "",
+      up: "",
+      down: "",
+      empty: "",
+    },
     recentlyUpdated: {
       title: "",
       subtitle: "",

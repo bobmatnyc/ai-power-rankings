@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { cachedJsonResponse } from "@/lib/api-cache";
 import { getDb } from "@/lib/db/connection";
-import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
-import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
+import { loadCurrentRankings } from "@/lib/rankings/current-rankings";
 
 export async function GET(): Promise<NextResponse> {
   try {
@@ -31,12 +30,9 @@ export async function GET(): Promise<NextResponse> {
 
     loggers.api.debug("Getting rankings from database");
 
-    const toolsRepo = new ToolsRepository();
-
-    // Get current rankings from database
-    const currentRankings = await rankingsRepository.getCurrentRankings();
-
-    if (!currentRankings) {
+    // See #192: the home page reads the same snapshot rows through this function.
+    const current = await loadCurrentRankings();
+    if (!current) {
       loggers.api.warn("No current rankings found in database");
 
       // Return a proper empty response structure
@@ -63,113 +59,8 @@ export async function GET(): Promise<NextResponse> {
       );
     }
 
-    // Parse the JSONB data which contains the rankings array
-    const rankingsData = currentRankings.data;
-    let rankings = [];
-
-    // Handle different data structures that might be in the JSONB field
-    if (Array.isArray(rankingsData)) {
-      rankings = rankingsData;
-    } else if (rankingsData && typeof rankingsData === "object") {
-      if (rankingsData["rankings"] && Array.isArray(rankingsData["rankings"])) {
-        rankings = rankingsData["rankings"];
-      } else if (rankingsData["data"] && Array.isArray(rankingsData["data"])) {
-        rankings = rankingsData["data"];
-      }
-    }
-
-    // Transform to expected format with tool details
-    const formattedRankings = await Promise.all(
-      rankings.map(async (ranking: any) => {
-        // Try to find tool by ID or slug
-        let tool = null;
-
-        if (ranking["tool_id"]) {
-          tool = await toolsRepo.findById(ranking["tool_id"]);
-        }
-
-        if (!tool && ranking["tool_slug"]) {
-          tool = await toolsRepo.findBySlug(ranking["tool_slug"]);
-        }
-
-        if (!tool) {
-          loggers.api.warn("Tool not found for ranking", {
-            toolId: ranking["tool_id"],
-            toolSlug: ranking["tool_slug"],
-          });
-          return null;
-        }
-
-        // Parse tool info from database
-        const toolInfo = (tool.info || {}) as any;
-        const toolAsAny = tool as Record<string, any> | undefined;
-
-        // Extract logo and fix path if needed (database has /tools/ but files are in /tool-icons/)
-        let logoPath = toolAsAny?.logo_url || toolAsAny?.logo || toolInfo?.logo || null;
-        if (logoPath && logoPath.startsWith('/tools/')) {
-          logoPath = logoPath.replace('/tools/', '/tool-icons/');
-        }
-
-        return {
-          rank: ranking["rank"] || ranking["position"] || 1,
-          previousRank:
-            ranking["movement"]?.["previous_position"] || ranking["previous_rank"] || null,
-          rankChange: ranking["movement"]?.["change"] || ranking["rank_change"] || 0,
-          changeReason:
-            ranking["change_analysis"]?.["primary_reason"] || ranking["change_reason"] || "",
-          tool: {
-            id: tool.id,
-            slug: tool.slug,
-            name: tool.name,
-            category: tool.category,
-            status: tool.status,
-            website_url: toolInfo?.website || "",
-            logo: logoPath,
-            description: toolInfo?.description || "",
-          },
-          total_score: ranking["score"] || ranking["total_score"] || 0,
-          scores: {
-            overall: ranking["score"] || ranking["total_score"] || 0,
-            base_score: ranking["base_score"] || ranking["score"] || 0,
-            news_impact:
-              ranking["factor_scores"]?.["innovation"] || ranking["scores"]?.["news_impact"] || 0,
-            agentic_capability:
-              (ranking["factor_scores"]?.["agenticCapability"] ??
-                ranking["factor_scores"]?.["agentic_capability"] ??
-                ranking["scores"]?.["agentic_capability"] ??
-                50) / 10 || 5,
-            innovation:
-              (ranking["factor_scores"]?.["innovation"] ??
-                ranking["scores"]?.["innovation"] ??
-                50) / 10 || 5,
-          },
-          metrics: {
-            news_articles_count: ranking["metrics"]?.["news_articles_count"] || 0,
-            recent_funding_rounds: ranking["metrics"]?.["recent_funding_rounds"] || 0,
-            recent_product_launches: ranking["metrics"]?.["recent_product_launches"] || 0,
-            users:
-              ranking["metrics"]?.["users"] ||
-              (ranking["factor_scores"]?.["developerAdoption"] ??
-                ranking["factor_scores"]?.["developer_adoption"] ??
-                50) * 1000 ||
-              10000,
-            swe_bench_score:
-              ranking["metrics"]?.["swe_bench_score"] ||
-              toolInfo?.metrics?.swe_bench?.verified ||
-              toolInfo?.metrics?.swe_bench?.lite ||
-              toolInfo?.metrics?.swe_bench?.full ||
-              null,
-          },
-          tier: ranking["tier"] || "standard",
-        };
-      })
-    );
-
-    // Filter out null values (tools that weren't found)
-    const validRankings = formattedRankings.filter(Boolean);
-
-    // Sort by rank to ensure proper ordering
-    validRankings.sort((a, b) => (a?.rank || 999) - (b?.rank || 999));
+    // See #192: joined to tools and sorted by rank in lib/rankings/current-rankings.ts.
+    const { snapshot: currentRankings, rankings: validRankings } = current;
 
     // Calculate statistics
     const toolsWithNews = validRankings.filter(

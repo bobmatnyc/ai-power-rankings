@@ -82,6 +82,14 @@
       "viewAll": "View All Trending",
       "viewAllButton": "View All Trending"
     },
+    "movers": {
+      "title": "Biggest movers",
+      "sinceLastUpdate": "Since last update",
+      "sinceLastUpdateOn": "Since last update on {date}",
+      "up": "Moving up",
+      "down": "Moving down",
+      "empty": "No rank changes since the last update."
+    },
     "recentlyUpdated": {
       "title": "Recently Updated",
       "subtitle": "Latest updates and new features from top AI tools",
