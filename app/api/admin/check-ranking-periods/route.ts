@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
+import { snapshotRows } from "@/lib/rankings/snapshot-rows";
 
 export async function GET() {
   // Check admin authentication
@@ -22,7 +23,8 @@ export async function GET() {
 
     // Map periods with their data
     const periodData = allRankings.map((ranking) => {
-      const rankingsCount = ranking.data?.rankings?.length || 0;
+      // #256: count rows of bare-array (cron) and wrapped snapshots alike.
+      const rankingsCount = snapshotRows(ranking.data).length;
 
       return {
         period: ranking.period,
