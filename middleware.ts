@@ -1,7 +1,7 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { routeAccess } from "./lib/route-access";
+import { isApiPath, routeAccess } from "./lib/route-access";
 import { searchKeyRedirect } from "./lib/search-url-keys";
 
 // Quick Win #4: Only log in development to save 10-30ms TTFB in production
@@ -66,7 +66,8 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
     if (!userId) {
       // API callers get a 401 JSON body; a sign-in redirect is only useful to a browser.
       // Case-insensitive, matching the protected-route matcher in lib/route-access.ts.
-      if (pathname.toLowerCase().startsWith("/api/")) {
+      // #228: checks the raw and the once-decoded path, as routeAccess() does.
+      if (isApiPath(pathname)) {
         return NextResponse.json(
           { error: "Unauthorized", message: "Authentication required", code: "AUTH_REQUIRED" },
           { status: 401 }
@@ -109,5 +110,9 @@ export const config = {
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     // Always run for API routes
     '/(api|trpc)(.*)',
+    // Always run for the protected page trees; mirrors the page entries of
+    // PROTECTED_ROUTE_PATTERNS in lib/route-access.ts.
+    '/:locale/admin(.*)',
+    '/:locale/dashboard(.*)',
   ],
 };

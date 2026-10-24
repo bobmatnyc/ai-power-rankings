@@ -1,9 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/lib/db/connection";
 import { NewsRepository } from "@/lib/db/repositories/news";
-import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
-import { findToolByText } from "@/lib/tool-matcher";
+import { loadNewsToolCatalogueOrNull } from "@/lib/news-tool-catalogue";
+import { primaryArticleTool } from "@/lib/news-tool-resolver";
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
@@ -29,7 +29,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     loggers.api.debug("Getting news article by slug", { slug });
 
     const newsRepo = new NewsRepository();
-    const toolsRepo = new ToolsRepository();
 
     // Get the specific news article by slug
     const article = await newsRepo.getBySlug(slug);
@@ -47,33 +46,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     // Get tool mentions from database
     const toolMentions = article.toolMentions || [];
 
-    // Try to extract tool from title using the term mapping
-    const matchedSlug = findToolByText(article.title);
-    let matchingTool = null;
-
-    if (matchedSlug) {
-      matchingTool = await toolsRepo.findBySlug(matchedSlug);
-    }
-
-    // If no match in title, check tool_mentions
-    if (!matchingTool && toolMentions.length > 0) {
-      const firstToolMention = toolMentions[0];
-      // Tool mentions can be either strings or objects with a 'name' property
-      let toolName: string | undefined;
-
-      if (typeof firstToolMention === 'string') {
-        toolName = firstToolMention;
-      } else if (typeof firstToolMention === 'object' && firstToolMention !== null && 'name' in firstToolMention) {
-        toolName = (firstToolMention as any).name;
-      }
-
-      // Try to find tool by slug or name - ensure it's a valid string
-      if (toolName && typeof toolName === 'string' && toolName.trim()) {
-        matchingTool = await toolsRepo.findBySlug(
-          toolName.toLowerCase().replace(/\s+/g, "-")
-        );
-      }
-    }
+    // #109: the primary tool comes from the tool catalogue only (stored mention
+    // ids, then exact names, then whole-word title matches). A failed catalogue
+    // read is logged and leaves `tool` null; the article is still served.
+    const catalogue = await loadNewsToolCatalogueOrNull("/api/news/[slug]");
+    // See #109: the same primary-tool rule as /api/news and the tool page.
+    const matchingTool = catalogue ? primaryArticleTool(article, catalogue) : null;
 
     // Transform to the format expected by the frontend
     const transformedArticle = {

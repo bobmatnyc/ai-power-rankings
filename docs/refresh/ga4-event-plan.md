@@ -123,7 +123,7 @@ which matches the GA4 `scroll` event.
 | `query_length` | number | `6` |
 | `query_length_bucket` | `"1-3" \| "4-10" \| "11-30" \| "31+"` | `4-10` |
 | `result_count` | number | `1` |
-| `search_location` | `"rankings"` | |
+| `search_location` | `"rankings" \| "tool_not_found"` | `rankings` |
 
 Since #233 the term lives only in the search box on `/{lang}/rankings`
 (`components/ranking/rankings-grid.tsx`). The box has no `<form>` and no `name`,
@@ -143,6 +143,10 @@ never sends `view_search_results`.
 - The hook sends one `site_search` per settled term, 800 ms after typing stops
   (`SITE_SEARCH_DEBOUNCE_MS`), and nothing for an empty term.
 - The raw term is never sent.
+- #193: the search box on a tool 404 page (`/{lang}/tools/<unknown slug>`,
+  `app/[lang]/tools/[slug]/tool-not-found-search.tsx`) uses the same hook with
+  `search_location: "tool_not_found"`. It filters the active tools by name or
+  slug in client state; like the rankings box, it has no `<form>` and no `name`.
 
 ### page_type values
 

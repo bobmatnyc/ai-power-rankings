@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { generateToolMetadata } from "./metadata";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { ToolDetailClient } from "./tool-detail-client";
-import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { canonicalLocale } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
+import { findToolBySlug } from "@/lib/tools/tool-page-request";
+import { buildToolProfile } from "@/lib/tools/tool-profile";
+import { getToolProfileRankingData } from "@/lib/tools/tool-profile-data";
+import { newsForTool } from "@/lib/tools/tool-news";
+import { getToolNewsBySlug } from "@/lib/tools/tool-news-data";
+import { ToolProfileSections } from "@/components/tools/tool-profile-sections";
 import {
   generateToolSchema,
   generateToolReviewSchema,
@@ -32,7 +38,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ToolDetailPage({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang, slug } = await params;
-  const dict = await getDictionary(lang as Locale);
+  // #193: 404 only for a slug with no catalogue row; a row in any status renders
+  // as before, and a failed lookup throws (5xx) instead of becoming a 404 or a 200.
+  const tool = await findToolBySlug(slug);
+  if (!tool) notFound();
+
+  // #193: the server-rendered profile block. Its ranking read is cached and
+  // never rejects, so ranking data trouble shows fallback text, not a 5xx.
+  // #193: related news is the same kind of read: cached, shared, never rejects.
+  const [dict, rankingData, newsBySlug] = await Promise.all([
+    getDictionary(lang as Locale),
+    getToolProfileRankingData(),
+    getToolNewsBySlug(),
+  ]);
+  const profile = buildToolProfile(tool, rankingData);
+  const news = newsBySlug ? newsForTool(newsBySlug, tool.slug) : null;
 
   // Fetch tool data for schema markup
   let toolSchemaData: ToolSchemaData | null = null;
@@ -40,51 +60,46 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
   let breadcrumbSchema = null;
 
   try {
-    const toolsRepo = new ToolsRepository();
-    const tool = await toolsRepo.findBySlug(slug);
+    // #153: the shared production-origin rule.
+    const baseUrl = siteOrigin();
 
-    if (tool) {
-      // #153: the shared production-origin rule.
-      const baseUrl = siteOrigin();
+    // Parse JSON info if available
+    const jsonInfo = tool.json_info ? (typeof tool.json_info === 'string' ? JSON.parse(tool.json_info) : tool.json_info) : {};
 
-      // Parse JSON info if available
-      const jsonInfo = tool.json_info ? (typeof tool.json_info === 'string' ? JSON.parse(tool.json_info) : tool.json_info) : {};
+    // Prepare tool schema data
+    toolSchemaData = {
+      name: tool.name,
+      description: jsonInfo?.product?.tagline || jsonInfo?.product?.description || `${tool.name} - AI-powered coding tool`,
+      category: tool.category || "Developer Tools",
+      company: typeof jsonInfo?.company?.name === 'string' ? jsonInfo.company.name : undefined,
+      website: typeof jsonInfo?.links?.website === 'string' ? jsonInfo.links.website : (typeof jsonInfo?.website === 'string' ? jsonInfo.website : undefined),
+      pricing: typeof jsonInfo?.business?.pricing_model === 'string' ? jsonInfo.business.pricing_model : undefined,
+      logo: typeof tool.logo_url === 'string' ? tool.logo_url : undefined,
+      github: typeof jsonInfo?.links?.github === 'string' ? jsonInfo.links.github : undefined,
+      rank: typeof tool.current_rank === 'number' ? tool.current_rank : undefined,
+      score: typeof tool.current_score === 'number' ? tool.current_score : undefined,
+      ratingCount: 100, // Default rating count for schema
+    };
 
-      // Prepare tool schema data
-      toolSchemaData = {
-        name: tool.name,
-        description: jsonInfo?.product?.tagline || jsonInfo?.product?.description || `${tool.name} - AI-powered coding tool`,
-        category: tool.category || "Developer Tools",
-        company: typeof jsonInfo?.company?.name === 'string' ? jsonInfo.company.name : undefined,
-        website: typeof jsonInfo?.links?.website === 'string' ? jsonInfo.links.website : (typeof jsonInfo?.website === 'string' ? jsonInfo.website : undefined),
-        pricing: typeof jsonInfo?.business?.pricing_model === 'string' ? jsonInfo.business.pricing_model : undefined,
-        logo: typeof tool.logo_url === 'string' ? tool.logo_url : undefined,
-        github: typeof jsonInfo?.links?.github === 'string' ? jsonInfo.links.github : undefined,
-        rank: typeof tool.current_rank === 'number' ? tool.current_rank : undefined,
-        score: typeof tool.current_score === 'number' ? tool.current_score : undefined,
-        ratingCount: 100, // Default rating count for schema
-      };
+    // Generate schemas only if toolSchemaData is valid
+    if (toolSchemaData) {
+      toolReviewSchema = generateToolReviewSchema(toolSchemaData, baseUrl);
+    }
 
-      // Generate schemas only if toolSchemaData is valid
-      if (toolSchemaData) {
-        toolReviewSchema = generateToolReviewSchema(toolSchemaData, baseUrl);
-      }
+    breadcrumbSchema = generateBreadcrumbSchema(
+      [
+        { name: "Home", url: "/" },
+        // #156: an unknown segment renders English; name the /en URLs.
+        { name: "Tools", url: `/${canonicalLocale(lang)}/tools` },
+        { name: tool.name, url: `/${canonicalLocale(lang)}/tools/${slug}` },
+      ],
+      baseUrl
+    );
 
-      breadcrumbSchema = generateBreadcrumbSchema(
-        [
-          { name: "Home", url: "/" },
-          // #156: an unknown segment renders English; name the /en URLs.
-          { name: "Tools", url: `/${canonicalLocale(lang)}/tools` },
-          { name: tool.name, url: `/${canonicalLocale(lang)}/tools/${slug}` },
-        ],
-        baseUrl
-      );
-
-      // Add tool schema to head via script tag
-      if (typeof document !== 'undefined') {
-        // This runs on client-side only, but we want server-side for SEO
-        // So we'll return the scripts in the JSX below
-      }
+    // Add tool schema to head via script tag
+    if (typeof document !== 'undefined') {
+      // This runs on client-side only, but we want server-side for SEO
+      // So we'll return the scripts in the JSX below
     }
   } catch (error) {
     console.error("Error generating tool schema:", error);
@@ -118,7 +133,14 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
           )}
         </>
       )}
-      <ToolDetailClient slug={slug} lang={lang as Locale} dict={dict} />
+      <ToolDetailClient
+        slug={slug}
+        lang={lang as Locale}
+        dict={dict}
+        profile={
+          <ToolProfileSections name={tool.name} lang={canonicalLocale(lang)} profile={profile} news={news} />
+        }
+      />
     </>
   );
 }

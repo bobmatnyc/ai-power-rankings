@@ -3,7 +3,7 @@
  * Handles data access for AI tool rankings from PostgreSQL database
  */
 
-import { desc, eq, sql } from "drizzle-orm";
+import { desc, eq, lt, sql } from "drizzle-orm";
 import { getDb } from "../connection";
 import { type NewRanking, type Ranking, rankings } from "../schema";
 import { BaseRepository } from "./base.repository";
@@ -64,6 +64,28 @@ export class RankingsRepository extends BaseRepository<RankingData> {
       console.error("Error fetching rankings by period:", error);
       throw error;
     }
+  }
+
+  /**
+   * The latest ranking period strictly before `period`, or null when there is none.
+   *
+   * #193: the tool page's "change since last month" compares the current
+   * period with this one. Read-only; one row.
+   */
+  async getLatestBefore(period: string): Promise<RankingData | null> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection not available");
+    }
+
+    const result = await db
+      .select()
+      .from(rankings)
+      .where(lt(rankings.period, period))
+      .orderBy(desc(rankings.period))
+      .limit(1);
+
+    return result[0] ? this.mapToRankingData(result[0]) : null;
   }
 
   /**
@@ -167,14 +189,21 @@ export class RankingsRepository extends BaseRepository<RankingData> {
         await tx.update(rankings).set({ isCurrent: false });
 
         // Set the specified ranking as current
-        await tx
+        const promoted = await tx
           .update(rankings)
           .set({
             isCurrent: true,
             publishedAt: new Date(),
             updatedAt: new Date(),
           })
-          .where(eq(rankings.id, id));
+          .where(eq(rankings.id, id))
+          .returning();
+
+        // #93: an admin rebuild replaces a draft row (new id). If the id is gone,
+        // throw so the transaction rolls back the demotion above.
+        if (promoted.length === 0) {
+          throw new Error(`Ranking ${id} not found; current ranking left unchanged`);
+        }
       });
 
       return true;

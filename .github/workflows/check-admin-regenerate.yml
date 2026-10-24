@@ -1,0 +1,108 @@
+name: Check admin regenerate (read-only)
+
+# Why: #93 moves the admin ranking build and preview onto regenerateRankings() in
+# dry-run / draft mode. It may merge only when two diffs are 0 on real data:
+#   A. admin dry-run vs the scheduled publish path, same rows and clock;
+#   B. admin dry-run vs the stored current snapshot, replayed at its publish time.
+#
+# What: a manual dispatch that runs scripts/check-admin-regenerate.ts and writes its
+# report to the job summary. It writes nothing anywhere else:
+#   - The script sends two SELECTs, each inside a READ ONLY Postgres transaction;
+#     Postgres rejects any write there. Its persistence port throws on any write.
+#     It never calls the cron route, an admin route, set-current or a migration.
+#   - The existing repository database secret reaches the step only through `env:`,
+#     never through `run:` text, and is never printed.
+#   - Script errors are redacted (connection strings and the secret value).
+#   - No artifact is uploaded.
+#   - #93: the repository is public and a dry-run computes unpublished ranks, so
+#     the log and the summary carry counts and one PASS/FAIL line only: no tool
+#     name, slug, id, rank, score, tier or row. The script suppresses the console
+#     output of the code it runs and prints errors without their text.
+#
+# Dispatch-only on purpose: it must never run on a schedule, push or pull request.
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Diff A scoring clock as YYYY-MM-DD. Empty means now (UTC).'
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: admin dry-run diffs
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      # Fail closed: on a ref without the script (for example main before #93
+      # merges) this step exits non-zero before any install or database access.
+      - name: Require the check script
+        run: |
+          set -uo pipefail
+          for f in scripts/check-admin-regenerate.ts lib/ranking-snapshot-diff.ts lib/services/ranking-preview.service.ts; do
+            if ! test -f "$f"; then
+              echo "::error::$f is missing on this ref; dispatch with --ref set to the #93 branch"
+              exit 1
+            fi
+          done
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The dispatch input reaches the shell only through `env:` and is shape-checked.
+      - name: Validate inputs
+        env:
+          SCORING_DATE: ${{ inputs.date }}
+        run: |
+          set -uo pipefail
+          if [ -n "$SCORING_DATE" ] && [[ ! "$SCORING_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "::error::date must be YYYY-MM-DD or empty"
+            exit 1
+          fi
+
+      # stdout is the counts-only report (or `Result: ERROR`); a fixed error line goes
+      # to stderr. Exit 0: both diffs 0. Exit 3: any diff. Exit 1: an error.
+      # #93: the log and the summary get the script's report, or one fixed ERROR line.
+      # NODE_ENV=test keeps the app's connection module from loading dotenv files;
+      # LOG_LEVEL=silent turns the app logger off.
+      - name: Check (read-only)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SCORING_DATE: ${{ inputs.date }}
+          NODE_ENV: test
+          LOG_LEVEL: silent
+        run: |
+          set -uo pipefail
+          date_flag=()
+          if [ -n "$SCORING_DATE" ]; then
+            date_flag=("--date=${SCORING_DATE}")
+          fi
+          status=0
+          npx tsx scripts/check-admin-regenerate.ts "${date_flag[@]}" > report.txt || status=$?
+          # #93: the report (counts and PASS/FAIL only) also goes to the job log, which
+          # the API can read when the summary cannot be. Any other exit writes a fixed line.
+          if [ "$status" -eq 0 ] || [ "$status" -eq 3 ]; then
+            cat report.txt
+            cat report.txt >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Result: ERROR (exit ${status})"
+            echo "Result: ERROR (exit ${status})" >> "$GITHUB_STEP_SUMMARY"
+          fi
+          rm -f report.txt
+          exit "$status"
