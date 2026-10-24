@@ -596,7 +596,7 @@
   {
     "id": "unreleased-f7ecdfe65193",
     "version": "Unreleased",
-    "date": "2026-10-24T07:02:38.000Z",
+    "date": "2026-10-24T07:12:25.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "ingestion",
@@ -779,6 +779,17 @@
     "title": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside…",
     "description": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside SWE-bench (best scaffold+model row per tool via a hand-curated allowlist, tunable `TB_BLEND_WEIGHT` default 0.4, no factor-weight change); wired matched `terminal_bench` leaves into `data/historical-metrics/2026-06.json` with full provenance and a curated source capture at `data/historical-metrics/sources/terminal-bench-2.1.json`",
     "changeType": "feature"
+  },
+  {
+    "id": "unreleased-f9bec976c2e0",
+    "version": "Unreleased",
+    "date": "2026-10-24T07:53:44.000Z",
+    "dateSource": "commit",
+    "section": "Changed",
+    "scope": "db",
+    "title": "every timestamp column moves to timestamptz",
+    "description": "every timestamp column moves to `timestamptz`. All 42 `timestamp(...)` columns in `lib/db/schema.ts` and `lib/db/article-schema.ts` (14 tables) now declare `withTimezone: true`, and the hand-written migration `0015_timestamptz_utc.sql` converts them with `USING col AT TIME ZONE 'UTC'`, which keeps each stored instant whatever the session zone. The migration runs one guarded statement per table with a 5 s `lock_timeout`; a column converts only while the catalog reports `timestamp without time zone`, and a missing table, a missing column or an already-converted column is skipped with a NOTICE, so a second apply changes nothing. Defaults and index names survive. The type change rewrites each table under an exclusive lock. `scripts/apply-migrations.ts` refuses to apply 0015, before any statement runs, unless `lib/db/preflight/0015_timestamptz_utc.sql.report.json` holds an acknowledged read-only report measured on the same database; a missing, unreadable, unacknowledged or mismatched report exits 1. The dry run produces that report with SELECT and SHOW statements only, in a READ ONLY transaction: session `TimeZone`, role and database zone overrides, tables, timestamp column types, table sizes, and per-table row, non-null and infinity counts. The database is identified by a one-way hash of its host and name. After the apply the runner lists skipped columns and fails, without recording the file, when a present column kept its old type. The #103 UTC reader stays. The migration is not applied by this change. Tests: `tests/unit/timestamptz-237-schema.test.ts`, `tests/unit/timestamptz-237-preflight.test.ts`, `tests/unit/timestamptz-237-tz.test.ts` (#237)",
+    "changeType": "improvement"
   },
   {
     "id": "unreleased-4af96d002286",
