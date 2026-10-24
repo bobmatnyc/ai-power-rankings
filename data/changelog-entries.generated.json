@@ -594,6 +594,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-f7ecdfe65193",
+    "version": "Unreleased",
+    "date": "2026-10-24T07:02:30.694Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "ingestion",
+    "title": "the daily-news \"[AutomatedIngestion] Run summary\" line says why candidates were rejected, in counts only",
+    "description": "the daily-news \"[AutomatedIngestion] Run summary\" line says why candidates were rejected, in counts only. `rejectReasons` splits `rejected` into `below_both_thresholds`, `below_relevance_threshold`, `below_average_threshold`, `no_assessment` and `other`, and sums to `rejected`. `rejectScoreBuckets` counts each rejected candidate's average and relevance score as `meets`, `within_0.5`, `0.5_to_2`, `over_2` or `no_score` against the threshold, and `rejectThresholds` logs the threshold values (average 7.0, relevance 7). `assessmentFailedReasons` splits `assessmentFailed` into `unparseable`, `truncated`, `circuit_breaker` and `provider_error`, so a reply that does not parse is never counted as a rejection. The line carries no titles, URLs, article text or model output. The threshold, prompt, model and pass/fail decisions are unchanged. Tests: `tests/unit/ingestion-run-summary.test.ts`, `tests/unit/cron-daily-news-billing.test.ts` (#172)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-c6cdd8dbf3c2",
     "version": "Unreleased",
     "date": "2026-10-24T05:34:10.000Z",
@@ -618,8 +629,8 @@
   {
     "id": "unreleased-91941ba8a221",
     "version": "Unreleased",
-    "date": "2026-10-24T06:44:40.821Z",
-    "dateSource": "build",
+    "date": "2026-10-24T06:49:35.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "metrics",
     "title": "check-metrics-history.yml also runs on a schedule, at 06:00 UTC on the 2nd of each month, and checks that month's…",

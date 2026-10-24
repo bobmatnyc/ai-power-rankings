@@ -553,6 +553,76 @@ describe("GET /api/cron/daily-news — run summary log line (#172)", () => {
     expect(JSON.stringify(fields)).not.toMatch(/https?:|example\.org|reuters/i);
   });
 
+  // #172 (2026-10-24: 12 assessed, 12 rejected): the summary says WHY, in counts only,
+  // and the breakdown never changes which candidates pass.
+  it("breaks `rejected` down by reason and score bucket without changing the verdicts", async () => {
+    const scores: Record<string, [number, number, number] | "unparseable"> = {
+      pass: [9, 9, 9], // avg 9, relevance 9: ingested
+      edge: [7, 7, 7], // avg 7, relevance 7: exactly at both thresholds, ingested
+      rel: [9, 5, 9], // avg 7.67, relevance 5: below the relevance threshold only
+      avg: [6, 7, 6], // avg 6.33, relevance 7: below the average threshold only
+      near: [7, 7, 6], // avg 6.67: within 0.5 of the average threshold
+      both: [3, 2, 5], // avg 3.33, relevance 2: below both
+      bad: "unparseable", // no verdict: assessment_failed, never a rejection
+    };
+    const tags = Object.keys(scores);
+    mocks.tavilySearch.mockResolvedValue(tags.map((tag) => candidate(tag)));
+    mocks.openRouterGenerate.mockImplementation(async (request: { messages: { content: string }[] }) => {
+      const tag = tags.find((t) => request.messages.some((m) => m.content.includes(`Corvane${t} `)))!;
+      const verdict = scores[tag]!;
+      const content =
+        verdict === "unparseable"
+          ? '{"qualityScore": 8, "relevanceScore": 9, "reasoning": "Corvanebad leak'
+          : JSON.stringify({
+              qualityScore: verdict[0],
+              relevanceScore: verdict[1],
+              credibilityScore: verdict[2],
+              reasoning: `Model reasoning about Corvane${tag}`,
+              suggestedCategories: ["AI Assistants"],
+            });
+      return { content, metadata: { estimatedCost: 0.001 } };
+    });
+    let nextId = 0;
+    mocks.ingestArticle.mockImplementation(async () => ({ id: `article-${nextId++}` }));
+
+    const response = await GET(cronRequest());
+
+    // Verdicts: the same two candidates pass as before the breakdown existed.
+    expect(response.status).toBe(200);
+    const ingestedUrls = mocks.ingestArticle.mock.calls.map((call) => (call[0] as { input: string }).input);
+    expect(ingestedUrls.sort()).toEqual([candidate("edge").url, candidate("pass").url].sort());
+
+    const [, fields] = summaryCalls()[0]!;
+    expect(fields).toMatchObject({
+      assessed: 7,
+      passedQuality: 2,
+      rejected: 4,
+      assessmentFailed: 1,
+      added: 2,
+      rejectThresholds: { minimumAverageScore: 7, minimumRelevanceScore: 7 },
+      rejectReasons: {
+        below_both_thresholds: 1,
+        below_relevance_threshold: 1,
+        below_average_threshold: 2,
+        no_assessment: 0,
+        other: 0,
+      },
+      rejectScoreBuckets: {
+        average: { meets: 1, "within_0.5": 1, "0.5_to_2": 1, over_2: 1, no_score: 0 },
+        relevance: { meets: 2, "within_0.5": 0, "0.5_to_2": 1, over_2: 1, no_score: 0 },
+      },
+      assessmentFailedReasons: { unparseable: 1, truncated: 0, circuit_breaker: 0, provider_error: 0 },
+    });
+    const sum = (o: unknown) => Object.values(o as Record<string, number>).reduce((a, b) => a + b, 0);
+    expect(sum(fields["rejectReasons"])).toBe(fields["rejected"]);
+    expect(sum(fields["assessmentFailedReasons"])).toBe(fields["assessmentFailed"]);
+
+    // No title, URL, slug, article text or model output reaches the line.
+    expect(JSON.stringify(fields)).not.toMatch(
+      /Corvane|Pellith|Draxum|https?:|example\.org|story|reasoning|leak|Discovery fixture|sufficiency/i
+    );
+  });
+
   it.each([
     {
       tag: "u",
