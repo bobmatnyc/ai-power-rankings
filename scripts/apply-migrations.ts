@@ -22,6 +22,7 @@ import fs from "fs";
 import path from "path";
 import {
   checkPreflightReport,
+  conversionFailures,
   CONVERSION_STATEMENT,
   createReportSource,
   databaseFingerprint,
@@ -496,10 +497,13 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
       const [rows] = await deps.db.readOnlyQueries([CONVERSION_STATEMENT]);
       const summary = summarizeConversion(spec, rows ?? []);
       emit(`  converted ${summary.converted.length} column(s); skipped ${summary.skipped.length}: ${summary.skipped.join(", ") || "none"}`);
-      // #237: a column present with another type is a failure, never a skip.
-      const failed = [...summary.unconverted, ...summary.otherType];
-      if (failed.length > 0) {
-        emit(`\nERROR: ${file} left ${failed.length} column(s) unconverted: ${failed.join(", ")}`);
+      // #237: unconverted or other-type columns, a skip the acknowledged report did not
+      // measure, or zero conversions: fail without recording.
+      const report = acknowledged.get(file);
+      const failures = report ? conversionFailures(summary, report) : ["no acknowledged report held for the read-back"];
+      if (failures.length > 0) {
+        for (const failure of failures) emit(`\nERROR: ${file} ${failure}`);
+        emit(`  ${file} was not recorded in ${TRACKING_TABLE}.`);
         return { exitCode: 1, lines, appliedNow };
       }
     }

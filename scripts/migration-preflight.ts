@@ -419,6 +419,30 @@ export function summarizeConversion(spec: PreflightSpec, rows: Record<string, un
   return summary;
 }
 
+/**
+ * #237: why a finished apply must not be recorded, or [] when it may.
+ *
+ * Why: a skip is only acceptable when the acknowledged report already measured that table
+ *   or column as missing; anything else is a surprise the Architect never saw. An apply
+ *   that converted nothing did nothing, whatever the catalog says.
+ * What: fails on a present column still in the source type or in another type, on a
+ *   skipped `table.column` that the report's `missing` lists neither as itself nor as its
+ *   table, and on zero converted columns.
+ * Test: `conversionFailures` cases in tests/unit/timestamptz-237-preflight.test.ts.
+ */
+export function conversionFailures(summary: ConversionSummary, report: PreflightReport): string[] {
+  const failures: string[] = [];
+  const failed = [...summary.unconverted, ...summary.otherType];
+  if (failed.length > 0) failures.push(`left ${failed.length} column(s) unconverted: ${failed.join(", ")}`);
+  const measured = new Set(report.measurements.missing);
+  const unexpected = summary.skipped.filter((key) => !measured.has(key) && !measured.has(key.split(".")[0] as string));
+  if (unexpected.length > 0) {
+    failures.push(`skipped ${unexpected.length} column(s) the acknowledged report did not measure as missing: ${unexpected.join(", ")}`);
+  }
+  if (summary.converted.length === 0) failures.push("converted 0 columns");
+  return failures;
+}
+
 /** Catalog read for `summarizeConversion`. */
 export const CONVERSION_STATEMENT =
   "SELECT table_name, column_name, data_type FROM information_schema.columns WHERE table_schema = 'public'";
