@@ -159,6 +159,14 @@ Response body:
       "type": "news"
     }
   ],
+  "links": [
+    {
+      "slug": "string",
+      "name": "string",
+      "relation": "native",
+      "sourceUrl": "https://example.com/docs/models"
+    }
+  ],
   "_source": "database",
   "_timestamp": "2025-09-01T00:00:00.000Z"
 }
@@ -168,7 +176,19 @@ Response body:
 omitted (or `null` for `ranking`) when no matching data is found — none of
 the lookups are treated as fatal. Missing dimensions in `ranking.scores` are
 derived from the overall score the same way `/api/rankings/current` does
-(see `deriveCompleteScores` in the route file). Returns HTTP 404 if the slug
+(see `deriveCompleteScores` in the route file).
+
+`links` (#183) lists the tools linked through `tool_links`: for a harness, the
+models it runs; for a model, the harnesses that offer it. Native links come
+first, then by name. Only active tools of the right kind are listed
+(`lib/tools/tool-links.ts`, which calls the `tool-links.repository` reads).
+`relation` is `native` or `supports`. `sourceUrl` is an absolute http(s) URL or
+`null`; a stored URL of any other form is answered as `null`. A tool with no
+links, or one that is neither a harness nor a model, answers `links: []`. When
+the links read fails, `links` is omitted, the rest of the response is
+unchanged and the status stays 200; the route logs a warning with the error
+class and SQLSTATE only. `GET /api/tools` does not carry `links`, `kind` or
+`subcategory`. Returns HTTP 404 if the slug
 does not match a tool, HTTP 503 on a database outage, HTTP 500 on any other
 error.
 
