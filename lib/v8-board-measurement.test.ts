@@ -179,12 +179,32 @@ describe("measureBoard D45 gate (#185)", () => {
 
     const sheet = { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set([mover.slug]) };
     const result = measureBoard({ tools, published, baseline: v710, candidate: wrong, sheet, harnessFloor: fixtureFloor(tools) - 1 });
-    expect(result.sheet.retiredActive).toBe(1);
+    expect(result.sheet.retiredHarnessActive).toBe(1);
     expect(result.harness!.harnessTools).toBe(fixtureFloor(tools) - 1);
     expect(result.candidate!.harnessRankShift.n).toBe(fixtureFloor(tools) - 1);
     expect(result.candidate!.d45Breaches).toBe(0);
     expect(result.exitCode).toBe(EXIT_CODES.ok);
-    expect(formatMeasurementReport(result)).toContain("active tools retired in the kind sheet (left out of the harness list): 1");
+    expect(formatMeasurementReport(result)).toContain(
+      "active harness tools retired in the kind sheet (left out of the harness list): 1"
+    );
+  });
+
+  it("counts only retired HARNESS tools as left out of the harness list; a retired model tool does not inflate it", () => {
+    const tools = retiredMoverBoard();
+    const published = quietPublished(tools);
+    const harnessRetired = tools.find((t) => t.slug.endsWith("-r0"))!;
+    const modelRetired = tools.find((t) => t.kind === "model")!;
+    const sheet = {
+      slugs: new Set(tools.map((t) => t.slug)),
+      retiredSlugs: new Set([harnessRetired.slug, modelRetired.slug]),
+    };
+    const result = measureBoard({ tools, published, baseline: v710, candidate: v8, sheet, harnessFloor: fixtureFloor(tools) - 1 });
+    expect(result.sheet.retiredHarnessActive).toBe(1);
+    expect(result.sheet.retiredActiveAllKinds).toBe(2);
+    const report = formatMeasurementReport(result);
+    expect(report).toContain("active harness tools retired in the kind sheet (left out of the harness list): 1\n");
+    expect(report).not.toContain("(left out of the harness list): 2");
+    expect(report).toContain("active tools of any kind retired in the kind sheet (information): 2\n");
   });
 
   it("counts tools by kind", () => {

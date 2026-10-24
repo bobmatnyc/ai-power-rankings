@@ -76,8 +76,10 @@ export function kindSheetView(rows: readonly KindSheetRow[]): KindSheetView {
  */
 export interface SheetCoverage {
   notInSheetNames: string[];
-  /** Active tools the sheet marks retired; they are left out of the D45 harness list. */
-  retiredActive: number;
+  /** Active harness tools the sheet marks retired: the ones left out of the D45 harness list. */
+  retiredHarnessActive: number;
+  /** Information: active tools of any kind the sheet marks retired. */
+  retiredActiveAllKinds: number;
 }
 
 /** Header of the only report section that may carry tool names. */
@@ -504,7 +506,9 @@ export function measureBoard(input: MeasureInput): MeasurementResult {
   const { reproduction, reproduced, harness, candidate } = run.value;
   const sheet: SheetCoverage = {
     notInSheetNames: input.tools.filter((t) => !input.sheet.slugs.has(t.slug)).map((t) => t.name).sort(),
-    retiredActive: input.tools.filter((t) => input.sheet.retiredSlugs.has(t.slug)).length,
+    // #185: only harness rows leave the D45 list; other retired kinds are counted apart.
+    retiredHarnessActive: input.tools.filter((t) => t.kind === "harness" && input.sheet.retiredSlugs.has(t.slug)).length,
+    retiredActiveAllKinds: input.tools.filter((t) => input.sheet.retiredSlugs.has(t.slug)).length,
   };
   const exitCode = !reproduced
     ? EXIT_CODES.notReproduced
@@ -611,7 +615,8 @@ export function formatMeasurementReport(result: MeasurementResult): string {
   }
   lines.push(
     "",
-    `active tools retired in the kind sheet (left out of the harness list): ${result.sheet.retiredActive}`,
+    `active harness tools retired in the kind sheet (left out of the harness list): ${result.sheet.retiredHarnessActive}`,
+    `active tools of any kind retired in the kind sheet (information): ${result.sheet.retiredActiveAllKinds}`,
     `engine log lines suppressed: ${result.engineLogLinesSuppressed}`,
     "",
     // #185 (ruling 12:33Z): the one place a tool name may appear; names only, last.
