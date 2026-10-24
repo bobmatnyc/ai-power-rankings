@@ -594,10 +594,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-626a069208c9",
+    "version": "Unreleased",
+    "date": "2026-10-24T10:58:00.515Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "db",
+    "title": "migration 0017_backfill_tool_kind.sql sets the reviewed kind on every active tool",
+    "description": "migration `0017_backfill_tool_kind.sql` sets the reviewed kind on every active tool. The mapping sheet `docs/refresh/tool-kind-mapping.csv` is committed (114 rows: 69 harness, 15 model, 30 other; seven app builders including `flint`), `KIND_SHEET_CONTRACT` matches it, and `scripts/build-tool-kind-backfill.ts` generates 0017 from it. 0017 is one statement and writes `kind` and `subcategory` only: no `open_weight`, `status` or `updated_at` change, no retirement and no redirect (D38 option 1). It raises, writing nothing, when a sheet slug has no `tools` row or when the counts by kind over the sheet slugs differ from the sheet, and a re-run updates 0 rows. Tests: `tests/unit/tool-kind-backfill-0017-183.test.ts` (migrations 0000..0017 on PGlite), `tests/unit/tool-kind-sheet-183.test.ts` (#183)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-e279e3b65b90",
     "version": "Unreleased",
-    "date": "2026-10-24T10:37:32.478Z",
-    "dateSource": "build",
+    "date": "2026-10-24T10:48:50.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "db",
     "title": "a writer and two reads for model-to-harness links",
