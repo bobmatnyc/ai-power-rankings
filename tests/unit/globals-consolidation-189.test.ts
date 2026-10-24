@@ -19,7 +19,8 @@ import { describe, expect, it } from "vitest";
  * less the #190 D2-D4 and Df8 allowlist, and fails above the baseline or on
  * an empty scan; (3) caps the colour literals (`literalCap`) or every counted
  * use (`colourCap`) in each allowlisted file set that carries a cap, so an
- * exemption cannot grow unseen.
+ * exemption cannot grow unseen; (4) #193: every `not-found.tsx` under `app/[lang]/`
+ * has no inline `style` and no hard-coded colour.
  * Test: `npx vitest run tests/unit/globals-consolidation-189.test.ts`. No network.
  */
 
@@ -193,11 +194,7 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{
     colourCap: 4,
     reason: "Df8: the card's box-shadow rgba values, and #111827 / #374151 headings that only surface and border tokens hold.",
   },
-  {
-    path: /^app\/\[lang\]\/not-found\.tsx$/,
-    colourCap: 4,
-    reason: "Df8: the card's box-shadow rgba values, and #111827 / #374151 headings that only surface and border tokens hold.",
-  },
+  // #193: app/[lang]/not-found.tsx left this list; it now uses the design-system Card and tokens.
   // #190 Df8: the 55 E2a colours with no exact token (migration-190e2a.md
   // "Not migrated"), exempted per file and capped at the measured count.
   {
@@ -465,5 +462,24 @@ describe("hard-coded colour ratchet (#189)", () => {
     expect(total, "hard-coded colours in components/ and app/ (migrate to --ds-* tokens instead)").toBeLessThanOrEqual(
       HARDCODED_COLOUR_BASELINE,
     );
+  });
+});
+
+// #193: the locale not-found pages render through the design-system Card and
+// `--ds-*` classes; an inline `style` could bring back a colour the ratchet
+// cannot count (a named colour, a CSS variable).
+describe("locale not-found pages use design-system classes (#193)", () => {
+  const notFoundPages = walk(join(root, "app", "[lang]"), (p) => /(^|\/)not-found\.tsx$/.test(p));
+
+  it("finds the generic and the tool not-found pages", () => {
+    expect(notFoundPages).toEqual(
+      expect.arrayContaining(["app/[lang]/not-found.tsx", "app/[lang]/tools/[slug]/not-found.tsx"]),
+    );
+  });
+
+  it.each(notFoundPages.map((file) => [file]))("%s has no inline style and no hard-coded colour", (file) => {
+    const source = readFileSync(join(root, file), "utf8");
+    expect(stripComments(source)).not.toMatch(/\bstyle\s*=/);
+    expect(countHardcodedColours(source)).toBe(0);
   });
 });

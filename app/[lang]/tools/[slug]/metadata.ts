@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { Tool } from "@/types/database";
-import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
+import { findToolBySlug } from "@/lib/tools/tool-page-request";
 import { generateToolMetadata as generateMetadataFromTool } from "@/lib/seo/utils";
 
 interface ToolInfo {
@@ -12,13 +12,14 @@ interface ToolInfo {
 
 export async function generateToolMetadata(slug: string, lang: string): Promise<Metadata> {
   try {
-    const toolsRepo = new ToolsRepository();
-    const toolData = await toolsRepo.findBySlug(slug);
+    const toolData = await findToolBySlug(slug);
 
     if (!toolData) {
+      // #193: the page answers 404 for this slug; keep it out of the index.
       return {
         title: "Tool Not Found",
         description: "The requested tool could not be found.",
+        robots: { index: false, follow: true },
       };
     }
 

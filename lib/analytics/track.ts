@@ -59,7 +59,8 @@ export interface AnalyticsEventMap {
     query_length: number;
     query_length_bucket: QueryLengthBucket;
     result_count: number;
-    search_location: "rankings";
+    // #193: "tool_not_found" is the search box on a tool 404 page.
+    search_location: "rankings" | "tool_not_found";
   };
 }
 
