@@ -21,6 +21,7 @@ import {
   assertReadOnlySql,
   CATALOG_STATEMENTS,
   checkPreflightReport,
+  conversionFailures,
   countStatement,
   databaseFingerprint,
   type PreflightReport,
@@ -268,6 +269,67 @@ describe("#237 criterion 8: the apply of 0015 refuses on PGlite before any ALTER
     const result = await run(() => JSON.stringify(report()), APPLY, true, "SELECT 1");
     expect(result.exitCode).toBe(1);
     expect(result.output).toMatch(/left 42 column\(s\) unconverted/);
+    expect(result.recorded).toEqual([]);
+  });
+});
+
+// #237 (critic MEDIUM): the read-back fails, unrecorded, on a skip the acknowledged
+// report did not measure as missing, and on zero converted columns.
+describe("#237 the post-apply read-back holds the apply to the acknowledged report", () => {
+  async function applyOn(db: PGlite, missing: string[]) {
+    const mdb = pgliteMigrationDb(db);
+    const recorded: string[] = [];
+    mdb.recordApplied = async (file) => void recorded.push(file);
+    const raw = JSON.stringify(report({ measurements: { ...report().measurements, missing } }));
+    const result = await runMigrations(
+      {
+        db: mdb,
+        files: { list: () => [FILE], read: () => MIGRATION_SQL },
+        log: () => {},
+        preflight: { fingerprint: THIS_DB, reports: { read: () => raw } },
+      },
+      { dryRun: false, only: FILE, showColumns: null, force: false }
+    );
+    return { exitCode: result.exitCode, output: result.lines.join("\n"), recorded };
+  }
+
+  it("conversionFailures accepts a skip the report measured as a missing table", () => {
+    const summary = { converted: ["a.x"], skipped: ["t.c"], unconverted: [], otherType: [] };
+    expect(conversionFailures(summary, report({ measurements: { ...report().measurements, missing: ["t"] } }))).toEqual([]);
+    expect(conversionFailures(summary, report({ measurements: { ...report().measurements, missing: ["t.c"] } }))).toEqual([]);
+    expect(conversionFailures(summary, report())).toEqual([
+      "skipped 1 column(s) the acknowledged report did not measure as missing: t.c",
+    ]);
+    expect(conversionFailures({ ...summary, converted: [] }, report({ measurements: { ...report().measurements, missing: ["t"] } }))).toEqual([
+      "converted 0 columns",
+    ]);
+  });
+
+  it("fails and does not record when a table the report saw is gone at apply time", async () => {
+    const db = new PGlite();
+    await insertFixtureRows(db, await createNaiveFixture(db, { omitTable: "ranking_versions" }));
+    const result = await applyOn(db, []);
+    await db.close();
+    expect(result.exitCode).toBe(1);
+    expect(result.output).toContain("skipped 1 column(s) the acknowledged report did not measure as missing: ranking_versions.created_at");
+    expect(result.recorded).toEqual([]);
+  });
+
+  it("records when every skip was measured as missing in the report", async () => {
+    const db = new PGlite();
+    await insertFixtureRows(db, await createNaiveFixture(db, { omitTable: "ranking_versions" }));
+    const result = await applyOn(db, ["ranking_versions"]);
+    await db.close();
+    expect(result.exitCode, result.output).toBe(0);
+    expect(result.recorded).toEqual([FILE]);
+  });
+
+  it("fails and does not record when no column was converted", async () => {
+    const db = new PGlite();
+    const result = await applyOn(db, Object.keys(TIMESTAMPTZ_COLUMNS));
+    await db.close();
+    expect(result.exitCode).toBe(1);
+    expect(result.output).toContain(`${FILE} converted 0 columns`);
     expect(result.recorded).toEqual([]);
   });
 });
