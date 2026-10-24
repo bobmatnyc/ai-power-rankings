@@ -22,7 +22,12 @@ name: Publish rankings (manual)
 #
 # Exit codes of the publish step: 0 published v7.10; 1 any other outcome (no
 # response, timeout, 5xx); 2 HTTP 401 (secret mismatch); 3 HTTP 409 (a run is in
-# progress); 4 HTTP 200 with another algorithm version.
+# progress); 4 HTTP 200 with another algorithm version: the row WAS replaced, so do
+# not re-dispatch; report to the Architect.
+#
+# The origin is pinned: the publish step sends nothing unless PRODUCTION_BASE_URL
+# is https://aipowerranking.com or https://www.aipowerranking.com, and both curl
+# calls accept https only (`--proto '=https'`).
 #
 # Dispatch-only on purpose: it must never run on a schedule, push or pull request.
 
@@ -73,6 +78,11 @@ jobs:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           set -uo pipefail
+          # Fail closed on any other origin: the secret is never sent elsewhere.
+          if [[ ! "$PRODUCTION_BASE_URL" =~ ^https://(www\.)?aipowerranking\.com/?$ ]]; then
+            echo "::error::PRODUCTION_BASE_URL is not https://aipowerranking.com; nothing was sent"
+            exit 1
+          fi
           if [ -z "${CRON_SECRET:-}" ]; then
             echo "::error::CRON_SECRET is empty or not available to this run; nothing was published"
             exit 1
@@ -84,6 +94,7 @@ jobs:
           echo "GET ${target} (timeout ${PUBLISH_TIMEOUT_SECONDS}s, no retry)"
 
           http_status=$(printf 'Authorization: Bearer %s\n' "$CRON_SECRET" | curl -sS \
+            --proto '=https' \
             --max-time "${PUBLISH_TIMEOUT_SECONDS}" \
             --retry 0 \
             --header @- \
@@ -116,8 +127,9 @@ jobs:
                 summary "Result: published v7.10"
                 code=0
               else
-                echo "::error::unexpected algorithm version"
-                summary "Result: unexpected algorithm version"
+                msg="PUBLISHED with algorithm_version ${version}, not v7.10. The current row was replaced. Do not re-dispatch; report to Architect."
+                echo "::error::${msg}"
+                summary "Result: ${msg}"
                 code=4
               fi
               ;;
@@ -149,7 +161,7 @@ jobs:
           target="${PRODUCTION_BASE_URL%/}/api/rankings"
           body="${RUNNER_TEMP}/rankings-body.json"
           : > "$body"
-          http_status=$(curl -sS --max-time 60 --retry 0 -o "$body" -w '%{http_code}' "$target") || http_status='000'
+          http_status=$(curl -sS --proto '=https' --max-time 60 --retry 0 -o "$body" -w '%{http_code}' "$target") || http_status='000'
 
           summary() {
             echo "$1"
