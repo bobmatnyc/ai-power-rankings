@@ -350,6 +350,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
               loadingText={dict.common.loading}
               lang={lang as Locale}
               initialRankings={serverRankings}
+              moversText={dict.home.movers} // See #192
             />
           </div>
         </section>

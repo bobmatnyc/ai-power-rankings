@@ -6,6 +6,8 @@ import type { Locale } from "@/i18n/config";
 import { HomeContent } from "./home-content";
 import { NewsUpdateCard } from "@/components/news/news-update-card";
 import { formatUtcDate } from "@/lib/format-utc-date";
+import { selectMovers } from "@/lib/rankings/select-movers";
+import { HomeMovers, type MoversText } from "./home-movers";
 
 interface RankingData {
   rank: number;
@@ -78,6 +80,8 @@ interface ClientRankingsProps {
   loadingText: string;
   lang: string;
   initialRankings?: RankingData[];
+  moversText: MoversText; // See #192
+  moversSnapshotDate?: string; // See #192: ISO date of the ranking snapshot
 }
 
 /**
@@ -93,12 +97,10 @@ const RankingCard = memo(
   ({
     tool,
     lang,
-    showRankChange = false,
     showScore = true,
   }: {
     tool: RankingData;
     lang: string;
-    showRankChange?: boolean;
     showScore?: boolean;
   }) => {
     return (
@@ -109,7 +111,7 @@ const RankingCard = memo(
       >
         <div className="absolute -top-2 -right-2 z-10">
           <span className="bg-accent border-0 shadow-lg text-accent-foreground px-2 py-1 rounded text-sm">
-            {showRankChange && tool.rankChange ? `+${tool.rankChange}` : `#${tool.rank}`}
+            #{tool.rank /* See #192: rank deltas moved to the movers strip */}
           </span>
         </div>
         <div className="h-full">
@@ -121,9 +123,6 @@ const RankingCard = memo(
             )}
             {tool.tool.description && (
               <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{tool.tool.description}</p>
-            )}
-            {showRankChange && tool.changeReason && (
-              <p className="mt-2 text-xs text-muted-foreground">{tool.changeReason}</p>
             )}
           </div>
         </div>
@@ -227,9 +226,16 @@ const StatsSection = memo(
 
 StatsSection.displayName = "StatsSection";
 
-function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRankingsProps) {
+function ClientRankings({
+  loadingText,
+  lang,
+  initialRankings = [],
+  moversText,
+  moversSnapshotDate,
+}: ClientRankingsProps) {
   const [topRankings, setTopRankings] = useState<RankingData[]>(initialRankings);
-  const [trendingTools, setTrendingTools] = useState<RankingData[]>([]);
+  // See #192: every row, so the movers strip scans all ranks; the server render uses initialRankings.
+  const [rankingRows, setRankingRows] = useState<RankingData[]>(initialRankings);
   const [recentlyUpdated, setRecentlyUpdated] = useState<RankingData[]>([]);
   const [recentUpdatesLoading, setRecentUpdatesLoading] = useState(true);
   const [loading, setLoading] = useState(initialRankings.length === 0);
@@ -361,11 +367,16 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
     if (typeof window === "undefined") {
       // During SSR, just set the data directly without chunking
       setTopRankings(rankings.slice(0, 3));
-      setTrendingTools(rankings.filter((r) => r.rankChange && r.rankChange > 0).slice(0, 3));
+      setRankingRows(rankings); // See #192
       // Recently updated is now fetched separately from the API
       setLoading(false);
       return;
     }
+
+    // See #192: the movers strip reads every row; no trending pass in the chunk loop.
+    startTransition(() => {
+      setRankingRows(rankings);
+    });
 
     const CHUNK_SIZE = 10;
     let currentIndex = 0;
@@ -380,17 +391,6 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
           startTransition(() => {
             setTopRankings(chunk.slice(0, 3));
           });
-        }
-
-        // Process trending calculations
-        if (currentIndex < 30) {
-          const trendingUp = chunk.filter((r) => r.rankChange && r.rankChange > 0);
-
-          if (trendingUp.length > 0) {
-            startTransition(() => {
-              setTrendingTools((prev) => [...prev, ...trendingUp].slice(0, 3));
-            });
-          }
         }
 
         currentIndex += CHUNK_SIZE;
@@ -643,7 +643,7 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
         // Try to set a minimal fallback to show something rather than nothing
         setTotalTools(0);
         setTopRankings([]);
-        setTrendingTools([]);
+        setRankingRows([]); // See #192
         setRecentlyUpdated([]);
       }
     }
@@ -653,10 +653,8 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
     fetchToolsStatistics();
   }, [processRankingsInChunks, fetchToolsStatistics, initialRankings]);
 
-  // Memoize trending tools display to prevent re-computation
-  const trendingDisplay = useMemo(() => {
-    return trendingTools.length > 0 ? trendingTools : topRankings;
-  }, [trendingTools, topRankings]);
+  // See #192: the biggest risers and fallers across all ranks; no top-3 fallback.
+  const movers = useMemo(() => selectMovers(rankingRows), [rankingRows]);
 
   return (
     <>
@@ -681,31 +679,14 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
         lastUpdateDate={lastUpdateDate}
       />
 
-      {/* Trending Section */}
-      <section className="px-3 md:px-6 py-12 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-foreground mb-2 flex items-center">
-                <span>🔥</span>
-                <span className="ml-2">Trending Tools</span>
-              </h2>
-              <p className="text-muted-foreground">Tools gaining momentum this week</p>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-3 md:gap-6">
-            {trendingDisplay.map((tool) => (
-              <RankingCard
-                key={tool.tool.id}
-                tool={tool}
-                lang={lang as Locale}
-                showRankChange={trendingTools.length > 0}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* See #192: movers strip, rendered from the rows the server passed */}
+      <HomeMovers
+        up={movers.up}
+        down={movers.down}
+        lang={lang}
+        text={moversText}
+        snapshotDate={moversSnapshotDate}
+      />
 
       {/* Recently Updated Section */}
       <section className="px-3 md:px-6 py-12">
@@ -739,7 +720,6 @@ function ClientRankings({ loadingText, lang, initialRankings = [] }: ClientRanki
                   key={tool.tool.id}
                   tool={tool}
                   lang={lang as Locale}
-                  showRankChange={false}
                   showScore={false}
                 />
               ))}

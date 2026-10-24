@@ -82,6 +82,14 @@
       "viewAll": "모든 트렌딩 보기",
       "viewAllButton": "모든 트렌딩 보기"
     },
+    "movers": {
+      "title": "순위 변동 상위",
+      "sinceLastUpdate": "지난 업데이트 이후",
+      "sinceLastUpdateOn": "지난 업데이트({date}) 이후",
+      "up": "상승",
+      "down": "하락",
+      "empty": "지난 업데이트 이후 순위 변동이 없습니다."
+    },
     "recentlyUpdated": {
       "title": "최근 업데이트",
       "subtitle": "탑 AI 툴들의 최신 업데이트와 새로운 기능",

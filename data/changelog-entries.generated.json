@@ -110,10 +110,21 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-376989f18542",
+    "version": "Unreleased",
+    "date": "2026-10-24T02:26:05.265Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "home",
+    "title": "the home page movers strip lists the biggest rank changes",
+    "description": "the home page movers strip lists the biggest rank changes. The \"Trending Tools\" strip was filled in client effects only, read the first 30 ranks, took the first 3 risers in rank order, never listed a faller, and showed the top 3 tools under \"Tools gaining momentum this week\" when no tool moved. It is now \"Biggest movers\", labelled \"Since last update\" (with the snapshot date when one is given) instead of a week: up to 3 risers and 3 fallers, each with a signed delta, chosen from every rank by size of move, then better current rank, then name (`lib/rankings/select-movers.ts`). A row with no previous rank is not a mover. With no movers the strip shows one line and no tool names. It renders from the rows the server passes, so it is in the server HTML; the labels are new `home.movers` keys in every locale. `/rankings` and `/api/rankings` are unchanged. Tests: `lib/rankings/select-movers.test.ts`, `tests/unit/home-movers-192.test.tsx` (#192)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-55a0662feb4b",
     "version": "Unreleased",
-    "date": "2026-10-24T02:00:49.089Z",
-    "dateSource": "build",
+    "date": "2026-10-24T02:07:04.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "news",
     "title": "an article's primary tool follows mention relevance",

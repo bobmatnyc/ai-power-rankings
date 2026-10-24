@@ -82,6 +82,14 @@
       "viewAll": "Voir toutes les tendances",
       "viewAllButton": "Voir toutes les tendances"
     },
+    "movers": {
+      "title": "Plus fortes variations",
+      "sinceLastUpdate": "Depuis la dernière mise à jour",
+      "sinceLastUpdateOn": "Depuis la dernière mise à jour du {date}",
+      "up": "En hausse",
+      "down": "En baisse",
+      "empty": "Aucun changement de rang depuis la dernière mise à jour."
+    },
     "recentlyUpdated": {
       "title": "Récemment mis à jour",
       "subtitle": "Dernières mises à jour et nouvelles fonctionnalités des meilleurs outils IA",
