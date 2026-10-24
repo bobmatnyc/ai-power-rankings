@@ -6,11 +6,13 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   date,
   decimal,
   index,
   integer,
   jsonb,
+  numeric,
   pgTable,
   text,
   timestamp,
@@ -18,6 +20,10 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+
+/** #183: the four entity kinds a tool row can have (CHECK `tools_kind_check`). */
+export const TOOL_KINDS = ["model", "harness", "productivity", "other"] as const;
+export type ToolKind = (typeof TOOL_KINDS)[number];
 
 /**
  * Tools table - AI coding tools and assistants
@@ -34,7 +40,20 @@ export const tools = pgTable(
     // Core attributes as columns for efficient querying
     category: text("category").notNull(), // e.g., 'code-editor', 'autonomous-agent'
     status: text("status").notNull().default("active"), // 'active', 'inactive', 'deprecated'
-    companyId: text("company_id"),
+    companyId: text("company_id"), // #183: also the model vendor; no vendor_company_id column
+
+    // #183: entity kind and model fields (migration 0016). Nothing reads them until #186.
+    kind: text("kind", { enum: TOOL_KINDS }).notNull().default("harness"),
+    subcategory: text("subcategory"), // stored with underscores, e.g. 'app_builder' (Q-A4)
+    openWeight: boolean("open_weight"), // NULL = unknown or not a model
+    licence: text("licence"),
+    parametersB: numeric("parameters_b"),
+    activeParametersB: numeric("active_parameters_b"),
+    contextWindow: integer("context_window"),
+    priceInPerMtok: numeric("price_in_per_mtok"),
+    priceOutPerMtok: numeric("price_out_per_mtok"),
+    releaseDate: date("release_date", { mode: "string" }),
+    hfRepo: text("hf_repo"),
 
     // Scoring fields for baseline + delta tracking
     baselineScore: jsonb("baseline_score").default("{}"), // Stores baseline scores per factor
@@ -61,6 +80,13 @@ export const tools = pgTable(
     createdAtIdx: index("tools_created_at_idx").on(table.createdAt),
     // GIN index for JSONB queries
     dataIdx: index("tools_data_gin_idx").using("gin", table.data),
+    // #183: kind filters for the per-kind ranking lists
+    kindIdx: index("tools_kind_idx").on(table.kind),
+    kindSubcategoryIdx: index("tools_kind_subcategory_idx").on(table.kind, table.subcategory),
+    openWeightIdx: index("tools_open_weight_idx").on(table.openWeight).where(sql`kind = 'model'`),
+    kindCheck: check("tools_kind_check", sql`kind IN ('model', 'harness', 'productivity', 'other')`),
+    subcategoryCheck: check("tools_subcategory_check", sql`subcategory ~ '^[a-z0-9_]+$'`),
+    openWeightCheck: check("tools_open_weight_check", sql`open_weight IS NULL OR kind = 'model'`),
   })
 );
 
@@ -380,6 +406,42 @@ export const metricsCollectionRuns = pgTable(
   })
 );
 
+/**
+ * Model-harness links (#183, D29): one row says "this model runs in this harness".
+ *
+ * Why: the models and harness pages cross-link (B-2), and both directions are
+ *   many-to-many, so the relation needs its own table rather than a JSON list.
+ * What: `model_tool_id` must reference a `kind='model'` tool and `harness_tool_id` a
+ *   non-model tool. Postgres cannot CHECK that across tables and there is no trigger
+ *   (Q-A5): the writer (B-2) checks it, and `TOOL_LINK_KIND_VIOLATIONS_SQL` in
+ *   `lib/db/tool-links.ts` finds any row that breaks it. Deleting either tool deletes
+ *   the link. Unique per (model, harness) pair; no self-link.
+ * Test: `tests/unit/tool-kind-links-migration-183.test.ts` (parity with migration 0016),
+ *   `tests/unit/tool-kind-links-pglite-183.test.ts` (constraints on real Postgres).
+ */
+export const toolLinks = pgTable(
+  "tool_links",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    modelToolId: uuid("model_tool_id")
+      .notNull()
+      .references(() => tools.id, { onDelete: "cascade" }),
+    harnessToolId: uuid("harness_tool_id")
+      .notNull()
+      .references(() => tools.id, { onDelete: "cascade" }),
+    relation: text("relation", { enum: ["native", "supports"] }).notNull(),
+    sourceUrl: text("source_url"),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    modelHarnessIdx: uniqueIndex("tool_links_model_harness_idx").on(table.modelToolId, table.harnessToolId),
+    harnessIdx: index("tool_links_harness_idx").on(table.harnessToolId),
+    relationCheck: check("tool_links_relation_check", sql`relation IN ('native', 'supports')`),
+    noSelfLinkCheck: check("tool_links_no_self_link_check", sql`model_tool_id <> harness_tool_id`),
+  })
+);
+
 // Type exports for TypeScript
 export type Tool = typeof tools.$inferSelect;
 export type NewTool = typeof tools.$inferInsert;
@@ -397,6 +459,8 @@ export type StateOfAiSummary = typeof stateOfAiSummaries.$inferSelect;
 export type NewStateOfAiSummary = typeof stateOfAiSummaries.$inferInsert;
 export type AutomatedIngestionRun = typeof automatedIngestionRuns.$inferSelect;
 export type NewAutomatedIngestionRun = typeof automatedIngestionRuns.$inferInsert;
+export type ToolLink = typeof toolLinks.$inferSelect;
+export type NewToolLink = typeof toolLinks.$inferInsert;
 
 // Enum types for type safety
 export type AutomatedIngestionRunStatus = "running" | "completed" | "failed";
