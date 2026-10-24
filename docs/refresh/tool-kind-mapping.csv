@@ -1,0 +1,115 @@
+slug,kind,subcategory,open_weight,retired,survivor,confidence,note
+aider,harness,open_source_framework,,false,,normal,
+amazon-q-developer,harness,devops_assistant,,false,,normal,
+anthropic,other,company,,false,,normal,Company entity.
+anything,harness,open_source_framework,,false,,normal,AnythingLLM is a general LLM/RAG app; audit keeps it as harness. Weak fit.
+anything-max,harness,autonomous_agent,,false,,normal,
+augment-code,harness,ide_assistant,,false,,normal,
+aws,other,non_ai,,false,,normal,
+azure,other,non_ai,,false,,normal,
+baz,harness,code_review,,false,,normal,"Confidence: high. Baz Reviewer, an AI code review tool in the pull-request workflow (GitHub). baz.co redirects to baz.ai. Catalog holds no website or description; the catalog news item on an AI code review benchmark is linked to this slug."
+bolt-new,harness,app_builder,,false,,normal,
+builder-io-fusion,harness,,,false,,normal,
+bytedance-seedance-2-0,model,,false,true,seedance-2-0,normal,Retired duplicate; open_weight inherited from survivor seedance-2-0. Served as a BytePlus ModelArk API (model ID dreamina-seedance-2-0-260128). ByteDance-Seed HF org page shows no Seedance 2.0 repo (partial listing viewed). Video model.
+cerebras-code,harness,code_assistant,,false,,normal,
+chatgpt-canvas,harness,autonomous_agent,,false,,normal,Ambiguous (productivity by name). Kept harness per audit; subcategory from audit category autonomous_agent.
+clacky-ai,harness,,,false,,normal,
+claude-artifacts,harness,app_builder,,false,,normal,D2b: app builder ranked under harnesses. Ambiguous (productivity by name).
+claude-code,harness,autonomous_agent,,false,,normal,"Harness with native models opus-4-6, sonnet-4-5 (D29)."
+claude-desktop-extensions,harness,autonomous_agent,,false,,normal,Ambiguous (productivity by name). Kept harness per audit.
+clawdbot,harness,,,true,openclaw,normal,"Retired. Merge into openclaw confirmed 2026-10-24: earlier name of the same project (see openclaw row). B-series item openclaw-lineage-merge-and-description-fix (plan B-5): one data change: the merge of clawdbot and moltbot into openclaw, plus the description fix (project joined no acquirer; it moved to the OpenClaw Foundation). Plan record only."
+cline,harness,open_source_framework,,false,,normal,
+code-review-bench,other,benchmark,,false,,normal,
+coder-ai-maturity-self-assessment,other,non_ai,,false,,low,Low confidence in audit.
+coderabbit,harness,code_review,,false,,normal,
+continue-dev,harness,open_source_framework,,false,,normal,
+cowork,harness,,,false,,normal,Ambiguous (productivity by name). Kept harness per audit; subcategory unset (category other).
+cowork-ai,harness,,,true,cowork,normal,
+crossbeam,other,non_ai,,false,,normal,"Confidence: medium. CrossBeam, an AI building-permit plan-review app (California ADU permits), first place in Anthropic's Built with Opus 4.6 hackathon (claude.com blog). Built with Claude Code; it is not a coding tool. Repo is MIT. Catalog has no website: the match rests on the name and on the slug date (2026-03-05, after the hackathon coverage). Kind other/non_ai follows the perplexity and elevenlabs precedent (AI product, not a coding tool). Kind pending D3c."
+cursor,harness,code_editor,,false,,normal,"Harness that also sells models; no model profile exists, none invented."
+deepseek,model,,true,false,,normal,Entity covers DeepSeek family; retired R1 and V3.2 rows merge here. Model card: repo and weights under MIT. R1 card also MIT (https://huggingface.co/deepseek-ai/DeepSeek-R1).
+deepseek-r1,model,,true,true,deepseek,normal,Retired duplicate; open_weight inherited from survivor deepseek. Model card: repo and weights under MIT. R1 card also MIT (https://huggingface.co/deepseek-ai/DeepSeek-R1).
+deepseek-v3-2,model,,true,true,deepseek,normal,Retired duplicate; open_weight inherited from survivor deepseek. Model card: repo and weights under MIT. R1 card also MIT (https://huggingface.co/deepseek-ai/DeepSeek-R1).
+devin,harness,autonomous_agent,,false,,normal,
+devstral-small-2,model,,true,false,,normal,"Model card: Apache 2.0, 24B. (Devstral 2 123B is a separate model, not this row.)"
+dfinity-caffeine,harness,,,false,,normal,
+diffblue-cover,harness,testing_tool,,false,,normal,
+elevenlabs,other,non_ai,,false,,normal,
+epam-ai-run,harness,autonomous_agent,,false,,normal,
+epic,harness,code_assistant,,false,,normal,"Confidence: medium. EPIC by Reload: an architecture and memory layer for coding agents, shipped as a Cursor extension; it plans and keeps system context, the coding agent writes the code. Name also matches Epic Games and Epic Systems. Slug and reload were created in the same second (2026-02-22) from the Reload funding story, which is the basis for the match. D34 ruled (Bob): keep both as separate kinds; epic stays a ranked harness entry, no merge and no redirect between epic and reload."
+factory,harness,autonomous_agent,,false,,normal,"Confidence: high. Factory (factory.ai now redirects to factory.com): Droids, coding agents driven from CLI, desktop, web, Slack, Jira, Linear and CI; model-agnostic. Catalog news (Claude Code alternatives roundup) names Factory Missions. Same subcategory as devin."
+flint,harness,app_builder,,false,,normal,A86: Flint website builder (reference Oct 2025); Recursive Flint news item to be unlinked
+frontier,other,non_ai,,false,,normal,"A86 ruled by Bob 2026-10-24 (Architect brief 2026-10-24-apr-a86-flint-frontier-marble). OpenAI Frontier is an enterprise agent platform (launched 2026-02-05), not a coding tool: other/non_ai, out of the rankings. Architect brief 2026-10-24."
+gas-town,harness,open_source_framework,,false,,normal,"Confidence: high. Gas Town: open-source (MIT) multi-agent workspace manager and orchestrator for Claude Code, Copilot, Codex, Gemini and others; created by Steve Yegge, released 2026-01-01. Subcategory follows aider, cline and openhands (open source frameworks)."
+gemini-code-assist,harness,ide_assistant,,false,,normal,
+github-copilot,harness,ide_assistant,,false,,normal,"Harness that also sells models; no model profile exists, none invented."
+gitlab-duo,harness,,,false,,normal,
+gitlab-duo-agent-platform,harness,,,false,,normal,
+glm-5-0,model,,true,false,,normal,"Model card: license mit; 744B total, 40B active."
+google-gemini-cli,harness,open_source_framework,,false,,normal,
+google-jules,harness,autonomous_agent,,false,,normal,
+google-maps-ai-code-generation-agent,harness,,,false,,normal,
+goose,harness,code_assistant,,false,,normal,
+graphite,harness,code_review,,false,,normal,
+greptile,harness,,,false,,normal,
+grok,model,,false,false,,normal,"Family entity; open_weight depends on version. Recommended value false for the family row (current flagship). Open: Grok-1 (Apache-2.0) and Grok-2/2.5 (Grok 2 Community License, restricted: no training of other models, Powered by xAI attribution). Not open: Grok 4.x (grok-4.3 to 4.7, grok-4.20, grok-build-0.1) served by API only per docs.x.ai/docs/models. xai-org on Hugging Face lists only grok-1 and grok-2 (checked 2026-10-24); no Grok 3 weights found despite the Aug 2025 pledge. Same basis as opus-4-6: absence of published weights, not an explicit closed statement. Licence left blank (varies by version). Note: Grok-1 and Grok-2 are open-weight versions."
+harness,other,non_ai,,false,,low,"Harness.io (slug is a kind word). Match on slug only, never on name."
+harvey-ai,other,non_ai,,false,,normal,
+infosys-topaz,other,non_ai,,false,,normal,"Confidence: medium. Infosys describes Topaz Fabric as a purpose-built agentic services suite, a multi-layer AI fabric (Infosys press release; infosys.com returned 403, text read from a reposted copy). A services offering, not a coding tool; the catalog's own text says enterprise AI-first platform. Changed from harness/code_assistant. If the owner wants it ranked as a coding tool, revert to harness/code_assistant. Note other/non_ai rows are noindexed in #197. Kind pending D3c."
+jetbrains-ai,harness,ide_assistant,,false,,normal,
+junie,harness,ide_assistant,,false,,normal,"Confidence: high. Junie by JetBrains: coding agent in JetBrains IDEs, plus a CLI and GitHub/GitLab CI integrations; any model or BYOK. Same subcategory as jetbrains-ai."
+kilocode,harness,ide_assistant,,false,,normal,
+kimi-2-5,model,,true,false,,normal,"Model card: weights and code under Modified MIT; 1T total, 32B active. Modification clause text not read."
+kiro,harness,proprietary_ide,,false,,normal,
+launchdarkly,other,non_ai,,false,,normal,
+lovable,harness,app_builder,,false,,normal,
+marble,other,non_ai,,false,,low,"A86 ruled by Bob 2026-10-24 (Architect brief 2026-10-24-apr-a86-flint-frontier-marble). No coding-product reference found (candidates: World Labs Marble 3D world model, MarbleOS desktop agent, Marble LeetCode Tutor): removed from the rankings. The sheets have no convention for a removed entry with no survivor (every retired row names a survivor), so it is recorded as other/non_ai, not retired, with noindex in R2 like the other non_ai rows; Architect 2026-10-24: accepted. Architect brief 2026-10-24."
+microsoft-intellicode,harness,ide_assistant,,false,,normal,
+model-context-protocol,other,protocol,,false,,normal,"Protocol, not a tool. Audit tag keep. D30 ruled (Bob, Q-A8): the page stays public and indexable (R-2 keep), but appears in no ranking list. The sheet has no in-ranking column; kind other is already outside every ranking list."
+model-context-protocol-mcp-,other,protocol,,true,model-context-protocol,normal,
+moltbook,other,non_ai,,false,,normal,
+moltbot,harness,,,true,openclaw,normal,"Retired. Merge into openclaw confirmed 2026-10-24: earlier name of the same project (see openclaw row). B-series item openclaw-lineage-merge-and-description-fix (plan B-5): one data change: the merge of clawdbot and moltbot into openclaw, plus the description fix (project joined no acquirer; it moved to the OpenClaw Foundation). Plan record only."
+moonshot-kimi-2-5,model,,true,true,kimi-2-5,normal,"Retired duplicate; open_weight inherited from survivor kimi-2-5. Model card: weights and code under Modified MIT; 1T total, 32B active. Modification clause text not read."
+nano-banana-pro,model,,false,false,,normal,Image model. Noindex. Keep off coding-model list (Q-A6). Nano Banana Pro = gemini-3-pro-image; docs describe Gemini API and AI Studio access only. Image model.
+nova-act,other,non_ai,,false,,normal,"Confidence: medium. Amazon Nova Act: AWS service and Apache-2.0 Python SDK for agents that automate browser UI workflows. Identity is certain; the kind is a judgement, since it automates the browser, not coding. Changed from harness. Note other/non_ai rows are noindexed in #197. Kind pending D3c."
+openai-codex,harness,autonomous_agent,,false,,normal,Ambiguous: live description calls it an AI model (legacy Codex). Audit and plan keep it a harness; not merged with openai-codex-cli. No GPT model exists in the catalog to link.
+openai-codex-cli,harness,autonomous_agent,,false,,normal,"Harness. Sibling of openai-codex, kept separate per plan."
+openai-reinforcement-fine-tuning,other,non_ai,,false,,low,Low confidence in audit.
+openclaw,harness,autonomous_agent,,false,,normal,"Survivor of clawdbot and moltbot. Lineage confirmed 2026-10-24: one project renamed Clawd/Clawdbot (2025-11) to Moltbot (2026-01-27) to OpenClaw (2026-01-30); Anthropic asked for the first rename over trademark. Same repo and creator (Peter Steinberger); not forks. Steinberger joined OpenAI in Feb 2026; the project moved to the independent OpenClaw Foundation (not an acquisition). Moltbook (separate project, Matt Schlicht) is not part of the lineage. Sources: docs.openclaw.ai/start/lore, steipete.me/posts/2026/openclaw. B-series item openclaw-lineage-merge-and-description-fix (plan B-5): one data change: the merge of clawdbot and moltbot into openclaw, plus the description fix (project joined no acquirer; it moved to the OpenClaw Foundation). Plan record only."
+openhands,harness,open_source_framework,,false,,normal,
+openrouter,other,non_ai,,false,,low,Model router; low confidence. Not a coding tool.
+opus-4-5,model,,false,true,opus-4-6,normal,"Retired duplicate; open_weight inherited from survivor opus-4-6. Docs list Claude models as API and cloud-platform models; no weights offered. Absence of a weights page, not an explicit closed-weights statement."
+opus-4-6,model,,false,false,,normal,"Survivor of opus-4-5 (versioning: per version or one family needs owner confirmation). Docs list Claude models as API and cloud-platform models; no weights offered. Absence of a weights page, not an explicit closed-weights statement. D38: model lines become one family entity (claude-opus); per-version slugs 308 to the family. Pending B-5 family entity; not expressible until claude-opus exists in the sheet and audit."
+perplexity,other,non_ai,,false,,low,Ambiguous: audit non-ai (low). Earlier proposal said productivity; no productivity kind in the schema. Chose other/non_ai; Architect 2026-10-24: stays other/non_ai unless Bob raises it.
+qoder,harness,code_editor,,false,,normal,
+qodo-gen,harness,testing_tool,,false,,normal,
+qwen-code,harness,open_source_framework,,false,,normal,Ambiguous: live description says open-source LLM; the product is a CLI agent (repo QwenLM/qwen-code). Kept harness per audit.
+refact-ai,harness,autonomous_agent,,false,,normal,
+reload,other,non_ai,,false,,normal,"Confidence: medium. Reload: a workspace where teams of AI agents do routine work, with shared memory; its first product was EPIC (see epic). General agent platform, not a coding tool. D34 ruled (Bob): keep both as separate kinds; reload stays other/non_ai and noindex, no merge and no redirect between reload and epic."
+rentahuman,other,non_ai,,false,,normal,
+replit-agent,harness,ide_assistant,,false,,normal,
+rocket-new,harness,app_builder,,false,,normal,
+roocode,harness,ide_assistant,,false,,normal,
+seedance-2-0,model,,false,false,,normal,Video model. Noindex. Keep off coding-model list (Q-A6). Served as a BytePlus ModelArk API (model ID dreamina-seedance-2-0-260128). ByteDance-Seed HF org page shows no Seedance 2.0 repo (partial listing viewed). Video model.
+semrush,other,non_ai,,false,,normal,
+shell-tool,other,non_ai,,false,,normal,
+snowflake-cortex-code,harness,,,false,,normal,
+snyk-code,harness,security,,false,,normal,
+sonnet-4-5,model,,false,false,,normal,Same basis as opus-4-6. Sonnet 4.5 is not on the current overview page; model ID claude-sonnet-4-5 appears in https://code.claude.com/docs/en/model-config.
+sourcegraph-cody,harness,ide_assistant,,false,,normal,
+sourcery,harness,code_review,,false,,normal,
+split,other,non_ai,,false,,normal,
+statsig,other,non_ai,,false,,normal,
+stripe,other,non_ai,,false,,normal,
+supermaven,harness,autonomous_agent,,false,,normal,
+swe-bench,other,benchmark,,false,,normal,
+tabnine,harness,ide_assistant,,false,,normal,
+trae-ai,harness,ide_assistant,,false,,normal,
+twilio,other,non_ai,,false,,normal,
+unleash-featureops-platform,other,non_ai,,false,,normal,
+v0-vercel,harness,app_builder,,false,,normal,
+wabi,harness,app_builder,,false,,normal,
+warp,harness,autonomous_agent,,false,,normal,
+windsurf,harness,code_editor,,false,,normal,
+zed,harness,code_editor,,false,,normal,
+zhipu-glm-5-0,model,,true,true,glm-5-0,normal,"Retired duplicate; open_weight inherited from survivor glm-5-0. Model card: license mit; 744B total, 40B active."
