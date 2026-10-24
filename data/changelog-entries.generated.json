@@ -112,7 +112,7 @@
   {
     "id": "unreleased-267d4e6140d6",
     "version": "Unreleased",
-    "date": "2026-10-24T04:22:44.000Z",
+    "date": "2026-10-24T04:34:17.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "admin",
@@ -737,9 +737,20 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-4af96d002286",
+    "version": "Unreleased",
+    "date": "2026-10-24T05:03:01.065Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "rankings",
+    "title": "ranking algorithm v7.10",
+    "description": "ranking algorithm v7.10. For the double-nested tools, the engine now reads `technical` and `business` from both `data.*` and `data.info.*`, merged per key with the top-level value winning (the #100 rule). Before, those tools scored the base 40 on technical performance and missed their pricing and free-tier data in several factors. Only those two groups fold; `info.company` and the other `info.*` fields are unchanged (#241). Flat tools with well-formed data score exactly as in v7.9. v7.10 also reads technical leaves defensively: `language_support` and `llm_providers` count list items (an array by length, a comma-separated string by its non-empty items, anything else 0) instead of a string's characters, and a non-string `ide_integration` no longer throws and aborts the ranking run. Weights and factor formulas are otherwise unchanged. The version stamp moves from v7.9 to v7.10 in the engine, the stored snapshot version (`7.10`) and `config/algorithm-config.json`. `scripts/compare-ranking-versions.ts` prints a read-only per-tool table of v7.9 against v7.10 (old and new rank and score, movers first) from the active tools, or from a fixture file with `--fixtures=<path>`; it never writes. It exits non-zero when the source returns zero tools or `--date` names an impossible day, and prints the scoring date and tool count above the table. It reads the database with one SELECT inside a READ ONLY Postgres transaction, so any write fails, and redacts the connection string, host, and the user and password (encoded and decoded) from its errors. The manually dispatched `Compare ranking versions (read-only)` workflow runs it against the real database and writes the table to the job summary. v7.10 is not to be published until the owner reviews that table on real data. The #93 publish golden is re-recorded for v7.10, because its tools are double-nested and folding raises their scores; the v7.9 recording stays in `regenerate-publish.v7-9.golden.json`, and `{ foldInfoGroups: false }` must still reproduce it. Tests: `lib/ranking-algorithm-v76.info-paths.test.ts`, `lib/services/ranking-generation.golden.test.ts`, `lib/services/ranking-generation.golden-v79.test.ts`, `lib/ranking-version-compare.test.ts`, `lib/ranking-compare-db-source.test.ts`, `tests/unit/compare-ranking-versions-script-101.test.ts` (#101)",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-29ae78b906fa",
     "version": "Unreleased",
-    "date": "2026-10-24T03:41:12.000Z",
+    "date": "2026-10-24T04:07:36.000Z",
     "dateSource": "commit",
     "section": "Changed",
     "scope": "rankings",

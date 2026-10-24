@@ -1,7 +1,7 @@
 {
   "result": {
     "period": "2026-07",
-    "algorithmVersion": "7.9",
+    "algorithmVersion": "7.10",
     "toolCount": 7,
     "publishedAt": "2026-07-01T09:00:00.000Z",
     "topMovers": [
@@ -22,7 +22,7 @@
   "saveSnapshotCalls": [
     {
       "period": "2026-07",
-      "algorithmVersion": "7.9",
+      "algorithmVersion": "7.10",
       "publishedAt": "2026-07-01T09:00:00.000Z",
       "data": [
         {
@@ -30,18 +30,18 @@
           "tool_name": "Alpha Agent",
           "tool_slug": "alpha-agent",
           "rank": 1,
-          "score": 47.546,
+          "score": 57.01,
           "tier": "S",
           "factor_scores": {
-            "agenticCapability": 86.36363636363636,
+            "agenticCapability": 89.77272727272728,
             "innovation": 30,
-            "technicalPerformance": 40,
+            "technicalPerformance": 85,
             "developerAdoption": 34,
             "marketTraction": 47,
             "businessSentiment": 80,
             "developmentVelocity": 60,
             "platformResilience": 50,
-            "technicalCapability": 40,
+            "technicalCapability": 85,
             "communitySentiment": 80
           },
           "category": "autonomous-agent",
@@ -57,18 +57,18 @@
           "tool_name": "Bravo IDE",
           "tool_slug": "bravo-ide",
           "rank": 2,
-          "score": 36.034,
+          "score": 40.381,
           "tier": "S",
           "factor_scores": {
             "agenticCapability": 58.33333333333333,
             "innovation": 30,
-            "technicalPerformance": 40,
+            "technicalPerformance": 70,
             "developerAdoption": 32.239984532774756,
             "marketTraction": 16,
             "businessSentiment": 70,
             "developmentVelocity": 60,
             "platformResilience": 53,
-            "technicalCapability": 40,
+            "technicalCapability": 70,
             "communitySentiment": 70
           },
           "category": "ide-assistant",
@@ -84,7 +84,7 @@
           "tool_name": "Delta Builder",
           "tool_slug": "delta-builder",
           "rank": 3,
-          "score": 32.658,
+          "score": 33.973,
           "tier": "S",
           "factor_scores": {
             "agenticCapability": 52.5,

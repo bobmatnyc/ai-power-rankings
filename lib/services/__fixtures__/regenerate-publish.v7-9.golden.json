@@ -1,0 +1,220 @@
+{
+  "result": {
+    "period": "2026-07",
+    "algorithmVersion": "7.9",
+    "toolCount": 7,
+    "publishedAt": "2026-07-01T09:00:00.000Z",
+    "topMovers": [
+      {
+        "tool_name": "Charlie CLI",
+        "previous_position": 9,
+        "rank": 4,
+        "change": 5
+      },
+      {
+        "tool_name": "Golf Lite",
+        "previous_position": 12,
+        "rank": 7,
+        "change": 5
+      }
+    ]
+  },
+  "saveSnapshotCalls": [
+    {
+      "period": "2026-07",
+      "algorithmVersion": "7.9",
+      "publishedAt": "2026-07-01T09:00:00.000Z",
+      "data": [
+        {
+          "tool_id": "g1",
+          "tool_name": "Alpha Agent",
+          "tool_slug": "alpha-agent",
+          "rank": 1,
+          "score": 47.546,
+          "tier": "S",
+          "factor_scores": {
+            "agenticCapability": 86.36363636363636,
+            "innovation": 30,
+            "technicalPerformance": 40,
+            "developerAdoption": 34,
+            "marketTraction": 47,
+            "businessSentiment": 80,
+            "developmentVelocity": 60,
+            "platformResilience": 50,
+            "technicalCapability": 40,
+            "communitySentiment": 80
+          },
+          "category": "autonomous-agent",
+          "status": "active",
+          "movement": {
+            "previous_position": 2,
+            "change": 1,
+            "direction": "up"
+          }
+        },
+        {
+          "tool_id": "g2",
+          "tool_name": "Bravo IDE",
+          "tool_slug": "bravo-ide",
+          "rank": 2,
+          "score": 36.034,
+          "tier": "S",
+          "factor_scores": {
+            "agenticCapability": 58.33333333333333,
+            "innovation": 30,
+            "technicalPerformance": 40,
+            "developerAdoption": 32.239984532774756,
+            "marketTraction": 16,
+            "businessSentiment": 70,
+            "developmentVelocity": 60,
+            "platformResilience": 53,
+            "technicalCapability": 40,
+            "communitySentiment": 70
+          },
+          "category": "ide-assistant",
+          "status": "active",
+          "movement": {
+            "previous_position": 1,
+            "change": -1,
+            "direction": "down"
+          }
+        },
+        {
+          "tool_id": "g4",
+          "tool_name": "Delta Builder",
+          "tool_slug": "delta-builder",
+          "rank": 3,
+          "score": 32.658,
+          "tier": "S",
+          "factor_scores": {
+            "agenticCapability": 52.5,
+            "innovation": 30,
+            "technicalPerformance": 40,
+            "developerAdoption": 26.315172029168973,
+            "marketTraction": 23,
+            "businessSentiment": 70,
+            "developmentVelocity": 60,
+            "platformResilience": 53,
+            "technicalCapability": 40,
+            "communitySentiment": 70
+          },
+          "category": "app-builder",
+          "status": "active",
+          "movement": {
+            "previous_position": 4,
+            "change": 1,
+            "direction": "up"
+          }
+        },
+        {
+          "tool_id": "g3",
+          "tool_name": "Charlie CLI",
+          "tool_slug": "charlie-cli",
+          "rank": 4,
+          "score": 32.189,
+          "tier": "S",
+          "factor_scores": {
+            "agenticCapability": 50,
+            "innovation": 30,
+            "technicalPerformance": 40,
+            "developerAdoption": 25.25964818206296,
+            "marketTraction": 7,
+            "businessSentiment": 60,
+            "developmentVelocity": 60,
+            "platformResilience": 50,
+            "technicalCapability": 40,
+            "communitySentiment": 60
+          },
+          "category": "code-assistant",
+          "status": "active",
+          "movement": {
+            "previous_position": 9,
+            "change": 5,
+            "direction": "up"
+          }
+        },
+        {
+          "tool_id": "g6",
+          "tool_name": "Foxtrot Open",
+          "tool_slug": "foxtrot-open",
+          "rank": 5,
+          "score": 29.488,
+          "tier": "S",
+          "factor_scores": {
+            "agenticCapability": 54.166666666666664,
+            "innovation": 30,
+            "technicalPerformance": 40,
+            "developerAdoption": 5,
+            "marketTraction": 10,
+            "businessSentiment": 60,
+            "developmentVelocity": 60,
+            "platformResilience": 70,
+            "technicalCapability": 40,
+            "communitySentiment": 60
+          },
+          "category": "open-source-framework",
+          "status": "active",
+          "movement": {
+            "previous_position": 3,
+            "change": -2,
+            "direction": "down"
+          }
+        },
+        {
+          "tool_id": "g5",
+          "tool_name": "Echo Review",
+          "tool_slug": "echo-review",
+          "rank": 6,
+          "score": 27.407,
+          "tier": "A",
+          "factor_scores": {
+            "agenticCapability": 50,
+            "innovation": 30,
+            "technicalPerformance": 40,
+            "developerAdoption": 12.153382790366965,
+            "marketTraction": 0,
+            "businessSentiment": 60,
+            "developmentVelocity": 60,
+            "platformResilience": 50,
+            "technicalCapability": 40,
+            "communitySentiment": 60
+          },
+          "category": "code-review",
+          "status": "active",
+          "movement": {
+            "previous_position": null,
+            "change": 0,
+            "direction": "same"
+          }
+        },
+        {
+          "tool_id": "g7",
+          "tool_name": "Golf Lite",
+          "tool_slug": "golf-lite",
+          "rank": 7,
+          "score": 24.22,
+          "tier": "A",
+          "factor_scores": {
+            "agenticCapability": 50,
+            "innovation": 30,
+            "technicalPerformance": 40,
+            "developerAdoption": 0,
+            "marketTraction": 0,
+            "businessSentiment": 60,
+            "developmentVelocity": 60,
+            "platformResilience": 50,
+            "technicalCapability": 40,
+            "communitySentiment": 60
+          },
+          "category": "code-assistant",
+          "status": "active",
+          "movement": {
+            "previous_position": 12,
+            "change": 5,
+            "direction": "up"
+          }
+        }
+      ]
+    }
+  ]
+}

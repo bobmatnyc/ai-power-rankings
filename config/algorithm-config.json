@@ -1,7 +1,7 @@
 {
-  "version": "7.9",
+  "version": "7.10",
   "name": "Market-Validated Scoring",
-  "releaseDate": "2026-07-18",
+  "releaseDate": "unreleased",
   "description": "Market-validated scoring that combines real-world adoption metrics with technical capabilities for objective evaluations",
   "fullDescription": "Our ranking system combines real-world adoption metrics with technical capabilities to provide objective evaluations of AI coding tools. We prioritize measurable data over theoretical assessments.",
 
@@ -110,6 +110,16 @@
   },
 
   "changelog": {
+    "v7.10": {
+      "date": "unreleased",
+      "focus": "Technical and business data for double-nested tools",
+      "changes": [
+        "Double-nested tools: technical and business are read from both data.* and data.info.*, merged per key with the top-level value winning (#101)",
+        "Only technical and business fold; info.company and the other info fields are unchanged (#241)",
+        "Flat tools score exactly as in v7.9; factor weights and formulas unchanged",
+        "Publish only after the owner reviews the real-data v7.9 vs v7.10 table (scripts/compare-ranking-versions.ts)"
+      ]
+    },
     "v7.9": {
       "date": "2026-07-18",
       "focus": "Terminal-Bench benchmark signal",

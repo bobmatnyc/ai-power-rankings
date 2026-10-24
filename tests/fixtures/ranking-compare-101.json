@@ -1,0 +1,85 @@
+[
+  {
+    "id": "fx-flat-rich",
+    "name": "Flat Rich",
+    "slug": "flat-rich",
+    "category": "code-editor",
+    "status": "active",
+    "data": {
+      "description": "A flat tool with technical and pricing data at the top level.",
+      "technical": { "context_window": 128000, "llm_providers": ["openai"], "language_support": ["typescript", "python"] },
+      "business": { "pricing_model": "subscription", "base_price": 20 },
+      "metrics": { "users": 200000, "vscode": { "installs": 80000 } }
+    }
+  },
+  {
+    "id": "fx-nested-tech",
+    "name": "Nested Tech",
+    "slug": "nested-tech",
+    "category": "code-editor",
+    "status": "active",
+    "data": {
+      "description": "A double-nested tool whose technical data lives under info.",
+      "info": {
+        "description": "A double-nested tool whose technical data lives under info.",
+        "technical": {
+          "context_window": 1000000,
+          "llm_providers": ["anthropic", "openai", "google"],
+          "language_support": ["typescript", "python", "go", "rust", "java", "c++", "ruby", "php", "kotlin", "swift"],
+          "ide_integration": "VS Code, JetBrains",
+          "multi_file_support": true
+        },
+        "business": { "pricing_model": "freemium", "base_price": 20, "free_tier": true, "enterprise_pricing": true },
+        "metrics": { "users": 150000 }
+      },
+      "metrics": { "vscode": { "installs": 60000 } }
+    }
+  },
+  {
+    "id": "fx-flat-mid",
+    "name": "Flat Mid",
+    "slug": "flat-mid",
+    "category": "code-editor",
+    "status": "active",
+    "data": {
+      "description": "A flat tool with some adoption data.",
+      "metrics": { "users": 150000, "vscode": { "installs": 60000 } }
+    }
+  },
+  {
+    "id": "fx-nested-company",
+    "name": "Nested Company Object",
+    "slug": "nested-company",
+    "category": "autonomous-agent",
+    "status": "active",
+    "data": {
+      "description": "A double-nested tool with an object-valued info.company.",
+      "info": {
+        "company": { "name": "Acme AI" },
+        "technical": { "context_window": 200000, "llm_providers": ["anthropic"] },
+        "metrics": { "users": 20000 }
+      },
+      "metrics": {}
+    }
+  },
+  {
+    "id": "fx-nested-empty",
+    "name": "Nested Empty",
+    "slug": "nested-empty",
+    "category": "autonomous-agent",
+    "status": "active",
+    "data": {
+      "description": "A double-nested tool with empty technical and business groups.",
+      "info": { "technical": {}, "business": {}, "metrics": { "users": 25000 } },
+      "metrics": {}
+    }
+  },
+  {
+    "id": "fx-flat-bare",
+    "name": "Flat Bare",
+    "slug": "flat-bare",
+    "category": "other",
+    "status": "active",
+    "data": { "metrics": {} }
+  }
+]

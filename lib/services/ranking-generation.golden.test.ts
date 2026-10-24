@@ -11,8 +11,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  *   The summary and the inserted row must equal `regenerate-publish.golden.json`,
  *   recorded on the code before #93, and the SQL writes must be the same
  *   delete / demote / insert-as-current transaction.
+ *   #101: re-recorded for v7.10 with the same input and clock. The golden
+ *   tools reach the engine double-nested, so info-group folding changes their
+ *   scores. The v7.9 recording is kept in `regenerate-publish.v7-9.golden.json`
+ *   and `ranking-generation.golden-v79.test.ts` reproduces it.
  * Test: `npx vitest run lib/services/ranking-generation.golden.test.ts`.
- *   Passes on the code before #93 and after. A change to publish output fails it.
+ *   A change to publish output fails it.
  */
 
 const db = vi.hoisted(() => ({ client: null as unknown }));
