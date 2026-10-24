@@ -12,6 +12,8 @@ import { NextRequest } from "next/server";
  * What: over the in-memory Drizzle stand-in, one bare period and one wrapped
  *   period with the same rows go through every listed reader, PUT and
  *   sync-current, plus malformed data and the article ingestion rankings read.
+ *   set-current and create-period keep bare rows intact; PUT and sync-current
+ *   refuse (409) stored data with no readable rows, such as a numeric-key object.
  * Test: `npx vitest run tests/unit/admin-rankings-bare-array-256.test.ts`.
  */
 
@@ -261,5 +263,101 @@ describe("article ingestion reads the current bare row's rankings (#256)", () =>
       ["tool-a", "Tool A", 9.1],
       ["tool-b", "Tool B", 8.4],
     ]);
+  });
+});
+
+describe("set-current, copy, PUT and sync-current keep bare rows intact (#256)", () => {
+  // A bare array once spread into an object: no rows a reader can find.
+  const NUMERIC = { "0": ROWS[0], "1": ROWS[1] };
+  const hasNumericKeys = (value: object) => Object.keys(value).some((key) => /^\d+$/.test(key));
+  const row = (period: string) => fake.state.rankings.find((r) => r.period === period);
+  const post = async (payload: unknown) =>
+    json(
+      await postRankings(
+        req("/api/admin/rankings", {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: { "content-type": "application/json" },
+        })
+      )
+    );
+  const put = async (period: string, body: unknown) =>
+    json(
+      await putPeriod(
+        req(`/api/admin/rankings/${period}`, {
+          method: "PUT",
+          body: JSON.stringify(body),
+          headers: { "content-type": "application/json" },
+        }),
+        params(period)
+      )
+    );
+  const publicFile = () => {
+    const call = fsSpy.writeFileSync.mock.calls.find(([path]) => String(path).endsWith("rankings.json"));
+    expect(call).toBeDefined();
+    return JSON.parse(String(call![1]));
+  };
+
+  it("create-period copies a bare source's rows and keeps its algorithm_version", async () => {
+    const { status } = await post({ action: "create-period", period: "2026-10", copy_from: BARE });
+    expect(status).toBe(200);
+    const created = row("2026-10")!;
+    expect(created.algorithmVersion).toBe("7.9");
+    expect(created.data).toMatchObject({ rankings: ROWS, period: "2026-10" });
+    expect(hasNumericKeys(created.data as object)).toBe(false);
+
+    // A wrapped source keeps its rows and other fields.
+    await post({ action: "create-period", period: "2026-11", copy_from: WRAPPED });
+    expect(row("2026-11")!.data).toMatchObject({ rankings: ROWS, metadata: { note: "old" }, period: "2026-11" });
+  });
+
+  it("set-current writes a bare row to public/data/rankings.json as { rankings, is_current }", async () => {
+    const { status } = await post({ action: "set-current", period: BARE });
+    expect(status).toBe(200);
+    const file = publicFile();
+    expect(file).toMatchObject({ rankings: ROWS, is_current: true });
+    expect(hasNumericKeys(file)).toBe(false);
+  });
+
+  it("PUT with no `rankings` refuses unreadable stored data with 409 and writes nothing", async () => {
+    seed([
+      rankingRow({ period: "2026-01", data: NUMERIC }),
+      rankingRow({ period: BARE, data: ROWS }),
+      rankingRow({ period: "2026-02", data: [] }),
+    ]);
+
+    const refused = await put("2026-01", { metadata: { note: "edited" } });
+    expect(refused.status).toBe(409);
+    expect(row("2026-01")!.data).toEqual(NUMERIC);
+    expect(fake.state.writes).toEqual([]);
+
+    // A bare row keeps its rows; a genuinely empty row may still be updated.
+    expect((await put(BARE, { metadata: { note: "edited" } })).status).toBe(200);
+    expect(row(BARE)!.data).toMatchObject({ rankings: ROWS });
+    expect((await put("2026-02", { metadata: { note: "edited" } })).status).toBe(200);
+    expect(row("2026-02")!.data).toMatchObject({ rankings: [] });
+  });
+
+  it("sync-current refuses unreadable current or latest data with 409 and writes no file", async () => {
+    seed([rankingRow({ period: "2026-01", isCurrent: true, data: NUMERIC })]);
+    expect((await post({ action: "sync-current" })).status).toBe(409);
+
+    // With no current row the latest row is used, and is not made current.
+    seed([rankingRow({ period: "2026-01", data: NUMERIC })]);
+    expect((await post({ action: "sync-current" })).status).toBe(409);
+    expect(row("2026-01")!.isCurrent).toBe(false);
+
+    expect(fsSpy.writeFileSync).not.toHaveBeenCalled();
+    expect(cacheSpy.writeRankingsStaticCache).not.toHaveBeenCalled();
+
+    // A genuinely empty current row still syncs, and so does a bare one.
+    seed([rankingRow({ period: "2026-02", isCurrent: true, data: [] })]);
+    expect(await post({ action: "sync-current" })).toMatchObject({ status: 200, body: { rankings_count: 0 } });
+    expect(publicFile()).toMatchObject({ rankings: [], is_current: true });
+
+    vi.clearAllMocks();
+    seed([rankingRow({ period: BARE, isCurrent: true, data: ROWS })]);
+    expect(await post({ action: "sync-current" })).toMatchObject({ status: 200, body: { rankings_count: 2 } });
+    expect(publicFile()).toMatchObject({ rankings: ROWS, is_current: true });
   });
 });

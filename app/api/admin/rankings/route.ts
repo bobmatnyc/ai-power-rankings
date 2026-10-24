@@ -16,7 +16,7 @@ import { writeRankingsStaticCache } from "@/lib/cache/rankings-static-cache";
 import { type RankingData, RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
 // #256: readers and the static-file writer accept bare-array and wrapped snapshots.
-import { snapshotDocument } from "@/lib/rankings/snapshot-rows";
+import { isUnreadableSnapshot, snapshotDocument } from "@/lib/rankings/snapshot-rows";
 // #93: build and preview run the cron's pipeline in draft / dry-run mode (V6 retired).
 import {
   RANKING_ALGORITHM_VERSION,
@@ -39,6 +39,14 @@ function currentSnapshotDocument(row: RankingData): Record<string, unknown> {
       generated_at: (row.published_at ?? row.created_at).toISOString(),
     },
     { is_current: true }
+  );
+}
+
+/** 409 for a stored snapshot whose rows cannot be read; nothing is written (#256). */
+function unreadableSnapshot(period: string): NextResponse {
+  return NextResponse.json(
+    { error: `Stored rankings for period ${period} have no readable rows; nothing was written` },
+    { status: 409 }
   );
 }
 
@@ -291,19 +299,9 @@ export async function POST(request: NextRequest) {
         // Set as current
         await rankingsRepo.setAsCurrent(data.id);
 
-        // Update public rankings.json
+        // #256: write `{ rankings: [...] }`, never a bare array spread into numeric keys.
         const publicPath = join(process.cwd(), "public", "data", "rankings.json");
-        writeFileSync(
-          publicPath,
-          JSON.stringify(
-            {
-              ...data.data,
-              is_current: true,
-            },
-            null,
-            2
-          )
-        );
+        writeFileSync(publicPath, JSON.stringify(currentSnapshotDocument(data), null, 2));
 
         return NextResponse.json({
           success: true,
@@ -328,6 +326,7 @@ export async function POST(request: NextRequest) {
         }
 
         let rankingData: any;
+        let algorithmVersion = "v6.0";
         if (copy_from) {
           // Copy from existing period
           const sourceData = await rankingsRepo.getByPeriod(copy_from);
@@ -337,8 +336,10 @@ export async function POST(request: NextRequest) {
               { status: 404 }
             );
           }
+          // #256: copy the rows of either stored shape and keep the source's engine version.
+          algorithmVersion = sourceData.algorithm_version || algorithmVersion;
           rankingData = {
-            ...sourceData.data,
+            ...snapshotDocument(sourceData.data, { algorithm_version: sourceData.algorithm_version }),
             period,
             generated_at: new Date().toISOString(),
           };
@@ -354,7 +355,7 @@ export async function POST(request: NextRequest) {
 
         await rankingsRepo.create({
           period,
-          algorithm_version: rankingData.algorithm_version || "v6.0",
+          algorithm_version: algorithmVersion,
           is_current: false,
           data: rankingData,
         });
@@ -378,6 +379,8 @@ export async function POST(request: NextRequest) {
           if (allRankings.length > 0) {
             const latestRanking = allRankings[0];
             if (latestRanking) {
+              // #256: refuse data with no readable rows rather than publish [].
+              if (isUnreadableSnapshot(latestRanking.data)) return unreadableSnapshot(latestRanking.period);
               await rankingsRepo.setAsCurrent(latestRanking.id);
 
               // #256: write `{ rankings: [...] }`, never a bare array spread into numeric keys.
@@ -396,6 +399,9 @@ export async function POST(request: NextRequest) {
           }
           return NextResponse.json({ error: "No rankings data found" }, { status: 404 });
         }
+
+        // #256: refuse data with no readable rows rather than publish [].
+        if (isUnreadableSnapshot(currentData.data)) return unreadableSnapshot(currentData.period);
 
         // #256: write `{ rankings: [...] }`, never a bare array spread into numeric keys.
         const document = currentSnapshotDocument(currentData);

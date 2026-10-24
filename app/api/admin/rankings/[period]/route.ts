@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
-import { snapshotRows } from "@/lib/rankings/snapshot-rows";
+import { isUnreadableSnapshot, snapshotRows } from "@/lib/rankings/snapshot-rows";
 
 type Params = {
   params: Promise<{
@@ -82,6 +82,14 @@ export async function PUT(request: NextRequest, { params }: Params) {
     const existing = await rankingsRepo.getByPeriod(period);
 
     if (existing) {
+      // #256: never replace stored data whose rows cannot be read with [].
+      if (body.rankings == null && isUnreadableSnapshot(existing.data)) {
+        return NextResponse.json(
+          { error: "Stored rankings have no readable rows; send `rankings` to replace them" },
+          { status: 409 }
+        );
+      }
+
       // Update existing rankings
       await rankingsRepo.update(existing.id, {
         algorithm_version: body.algorithm_version || existing.algorithm_version,

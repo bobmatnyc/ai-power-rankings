@@ -29,6 +29,19 @@ export function snapshotRows(data: unknown): SnapshotRow[] {
 }
 
 /**
+ * True when stored data is present but `snapshotRows()` cannot read rows from it,
+ * e.g. a numeric-key object. A genuinely empty `[]`, `{ rankings: [] }` or
+ * `{ data: [] }` is readable. Writers refuse such data rather than replace it with [] (#256).
+ */
+export function isUnreadableSnapshot(data: unknown): boolean {
+  if (data == null || snapshotRows(data).length > 0) return false;
+  if (Array.isArray(data)) return data.length > 0;
+  if (!isPlainObject(data)) return true;
+  const rows = Array.isArray(data["rankings"]) ? data["rankings"] : data["data"];
+  return !(Array.isArray(rows) && rows.length === 0);
+}
+
+/**
  * The snapshot as one `{ rankings: [...] }` object, plus `extra` fields.
  * A wrapped snapshot keeps its other fields; a bare array gets `fallback` fields.
  */
