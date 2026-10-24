@@ -657,5 +657,8 @@
     "missing": [],
     "other_type": []
   },
-  "acknowledged": null
+  "acknowledged": {
+    "by": "Architect (for Bob, #237 plan)",
+    "at": "2026-10-24T08:56:15.000Z"
+  }
 }
