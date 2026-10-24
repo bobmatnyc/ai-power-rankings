@@ -56,18 +56,35 @@ export const D45_MAX_HARNESS_SHIFT = 2;
 /** A recomputed score further than this from the published one is a mismatch. */
 export const SCORE_TOLERANCE = 0.001;
 /**
- * #185: the D45 gate refuses a harness list shorter than this. The reviewed
- * 0017 kind sheet has 69 harness rows; a shorter list means the board changed
- * since that review (or the kinds are wrong) and must be looked at before
- * D45 can be cleared on it.
+ * #185: the D45 gate refuses a harness list shorter than this. It is the count
+ * of non-retired harness rows in `docs/refresh/tool-kind-mapping.csv`: 69
+ * harness rows minus 3 retired = 66 (Architect ruling 12:16Z). A shorter list
+ * means the board changed since that review, or the kinds are wrong, and must
+ * be looked at before D45 can be cleared on it. Tools outside the sheet, which
+ * keep the column default `harness`, are not counted: the floor is a minimum,
+ * so they can only add to the list. Retiring or adding a harness tool means
+ * updating the sheet and this floor together.
  */
-export const HARNESS_FLOOR = 69;
+export const HARNESS_FLOOR = 66;
 /** `tools.kind` values the D45 gate accepts (CHECK `tools_kind_check`). */
 export const KNOWN_KINDS: readonly string[] = TOOL_KINDS;
 
 export const EXIT_CODES = { ok: 0, error: 1, refused: 2, d45Breach: 3, notReproduced: 4, harnessCheck: 5 } as const;
 
 const REPRODUCED_FIELDS = ["score", "factor_scores"] as const;
+
+/**
+ * #185: a published rank that differs from the recomputed one inside an
+ * equal-score block. D19: it names no tool, slug, id or score, only which
+ * block (1 = the highest-ranked tied block), its size, and the tool's
+ * position inside it (1-based) as published and as recomputed.
+ */
+export interface TieSwap {
+  block: number;
+  blockSize: number;
+  publishedPosition: number;
+  recomputedPosition: number;
+}
 
 export interface Reproduction {
   publishedVersion: string;
@@ -83,6 +100,8 @@ export interface Reproduction {
   rankDiffs: number;
   /** Information: published rank differs but stays inside the tool's equal-score block. */
   ordinalDiffsInsideTies: number;
+  /** #185: one anonymous entry per tie swap counted in `ordinalDiffsInsideTies`. */
+  tieSwaps: TieSwap[];
   /** #185: published rows beyond the first for a `tool_id` (a Map would hide them). */
   duplicatePublishedIds: number;
   /** #185: published rows sharing a rank with a row of a different score. */
@@ -260,6 +279,22 @@ function checkReproduction(input: MeasureInput, recomputed: RankingEntry[]): Rep
     const rank = pub.ranks.get(id)!;
     return mine.get(id) === pub.scores.get(id) && rank >= block.first && rank <= block.last;
   };
+  // #185: number the tied blocks from the top, so each swap is logged by block, not by tool.
+  const tiedFirsts = [...new Set([...blocks.values()].filter((b) => b.last > b.first).map((b) => b.first))].sort(
+    (a, b) => a - b
+  );
+  const tieSwaps: TieSwap[] = moved
+    .filter(insideBlock)
+    .map((id) => {
+      const { first, last } = blocks.get(id)!;
+      return {
+        block: tiedFirsts.indexOf(first) + 1,
+        blockSize: last - first + 1,
+        publishedPosition: pub.ranks.get(id)! - first + 1,
+        recomputedPosition: myRanks.get(id)! - first + 1,
+      };
+    })
+    .sort((a, b) => a.block - b.block || a.publishedPosition - b.publishedPosition);
 
   return {
     publishedVersion: published.algorithmVersion,
@@ -272,7 +307,8 @@ function checkReproduction(input: MeasureInput, recomputed: RankingEntry[]): Rep
     scoreOverTolerance: absDiffs.filter((d) => d > SCORE_TOLERANCE).length,
     maxAbsScoreDiff: round3(absDiffs.reduce((a, b) => Math.max(a, b), 0)),
     rankDiffs: moved.filter((id) => !insideBlock(id)).length,
-    ordinalDiffsInsideTies: moved.filter(insideBlock).length,
+    ordinalDiffsInsideTies: tieSwaps.length,
+    tieSwaps,
     ...publishedDuplicates(published.rows),
   };
 }
@@ -468,6 +504,11 @@ export function formatMeasurementReport(result: MeasurementResult): string {
     `only recomputed: ${r.onlyRecomputed}; only published: ${r.onlyPublished}`,
     `score or factor differences: ${r.scoreOrFactorDiffs}; score off by > ${SCORE_TOLERANCE}: ${r.scoreOverTolerance}; max abs score difference ${r.maxAbsScoreDiff.toFixed(3)}`,
     `rank differences: ${r.rankDiffs}; rank differences inside equal-score blocks (information): ${r.ordinalDiffsInsideTies}`,
+    // #185: each counted tie swap, anonymous (block, size, positions inside the block).
+    ...r.tieSwaps.map(
+      (s) =>
+        `  tie swap: block ${s.block} (size ${s.blockSize}), published position ${s.publishedPosition}, recomputed position ${s.recomputedPosition}`
+    ),
     `duplicate published tool ids: ${r.duplicatePublishedIds}; duplicate published ranks across different scores: ${r.duplicatePublishedRanksOutsideTies}`,
     `reproduced: ${result.reproduced ? "yes" : "NO"}`,
   ];
