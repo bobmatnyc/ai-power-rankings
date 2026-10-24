@@ -7,6 +7,13 @@ import {
   scoreTerminalBenchContribution,
   scoreUsersContribution,
 } from "./ranking-metric-curves";
+import {
+  canonicalizeInfoGroups,
+  countLeafItems,
+  legacyLeafLength,
+  namesProprietaryIde,
+  type InfoPathOptions,
+} from "./ranking-info-paths";
 
 /**
  * Single source of truth for the ranking algorithm version.
@@ -28,10 +35,18 @@ import {
  * (AGENTIC_BONUS_HEADROOM_SCALE) so a strong benchmark blend is never re-capped
  * away. Factor WEIGHTS are unchanged; this only reshapes the agentic base.
  *
+ * Bumped v7.9 → v7.10 (#101): normalizeInput() also folds the `technical` and
+ * `business` groups of double-nested tools (`data.info.*`) into the top-level
+ * path the factors read, top-level winning per key (see canonicalizeInfoGroups
+ * in ./ranking-info-paths). Weights and factor formulas are unchanged.
+ * v7.10 also counts `language_support` / `llm_providers` by list item, not by
+ * string length, and never throws on a malformed technical leaf (#101).
+ *
  * NOTE: existing v76 content slugs (e.g. `algorithm-v76-november-2025-rankings`)
  * are historical references and intentionally keep their v7.6 naming.
  */
-export const ALGORITHM_VERSION = "v7.9";
+// #101: technical/business info-path fold changes scores, so the version moves.
+export const ALGORITHM_VERSION = "v7.10";
 
 /**
  * Blend weight for Terminal-Bench when BOTH benchmarks are present on a tool.
@@ -512,7 +527,9 @@ export function canonicalizeMetricPaths(
 export class RankingEngineV76 {
   constructor(
     private weights: RankingWeightsV76 = ALGORITHM_V76_WEIGHTS,
-    private calibration: AgenticCalibration = {}
+    private calibration: AgenticCalibration = {},
+    // #101: `{ foldInfoGroups: false }` reproduces v7.9 for the compare script.
+    private infoPaths: InfoPathOptions = {}
   ) {}
 
   /**
@@ -522,10 +539,11 @@ export class RankingEngineV76 {
    * through `getData()` (developer adoption, market traction) — resolves the
    * same logical field to the same single value.
    *
-   * Only the metrics subtree is canonicalized. Non-metric info fields
-   * (features, description, technical, business, …) keep their existing
-   * per-group resolution exactly, so this fix cannot move scores for any tool
-   * whose metric paths already agreed (all 80 flat tools score identically).
+   * v7.10 (#101): for double-nested tools the `technical` and `business`
+   * groups are canonicalized the same way (top-level wins per key), and the
+   * merged object is written to both `info.X` and `info.info.X`. No other
+   * non-metric field (features, description, company, …) is folded (#241).
+   * Flat tools have one path only, so their scores cannot change.
    *
    * Does not mutate the input (or the underlying tool.data).
    */
@@ -543,11 +561,18 @@ export class RankingEngineV76 {
 
     const canonical = canonicalizeMetricPaths(topMetrics, nestedMetrics);
 
+    // #101: fold info.technical / info.business into the path the factors read.
+    const groups =
+      hasDoubleNesting && this.infoPaths.foldInfoGroups !== false
+        ? canonicalizeInfoGroups(outer, nestedInfo)
+        : {};
+
     const normalizedOuter: Record<string, unknown> = hasDoubleNesting
       ? {
           ...outer,
+          ...groups,
           metrics: canonical,
-          info: { ...(nestedInfo ?? {}), metrics: canonical },
+          info: { ...(nestedInfo ?? {}), ...groups, metrics: canonical },
         }
       : { ...outer, metrics: canonical };
 
@@ -556,6 +581,17 @@ export class RankingEngineV76 {
       info: normalizedOuter,
       metrics: canonical,
     } as ToolMetricsV76;
+  }
+
+  /**
+   * Item count of a list-style technical leaf.
+   *
+   * #101: v7.10 counts list items (`countLeafItems`), so a comma-separated
+   * string scores its items, not its characters. `{ foldInfoGroups: false }`
+   * keeps the v7.9 `.length` read so the compare baseline stays exact.
+   */
+  private countListLeaf(value: unknown): number {
+    return this.infoPaths.foldInfoGroups === false ? legacyLeafLength(value) : countLeafItems(value);
   }
 
   /**
@@ -754,7 +790,8 @@ export class RankingEngineV76 {
     }
 
     // Language support
-    const languageCount = metrics.info?.technical?.language_support?.length || 0;
+    // #101: folded leaves may be strings or non-lists; count without throwing.
+    const languageCount = this.countListLeaf(metrics.info?.technical?.language_support);
     if (languageCount >= 20) {
       score = Math.min(100, score + 15);
     } else if (languageCount >= 10) {
@@ -764,7 +801,8 @@ export class RankingEngineV76 {
     }
 
     // LLM provider diversity
-    const llmProviders = metrics.info?.technical?.llm_providers?.length || 0;
+    // #101: folded leaves may be strings or non-lists; count without throwing.
+    const llmProviders = this.countListLeaf(metrics.info?.technical?.llm_providers);
     if (llmProviders >= 10) {
       score = Math.min(100, score + 15);
     } else if (llmProviders >= 5) {
@@ -776,8 +814,8 @@ export class RankingEngineV76 {
     }
 
     // IDE integration type matters
-    const ideIntegration = metrics.info?.technical?.ide_integration;
-    if (ideIntegration?.includes("Proprietary") || ideIntegration?.includes("Fork")) {
+    // #101: a non-string ide_integration threw and aborted computeRankings.
+    if (namesProprietaryIde(metrics.info?.technical?.ide_integration)) {
       score = Math.min(100, score + 5);
     }
 
@@ -1059,7 +1097,8 @@ export class RankingEngineV76 {
     let score = 50; // Base score
 
     // Multiple LLM providers = resilience
-    const llmProviders = metrics.info?.technical?.llm_providers?.length || 0;
+    // #101: folded leaves may be strings or non-lists; count without throwing.
+    const llmProviders = this.countListLeaf(metrics.info?.technical?.llm_providers);
     if (llmProviders >= 5) {
       score = 85;
     } else if (llmProviders >= 3) {
