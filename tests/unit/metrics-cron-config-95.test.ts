@@ -8,8 +8,9 @@
  *   entries name shards exactly 0..of-1 with `of` = SHARD_COUNTS[part], each on
  *   the 1st, each starting early enough that its 300 s maxDuration ends before
  *   `0 8 1 * *`; that the total stays within Vercel's 100-cron cap; and that
- *   the check workflow is dispatch-only and the check report fails on a
- *   missing or not-ok shard while printing counts only.
+ *   the check workflow runs on one monthly schedule and by dispatch, read
+ *   only; and the check report fails on a missing or not-ok shard while
+ *   printing counts only.
  * Test: `npx vitest run tests/unit/metrics-cron-config-95.test.ts`
  */
 
@@ -92,12 +93,14 @@ describe("#95 check-metrics-history", () => {
     skipped_timeout: 0,
   });
   const allOk = COLLECTOR_PARTS.flatMap((part) => [...Array(SHARD_COUNTS[part]).keys()].map((s) => ok(part, s)));
+  const rest = { coverage: { tools: 50, rows: 40 }, previousDate: null, flat: [] };
 
   it("passes when every configured shard has an ok row, printing counts only", () => {
     const { exitCode, report } = renderMetricsHistoryReport({
       date: "2026-11-01",
       rowsPerDate: [{ collected_date: "2026-11-01", rows: 40 }],
       ledger: allOk,
+      ...rest,
     });
     expect(exitCode).toBe(0);
     expect(report).toContain("2026-11-01: 40");
@@ -110,6 +113,7 @@ describe("#95 check-metrics-history", () => {
       date: "2026-11-01",
       rowsPerDate: [],
       ledger: allOk.filter((r) => !(r.collector === "vscode" && r.shard === 2)),
+      ...rest,
     });
     expect(exitCode).toBe(3);
     expect(report).toContain("vscode 2/4: MISSING");
@@ -117,21 +121,33 @@ describe("#95 check-metrics-history", () => {
 
   it("fails on a shard that is not ok", () => {
     const ledger = allOk.map((r) => (r.collector === "pypi" && r.shard === 1 ? { ...r, status: "partial" } : r));
-    const { exitCode, report } = renderMetricsHistoryReport({ date: "2026-11-01", rowsPerDate: [], ledger });
+    const { exitCode, report } = renderMetricsHistoryReport({ date: "2026-11-01", rowsPerDate: [], ledger, ...rest });
     expect(exitCode).toBe(3);
     expect(report).toContain("pypi 1/2: partial");
   });
 
-  it("the workflow is dispatch-only and its queries are SELECTs in a read-only transaction", () => {
+  // #95 slice 2: this assertion changed on purpose. Slice 1 asserted no `schedule:`;
+  // the owner's ruling adds exactly one monthly schedule, and the check stays read only.
+  it("the workflow runs at 06:00 UTC on the 2nd and by dispatch, read only, its queries SELECTs in one read-only transaction", () => {
     const workflow = readFileSync(path.join(ROOT, ".github/workflows/check-metrics-history.yml"), "utf8");
     const on = /\non:\n([\s\S]*?)\n\S/.exec(workflow)?.[1] ?? "";
     expect(on).toContain("workflow_dispatch:");
-    expect(on).not.toMatch(/schedule:|push:|pull_request/);
+    expect(on).toMatch(/\n\s+date:\n/);
+    expect(on.match(/- cron:/g)).toHaveLength(1);
+    expect(on).toContain("- cron: '0 6 2 * *'");
+    expect(on).not.toMatch(/push:|pull_request/);
+    expect(workflow).toMatch(/\npermissions:\n {2}contents: read\n\n/);
     expect(workflow).toContain("DATABASE_URL: ${{ secrets.DATABASE_URL }}");
+    expect(workflow).not.toMatch(/upload-artifact|\/api\/cron|CRON_SECRET|issues: write|gh issue/);
+    expect(workflow).toMatch(/if \[ "\$EVENT_NAME" = "schedule" \]; then\n\s+date_flag=\("--scheduled"\)/);
+    expect(workflow).toContain('exit "$status"');
 
     const script = readFileSync(path.join(ROOT, "scripts/check-metrics-history.ts"), "utf8");
-    expect(script).toContain("readOnly: true");
-    expect(script).toMatch(/assertSelectOnly\(ROWS_QUERY\)/);
-    expect(script).toMatch(/assertSelectOnly\(LEDGER_QUERY\)/);
+    expect(script).toContain("{ readOnly: true }");
+    expect(script.match(/sql\.transaction\(/g)).toHaveLength(1);
+    expect(script).toContain("for (const query of QUERIES) assertSelectOnly(query);");
+    expect(script).toMatch(/QUERIES = \[ROWS_QUERY, LEDGER_QUERY, COVERAGE_QUERY, FLAT_QUERY\]/);
+    // Every SQL constant in the script is in QUERIES.
+    expect(script.match(/^export const \w+_QUERY =/gm)).toHaveLength(4);
   });
 });
