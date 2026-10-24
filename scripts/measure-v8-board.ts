@@ -12,7 +12,8 @@
  *   Reads the active `tools` rows (with `kind`) and the one current `rankings` row in a single READ ONLY transaction, after a single-SELECT
  *   check on each statement (`assertSelectOnly`, #93). Weights come from
  *   `config/scoring-profiles.json`: set v7.10 profile `all` (baseline) and set
- *   v8.0 profile `harness` (candidate). `measureBoard()` reproduces v7.10 first,
+ *   v8.0 routed by `tools.kind` (candidate, PR-2: each tool scored with the
+ *   profile for its kind; a kind with no profile stops the run). `measureBoard()` reproduces v7.10 first,
  *   then checks the harness list, and prints no candidate number unless both pass.
  *   The kind sheet (`docs/refresh/tool-kind-mapping.csv`, read from the repo
  *   root) removes retired tools from the harness list. stdout is the
@@ -41,6 +42,7 @@ import { naiveUtcTypes } from "@/lib/db/naive-utc-timestamp.mjs";
 import { parseKindSheet } from "@/lib/db/tool-kind-sheet";
 import { assertSelectOnly, redact } from "@/lib/ranking-snapshot-diff";
 import { snapshotRows } from "@/lib/rankings/snapshot-rows";
+import { profileRouting } from "@/lib/scoring-kind-routing";
 import { loadCheckedInScoringProfiles, profileWeights } from "@/lib/scoring-profiles";
 import {
   EXIT_CODES,
@@ -86,7 +88,7 @@ async function main(): Promise<number> {
   refuseUnderCi();
   const config = loadCheckedInScoringProfiles();
   const baseline = profileWeights(config, "v7.10", "all");
-  const candidate = profileWeights(config, "v8.0", "harness");
+  const candidate = profileRouting(config, "v8.0");
 
   // #185: only the value passed at launch; a .env* file can never supply it.
   const connectionString = launchConnectionString;

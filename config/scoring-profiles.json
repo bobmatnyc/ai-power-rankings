@@ -1,5 +1,5 @@
 {
-  "$comment": "#185: scoring profile sets, read by lib/scoring-profiles.ts. Nothing in the publish path reads this file yet: the engine still scores with ALGORITHM_V76_WEIGHTS, and activeProfileSet records that v7.10 is the published set. Weights are fractions. A set with status legacy is frozen and may declare a total other than 1.00; every other set must declare 1.00.",
+  "$comment": "#185: scoring profile sets, read by lib/scoring-profiles.ts. Nothing in the publish path reads this file: the engine still scores with ALGORITHM_V76_WEIGHTS, and activeProfileSet records that v7.10 is the published set. Weights are fractions. A set with status legacy is frozen, has the one profile all for every tool, and may declare a total other than 1.00; every other set routes each tool to the profile named after its tools.kind and must declare 1.00. A profile with provisional set awaits the ruling it names.",
   "schemaVersion": 1,
   "activeProfileSet": "v7.10",
   "profileSets": {
@@ -28,10 +28,52 @@
       "label": "v8.0",
       "status": "staged",
       "frozen": false,
-      "description": "Staged v8 harness profile, ruling D44: technical and adoption each 0.18 -> 0.17, other factors unchanged, sum 1.00. Not selected by anything; the model profile awaits a ruling.",
+      "description": "Staged v8 profiles, routed by tools.kind. harness: ruling D44 (technical and adoption each 0.18 -> 0.17, other factors unchanged, sum 1.00). model: ruling D4b, provisional until D4d. productivity and other: the D44 harness weights, pending an Architect decision. Open-weight status is not a factor (D2f). Not selected by the publish path.",
       "profiles": {
         "harness": {
           "declaredTotal": 1,
+          "weights": {
+            "agenticCapability": 0.12,
+            "innovation": 0.1,
+            "technicalPerformance": 0.17,
+            "developerAdoption": 0.17,
+            "marketTraction": 0.12,
+            "businessSentiment": 0.12,
+            "developmentVelocity": 0.12,
+            "platformResilience": 0.08
+          }
+        },
+        "model": {
+          "declaredTotal": 1,
+          "provisional": "D4b weights, pending D4d (owner final sign-off)",
+          "weights": {
+            "agenticCapability": 0.18,
+            "innovation": 0.1,
+            "technicalPerformance": 0.22,
+            "developerAdoption": 0.1,
+            "marketTraction": 0.1,
+            "businessSentiment": 0.12,
+            "developmentVelocity": 0.1,
+            "platformResilience": 0.08
+          }
+        },
+        "productivity": {
+          "declaredTotal": 1,
+          "provisional": "D44 harness weights, pending an Architect decision on the productivity profile",
+          "weights": {
+            "agenticCapability": 0.12,
+            "innovation": 0.1,
+            "technicalPerformance": 0.17,
+            "developerAdoption": 0.17,
+            "marketTraction": 0.12,
+            "businessSentiment": 0.12,
+            "developmentVelocity": 0.12,
+            "platformResilience": 0.08
+          }
+        },
+        "other": {
+          "declaredTotal": 1,
+          "provisional": "D44 harness weights, pending an Architect decision on the other profile",
           "weights": {
             "agenticCapability": 0.12,
             "innovation": 0.1,
