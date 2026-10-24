@@ -594,14 +594,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-9b37136cbecf",
+    "id": "unreleased-f2585d4bf993",
     "version": "Unreleased",
-    "date": "2026-10-24T10:07:19.000Z",
+    "date": "2026-10-24T10:16:03.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "db",
     "title": "tools carry an entity kind, and models link to harnesses",
-    "description": "tools carry an entity kind, and models link to harnesses. Migration `0016_add_tool_kind_and_links.sql` adds eleven `tools` columns: `kind` (NOT NULL, default `harness`, CHECK in `model`, `harness`, `productivity`, `other`), `subcategory` (CHECK `^[a-z0-9_]+$`), `open_weight` (CHECK: NULL unless `kind = 'model'`), `licence`, `parameters_b`, `active_parameters_b`, `context_window`, `price_in_per_mtok`, `price_out_per_mtok`, `release_date` and `hf_repo`, with the indexes `tools_kind_idx`, `tools_kind_subcategory_idx` and the partial `tools_open_weight_idx`. The model vendor is the existing `company_id`. The new `tool_links` table pairs a model with a harness (`native` or `supports`), unique per pair, no self-link, deleted with either tool, with `timestamptz` timestamps. The migration is additive and guarded; a re-run is a no-op and `tools` is not rewritten. No reader uses the new columns yet. The model-side and harness-side kind rule has no trigger: the writer will check it, and `TOOL_LINK_KIND_VIOLATIONS_SQL` (`lib/db/tool-links.ts`) finds violating rows. `scripts/build-tool-kind-backfill.ts` builds the separate `0017_backfill_tool_kind.sql` from the reviewed mapping sheet and refuses a sheet that breaks the plan's counts. Tests: `tests/unit/tool-kind-links-migration-183.test.ts`, `tests/unit/tool-kind-links-pglite-183.test.ts`, `tests/unit/tool-kind-sheet-183.test.ts`, `tests/unit/timestamptz-237-schema.test.ts` (#183)",
+    "description": "tools carry an entity kind, and models link to harnesses. Migration `0016_add_tool_kind_and_links.sql` adds eleven `tools` columns: `kind` (NOT NULL, default `harness`, CHECK in `model`, `harness`, `productivity`, `other`), `subcategory` (CHECK `^[a-z0-9_]+$`), `open_weight` (CHECK: NULL unless `kind = 'model'`), `licence`, `parameters_b`, `active_parameters_b`, `context_window`, `price_in_per_mtok`, `price_out_per_mtok`, `release_date` and `hf_repo`, with the indexes `tools_kind_idx`, `tools_kind_subcategory_idx` and the partial `tools_open_weight_idx`. The model vendor is the existing `company_id`. The new `tool_links` table pairs a model with a harness (`native` or `supports`), unique per pair, no self-link, deleted with either tool, with `timestamptz` timestamps. The migration is additive and guarded; a re-run is a no-op and `tools` is not rewritten. No reader uses the new columns yet. The kind rule (the model side is `kind='model'`, the harness side `kind='harness'`) has no trigger: the writer will check it, and `TOOL_LINK_KIND_VIOLATIONS_SQL` (`lib/db/tool-links.ts`) finds violating rows. `scripts/build-tool-kind-backfill.ts` builds the separate `0017_backfill_tool_kind.sql` from the reviewed mapping sheet and refuses a sheet that breaks the plan's counts. The generated 0017 is one DO block that raises, writing nothing, when a sheet slug has no tools row or the counts by kind differ from the sheet. Tests: `tests/unit/tool-kind-links-migration-183.test.ts`, `tests/unit/tool-kind-links-pglite-183.test.ts`, `tests/unit/tool-kind-sheet-183.test.ts`, `tests/unit/timestamptz-237-schema.test.ts` (#183)",
     "changeType": "feature"
   },
   {
