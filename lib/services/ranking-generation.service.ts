@@ -17,10 +17,14 @@
  *   `is_current` row, then insert the new snapshot with `is_current = true`.
  * - An in-process guard rejects concurrent runs for the same period; the unique
  *   `rankings_period_idx` index is the durable backstop across instances.
+ * - #93: `mode` selects what is written. "publish" (the default, used by the
+ *   cron and the CLI) is the transaction above. "draft" (admin build) writes a
+ *   non-current row and never touches the current one. "dry-run" (admin build
+ *   with dry_run, admin preview) writes nothing.
  */
 
 import { existsSync, readFileSync } from "node:fs";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import { rankings, tools } from "@/lib/db/schema";
 import { ALGORITHM_V76_WEIGHTS, ALGORITHM_VERSION, RankingEngineV76 } from "@/lib/ranking-algorithm-v76";
@@ -71,6 +75,16 @@ export interface RankingEntry {
   provenance?: Record<string, unknown>;
 }
 
+/**
+ * What a run writes (#93).
+ * - "publish": the new row becomes current and the prior current row is demoted.
+ * - "draft": a non-current row for the period; the current row is untouched.
+ * - "dry-run": nothing is written.
+ */
+export type RegenerateMode = "publish" | "draft" | "dry-run";
+
+const REGENERATE_MODES: readonly RegenerateMode[] = ["publish", "draft", "dry-run"];
+
 /** Summary returned to callers (cron route surfaces this as JSON). */
 export interface RankingGenerationResult {
   period: string;
@@ -78,18 +92,33 @@ export interface RankingGenerationResult {
   toolCount: number;
   publishedAt: string;
   topMovers: Array<{ tool_name: string; previous_position: number | null; rank: number; change: number }>;
+  /** #93: the mode that ran. */
+  mode: RegenerateMode;
+  /** #93: the computed rows, for the admin dry-run and draft responses. */
+  entries: RankingEntry[];
+}
+
+/** The rows one run computed, as handed to the persistence port. */
+export interface RankingSnapshotInput {
+  period: string;
+  algorithmVersion: string;
+  publishedAt: Date;
+  data: RankingEntry[];
 }
 
 /** Injectable persistence boundary so orchestration is DB-agnostic in tests. */
 export interface RankingPersistencePort {
   loadActiveTools(): Promise<RankingSourceTool[]>;
-  loadCurrentRankings(): Promise<{ data: unknown } | null>;
-  saveSnapshot(input: {
-    period: string;
-    algorithmVersion: string;
-    publishedAt: Date;
-    data: RankingEntry[];
-  }): Promise<void>;
+  /** #93: `period` is optional so existing ports keep compiling; the DB adapter sets it. */
+  loadCurrentRankings(): Promise<{ data: unknown; period?: string } | null>;
+  saveSnapshot(input: RankingSnapshotInput): Promise<void>;
+  /**
+   * #93: write a non-current row for `input.period`, replacing only a
+   * non-current row for that period. Must never change `is_current` on any
+   * row; throws `RankingPeriodIsCurrentError` when the period is the current
+   * one. Required for mode "draft" only.
+   */
+  saveDraft?(input: RankingSnapshotInput): Promise<void>;
 }
 
 export interface RegenerateRankingsOptions {
@@ -107,6 +136,8 @@ export interface RegenerateRankingsOptions {
    * `tools.data` is scored unchanged — the cron path is byte-for-byte identical.
    */
   metricsOverridePath?: string;
+  /** #93: what to write. Defaults to "publish", the cron and CLI behaviour. */
+  mode?: RegenerateMode;
 }
 
 /** Raised when a regeneration for the same period is already in flight. */
@@ -117,9 +148,23 @@ export class RankingGenerationInProgressError extends Error {
   }
 }
 
+/**
+ * #93: a draft was asked for the period that is currently published. Admin
+ * build refuses it so the published row is never overwritten from that path.
+ */
+export class RankingPeriodIsCurrentError extends Error {
+  constructor(public readonly period: string) {
+    super(`Period ${period} is the current published ranking; a draft cannot replace it`);
+    this.name = "RankingPeriodIsCurrentError";
+  }
+}
+
 // In-process concurrency guard (per-instance). The unique period index in the DB
 // is the cross-instance backstop against duplicate snapshots.
 const inFlightPeriods = new Set<string>();
+// #93: drafts get their own guard so an admin build never blocks the cron publish
+// (the publish transaction replaces a same-period draft row anyway).
+const inFlightDrafts = new Set<string>();
 
 /** Format a Date as a "YYYY-MM" period string in UTC. */
 export function toPeriod(date: Date): string {
@@ -365,7 +410,8 @@ export function createDbPersistence(): RankingPersistencePort {
         .from(rankings)
         .where(eq(rankings.isCurrent, true))
         .limit(1);
-      return result.length > 0 ? { data: result[0]!.data } : null;
+      // #93: period lets draft mode refuse the current period before computing.
+      return result.length > 0 ? { data: result[0]!.data, period: result[0]!.period } : null;
     },
 
     async saveSnapshot({ period, algorithmVersion, publishedAt, data }) {
@@ -386,15 +432,49 @@ export function createDbPersistence(): RankingPersistencePort {
         });
       });
     },
+
+    // #93: admin build. One transaction that never sets or clears is_current.
+    async saveDraft({ period, algorithmVersion, data }) {
+      const db = getDb();
+      if (!db) throw new Error("Database connection not available");
+      await db.transaction(async (tx) => {
+        const existing = await tx
+          .select()
+          .from(rankings)
+          .where(eq(rankings.period, period))
+          .limit(1);
+        if (existing[0]?.isCurrent) {
+          throw new RankingPeriodIsCurrentError(period);
+        }
+        // Replace only a non-current row for this period.
+        await tx
+          .delete(rankings)
+          .where(and(eq(rankings.period, period), eq(rankings.isCurrent, false)));
+        // published_at stays null until set-current publishes the row.
+        await tx.insert(rankings).values({
+          period,
+          algorithmVersion,
+          isCurrent: false,
+          publishedAt: null,
+          data: data as never,
+        });
+      });
+    },
   };
 }
 
 /**
- * Regenerate the v7.6 rankings and persist a new current snapshot.
+ * Regenerate the v7.6 rankings and, by default, persist a new current snapshot.
  *
  * Idempotent per period (safe to re-run) and guarded against concurrent runs.
  * Does NOT close the DB connection — callers that own the process lifecycle
  * (the CLI script) are responsible for that.
+ *
+ * #93: `mode` "draft" writes through `saveDraft` and refuses the current
+ * period; "dry-run" writes nothing. Neither mode takes the publish guard, so
+ * neither blocks a publish run. All modes compute rows with the same function and inputs.
+ * Test: `lib/services/ranking-generation.golden.test.ts` (publish unchanged),
+ * `lib/services/ranking-generation.modes.test.ts` (draft, dry-run).
  */
 export async function regenerateRankings(
   options: RegenerateRankingsOptions = {}
@@ -403,11 +483,21 @@ export async function regenerateRankings(
   const publishedAt = now();
   const period = options.period ?? toPeriod(publishedAt);
   const persistence = options.persistence ?? createDbPersistence();
+  // #93: default keeps the cron and CLI on the publish path.
+  const mode = options.mode ?? "publish";
+  if (!REGENERATE_MODES.includes(mode)) {
+    throw new Error(`Unknown regenerate mode: ${String(mode)}`);
+  }
+  if (mode === "draft" && !persistence.saveDraft) {
+    throw new Error("Draft mode needs a persistence port with saveDraft");
+  }
+  // #93: a dry-run writes nothing, so it takes no slot in either guard.
+  const guard = mode === "publish" ? inFlightPeriods : mode === "draft" ? inFlightDrafts : null;
 
-  if (inFlightPeriods.has(period)) {
+  if (guard?.has(period)) {
     throw new RankingGenerationInProgressError(period);
   }
-  inFlightPeriods.add(period);
+  guard?.add(period);
 
   try {
     const [loadedTools, prevSnapshot] = await Promise.all([
@@ -426,15 +516,20 @@ export async function regenerateRankings(
       sourceTools = applyHistoricalMetricsOverride(loadedTools, overrides);
     }
 
+    // #93: refuse before scoring; saveDraft re-checks inside its transaction.
+    if (mode === "draft" && prevSnapshot?.period === period) {
+      throw new RankingPeriodIsCurrentError(period);
+    }
+
     const previousRankMap = buildPreviousRankMap(prevSnapshot?.data ?? null);
     const data = computeRankings(sourceTools, previousRankMap, publishedAt);
+    const snapshot = { period, algorithmVersion: RANKING_ALGORITHM_VERSION, publishedAt, data };
 
-    await persistence.saveSnapshot({
-      period,
-      algorithmVersion: RANKING_ALGORITHM_VERSION,
-      publishedAt,
-      data,
-    });
+    if (mode === "publish") {
+      await persistence.saveSnapshot(snapshot);
+    } else if (mode === "draft") {
+      await persistence.saveDraft!(snapshot);
+    }
 
     const topMovers = [...data]
       .filter((r) => Math.abs(r.movement.change) >= 5)
@@ -453,8 +548,10 @@ export async function regenerateRankings(
       toolCount: data.length,
       publishedAt: publishedAt.toISOString(),
       topMovers,
+      mode,
+      entries: data,
     };
   } finally {
-    inFlightPeriods.delete(period);
+    guard?.delete(period);
   }
 }

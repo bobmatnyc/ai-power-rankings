@@ -33,6 +33,8 @@ export interface RankingChangeAnalysis {
 
 export interface RankingData {
   position?: number;
+  /** #93: cron and draft rows carry `rank` instead of `position`. */
+  rank?: number;
   new_position?: number;
   current_position?: number;
   score?: number;
@@ -73,8 +75,10 @@ export class RankingChangeAnalyzer {
     currentFactorScores: Record<string, number>,
     previousFactorScores?: Record<string, number>
   ): RankingChangeAnalysis {
-    const currentRank = currentRanking.position || currentRanking.new_position || 0;
-    const previousRank = previousRanking?.position || previousRanking?.current_position || 999;
+    // #93: fall back to `rank` so a rank-shaped row is not read as rank 0 / 999.
+    const currentRank = currentRanking.position || currentRanking.rank || currentRanking.new_position || 0;
+    const previousRank =
+      previousRanking?.position || previousRanking?.rank || previousRanking?.current_position || 999;
     const currentScore = currentRanking.score || currentRanking.new_score || 0;
     const previousScore = previousRanking?.score || previousRanking?.current_score || 0;
 

@@ -83,6 +83,7 @@ import * as dbStatus from "../../app/api/admin/db-status/route";
 import * as dbStatusV2 from "../../app/api/admin/db-status-v2/route";
 import * as fixOrphanedData from "../../app/api/admin/fix-orphaned-data/route";
 import * as fixOrphanedMetrics from "../../app/api/admin/fix-orphaned-metrics/route";
+import * as adminRankings from "../../app/api/admin/rankings/route";
 import * as rankingsRollback from "../../app/api/admin/rankings/rollback/[id]/route";
 import * as rankingsVersions from "../../app/api/admin/rankings/versions/route";
 import * as removeData from "../../app/api/admin/remove-data/route";
@@ -140,6 +141,12 @@ const HANDLERS: Array<[string, () => Promise<Response>]> = [
   ["GET /api/admin/articles-v2", () => articlesV2.GET()],
   ["GET /api/admin/db-status", () => dbStatus.GET()],
   ["GET /api/admin/db-status-v2", () => dbStatusV2.GET()],
+  // #93: build and preview now reach the ranking service; admin only.
+  ["GET /api/admin/rankings", () => adminRankings.GET(req("/api/admin/rankings"))],
+  [
+    "POST /api/admin/rankings",
+    () => adminRankings.POST(jsonReq("/api/admin/rankings", "POST", { action: "build", period: "2026-08" })),
+  ],
   [
     "POST /api/admin/rankings/rollback/[id]",
     () => rankingsRollback.POST(req("/api/admin/rankings/rollback/v1", "POST"), id),

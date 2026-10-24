@@ -78,7 +78,7 @@ jobs:
 
       # stdout is the counts-only report (or `Result: ERROR`); a fixed error line goes
       # to stderr. Exit 0: both diffs 0. Exit 3: any diff. Exit 1: an error.
-      # #93: the summary gets the script's stdout and nothing else.
+      # #93: the log and the summary get the script's report, or one fixed ERROR line.
       # NODE_ENV=test keeps the app's connection module from loading dotenv files;
       # LOG_LEVEL=silent turns the app logger off.
       - name: Check (read-only)
@@ -95,6 +95,14 @@ jobs:
           fi
           status=0
           npx tsx scripts/check-admin-regenerate.ts "${date_flag[@]}" > report.txt || status=$?
-          cat report.txt >> "$GITHUB_STEP_SUMMARY"
+          # #93: the report (counts and PASS/FAIL only) also goes to the job log, which
+          # the API can read when the summary cannot be. Any other exit writes a fixed line.
+          if [ "$status" -eq 0 ] || [ "$status" -eq 3 ]; then
+            cat report.txt
+            cat report.txt >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Result: ERROR (exit ${status})"
+            echo "Result: ERROR (exit ${status})" >> "$GITHUB_STEP_SUMMARY"
+          fi
           rm -f report.txt
           exit "$status"

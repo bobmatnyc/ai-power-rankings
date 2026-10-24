@@ -68,6 +68,17 @@ describe("RankingChangeAnalyzer", () => {
       expect(result.narrativeExplanation).toContain("dropped");
     });
 
+    // #93: cron and draft rows carry `rank` and no `position`.
+    it("reads `rank` when a row has no `position`", () => {
+      const result = analyzer.analyzeRankingChange(
+        ranking({ tool_id: "t5", tool_name: "Ranked", rank: 2, score: 85 }),
+        ranking({ tool_id: "t5", tool_name: "Ranked", rank: 6, score: 80 }),
+        { developerAdoption: 70 },
+        { developerAdoption: 60 }
+      );
+      expect(result.rankChange).toBe(4);
+    });
+
     it("treats a held position with a tiny score delta as stable", () => {
       const result = analyzer.analyzeRankingChange(
         ranking({ tool_id: "t3", tool_name: "Steady", position: 7, score: 75.05 }),

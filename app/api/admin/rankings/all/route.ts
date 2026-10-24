@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
+import { snapshotRows } from "@/lib/services/ranking-preview.service";
 
 // GET all rankings for admin tools manager
 export async function GET(_request: NextRequest) {
@@ -31,7 +32,8 @@ export async function GET(_request: NextRequest) {
     }> = [];
 
     for (const periodData of allPeriods) {
-      const rankings = periodData.data?.rankings || [];
+      // #93: read both stored shapes; cron and draft rows are a bare array.
+      const rankings = snapshotRows(periodData.data);
 
       // Transform rankings to match the expected format
       rankings.forEach((ranking: any) => {
@@ -39,7 +41,8 @@ export async function GET(_request: NextRequest) {
           id: `${periodData.period}-${ranking.tool_id}`,
           period: periodData.period,
           tool_id: ranking.tool_id,
-          position: ranking.position ?? 0,
+          // #93: cron and draft rows carry `rank`, not `position`.
+          position: ranking.position ?? ranking.rank ?? 0,
           score: ranking.score ?? 0,
           movement: ranking.movement?.direction || "same",
           movement_positions: ranking.movement?.change || 0,

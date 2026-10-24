@@ -14,69 +14,15 @@ import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { writeRankingsStaticCache } from "@/lib/cache/rankings-static-cache";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
-import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
-// NOTE: The build/preview actions below still use the legacy RankingEngineV6.
-// The canonical regeneration path is now `regenerateRankings()` in
-// `@/lib/services/ranking-generation.service` (algorithm v7.6, see #86).
-// Consolidating onto it is deferred (#83 secondary) because the admin build
-// action is tightly coupled to V6's ToolMetricsV6/ToolScoreV6 score/weight
-// output contract; migrating it is a larger change than this ENOENT fix.
-import { RankingEngineV6, type ToolMetricsV6, type ToolScoreV6 } from "@/lib/ranking-algorithm-v6";
-
-// Helper function for category-based agentic scores
-function getCategoryBasedAgenticScore(category: string, toolName: string): number {
-  const premiumAgents = ["Devin", "Claude Code", "Google Jules"];
-  if (premiumAgents.includes(toolName)) {
-    return 8.5;
-  }
-
-  const categoryScores: Record<string, number> = {
-    "autonomous-agent": 8,
-    "ide-assistant": 6,
-    "code-assistant": 5,
-    "app-builder": 4,
-    "research-tool": 3,
-    "general-assistant": 2,
-  };
-
-  return categoryScores[category] || 5;
-}
-
-// Helper function to transform tool to metrics
-function transformToToolMetrics(tool: any, innovationScore: number = 0): ToolMetricsV6 {
-  const info = tool.info || {};
-  const technical = info.technical || {};
-  const businessMetrics = info.metrics || {};
-  const business = info.business || {};
-
-  return {
-    tool_id: tool.id,
-    status: tool.status,
-    agentic_capability: getCategoryBasedAgenticScore(tool.category, tool.name),
-    swe_bench_score: businessMetrics.swe_bench_score || 0,
-    multi_file_capability: technical.multi_file_support ? 75 : 25,
-    planning_depth: 5,
-    context_utilization: 5,
-    context_window: technical.context_window || 100000,
-    language_support: technical.supported_languages || 10,
-    github_stars: businessMetrics.github_stars || 0,
-    innovation_score: innovationScore,
-    innovations: [],
-    estimated_users: businessMetrics.estimated_users || 0,
-    monthly_arr: businessMetrics.monthly_arr || 0,
-    valuation: businessMetrics.valuation || 0,
-    funding: businessMetrics.funding_total || 0,
-    business_model: business.business_model || "freemium",
-    business_sentiment: 5,
-    risk_factors: [],
-    release_frequency: 5,
-    github_contributors: businessMetrics.github_contributors || 0,
-    llm_provider_count: 1,
-    multi_model_support: false,
-    community_size: businessMetrics.estimated_users || 0,
-  };
-}
+// #93: build and preview run the cron's pipeline in draft / dry-run mode (V6 retired).
+import {
+  RANKING_ALGORITHM_VERSION,
+  RankingGenerationInProgressError,
+  RankingPeriodIsCurrentError,
+  regenerateRankings,
+} from "@/lib/services/ranking-generation.service";
+import { buildPreviewComparison, previewRankings, snapshotRows } from "@/lib/services/ranking-preview.service";
 
 /**
  * GET /api/admin/rankings
@@ -198,144 +144,49 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case "preview": {
-        // Preview rankings
-        const { period, algorithm_version = "v6.0", preview_date, compare_with } = body;
+        // #93: scored by the cron's engine in dry-run mode; writes nothing.
+        const { period, preview_date, compare_with } = body;
 
         if (!period) {
           return NextResponse.json({ error: "Period parameter is required" }, { status: 400 });
         }
 
-        const toolsRepo = new ToolsRepository();
         const rankingsRepo = new RankingsRepository();
 
         // Get comparison period
         let comparisonPeriod = compare_with;
-        let currentRankings: any[] = [];
+        let currentRankings: unknown = [];
 
         if (compare_with === "auto" || !compare_with) {
           const availableRankings = await rankingsRepo.findAll();
           for (const ranking of availableRankings) {
             if (ranking.period < period) {
               comparisonPeriod = ranking.period;
-              currentRankings = ranking.data?.rankings || [];
+              // #93: read both stored shapes (cron rows are a bare array).
+              currentRankings = snapshotRows(ranking.data);
               break;
             }
           }
         } else if (comparisonPeriod && comparisonPeriod !== "none") {
           const periodData = await rankingsRepo.getByPeriod(comparisonPeriod);
           if (periodData) {
-            currentRankings = periodData.data?.rankings || [];
+            currentRankings = snapshotRows(periodData.data);
           }
         }
 
-        // Fetch tools
-        let tools = await toolsRepo.findByStatus("active");
-
-        // Filter by preview date if provided
-        if (preview_date) {
-          const cutoffDate = new Date(preview_date);
-          tools = tools.filter((tool) => {
-            const launchDate = tool["launch_date"];
-            const createdAt = tool["created_at"];
-            const dateValue = launchDate || createdAt || new Date();
-            const toolDate = new Date(dateValue as string | number | Date);
-            return toolDate <= cutoffDate;
-          });
-        }
-
-        // Load innovation scores (if available)
-        const innovationScores: { tool_id: string; score?: number }[] = [];
-        try {
-          const fs = await import("fs-extra");
-          const path = await import("node:path");
-          const innovationPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
-          if (await fs.pathExists(innovationPath)) {
-            const innovationData = await fs.readJSON(innovationPath);
-            innovationScores.push(...innovationData);
-          }
-        } catch (error) {
-          loggers.api.warn("Failed to load innovation scores", { error });
-        }
-        const innovationMap = new Map(innovationScores.map((s) => [s.tool_id, s]));
-
-        // Calculate scores
-        const rankingEngine = new RankingEngineV6();
-        const newScores: ToolScoreV6[] = [];
-
-        for (const tool of tools) {
-          try {
-            const innovationData = innovationMap.get(tool.id);
-            const innovationScore = innovationData?.score || 0;
-
-            const toolMetrics = transformToToolMetrics(tool, innovationScore);
-            const score = rankingEngine.calculateToolScore(
-              toolMetrics,
-              preview_date ? new Date(preview_date) : new Date(period)
-            );
-
-            // Recalculate overall score
-            const weights = RankingEngineV6.getAlgorithmInfo().weights;
-            score.overallScore = Object.entries(weights).reduce((total, [factor, weight]) => {
-              const factorScore =
-                score.factorScores[factor as keyof typeof score.factorScores] || 0;
-              return total + factorScore * weight;
-            }, 0);
-            score.overallScore = Math.max(
-              0,
-              Math.min(10, Math.round(score.overallScore * 1000) / 1000)
-            );
-
-            newScores.push(score);
-          } catch (error) {
-            loggers.api.error(`Error calculating score for tool ${tool.name}:`, error);
-          }
-        }
-
-        // Sort and create comparisons
-        newScores.sort((a, b) => b.overallScore - a.overallScore);
-
-        // Generate comparison data
-        const comparisons = [];
-        const currentRankingsMap = new Map(currentRankings.map((r) => [r.tool_id, r]));
-
-        for (let i = 0; i < newScores.length; i++) {
-          const newScore = newScores[i];
-          const tool = tools.find((t) => t.id === newScore?.toolId);
-          if (!tool) continue;
-
-          const currentRanking = currentRankingsMap.get(tool.id);
-          const newPosition = i + 1;
-          const currentPosition = currentRanking?.position;
-
-          comparisons.push({
-            tool_id: tool.id,
-            tool_name: tool.name,
-            category: tool.category || "",
-            current_rank: newPosition,
-            current_score: newScore?.overallScore || 0,
-            previous_rank: currentPosition,
-            previous_score: currentRanking?.score,
-            rank_change: currentPosition ? currentPosition - newPosition : 0,
-            score_change: currentRanking
-              ? (newScore?.overallScore || 0) - currentRanking.score
-              : newScore?.overallScore || 0,
-            movement: !currentPosition
-              ? "new"
-              : currentPosition > newPosition
-                ? "up"
-                : currentPosition < newPosition
-                  ? "down"
-                  : "same",
-          });
-        }
+        const entries = await previewRankings({
+          period,
+          ...(preview_date ? { previewDate: new Date(preview_date) } : {}),
+        });
 
         return NextResponse.json({
           success: true,
           preview: {
             period,
-            algorithm_version,
-            total_tools: newScores.length,
-            rankings_comparison: comparisons,
+            // #93: the engine that scored the preview, not a request echo.
+            algorithm_version: RANKING_ALGORITHM_VERSION,
+            total_tools: entries.length,
+            rankings_comparison: buildPreviewComparison(entries, currentRankings),
             comparison_period: comparisonPeriod,
           },
         });
@@ -349,67 +200,18 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: "Period is required" }, { status: 400 });
         }
 
-        const toolsRepo = new ToolsRepository();
-        const rankingsRepo = new RankingsRepository();
-
-        const tools = await toolsRepo.findByStatus("active");
-
-        // Calculate rankings
-        const rankingEngine = new RankingEngineV6();
-        const scores: ToolScoreV6[] = [];
-
-        // Load innovation scores
-        const innovationScores: { tool_id: string; score?: number }[] = [];
+        // #93: admin build never publishes. dry_run writes nothing; otherwise a
+        // non-current draft row is written. Publishing stays with set-current.
+        let result: Awaited<ReturnType<typeof regenerateRankings>>;
         try {
-          const fs = await import("fs-extra");
-          const path = await import("node:path");
-          const innovationPath = path.join(process.cwd(), "data", "json", "innovation-scores.json");
-          if (await fs.pathExists(innovationPath)) {
-            const innovationData = await fs.readJSON(innovationPath);
-            innovationScores.push(...innovationData);
-          }
+          result = await regenerateRankings({ period, mode: dry_run ? "dry-run" : "draft" });
         } catch (error) {
-          loggers.api.warn("Failed to load innovation scores", { error });
-        }
-        const innovationMap = new Map(innovationScores.map((s) => [s.tool_id, s]));
-
-        for (const tool of tools) {
-          try {
-            const innovationData = innovationMap.get(tool.id);
-            const innovationScore = innovationData?.score || 0;
-
-            const toolMetrics = transformToToolMetrics(tool, innovationScore);
-            const score = rankingEngine.calculateToolScore(toolMetrics, new Date(period));
-
-            scores.push(score);
-          } catch (error) {
-            loggers.api.error(`Error calculating score for ${tool.name}:`, error);
+          if (error instanceof RankingPeriodIsCurrentError || error instanceof RankingGenerationInProgressError) {
+            return NextResponse.json({ error: error.message }, { status: 409 });
           }
+          throw error;
         }
-
-        // Sort and format rankings
-        scores.sort((a, b) => b.overallScore - a.overallScore);
-
-        const rankings = scores.map((score, index) => {
-          const tool = tools.find((t) => t.id === score.toolId);
-          return {
-            position: index + 1,
-            tool_id: score.toolId,
-            tool_name: tool?.name || "Unknown",
-            tool_slug: tool?.slug || "",
-            score: score.overallScore,
-            factor_scores: {
-              agentic_capability: score.factorScores.agenticCapability,
-              innovation: score.factorScores.innovation,
-              technical_performance: score.factorScores.technicalPerformance,
-              developer_adoption: score.factorScores.developerAdoption,
-              market_traction: score.factorScores.marketTraction,
-              business_sentiment: score.factorScores.businessSentiment,
-              development_velocity: score.factorScores.developmentVelocity,
-              platform_resilience: score.factorScores.platformResilience,
-            },
-          };
-        });
+        const rankings = result.entries;
 
         if (dry_run) {
           return NextResponse.json({
@@ -421,31 +223,15 @@ export async function POST(request: NextRequest) {
           });
         }
 
-        // Save rankings to database
         const rankingData = {
           period,
-          algorithm_version: "v6.0",
-          generated_at: new Date().toISOString(),
+          algorithm_version: result.algorithmVersion,
+          generated_at: result.publishedAt,
           rankings,
         };
 
-        // Check if period exists
-        const existing = await rankingsRepo.getByPeriod(period);
-        if (existing) {
-          await rankingsRepo.update(existing.id, {
-            data: rankingData,
-            algorithm_version: "v6.0",
-          });
-        } else {
-          await rankingsRepo.create({
-            period,
-            algorithm_version: "v6.0",
-            is_current: false,
-            data: rankingData,
-          });
-        }
-
         // Also update public rankings.json if this is the current period
+        const rankingsRepo = new RankingsRepository();
         const currentRanking = await rankingsRepo.getCurrentRankings();
         if (currentRanking && currentRanking.period === period) {
           const publicPath = join(process.cwd(), "public", "data", "rankings.json");
