@@ -1,0 +1,4 @@
+model_slug,harness_slug,relation,source_url
+opus-4-6,claude-code,native,https://example.com/claude-code-models
+sonnet-4-5,claude-code,native,
+opus-4-6,cursor,supports,"https://example.com/cursor,models"
