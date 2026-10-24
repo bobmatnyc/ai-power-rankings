@@ -596,8 +596,8 @@
   {
     "id": "unreleased-f7ecdfe65193",
     "version": "Unreleased",
-    "date": "2026-10-24T07:02:30.694Z",
-    "dateSource": "build",
+    "date": "2026-10-24T07:02:38.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "ingestion",
     "title": "the daily-news \"[AutomatedIngestion] Run summary\" line says why candidates were rejected, in counts only",
