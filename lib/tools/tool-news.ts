@@ -5,12 +5,12 @@
  * `/api/news` computes it at read time, so the page must compute it the same way
  * or the page and the API would disagree about an article's tool.
  * What: pure, no DB access. Each article goes to its PRIMARY resolved tool only
- * (`resolveArticleTools(...)[0]`, the value `/api/news` reports as `tool_slug`);
+ * (`primaryArticleTool`, the value `/api/news` reports as `tool_slug`);
  * a secondary mention never counts. Per slug, newest first by `published_date`,
  * else `created_at`, then `id` descending; at most `perTool` items.
  * Test: `tests/unit/tool-news-193.test.tsx`.
  */
-import { resolveArticleTools, type CatalogueTool, type ToolCatalogue } from "@/lib/news-tool-resolver";
+import { primaryArticleTool, type CatalogueTool, type ToolCatalogue } from "@/lib/news-tool-resolver";
 
 /** The row fields grouping reads; `ToolNewsRow` from the news repository satisfies it. */
 export interface ToolNewsSource {
@@ -50,8 +50,8 @@ export function groupNewsByPrimaryTool<T extends CatalogueTool>(
 ): ToolNewsBySlug {
   const bySlug = new Map<string, ToolNewsItem[]>();
   for (const row of rows) {
-    // #193: primary tool only, through the same resolver and input shape as /api/news.
-    const primary = resolveArticleTools({ title: row.title, toolMentions: row.toolMentions }, catalogue)[0];
+    // #193: primary tool only, through the same resolver and input shape as /api/news. See #109.
+    const primary = primaryArticleTool({ title: row.title, toolMentions: row.toolMentions }, catalogue);
     if (!primary) continue;
     const items = bySlug.get(primary.slug) ?? [];
     items.push({

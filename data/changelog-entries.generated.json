@@ -110,6 +110,17 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-55a0662feb4b",
+    "version": "Unreleased",
+    "date": "2026-10-24T02:00:49.089Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "news",
+    "title": "an article's primary tool follows mention relevance",
+    "description": "an article's primary tool follows mention relevance. The primary tool was the first stored mention that resolved to a catalogue tool, so when an article's subject is not in the catalogue a passing mention became its tool: \"Manus Secures $500M Funding\" (Manus at relevance 1) was attributed to Cursor through a 0.3 competitor mention and listed on the Cursor page. Now only the mentions with the highest relevance compete, ties go to stored order, and when none of them resolves the article has no primary tool, even if a weaker mention resolves. A mention without a relevance ranks below every scored one. The title is read for a primary tool only when an article has no mentions. `/api/news` `tool_slug`, `/api/news/[slug]` `tool` and the tool page's Related news all read `primaryArticleTool` in `lib/news-tool-resolver.ts`, so they agree. `tool_name` still lists every resolved tool; response shapes are unchanged. On the 100 newest live articles, 64 keep a primary tool instead of 84: 20 lose it and 5 change tool. Attribution feeds no ranking score or publish path. Tests: `tests/unit/news-primary-tool-109.test.ts`, `tests/unit/news-route-tools-109.test.ts` (#109)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-db502ee7eeee",
     "version": "Unreleased",
     "date": "2026-10-24T01:06:09.000Z",
@@ -563,7 +574,7 @@
   {
     "id": "unreleased-2c04693feabd",
     "version": "Unreleased",
-    "date": "2026-10-24T01:41:38.000Z",
+    "date": "2026-10-24T01:49:14.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "tools",

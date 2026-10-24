@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db/connection";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { loggers } from "@/lib/logger";
 import { loadNewsToolCatalogueOrNull } from "@/lib/news-tool-catalogue";
-import { resolveArticleTools } from "@/lib/news-tool-resolver";
+import { primaryArticleTool } from "@/lib/news-tool-resolver";
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
@@ -50,7 +50,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     // ids, then exact names, then whole-word title matches). A failed catalogue
     // read is logged and leaves `tool` null; the article is still served.
     const catalogue = await loadNewsToolCatalogueOrNull("/api/news/[slug]");
-    const matchingTool = catalogue ? (resolveArticleTools(article, catalogue)[0] ?? null) : null;
+    // See #109: the same primary-tool rule as /api/news and the tool page.
+    const matchingTool = catalogue ? primaryArticleTool(article, catalogue) : null;
 
     // Transform to the format expected by the frontend
     const transformedArticle = {
