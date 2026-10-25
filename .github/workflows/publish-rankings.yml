@@ -1,15 +1,18 @@
 name: Publish rankings (manual)
 
-# Why: Bob's ruling D24 on #101 publishes the v7.10 rankings now, without waiting
+# Why: Bob's ruling D24 on #101 publishes the rankings now, without waiting
 # for the monthly cron on the 1st. This workflow is that manual publish.
+# #185: after v8 activation the route publishes the per-list boards with the
+# version of the active scoring profile set. EXPECTED_VERSION (below) is the one
+# version this workflow accepts; it is 8.0 for the v8.0 set.
 #
 # What: a manual dispatch that sends one authorised GET to the production route
 # /api/cron/regenerate-rankings, then reads the public /api/rankings once.
 #   - EVERY RUN PUBLISHES. The route has no dry-run mode: each run REPLACES the
 #     current period's rankings row and makes it the current snapshot.
 #   - Clearance: dispatch only after the Architect clears the publish on #101.
-#     The `confirm` input must equal `publish-v7.10`, or the job stops before
-#     any request.
+#     The `confirm` input must equal `publish-v${EXPECTED_VERSION}` (publish-v8.0),
+#     or the job stops before any request.
 #   - The existing CRON_SECRET repository secret reaches the step only through
 #     `env:`. curl reads the Authorization header from stdin (`--header @-`), so
 #     the secret is never in `run:` text, in the process arguments or in the log.
@@ -20,7 +23,7 @@ name: Publish rankings (manual)
 #   - `concurrency` with cancel-in-progress false queues a second dispatch behind
 #     a running one; two runs never overlap.
 #
-# Exit codes of the publish step: 0 published v7.10; 1 any other outcome (no
+# Exit codes of the publish step: 0 published EXPECTED_VERSION; 1 any other outcome (no
 # response, timeout, 5xx); 2 HTTP 401 (secret mismatch); 3 HTTP 409 (a run is in
 # progress); 4 HTTP 200 with another algorithm version: the row WAS replaced, so do
 # not re-dispatch; report to the Architect.
@@ -35,7 +38,7 @@ on:
   workflow_dispatch:
     inputs:
       confirm:
-        description: 'Type publish-v7.10 to publish. Every run replaces the current period rankings in production.'
+        description: 'Type publish-v8.0 to publish. Every run replaces the current period rankings in production.'
         type: string
         required: true
 
@@ -51,21 +54,25 @@ env:
   PRODUCTION_BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://aipowerranking.com' }}
   # The route's maxDuration is 300 s; 10 s more covers connection and transfer.
   PUBLISH_TIMEOUT_SECONDS: '310'
+  # #185: the algorithm version a publish must report; the confirm string is publish-v<this>.
+  EXPECTED_VERSION: '8.0'
 
 jobs:
   publish:
-    name: publish v7.10 rankings
+    name: publish rankings
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       # The dispatch input reaches the shell only through `env:`.
       - name: Require confirmation
+        id: confirm
         env:
           CONFIRM: ${{ inputs.confirm }}
         run: |
           set -uo pipefail
-          if [ "$CONFIRM" != "publish-v7.10" ]; then
-            echo "::error::confirm must equal publish-v7.10; nothing was published"
+          # #185: the confirm string names the version the publish must report.
+          if [ "$CONFIRM" != "publish-v${EXPECTED_VERSION}" ]; then
+            echo "::error::confirm must equal publish-v${EXPECTED_VERSION}; nothing was published"
             exit 1
           fi
 
@@ -123,11 +130,12 @@ jobs:
               summary "period: ${period}"
               summary "algorithm_version: ${version}"
               summary "tool_count: ${tool_count}"
-              if [ "$version" = "7.10" ] || [ "$version" = "v7.10" ]; then
-                summary "Result: published v7.10"
+              # #185: success only for the expected version; any other 200 replaced the row.
+              if [ "$version" = "${EXPECTED_VERSION}" ] || [ "$version" = "v${EXPECTED_VERSION}" ]; then
+                summary "Result: published v${EXPECTED_VERSION}"
                 code=0
               else
-                msg="PUBLISHED with algorithm_version ${version}, not v7.10. The current row was replaced. Do not re-dispatch; report to Architect."
+                msg="PUBLISHED with algorithm_version ${version}, not v${EXPECTED_VERSION}. The current row was replaced. Do not re-dispatch; report to Architect."
                 echo "::error::${msg}"
                 summary "Result: ${msg}"
                 code=4
@@ -178,5 +186,5 @@ jobs:
             summary "period: $(pick '.period')"
             summary "published_at: $(pick '.published_at')"
           fi
-          summary "Note: the CDN cache lags up to 15 minutes, so a stale 7.9 here does not mean the publish failed."
+          summary "Note: the CDN cache lags up to 15 minutes, so a stale version here does not mean the publish failed."
           rm -f "$body"
