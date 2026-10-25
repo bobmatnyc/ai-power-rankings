@@ -61,11 +61,15 @@ describe("#197 usePayload reads the admin tools list", () => {
 
   beforeEach(() => {
     fetchMock.mockReset();
-    fetchMock.mockImplementation(async (url: string) =>
-      url === ADMIN_URL
-        ? new Response(JSON.stringify({ total: ROWS.length, tools: ROWS }))
-        : new Response("{}", { status: url.startsWith("/api/tools/") ? 200 : 404 })
-    );
+    fetchMock.mockImplementation(async (url: string) => {
+      if (url === ADMIN_URL) return new Response(JSON.stringify({ total: ROWS.length, tools: ROWS }));
+      // #288: discontinue answers the written row from the admin route.
+      const slug = url.startsWith("/api/admin/tools/") ? url.slice("/api/admin/tools/".length) : "";
+      const hit = ROWS.find((r) => r.slug === slug);
+      return hit
+        ? new Response(JSON.stringify({ tool: { ...hit, status: "discontinued" } }))
+        : new Response("{}", { status: 404 });
+    });
     vi.stubGlobal("fetch", fetchMock);
   });
 
@@ -81,7 +85,7 @@ describe("#197 usePayload reads the admin tools list", () => {
     expect(urls).toEqual([ADMIN_URL]);
   });
 
-  it("keeps a noindex slug in the list, and deleteTool finds it", async () => {
+  it("keeps a noindex slug in the list, and discontinueTool finds it", async () => {
     expect(isNoindexToolSlug(NOINDEX_SLUG)).toBe(true);
     const { result } = renderHook(() => usePayload());
     await act(() => result.current.fetchTools());
@@ -89,7 +93,7 @@ describe("#197 usePayload reads the admin tools list", () => {
     expect(result.current.tools.map((t) => t.slug)).toContain(NOINDEX_SLUG);
 
     // Before #197 (b) the noindex tool was absent and this threw "Tool not found".
-    await act(() => result.current.deleteTool(`id-${NOINDEX_SLUG}`));
+    await act(() => result.current.discontinueTool(`id-${NOINDEX_SLUG}`));
     expect(result.current.tools.find((t) => t.slug === NOINDEX_SLUG)?.status).toBe("discontinued");
   });
 
