@@ -23,8 +23,10 @@
  *   result lists active tools missing from the sheet (ruling 12:33Z).
  *   `formatMeasurementReport()` renders the result as text that names no slug,
  *   id, rank or per-tool score; tool names appear only in its closing private
- *   section of tools missing from the sheet.
- * Test: `lib/v8-board-measurement.test.ts`
+ *   section of tools missing from the sheet. `candidate.perTool` holds one
+ *   row per tool from the same rank and score maps, for the private D8b
+ *   table (`lib/v8-board-measurement-per-tool.ts`), which this report never prints.
+ * Test: `lib/v8-board-measurement.test.ts`, `lib/v8-board-measurement-per-tool.test.ts`
  */
 
 import { TOOL_KINDS } from "./db/schema";
@@ -37,6 +39,7 @@ import {
   type RankingEntry,
   type RankingSourceTool,
 } from "./services/ranking-generation.service";
+import { perToolRows, type PerToolRow } from "./v8-board-measurement-per-tool";
 import { v8TieOrder } from "./v8-tie-order";
 
 /** A scored tool row plus its `tools.kind`. */
@@ -206,6 +209,8 @@ export interface CandidateMeasurement {
   harnessToolsInTies: number;
   /** Information only: twice the candidate's delta from baseline, renormalised to 1. */
   stress: { harnessRankShift: ShiftHistogram; breaches: number };
+  /** D8b: one row per tool, built from the maps above; printed only behind `--per-tool`. */
+  perTool: PerToolRow[];
 }
 
 export interface MeasurementResult {
@@ -432,7 +437,7 @@ function withinList(
   // D8f: break v8 ties by published v7.10 position
   const after = rankMap(computeRankings(v8TieOrder(list, v710), new Map(), date, scoring));
   const histogram = shiftHistogram(shiftsBetween(before, after, list.map((t) => t.id)));
-  return { histogram, breaches: histogram.n - histogram.moved0 - histogram.moved1 - histogram.moved2 };
+  return { histogram, breaches: histogram.n - histogram.moved0 - histogram.moved1 - histogram.moved2, after };
 }
 
 /** #185: tools of one kind, not retired in the sheet. */
@@ -514,6 +519,11 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
     harnessGaps: harnessGaps(harnessBase),
     harnessToolsInTies: harnessBase.filter((e) => harnessScoreCounts.get(e.score)! > 1).length,
     stress: { harnessRankShift: stress.histogram, breaches: stress.breaches },
+    // D8b: private per-tool table for Bob's D4d sign-off (the same maps, no second ranking)
+    perTool: perToolRows({
+      tools, baseRanks, candRanks, baseScores, candScores, harnessBaseRanks,
+      harnessCandRanks: d45.after, maxHarnessShift: D45_MAX_HARNESS_SHIFT,
+    }),
   };
 }
 
