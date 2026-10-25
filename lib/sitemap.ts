@@ -17,6 +17,7 @@ import { i18n, locales } from "@/i18n/config";
 import { newsRepository } from "@/lib/db/repositories/news";
 import { toolsRepository } from "@/lib/db/repositories/tools.repository";
 import { listPeriods } from "@/lib/services/whats-new-summary.service";
+import { isNoindexToolSlug, isTableRedirectSource } from "@/lib/seo/url-table";
 
 // Category page slugs based on existing app structure
 const categoryPages = [
@@ -56,8 +57,8 @@ const staticPages = [
  * What: Static pages in every locale (English-only pages under `/en` only),
  * category pages under `/en`, each active tool in every locale, and each active
  * article once under `/en/news/<slug>` with `lastModified` set to its date, and
- * each stored monthly report once under `/en/whats-new/<period>` (#54). All
- * URLs start with `baseUrl`. Rejects when any database read rejects.
+ * each stored monthly report once under `/en/whats-new/<period>` (#54). #191:
+ * table 308 sources and noindex tools are left out. All URLs start with `baseUrl`. Rejects when any database read rejects.
  * Test: `tests/unit/sitemap-route.test.ts`, `tests/unit/seo-canonical-origin.test.ts`.
  */
 export async function buildSitemapEntries(
@@ -102,6 +103,8 @@ export async function buildSitemapEntries(
   // 3. Active tool pages, one per locale
   for (const tool of tools) {
     if (tool.status !== "active") continue;
+    // #191: a noindex tool leaves the sitemap in every locale.
+    if (isNoindexToolSlug(tool.slug)) continue;
     for (const locale of locales) {
       routes.push({
         url: `${baseUrl}/${locale}/tools/${tool.slug}`,
@@ -134,7 +137,8 @@ export async function buildSitemapEntries(
     });
   }
 
-  return routes;
+  // #191: a URL that 308s under the signed table is never listed.
+  return routes.filter((route) => !isTableRedirectSource(new URL(route.url).pathname));
 }
 
 function escapeXml(text: string): string {

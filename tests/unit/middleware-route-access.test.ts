@@ -133,7 +133,9 @@ describe("middleware: public pages and APIs stay anonymous", () => {
     "/en/trending",
     "/en/privacy",
     "/en/terms",
-    "/en/contact",
+    // #191: /en/contact is a table 308 source (tests/unit/url-table-191.test.ts).
+    "/de/contact",
+    "/en/contact/default",
     "/en/sign-in",
     "/en/sign-up",
     "/en/sign-in/factor-one",
