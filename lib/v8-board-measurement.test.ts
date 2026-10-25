@@ -153,7 +153,7 @@ describe("measureBoard D45 gate (#185)", () => {
     );
   });
 
-  it("baselines on the published order inside a harness tie: reversing it flips D45 to a breach", () => {
+  it("D8f: a v8 tie follows the published v7.10 order, so reversing it inside a tie moves no tool", () => {
     const tools = tiedHarnessBoard();
     const asPublished = quietPublished(tools);
     const pass = measure(tools, v8, asPublished);
@@ -174,11 +174,15 @@ describe("measureBoard D45 gate (#185)", () => {
     const flipped = measure(tools, v8, reversed);
     expect(flipped.reproduced).toBe(true);
     expect(flipped.reproduction.ordinalDiffsInsideTies).toBe(4);
-    expect(flipped.candidate!.harnessRankShift.max).toBe(3);
-    expect(flipped.exitCode).toBe(EXIT_CODES.d45Breach);
+    // Before D8f the candidate ranked the tie in tool_id order: a move of 3, a D45 breach.
+    // The baseline must be the published order too, or the recomputed order would move 3 here.
+    expect(flipped.candidate!.harnessRankShift.max).toBe(0);
+    // The model tool's own global move is the same with or without the reversal.
+    expect(flipped.candidate!.globalRankShift).toEqual(pass.candidate!.globalRankShift);
+    expect(flipped.exitCode).toBe(EXIT_CODES.ok);
   });
 
-  it("ranks candidate ties by tool_id, not by the order the rows were read", () => {
+  it("ranks candidate ties by published v7.10 position, not by the order the rows were read", () => {
     const tools = tiedHarnessBoard();
     const published = quietPublished(tools);
     const shuffled = [...tools].reverse();
