@@ -24,7 +24,18 @@ export function currentListBoardsWhere(): SQL {
   return and(eq(rankings.isCurrent, true), inArray(rankings.list, [...RANKING_LISTS]))!;
 }
 
-export type ListBoardEntry = Record<string, unknown> & { list: RankingList };
+/**
+ * #185: the database answered but no list has a current board. Readers that record rank
+ * changes or snapshots refuse instead of recording them against an empty rank set.
+ */
+export class NoCurrentListBoardsError extends Error {
+  constructor(reader: string) {
+    super(`${reader}: no current per-list ranking board; refusing to use empty ranks`);
+    this.name = "NoCurrentListBoardsError";
+  }
+}
+
+export type ListBoardEntry =Record<string, unknown> & { list: RankingList };
 
 /**
  * One entry array from the current rows of the lists, in `RANKING_LISTS` order.
