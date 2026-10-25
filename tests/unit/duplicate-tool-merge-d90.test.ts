@@ -183,11 +183,50 @@ describe("D90 merge on the migration chain", () => {
     expect(await snapshot(db)).toEqual(before);
   });
 
+  it("apply refuses a backup that lacks the tool_links or metrics rows it would change", async () => {
+    const before = await snapshot(db);
+    const backup = JSON.parse(readFileSync(path.join(dir, "backup.json"), "utf8"));
+    const noLinks = path.join(dir, "no-links.json");
+    const noMetrics = path.join(dir, "no-metrics.json");
+    writeFileSync(noLinks, JSON.stringify({ ...backup, tool_links: [] }));
+    writeFileSync(noMetrics, JSON.stringify({ ...backup, tool_metrics_history: [] }));
+    const links = await run(db, { mode: "apply", backupFile: noLinks });
+    expect(links.code).toBe(1);
+    expect(links.log.at(-1)).toBe("--apply: refused, nothing written: the backup lacks a tool_links row of clawdbot");
+    const metrics = await run(db, { mode: "apply", backupFile: noMetrics });
+    expect(metrics.code).toBe(1);
+    expect(metrics.log.at(-1)).toBe("--apply: refused, nothing written: the backup lacks a metrics row of deepseek-r1");
+    expect(await snapshot(db)).toEqual(before);
+  });
+
+  it("a failed read-back before commit rolls back every write", async () => {
+    const before = await snapshot(db);
+    // Fault: the retire UPDATEs report success but never run, so the read-back finds old rows still active.
+    const faulty: MergeDb = {
+      query: (text, params) => db.query(text, params),
+      transaction: (fn) =>
+        db.transaction((tx) =>
+          fn({ query: (text, params) => (/^\s*UPDATE public\."tools"/.test(text) ? Promise.resolve({ rows: [] }) : tx.query(text, params)) })
+        ),
+    };
+    const log: string[] = [];
+    const code = await runMerge(
+      { db: faulty, fingerprint: FINGERPRINT, log: (l) => log.push(l), now: () => NOW },
+      { mode: "apply", backupFile: path.join(dir, "backup.json") }
+    );
+    expect(code).toBe(1);
+    expect(log.at(-1)).toMatch(/^--apply: rolled back, nothing written: merge verification failed: bytedance-seedance-2-0 is active/);
+    expect(await snapshot(db)).toEqual(before);
+  });
+
   it("apply moves the links, settles the clash and retires the old rows in one transaction", async () => {
     const { code, log, statements } = await run(db, { mode: "apply", backupFile: path.join(dir, "backup.json") });
     expect(code).toBe(0);
     expect(log.at(-1)).toBe("--apply: committed (merged)");
     expect(statements.filter((s) => s === "BEGIN")).toHaveLength(1);
+    // The plan inside the transaction is built from locked rows: tools, links and metrics.
+    const load = statements.slice(statements.indexOf("BEGIN") + 1, statements.indexOf("BEGIN") + 4);
+    expect(load.map((s) => s.match(/FOR UPDATE( OF l)?$/)?.[0] ?? s.slice(0, 40))).toEqual(["FOR UPDATE", "FOR UPDATE OF l", "FOR UPDATE"]);
     expect(await linkPairs(db)).toEqual([
       "deepseek x cursor supports",
       "deepseek x goose supports",
