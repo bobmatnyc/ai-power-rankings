@@ -8,7 +8,11 @@
  * slug, so every tool returned here is a catalogue row. Matching is exact and
  * case-insensitive; there is no fuzzy or partial matching, because a wrong
  * attribution is worse than none.
- * Test: `tests/unit/news-tool-resolver-109.test.ts`.
+ * #187: only active rows are returned; a redirect row's names resolve to the
+ * active row it redirects to; each returned row carries its `kind`, and
+ * `articleToolTags` gives an article one tag per kind (a model and a harness).
+ * Test: `tests/unit/news-tool-resolver-109.test.ts`,
+ * `tests/unit/news-kind-matcher-187.test.ts`.
  */
 
 /** The catalogue fields the resolver reads. A row may carry more. */
@@ -19,6 +23,33 @@ export interface CatalogueTool {
   db_id?: string;
   slug: string;
   name: string;
+  /** #187: `tools.kind` (model, harness, productivity, other). */
+  kind: string;
+  /** #187: `tools.status`; only "active" rows are tag targets. */
+  status: string;
+  /** #187: on a status "redirect" row, the slug it redirects to (`data.redirect_to`). */
+  redirect_to?: unknown;
+}
+
+/** #187: longest redirect chain followed before a row is dropped (guards a cycle). */
+const MAX_REDIRECT_HOPS = 5;
+
+/**
+ * The active row a catalogue row stands for, or undefined.
+ *
+ * What: an active row stands for itself. A "redirect" row follows `redirect_to`
+ * by slug, at most `MAX_REDIRECT_HOPS` times, and stands for the first active row
+ * it reaches. Every other status (inactive, pending_review, deprecated, a
+ * redirect to a missing or non-active row) stands for nothing.
+ */
+function activeTarget<T extends CatalogueTool>(tool: T, bySlug: Map<string, T>): T | undefined {
+  let current: T | undefined = tool;
+  for (let hop = 0; current && hop <= MAX_REDIRECT_HOPS; hop++) {
+    if (current.status === "active") return current;
+    if (current.status !== "redirect" || typeof current.redirect_to !== "string") return undefined;
+    current = bySlug.get(current.redirect_to);
+  }
+  return undefined;
 }
 
 /** Lookup tables built once from the catalogue rows. */
@@ -49,27 +80,42 @@ function escapeRegExp(value: string): string {
  * What: indexes each row by `id` and `db_id`, and by its name and slug
  * (case-insensitive). The first row wins a duplicate key. A row without a
  * string slug and name is skipped.
+ * #187: every key maps to an ACTIVE row. A redirect row's keys map to the
+ * active row it redirects to (D91: opus-4-6 -> claude-opus); any other
+ * non-active row is not indexed. Active rows are indexed before redirect rows,
+ * so an active row keeps a key a redirect row also carries.
  */
 export function buildToolCatalogue<T extends CatalogueTool>(tools: readonly T[]): ToolCatalogue<T> {
   const byId = new Map<string, T>();
   const byKey = new Map<string, T>();
   const terms = new Map<string, T>();
 
-  for (const tool of tools) {
-    if (typeof tool?.slug !== "string" || typeof tool?.name !== "string") continue;
+  const named = tools.filter((t) => typeof t?.slug === "string" && typeof t?.name === "string");
+  const bySlug = new Map<string, T>();
+  for (const tool of named) if (!bySlug.has(tool.slug)) bySlug.set(tool.slug, tool);
+  // #187: active rows first, then the redirect rows that reach one; nothing else.
+  const entries = [
+    ...named.filter((t) => t.status === "active").map((t) => ({ tool: t, target: t })),
+    ...named
+      .filter((t) => t.status === "redirect")
+      .map((t) => ({ tool: t, target: activeTarget(t, bySlug) }))
+      .filter((e): e is { tool: T; target: T } => e.target !== undefined),
+  ];
+
+  for (const { tool, target } of entries) {
     for (const id of [tool.id, tool.db_id]) {
-      if (typeof id === "string" && id && !byId.has(id)) byId.set(id, tool);
+      if (typeof id === "string" && id && !byId.has(id)) byId.set(id, target);
     }
     for (const raw of [tool.name, tool.slug]) {
       const key = normalizeKey(raw);
       if (!key) continue;
-      if (!byKey.has(key)) byKey.set(key, tool);
+      if (!byKey.has(key)) byKey.set(key, target);
     }
     // #109: title terms are catalogue names only, as stored (case-sensitive).
     // A single all-letter name ("Continue", "Warp", "AI") is an ordinary word
     // in headlines, so it is attributed through mentions only.
     const name = tool.name.trim();
-    if (name && !isSingleWordName(name) && !terms.has(name)) terms.set(name, tool);
+    if (name && !isSingleWordName(name) && !terms.has(name)) terms.set(name, target);
   }
 
   // A term matches only as a whole word: no letter or digit may touch either
@@ -119,12 +165,14 @@ function matchTitle<T extends CatalogueTool>(title: string, catalogue: ToolCatal
  * 1. Each mention's `toolId` (or a string mention) that is a catalogue id.
  * 2. Otherwise the mention's name, equal to a catalogue name or slug
  *    (case-insensitive, trimmed).
- * 3. Only when no mention resolves: catalogue names (never slugs) found in the
- *    title as whole words, case-sensitive. A single all-letter name never matches.
+ * 3. Catalogue names (never slugs) found in the title as whole words,
+ *    case-sensitive, of a kind no mention resolved to (#187; before #187, only
+ *    when no mention resolved at all). A single all-letter name never matches.
  *
  * A mention that resolves to nothing is dropped. Duplicates are removed.
  * Returns `[]` when nothing resolves.
- * Test: `tests/unit/news-tool-resolver-109.test.ts`.
+ * Test: `tests/unit/news-tool-resolver-109.test.ts`,
+ * `tests/unit/news-kind-matcher-187.test.ts`.
  */
 export function resolveArticleTools<T extends CatalogueTool>(
   article: { title?: unknown; toolMentions?: unknown },
@@ -138,11 +186,58 @@ export function resolveArticleTools<T extends CatalogueTool>(
   const mentions = Array.isArray(article.toolMentions) ? article.toolMentions : [];
   for (const mention of mentions) add(resolveMention(readMention(mention), catalogue));
 
-  if (resolved.length === 0 && typeof article.title === "string") {
-    for (const tool of matchTitle(article.title, catalogue)) add(tool);
+  // #187: the title fills each kind the mentions left empty, so an article
+  // whose mentions name only its harness still gets the model in its title.
+  const mentionedKinds = new Set(resolved.map((t) => t.kind));
+  if (typeof article.title === "string") {
+    for (const tool of matchTitle(article.title, catalogue)) {
+      if (!mentionedKinds.has(tool.kind)) add(tool);
+    }
   }
 
   return resolved;
+}
+
+/**
+ * The article's tags: at most one catalogue tool per kind, primary first (#187).
+ *
+ * Why: an article about a harness running a model ("Claude Code now runs
+ * Claude Opus 4.6") is about both; one primary tool dropped the model.
+ * What:
+ * 1. No primary tool (`primaryArticleTool` is null) means no tags, so the #109
+ *    rule holds: an article whose top mention is not in the catalogue is
+ *    tagged to nothing.
+ * 2. The primary tool tags its own kind.
+ * 3. Each other kind is tagged by its highest-relevance resolved mention
+ *    (stored order breaks a tie); a kind no mention resolves to is tagged by
+ *    its first catalogue name in the title, by the title rule above.
+ *
+ * Every tag is an active row and carries `kind`. Kind "other" rows are tagged
+ * like any other kind; issue #187 does not exclude them.
+ * Test: `tests/unit/news-kind-matcher-187.test.ts`.
+ */
+export function articleToolTags<T extends CatalogueTool>(
+  article: { title?: unknown; toolMentions?: unknown },
+  catalogue: ToolCatalogue<T>
+): T[] {
+  const primary = primaryArticleTool(article, catalogue);
+  if (!primary) return [];
+
+  const tags: T[] = [primary];
+  const add = (tool: T | undefined) => {
+    if (tool && !tags.some((t) => t.kind === tool.kind)) tags.push(tool);
+  };
+
+  const stored = Array.isArray(article.toolMentions) ? article.toolMentions : [];
+  stored
+    .map((m, order) => ({ tool: resolveMention(readMention(m), catalogue), relevance: readRelevance(m), order }))
+    .sort((a, b) => b.relevance - a.relevance || a.order - b.order)
+    .forEach(({ tool }) => add(tool));
+
+  if (typeof article.title === "string") {
+    for (const tool of matchTitle(article.title, catalogue)) add(tool);
+  }
+  return tags;
 }
 
 /** A mention's `toolId` as a catalogue id, else its name as a catalogue name or slug. */

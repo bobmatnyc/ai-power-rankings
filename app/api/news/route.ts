@@ -3,7 +3,7 @@ import { cachedJsonResponse, uncachedJsonResponse } from "@/lib/api-cache";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { loggers } from "@/lib/logger";
 import { loadNewsToolCatalogueOrNull } from "@/lib/news-tool-catalogue";
-import { primaryArticleTool, resolveArticleTools } from "@/lib/news-tool-resolver";
+import { articleToolTags, primaryArticleTool, resolveArticleTools } from "@/lib/news-tool-resolver";
 
 /** Largest page the route will serve; the news page asks for exactly this many. */
 const MAX_LIMIT = 100;
@@ -57,6 +57,10 @@ function readBoundedInt(
  * response echoes the caller's User-Agent, so it is `no-store`. Each item's
  * `tool_slug`/`tool_name` come from the tool catalogue (#109); a failed
  * catalogue read leaves them unset and logs a warning, the response is still 200.
+ * #187: `tool_kind` is the primary tool's kind, and `tools` lists the article's
+ * tags (one per kind: `{ slug, name, kind }`). `tools` is `[]` when nothing is
+ * tagged and `null` when the catalogue read failed, so a failure never reads as
+ * "no tools".
  * Test: `tests/unit/news-route-fail-closed.test.ts`,
  * `tests/unit/news-route-pagination.test.ts`, `tests/unit/news-route-tools-109.test.ts`.
  */
@@ -139,6 +143,10 @@ export async function GET(request: NextRequest) {
         const toolCategory = "ai-coding-tool";
         const toolWebsite = "";
         const primaryToolId = primaryTool ? primaryTool.slug : "unknown";
+        // #187: one tag per kind; null (not []) when the catalogue read failed.
+        const toolTags = catalogue
+          ? articleToolTags(article, catalogue).map((t) => ({ slug: t.slug, name: t.name, kind: t.kind }))
+          : null;
 
         const tags = article.tags || [];
         // #140: event_type is derived in SQL (lib/db/news-event-type.ts) so the
@@ -242,6 +250,8 @@ export async function GET(request: NextRequest) {
           slug: article.slug,
           tool_id: primaryToolId,
           tool_slug: primaryToolId !== "unknown" ? primaryToolId : undefined,
+          tool_kind: primaryTool?.kind, // #187
+          tools: toolTags, // #187
           tool_name: toolNames,
           tool_category: toolCategory,
           tool_website: toolWebsite,
