@@ -7,8 +7,7 @@
  * Categories change infrequently, so we can cache them with 5-minute revalidation
  */
 
-import { and, eq } from "drizzle-orm";
-import { COMBINED_LIST } from "@/lib/rankings/lists";
+import { currentListBoardsWhere, listBoardEntries } from "@/lib/rankings/list-boards";
 import { unstable_cache } from "next/cache";
 import { getDb } from "../connection";
 import { rankings } from "../schema";
@@ -33,6 +32,8 @@ function getCategoryName(categoryId: string): string {
 /**
  * Internal function to fetch categories with counts from current rankings
  * This runs on the server during SSR/SSG, eliminating client-side fetch waterfall
+ * #185: counts the tools of every list's current board (each tool once); a failed read throws.
+ * Test: `tests/unit/list-boards-185.test.ts`.
  */
 async function _getCategoriesWithCounts(): Promise<Category[]> {
   try {
@@ -42,33 +43,16 @@ async function _getCategoriesWithCounts(): Promise<Category[]> {
       return [{ id: "all", name: "All Categories", count: 0 }];
     }
 
-    // Fetch current rankings (marked as is_current = true)
-    const currentRankings = await db
-      .select()
-      .from(rankings)
-      // #186: the legacy combined board; per-list boards have their own current rows.
-      .where(and(eq(rankings.isCurrent, true), eq(rankings.list, COMBINED_LIST)))
-      .limit(1);
+    // #185: every list's current board, never the combined one. A tool is ranked in at
+    // most one list, so each ranked tool is counted once.
+    const listRows = await db.select().from(rankings).where(currentListBoardsWhere());
 
-    if (!currentRankings[0]?.data) {
+    if (listRows.length === 0) {
       console.warn("[Categories] No current rankings data found");
       return [{ id: "all", name: "All Categories", count: 0 }];
     }
 
-    // Parse the rankings data (JSONB field)
-    const rankingsData: any = currentRankings[0].data;
-    let rankingsArray: any[] = [];
-
-    // Handle different data structures in JSONB field
-    if (Array.isArray(rankingsData)) {
-      rankingsArray = rankingsData;
-    } else if (rankingsData && typeof rankingsData === "object") {
-      if (rankingsData.rankings && Array.isArray(rankingsData.rankings)) {
-        rankingsArray = rankingsData.rankings;
-      } else if (rankingsData.data && Array.isArray(rankingsData.data)) {
-        rankingsArray = rankingsData.data;
-      }
-    }
+    const rankingsArray: any[] = listBoardEntries(listRows);
 
     // Count tools by category
     const categoryMap: Record<string, number> = {};
@@ -106,9 +90,9 @@ async function _getCategoriesWithCounts(): Promise<Category[]> {
 
     return allCategories;
   } catch (error) {
+    // #185: a failed list-board read is rethrown, not cached as an empty category list.
     console.error("[Categories] Failed to fetch categories:", error);
-    // Return minimal fallback on error
-    return [{ id: "all", name: "All Categories", count: 0 }];
+    throw error;
   }
 }
 
