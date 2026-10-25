@@ -12,8 +12,8 @@
  *   `ScoringProfileError` for a null, missing or unknown kind, and for a known
  *   kind the set has no profile for. `profileRouting()` builds it from a
  *   validated config: `single` for a legacy set, `byKind` otherwise.
- *   Nothing in the publish path builds a routing; `computeRankings()` only
- *   routes when a caller passes one (the v8 measurement and tests).
+ *   `computeRankings()` only routes when a caller passes one: #185 PR-3, the
+ *   per-list publish (`lib/rankings/publish-active.ts`), the v8 measurement and tests.
  * Test: `lib/scoring-kind-routing.test.ts`
  */
 
