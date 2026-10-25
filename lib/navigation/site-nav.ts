@@ -45,7 +45,7 @@ export interface RankingSubPage {
 
 /**
  * The Rankings menu, in display order. All entries are peers (D2d).
- * #195 ships `/rankings/models` (with `?open=1`) and `/rankings/coding-harnesses`.
+ * #195 ships `/rankings/models`, `/rankings/coding-harnesses` and `/rankings/open-weight-models`.
  */
 export const RANKING_SUB_PAGES: readonly RankingSubPage[] = [
   {
@@ -63,7 +63,7 @@ export const RANKING_SUB_PAGES: readonly RankingSubPage[] = [
   },
   {
     id: "open-weight",
-    path: "/rankings/models?open=1",
+    path: "/rankings/open-weight-models",
     live: false,
     label: () => "Open-weight models",
   },

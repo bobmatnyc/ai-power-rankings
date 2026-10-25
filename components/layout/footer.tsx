@@ -161,6 +161,12 @@ export function Footer() {
                   Contact Us
                 </FooterLink>
               </li>
+              <li>
+                {/* #194: a route handler, so a plain <a>, not next/link. */}
+                <a href={`/${lang}/news/rss.xml`} className="hover:text-ds-text-on-fill transition-colors">
+                  RSS
+                </a>
+              </li>
             </ul>
           </div>
         </div>

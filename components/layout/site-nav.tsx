@@ -52,11 +52,12 @@ function useDisclosure(pathname: string) {
 
   useEffect(() => {
     if (!open) return;
-    const onPointerDown = (event: PointerEvent | MouseEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
       if (!containerRef.current?.contains(event.target as Node)) setOpen(false);
     };
-    document.addEventListener("mousedown", onPointerDown);
-    return () => document.removeEventListener("mousedown", onPointerDown);
+    // #194: pointerdown, so a tap closes the menu on iOS Safari.
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
   }, [open]);
 
   const onKeyDown = useCallback(

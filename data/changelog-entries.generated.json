@@ -605,14 +605,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-6529783fa23c",
+    "id": "unreleased-2cfc870cbb99",
     "version": "Unreleased",
-    "date": "2026-10-25T22:47:46.003Z",
+    "date": "2026-10-25T22:55:18.665Z",
     "dateSource": "build",
     "section": "Added",
     "scope": "nav",
     "title": "a header nav and a phone menu, built with the footer from one model in lib/navigation/site-nav.ts",
-    "description": "a header nav and a phone menu, built with the footer from one model in `lib/navigation/site-nav.ts`. From 1280px the header shows a Rankings menu (Overall rankings, Historical trends), then Tools, News, Methodology and About. Below 1280px a menu button opens a panel with the same links plus Home; Escape, a click outside, a link click or a route change closes it, and Escape returns focus to the button. Every link stays in the current `/{lang}/` prefix. The current page has `aria-current=\"page\"` and its section has `aria-current=\"true\"`. The Rankings entries are peers: the open-weight ranking will sit beside Models (D2d). The models, coding-harness and open-weight ranking pages are not live yet (#195), so the nav does not link them. The footer's quick links become a Rankings column and an Explore column. The category and legal links are unchanged. The sidebar keeps the category and feature filters, and its page links and change-count badges are removed. The phone header hides the app name under 640px so the menu button fits at 375px, and the \"Last updated\" badge shows from 1536px. Routes, metadata, canonical and hreflang output are unchanged. New dictionary key `navigation.overallRankings` in all ten locales. Tests: `tests/unit/site-nav-194.test.tsx`, `tests/unit/url-table-links-191.test.tsx` (#194)",
+    "description": "a header nav and a phone menu, built with the footer from one model in `lib/navigation/site-nav.ts`. From 1280px the header shows a Rankings menu (Overall rankings, Historical trends), then Tools, News, Methodology and About. Below 1280px a menu button opens a panel with the same links plus Home; Escape, a click outside, a link click or a route change closes it, and Escape returns focus to the button. Every link stays in the current `/{lang}/` prefix. The current page has `aria-current=\"page\"` and its section has `aria-current=\"true\"`. The Rankings entries are peers: the open-weight ranking will sit beside Models (D2d). The models, coding-harness and open-weight ranking pages are not live yet (#195), so the nav does not link them. The footer's quick links become a Rankings column and an Explore column. The category and legal links are unchanged, and the legal column gains an RSS link to `/{lang}/news/rss.xml`. The sidebar keeps the category and feature filters, and its page links and change-count badges are removed. The phone header hides the app name under 640px so the menu button fits at 375px, and the \"Last updated\" badge shows from 1536px. Routes, metadata, canonical and hreflang output are unchanged. New dictionary key `navigation.overallRankings` in all ten locales. Tests: `tests/unit/site-nav-194.test.tsx`, `tests/unit/url-table-links-191.test.tsx` (#194)",
     "changeType": "feature"
   },
   {

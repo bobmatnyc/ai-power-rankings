@@ -17,8 +17,9 @@ import { cleanup, fireEvent, render, screen, within } from "@testing-library/rea
 import type { ReactNode } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import en from "../../i18n/dictionaries/en.json";
+import ja from "../../i18n/dictionaries/ja.json";
 
-const state = vi.hoisted(() => ({ pathname: "/en", lang: "en" }));
+const state = vi.hoisted(() => ({ pathname: "/en", lang: "en", dict: null as unknown }));
 
 vi.mock("next/navigation", () => ({ usePathname: () => state.pathname }));
 vi.mock("next/link", () => ({
@@ -35,7 +36,7 @@ vi.mock("next/link", () => ({
     </a>
   ),
 }));
-vi.mock("../../i18n/client", () => ({ useI18n: () => ({ dict: en, lang: state.lang }) }));
+vi.mock("../../i18n/client", () => ({ useI18n: () => ({ dict: state.dict ?? en, lang: state.lang }) }));
 
 import { Footer } from "../../components/layout/footer";
 import { DesktopSiteNav, MobileSiteNav } from "../../components/layout/site-nav";
@@ -48,7 +49,10 @@ import {
 } from "../../lib/navigation/site-nav";
 import { isNoindexToolSlug, resolveTableRedirect, URL_TABLE_ROWS } from "../../lib/seo/url-table";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  state.dict = null;
+});
 
 function show(pathname: string, lang: Locale) {
   state.pathname = pathname;
@@ -86,7 +90,7 @@ describe("nav model", () => {
     expect(menus.find((m) => m.id === ("models" as never))).toBeUndefined();
     const children = menus.find((m) => m.id === "rankings")?.children ?? [];
     expect(children.map((c) => c.id)).toEqual(ids);
-    expect(children.find((c) => c.id === "open-weight")?.href).toBe("/de/rankings/models?open=1");
+    expect(children.find((c) => c.id === "open-weight")?.href).toBe("/de/rankings/open-weight-models");
     for (const child of children) expect(child).not.toHaveProperty("children");
   });
 
@@ -172,7 +176,7 @@ describe("DesktopSiteNav", () => {
     render(<DesktopSiteNav />);
     const button = screen.getByRole("button", { name: en.navigation.rankings });
     fireEvent.click(button);
-    fireEvent.mouseDown(document.body);
+    fireEvent.pointerDown(document.body);
     expect(button.getAttribute("aria-expanded")).toBe("false");
   });
 });
@@ -209,6 +213,15 @@ describe("MobileSiteNav", () => {
     expect(panel.hidden).toBe(true);
   });
 
+  it("the menu button's accessible name comes from the locale's dictionary", () => {
+    show("/ja", "ja");
+    state.dict = ja;
+    render(<MobileSiteNav />);
+    expect(ja.sidebar.navigation).not.toBe(en.sidebar.navigation);
+    const button = screen.getByRole("button", { name: ja.sidebar.navigation });
+    expect(button.getAttribute("aria-controls")).toBeTruthy();
+  });
+
   it("closes on Escape with focus back on the button, and on a link click", () => {
     show("/en", "en");
     render(<MobileSiteNav />);
@@ -237,5 +250,6 @@ describe("Footer", () => {
     expect(within(explore).getByRole("link", { name: en.navigation.news }).getAttribute("aria-current")).toBe(
       "page"
     );
+    expect(screen.getByRole("link", { name: "RSS" }).getAttribute("href")).toBe(`/${locale}/news/rss.xml`);
   });
 });
