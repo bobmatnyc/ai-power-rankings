@@ -4,7 +4,7 @@
  */
 
 import { and, desc, eq, lt, sql } from "drizzle-orm";
-import { COMBINED_LIST, type StoredRankingList } from "@/lib/rankings/lists";
+import { COMBINED_LIST, type RankingList, type StoredRankingList } from "@/lib/rankings/lists";
 import { getDb } from "../connection";
 import { type NewRanking, type Ranking, rankings } from "../schema";
 import { BaseRepository } from "./base.repository";
@@ -124,6 +124,23 @@ export class RankingsRepository extends BaseRepository<RankingData> {
       console.error("Error fetching all rankings:", error);
       throw error;
     }
+  }
+
+  /**
+   * #185: every stored board of one list, ordered by period descending. The public
+   * history (trending) reads this; it never reads the combined rows.
+   */
+  async findAllForList(list: RankingList): Promise<RankingData[]> {
+    const db = getDb();
+    if (!db) {
+      throw new Error("Database connection not available");
+    }
+    const result = await db
+      .select()
+      .from(rankings)
+      .where(eq(rankings.list, list))
+      .orderBy(desc(rankings.period));
+    return result.map((r) => this.mapToRankingData(r));
   }
 
   /**

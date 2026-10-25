@@ -10,6 +10,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *   figure never counts), the pure index and note rules on both sides of the boundary (9 and 10), D53 thirds
  *   tiers below 10 entries, and `loadCurrentRankings()` / `GET /api/rankings?list=model` over a
  *   mocked repository boundary: inactive rows and rows without metrics do not count.
+ *   #185: after v8 activation the combined board is never read, so the count comes from the
+ *   models list's own board only; a combined row alone yields no board, and the API answers an
+ *   empty models board that stays noindex with the metrics-pending note.
  * Test: `npx vitest run tests/unit/models-list-index-rule-329.test.ts`. No network, no database.
  */
 
@@ -120,7 +123,7 @@ describe("index and note rule at the boundary", () => {
 });
 
 /** A models board of `metricActive` active rows with a Vals TB figure plus rows that must not count. */
-function seed(boardKind: "combined" | "model", metricActive: number) {
+function seed(boardKind: "combined" | "model" | "harness", metricActive: number) {
   for (const key of Object.keys(TOOLS)) delete TOOLS[key];
   const add = (slug: string, status: string, data: Record<string, unknown>) => {
     TOOLS[slug] = { id: slug, slug, name: slug, kind: "model", status, ...data };
@@ -156,7 +159,8 @@ afterEach(() => {
 });
 
 describe("models board count (loadCurrentRankings and /api/rankings)", () => {
-  it.each(["combined", "model"] as const)("from a %s board: 9 metric rows stay noindex, 10 index", async (boardKind) => {
+  it("from a model board: 9 metric rows stay noindex, 10 index", async () => {
+    const boardKind = "model";
     seed(boardKind, 9);
     const nine = (await loadCurrentRankings("model"))!;
     expect(nine.metricRowCount).toBe(9);
@@ -170,8 +174,19 @@ describe("models board count (loadCurrentRankings and /api/rankings)", () => {
     expect(body.list_meta).toMatchObject({ indexable: true, metric_row_count: 10, metrics_pending_note: false });
   });
 
-  it("the harness board does not count model metrics", async () => {
+  it("from a combined board only (#185): no board, and the API answers an empty noindex models board", async () => {
     seed("combined", 10);
+    expect(await loadCurrentRankings("model")).toBeNull();
+
+    const res = await GET(new Request("https://example.test/api/rankings?list=model"));
+    const body = (await res.json()) as { rankings: unknown[]; list_meta: { indexable: boolean; metric_row_count: number; metrics_pending_note: boolean } };
+    expect(body.rankings).toEqual([]);
+    expect(body.list_meta).toMatchObject({ indexable: false, metric_row_count: 0, metrics_pending_note: true });
+  });
+
+  it("the harness board does not count model metrics", async () => {
+    // #185: the harness list's own board; the combined board is no longer read.
+    seed("harness", 10);
     for (const t of Object.values(TOOLS)) t.kind = "harness";
     expect((await loadCurrentRankings("harness"))!.metricRowCount).toBe(0);
   });
