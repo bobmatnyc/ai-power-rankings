@@ -8,9 +8,9 @@
  * What: `parseScoringProfilesText()` / `parseScoringProfiles()` validate the
  *   whole file and throw `ScoringProfileError` listing every problem.
  *   `profileWeights()` returns one profile's weights in the engine's factor
- *   order. Nothing in the publish path calls this module (PR-2 is still
- *   inert); the v8 measurement script and `lib/scoring-kind-routing.ts` are
- *   its callers. An optional `provisional` string marks a profile that awaits
+ *   order. #185 PR-3: the publish path reads the active set through
+ *   `lib/rankings/publish-active.ts`; the v8 measurement script and
+ *   `lib/scoring-kind-routing.ts` are its other callers. An optional `provisional` string marks a profile that awaits
  *   a ruling; it is metadata and never changes a weight. `publicNote: true`
  *   marks a provisional profile whose list page says so in public (#186, D54).
  *   Active-set rule (Architect amendment to the PR-3 criterion, #186): the set
