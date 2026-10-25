@@ -27,8 +27,9 @@ import {
  *   Replaced: "no publish-path module reads the profiles" becomes "the cron and the CLI
  *   publish only through `publishActiveRankings()`, and only that module reads the
  *   profiles"; "the active set is still v7.10" becomes "the checked-in active set is
- *   v7.10, and the publish refuses it" (the switch is the one config point,
- *   `activeProfileSet`); "one `computeRankings()` call with no scoring argument"
+ *   v8.0 with no `other` profile, and the publish resolves it" (#185: the switch is the
+ *   one config point, `activeProfileSet`; owner ruling v8 Q3 drops `other`); "one
+ *   `computeRankings()` call with no scoring argument"
  *   becomes "two calls: the v7.10 one and the per-list routing one in D8f order".
  * Test: `npx vitest run lib/scoring-profiles.activation-185.test.ts`
  */
@@ -97,11 +98,15 @@ describe("publish path activated (#185 PR-3, replaces the PR-1/PR-2 inert checks
     }
   );
 
-  it("the checked-in active set is still v7.10, and the publish path refuses it", () => {
-    // The switch to v8.0 is `activeProfileSet`; it waits on the owner ruling for `other`.
-    expect(config.activeProfileSet).toBe("v7.10");
-    expect(() => resolvePublishScoring(config)).toThrow(ScoringProfileError);
-    expect(() => resolvePublishScoring(config)).toThrow(/legacy one-table set/);
+  it("the checked-in active set is v8.0 without the other profile, and the publish path resolves it", () => {
+    // #185: the switch to v8.0 is `activeProfileSet`; owner ruling (v8 Q3) dropped `other`.
+    expect(config.activeProfileSet).toBe("v8.0");
+    expect(Object.hasOwn(config.profileSets["v8.0"]!.profiles, "other")).toBe(false);
+    const scoring = resolvePublishScoring(config);
+    expect(scoring.algorithmVersion).toBe("8.0");
+    expect(() => scoring.routing.route("other")).toThrow(ScoringProfileError);
+    // The legacy set, if named again, is still refused.
+    expect(() => resolvePublishScoring({ ...config, activeProfileSet: "v7.10" })).toThrow(/legacy one-table set/);
   });
 
   it("regenerateRankings() has two scoring calls: v7.10 for the combined board, the routing in D8f order per list", () => {

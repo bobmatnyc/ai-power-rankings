@@ -73,9 +73,10 @@ export function mixedBoard(): MeasuredTool[] {
     return tool(`m-m${String(i).padStart(2, "0")}`, "model", Math.round(5_000 + t * 90_000), Math.round(900_000 * Math.pow(0.01, t)));
   });
   // An unusable company type makes the engine warn with the tool id (#241).
-  const other = tool("m-o0", "other", 30_000, 50_000);
-  other.data = { ...other.data, company: 42 };
-  return [...harness, ...models, other];
+  // #185: a productivity tool, not `other`: v8.0 has no `other` profile (owner ruling, Q3).
+  const productivity = tool("m-p0", "productivity", 30_000, 50_000);
+  productivity.data = { ...productivity.data, company: 42 };
+  return [...harness, ...models, productivity];
 }
 
 /**
