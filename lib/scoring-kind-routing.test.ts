@@ -22,7 +22,7 @@ import { calculateTier, computeRankings } from "./services/ranking-generation.se
  *   model table that does not sum to 1.00, and open-weight carrying weight.
  * What: checks the checked-in v8.0 profiles, `kindRouting()` /
  *   `profileRouting()`, and `computeRankings()` handed a routing, on the
- *   synthetic `mixedBoard()` (harness, model and other tools; no real data).
+ *   synthetic `mixedBoard()` (harness, model and productivity tools; no real data).
  * Test: `npx vitest run lib/scoring-kind-routing.test.ts`
  */
 
@@ -56,7 +56,7 @@ function configJson(): Record<string, any> {
 }
 
 beforeEach(() => {
-  // The fixture's `other` tool makes the engine warn with its id (#241); not under test here.
+  // The fixture's productivity tool makes the engine warn with its id (#241); not under test here.
   vi.spyOn(console, "warn").mockImplementation(() => {});
 });
 afterEach(() => vi.restoreAllMocks());
@@ -102,13 +102,13 @@ describe("v8.0 model profile, D4b (#185)", () => {
     expect(() => parseScoringProfiles(broken)).toThrow(/provisional must be a non-empty string/);
   });
 
-  it("keeps the harness profile at D44, and gives productivity and other the D44 weights, marked provisional", () => {
+  it("keeps the harness profile at D44, gives productivity the D44 weights marked provisional, and has no other profile", () => {
     expect(v8.profiles["harness"]!.weights).toEqual(D44_HARNESS);
     expect(v8.profiles["harness"]!.provisional).toBeUndefined();
-    for (const kind of ["productivity", "other"]) {
-      expect(v8.profiles[kind]!.weights).toEqual(D44_HARNESS);
-      expect(v8.profiles[kind]!.provisional).toMatch(/Architect decision/);
-    }
+    expect(v8.profiles["productivity"]!.weights).toEqual(D44_HARNESS);
+    expect(v8.profiles["productivity"]!.provisional).toMatch(/Architect decision/);
+    // #185: owner ruling (Q3) drops the provisional other profile from v8.0.
+    expect(Object.keys(v8.profiles).sort()).toEqual(["harness", "model", "productivity"]);
   });
 });
 
@@ -119,7 +119,8 @@ describe("kindRouting / profileRouting (#185)", () => {
     expect(routing.route("harness")).toEqual({ profile: "harness", weights: D44_HARNESS });
     expect(routing.route("model")).toEqual({ profile: "model", weights: D4B_MODEL });
     expect(routing.route("productivity")).toEqual({ profile: "productivity", weights: D44_HARNESS });
-    expect(routing.route("other")).toEqual({ profile: "other", weights: D44_HARNESS });
+    // #185: v8.0 has no other profile, so an other tool is never scored by it.
+    expect(() => routing.route("other")).toThrow(/no profile for kind "other"/);
   });
 
   it.each([null, undefined, "", "unknown", "Harness", "non_ai", 42])("throws for kind %j, never falls back", (kind) => {

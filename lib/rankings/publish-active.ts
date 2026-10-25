@@ -6,8 +6,8 @@
  *   (v8), and a profile problem must stop the run before anything is written: a wrong
  *   weight table would publish plausible but wrong ranks.
  * What: `resolvePublishScoring()` turns a validated config into the per-list scoring
- *   of the set `activeProfileSet` names. It refuses a legacy (one-table) set and a set
- *   without a profile for every list. `publishActiveRankings()` loads the checked-in
+ *   of the set `activeProfileSet` names. It refuses a legacy (one-table) set, a set
+ *   without a profile for every list, and a set with a profile for no list (#185). `publishActiveRankings()` loads the checked-in
  *   config, resolves the scoring, then calls `regenerateRankings()` with the per-list
  *   layout. It never calls the combined layout. `activeProfileSet` in
  *   `config/scoring-profiles.json` is the one config point that selects the set; the
@@ -35,7 +35,7 @@ import {
  * The per-list scoring of the active profile set.
  *
  * Precondition: `config` passed `parseScoringProfiles()`. Postcondition: the routing
- * is the active set's `byKind` routing, it has a profile for every list in
+ * is the active set's `byKind` routing, its profiles are exactly the lists in
  * `RANKING_LISTS`, and `algorithmVersion` is the set id without a leading "v".
  * Throws `ScoringProfileError` otherwise.
  */
@@ -52,6 +52,12 @@ export function resolvePublishScoring(config: ScoringProfilesConfig): PerListSco
   const missing = RANKING_LISTS.filter((list) => !Object.hasOwn(set.profiles, list));
   if (missing.length > 0) {
     throw new ScoringProfileError([`active set "${setId}" has no profile for list(s): ${missing.join(", ")}`]);
+  }
+  // #185: the active set's profiles and RANKING_LISTS must match; a profile with no list
+  // (the dropped `other`, owner ruling v8 Q3) would be scored for a board no reader serves.
+  const unlisted = Object.keys(set.profiles).filter((name) => !(RANKING_LISTS as readonly string[]).includes(name));
+  if (unlisted.length > 0) {
+    throw new ScoringProfileError([`active set "${setId}" has profile(s) for no list: ${unlisted.join(", ")}`]);
   }
   return { setId, algorithmVersion: setId.replace(/^v/, ""), routing: profileRouting(config, setId) };
 }
