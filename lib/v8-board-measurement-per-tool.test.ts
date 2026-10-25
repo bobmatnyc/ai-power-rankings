@@ -68,11 +68,12 @@ describe("per-tool table (#185, D8b)", () => {
   // Digests of `${formatMeasurementReport(result)}\n` at base commit 9daf1d27.
   // #185: the mixed-board digest is re-pinned after its `other` tool became a productivity
   // tool (v8.0 has no other profile); the one changed line is the kind count.
-  // #185: re-pinned again for the added redirect-count line and the 1c v8 board scope section.
+  // #185: re-pinned again for the added redirect-count line and the 1c v8 board scope section,
+  // and again for the retired and unexplained counts on that line (ruling option a).
   it.each([
-    ["harness board, v8.0", () => measure(harnessBoard()), "55cb1756895a659df73fe2618f8b49ed6e1bf4f5fae8f8253ce99ccbac51057b"],
-    ["harness board, negative control", () => measure(harnessBoard(), wrong), "674cd57d89a59f6cb090b2962ed2dc30104554bf069fc8816182d442d59ae569"],
-    ["mixed board, v8.0", () => measure(mixedBoard()), "96e821180435668b679c63cc77cc7ba4620320c400f6d4c721f4a895a317cd82"],
+    ["harness board, v8.0", () => measure(harnessBoard()), "a64fba1b8537123b0cd6862ade4ecf31ebc5aa1b1e7c3c127e12c94c03080ca3"],
+    ["harness board, negative control", () => measure(harnessBoard(), wrong), "46ba7bb6436485247c5b3015d2b49393f5588f838e06e8965bb5d82b1b50289f"],
+    ["mixed board, v8.0", () => measure(mixedBoard()), "c3ee3a198c3e02bad5abffeb5f18ee36b9c92b1bccdb336615a6b3c5a72209f3"],
   ])("without the flag the output is byte-for-byte the base report (%s)", (_label, run, digest) => {
     const result = run();
     const output = formatScriptOutput(result, { perTool: false });
