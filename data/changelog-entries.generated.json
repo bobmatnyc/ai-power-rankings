@@ -594,6 +594,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-50b332d0db5b",
+    "version": "Unreleased",
+    "date": "2026-10-25T14:57:33.009Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "db",
+    "title": "an admin script for the D90 merge of the seven duplicate tool rows",
+    "description": "an admin script for the D90 merge of the seven duplicate tool rows. `scripts/merge-duplicate-tools.ts` takes each old slug's target from the signed #191 URL table (`bytedance-seedance-2-0`, `clawdbot`, `cowork-ai`, `deepseek-r1`, `deepseek-v3-2`, `model-context-protocol-mcp-`, `moltbot`). `--backup <file>` exports the affected `tools` rows and every `tool_links` and `tool_metrics_history` row on an old id to a new local JSON file. The default dry run prints, per pair, the links it would move, the links it would drop, the metrics rows it would re-point or set to NULL, and the retire action, and exits 1 when a pair is unresolved (a row missing, the target not active). Both modes issue single SELECT statements only, so they run under a read-only role. When two old rows merge into one target and both link the same tool, or the target already has that link, the target's row (else the earlier pair's) is kept and the other is dropped, so no unique index is hit. `--apply <backup-file>` refuses a backup that is over 6 hours old, from another database or missing a changed row; it re-plans on locked rows and writes everything in one transaction. Old rows get `status='redirect'` and `data.redirect_to`, so the ranking generator, which reads `status='active'` only, leaves them out. A re-run changes nothing. Tests: `tests/unit/duplicate-tool-merge-d90.test.ts`",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-dbb9f159174b",
     "version": "Unreleased",
     "date": "2026-10-24T11:31:05.000Z",
