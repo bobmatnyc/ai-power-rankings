@@ -6,7 +6,8 @@
  *   reviewed sheet sets, before anyone points the loader at a real database.
  * What: builds PGlite from the on-disk migrations 0000..0016 seeded with the audit's tools,
  *   applies the committed 0017 backfill (the kinds from `docs/refresh/tool-kind-mapping.csv`)
- *   through the runner, then runs `loadToolLinks` in dry-run mode on the parsed seed.
+ *   and the D91 family migrations 0018 and 0019 through the runner, then runs
+ *   `loadToolLinks` in dry-run mode on the parsed seed (D91: it names the family rows).
  *   Asserts 17 rows, 0 refused, every row an insert, nothing written, and that no seed
  *   slug is a retired duplicate in the sheet.
  * Test: `npx vitest run tests/unit/model-harness-links-seed-183.test.ts`. No server, no network.
@@ -25,6 +26,8 @@ import { pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
 
 const SEED_FILE = path.join(REPO_ROOT, "docs/refresh/model-harness-links.csv");
 const BACKFILL = "0017_backfill_tool_kind.sql";
+// D91: the seed names the family rows, which exist and are active after 0018 and 0019.
+const APPLY = [BACKFILL, "0018_create_model_family_rows.sql", "0019_fold_model_families.sql"];
 
 describe("#183 docs/refresh/model-harness-links.csv", () => {
   let db: PGlite;
@@ -34,11 +37,14 @@ describe("#183 docs/refresh/model-harness-links.csv", () => {
 
   beforeAll(async () => {
     db = await chainDb(BACKFILL);
-    const backfill = await runMigrations(
-      { db: pgliteMigrationDb(db), files: { list: () => [...MIGRATION_FILES], read: readMigration }, log: () => {} },
-      { dryRun: false, only: BACKFILL, showColumns: null, force: false }
-    );
-    expect(backfill.exitCode).toBe(0);
+    const migrationDb = pgliteMigrationDb(db);
+    for (const only of APPLY) {
+      const applied = await runMigrations(
+        { db: migrationDb, files: { list: () => [...MIGRATION_FILES], read: readMigration }, log: () => {} },
+        { dryRun: false, only, showColumns: null, force: false }
+      );
+      expect({ only, exitCode: applied.exitCode, lines: applied.exitCode === 0 ? [] : applied.lines }).toEqual({ only, exitCode: 0, lines: [] });
+    }
     log = [];
     exitCode = await loadToolLinks(drizzle(db), rows, false, (line) => log.push(line));
   }, 120_000);
@@ -65,6 +71,6 @@ describe("#183 docs/refresh/model-harness-links.csv", () => {
     const retired = new Set(sheet.rows.filter((r) => r.retired).map((r) => r.slug));
     for (const row of rows) expect([row.modelSlug, row.harnessSlug].filter((s) => retired.has(s))).toEqual([]);
     const pairs = rows.map((r) => `${r.modelSlug} -> ${r.harnessSlug}`);
-    for (const dropped of ["opus-4-6 -> openclaw", "sonnet-4-5 -> goose", "deepseek -> aider"]) expect(pairs).not.toContain(dropped);
+    for (const dropped of ["claude-opus -> openclaw", "claude-sonnet -> goose", "deepseek -> aider"]) expect(pairs).not.toContain(dropped);
   });
 });

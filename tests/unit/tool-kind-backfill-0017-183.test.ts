@@ -19,7 +19,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import type { PGlite } from "@electric-sql/pglite";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { buildKindBackfillSql, KIND_COUNT_SQL, parseKindSheet } from "../../lib/db/tool-kind-sheet";
+import { backfillSheetRows, buildKindBackfillSql, KIND_COUNT_SQL, KIND_SHEET_CONTRACT, parseKindSheet } from "../../lib/db/tool-kind-sheet";
 import { TOOL_LINK_KIND_VIOLATIONS_SQL } from "../../lib/db/tool-links";
 import { runMigrations, splitStatements } from "../../scripts/apply-migrations";
 import { chainDb, EXTRA_TOOLS, MIGRATION_FILES, readMigration, REPO_ROOT } from "./fixtures/migration-chain-183";
@@ -27,6 +27,8 @@ import { pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
 
 const FILE = "0017_backfill_tool_kind.sql";
 const SHEET = parseKindSheet(readFileSync(path.join(REPO_ROOT, "docs/refresh/tool-kind-mapping.csv"), "utf8"));
+// D91: 0017 was built from the 114 audit rows; the family rows 0018 creates are not in it.
+const BACKFILL_ROWS = backfillSheetRows(SHEET.rows, KIND_SHEET_CONTRACT);
 const LINKS = [
   ["opus-4-6", "claude-code", "native"],
   ["sonnet-4-5", "claude-code", "native"],
@@ -61,7 +63,7 @@ describe("#183 the committed 0017 file", () => {
   it("is the builder's output for the committed sheet, one guarded statement", () => {
     expect(SHEET.errors).toEqual([]);
     const sql = readMigration(FILE);
-    expect(sql).toBe(buildKindBackfillSql(SHEET.rows));
+    expect(sql).toBe(buildKindBackfillSql(BACKFILL_ROWS));
     expect(splitStatements(sql)).toHaveLength(1);
     expect(sql).toContain("SET LOCAL lock_timeout = '5s';");
     // Writes kind and subcategory only (D38 option 1): no other column is assigned.
@@ -99,20 +101,20 @@ describe("#183 0017 on the migration chain 0000..0016 (PGlite)", () => {
   it("applies through the runner and records the file once", async () => {
     expect(firstRun.exitCode).toBe(0);
     expect(await migrationDb.listAppliedFilenames()).toEqual([FILE]);
-    const changed = SHEET.rows.filter((r) => r.kind !== "harness" || r.subcategory !== null).length;
+    const changed = BACKFILL_ROWS.filter((r) => r.kind !== "harness" || r.subcategory !== null).length;
     expect(migrationDb.notices).toContain(`#183 0017: updated ${changed} tools rows`);
   });
 
   it("sets each sheet slug's kind and subcategory and leaves tools outside the sheet alone", async () => {
     const got = await kinds(db);
-    for (const row of SHEET.rows) expect([row.slug, ...got.get(row.slug)!]).toEqual([row.slug, row.kind, row.subcategory]);
+    for (const row of BACKFILL_ROWS) expect([row.slug, ...got.get(row.slug)!]).toEqual([row.slug, row.kind, row.subcategory]);
     for (const extra of EXTRA_TOOLS) expect(got.get(extra.slug)).toEqual(["harness", null]);
     expect(await counts(db)).toEqual([
       { kind: "harness", n: 69 + EXTRA_TOOLS.length },
       { kind: "model", n: 15 },
       { kind: "other", n: 30 },
     ]);
-    const sheetSlugs = SHEET.rows.map((r) => r.slug);
+    const sheetSlugs = BACKFILL_ROWS.map((r) => r.slug);
     const bySheet = (
       await db.query<{ kind: string; n: number }>(
         `SELECT kind, count(*)::int AS n FROM public."tools" WHERE slug = ANY($1) GROUP BY kind ORDER BY kind`,
