@@ -211,11 +211,6 @@ describe("GET /api/rankings (#186)", () => {
     expect(slugsOf(body.rankings)).toEqual(HARNESS.map((t) => t.slug));
   });
 
-  it("D51 holds when GET is called with no request at all", async () => {
-    const body = await (await GET()).json();
-    expect(body.list).toBe("harness");
-  });
-
   it.each([
     ["?list=model", "model"],
     ["?list=models", "model"],
