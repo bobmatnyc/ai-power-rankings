@@ -65,10 +65,12 @@ const sha256 = (text: string) => createHash("sha256").update(text).digest("hex")
 
 describe("per-tool table (#185, D8b)", () => {
   // Digests of `${formatMeasurementReport(result)}\n` at base commit 9daf1d27.
+  // #185: the mixed-board digest is re-pinned after its `other` tool became a productivity
+  // tool (v8.0 has no other profile); the one changed line is the kind count.
   it.each([
     ["harness board, v8.0", () => measure(harnessBoard()), "799999d19c52779062b7b0fa24f393daa1aba8f77094743aea29f2423d54f8da"],
     ["harness board, negative control", () => measure(harnessBoard(), wrong), "4ac8abc66aa52fe0ec3dec90a4be81d7c459ccdd668d849c6df516498c60b1f5"],
-    ["mixed board, v8.0", () => measure(mixedBoard()), "dac9b29809df957425cbf27486a0ae2c7ca95a6f8a31a4a751a8ce16eba0655e"],
+    ["mixed board, v8.0", () => measure(mixedBoard()), "6723512f0030f05e1b4738a9d2ca621ae0324ec23f895d893269235ff6587083"],
   ])("without the flag the output is byte-for-byte the base report (%s)", (_label, run, digest) => {
     const result = run();
     const output = formatScriptOutput(result, { perTool: false });
