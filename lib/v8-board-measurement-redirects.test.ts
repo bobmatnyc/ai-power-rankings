@@ -196,6 +196,19 @@ describe("v7.10 baseline through redirects (#185)", () => {
 });
 
 describe("v8 board leaves out kind other; the v7.10 reproduction keeps it (#185, ruling 'Dad')", () => {
+  it("an other-kind tool tied on score leaves every v8 candidate statistic, ties included, unchanged", () => {
+    const without = mixedBoard();
+    // Same data as a harness tool, so it ties with it on the v7.10 board.
+    const twin = { ...without[2]!, id: `${without[2]!.id}-other`, slug: `${without[2]!.slug}-other`, kind: "other" };
+    const withOther = [...without, twin];
+    const a = run(without, quietPublished(without), without.map(active));
+    const b = run(withOther, quietPublished(withOther), withOther.map(active));
+    expect(b.reproduced).toBe(true);
+    expect(b.v8ExcludedOtherKind).toBe(1);
+    expect(b.candidate!.ties).toEqual(a.candidate!.ties);
+    expect(b.candidate).toEqual(a.candidate);
+  });
+
   it("scores the v8 board without the other tool and reports its count", () => {
     const tools = mixedBoard();
     const other = tools.find((t) => t.kind === "productivity")!;
