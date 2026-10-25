@@ -150,7 +150,10 @@ present. `tool` is the full tool record from `tools.repository`, or `null` if
 it could not be resolved.
 
 When the list has no current row, the route returns
-`{ success: false, error, list, message, timestamp, statusCode: 404 }`. On a
+`{ success: false, error, list, message, timestamp, statusCode: 404 }`.
+#185: only a 200 is held in the in-memory cache; a 404, 500 or 503 is never
+replayed from it (#311 below: no response is edge-cached). A per-list publish clears the
+in-memory entries and revalidates the `rankings` tag. On a
 database outage it returns `statusCode: 503`; on an unexpected error, HTTP
 500.
 

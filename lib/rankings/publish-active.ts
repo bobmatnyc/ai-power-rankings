@@ -16,6 +16,7 @@
  * Test: `tests/unit/publish-active-185.test.ts`, `lib/scoring-profiles.activation-185.test.ts`.
  */
 
+import { invalidateRankingsCache } from "@/lib/cache/invalidation.service";
 import { RANKING_LISTS } from "@/lib/rankings/lists";
 import { profileRouting } from "@/lib/scoring-kind-routing";
 import {
@@ -66,10 +67,17 @@ export type PublishActiveOptions = Omit<RegenerateRankingsOptions, "layout" | "m
  * The config is loaded and resolved before `regenerateRankings()` runs, so a refused
  * or invalid set throws with no read and no write. A failed write rolls back inside
  * `saveListSnapshots()` and is rethrown; there is no fallback to the combined layout.
+ * Only after a committed publish it calls `invalidateRankingsCache()`.
  */
 export async function publishActiveRankings(options: PublishActiveOptions = {}): Promise<RankingGenerationResult> {
   const { loadProfiles = loadCheckedInScoringProfiles, ...rest } = options;
   const scoring = resolvePublishScoring(loadProfiles());
   // #185: the publish path writes the per-list boards only; the combined rows stay as they are (D55).
-  return regenerateRankings({ ...rest, mode: "publish", layout: "per-list", scoring });
+  const result = await regenerateRankings({ ...rest, mode: "publish", layout: "per-list", scoring });
+  // #185: a committed publish revalidates the rankings pages and routes (tag `rankings`,
+  // the home, rankings and tools layouts) and clears their in-memory entries, so no cached
+  // pre-publish body (an empty board or a 404) outlives it. A revalidation error is logged
+  // inside and never undoes or fails the publish that already committed.
+  await invalidateRankingsCache();
+  return result;
 }
