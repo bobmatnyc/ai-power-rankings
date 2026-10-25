@@ -43,7 +43,7 @@ export type ProfileSetStatus = "legacy" | "active" | "staged";
 export interface ScoringProfile {
   declaredTotal: number;
   weights: RankingWeightsV76;
-  /** #185: present while the profile awaits the ruling it names (e.g. the model profile, D4d). */
+  /** #185: present while the profile awaits the ruling it names (e.g. the productivity profile). */
   provisional?: string;
 }
 
