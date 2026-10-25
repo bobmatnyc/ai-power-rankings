@@ -3,15 +3,44 @@ import { cachedJsonResponse } from "@/lib/api-cache";
 import { getDb } from "@/lib/db/connection";
 import { loggers } from "@/lib/logger";
 import { loadCurrentRankings } from "@/lib/rankings/current-rankings";
+import { parseRankingListParam, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
 
-export async function GET(): Promise<NextResponse> {
+/**
+ * `GET /api/rankings[?list=<list>]`: one list's current board (#186).
+ *
+ * Why: #186 replaces the one global board with one board per list. D51: with no list
+ *   parameter the response is the coding-harness board, and every response names the
+ *   list it holds, so a caller never mistakes one board for another.
+ * What: `list` (or its alias `kind`, the issue's name) is a list id (`harness`,
+ *   `model`, `productivity`) or its URL slug. An unknown value is 400 and lists the
+ *   valid ones. The body is the #192 shape plus `list` and `list_meta` (entry count,
+ *   D53 indexable flag and tier scheme, D54 provisional-note flag) and `list_source`
+ *   (`list` for the list's own row, `combined` for the legacy board split by list).
+ * Test: `tests/unit/api-rankings-per-list-186.test.ts`,
+ *   `tests/unit/home-live-rankings-192.test.tsx`.
+ */
+export async function GET(request?: Request): Promise<NextResponse> {
+  // #186: D51 — an absent list parameter means the coding-harness board.
+  const params = request ? new URL(request.url).searchParams : null;
+  const parsed = parseRankingListParam(params?.get("list") ?? params?.get("kind"));
+  if (!parsed.ok) {
+    return NextResponse.json(
+      { error: "Unknown list", message: parsed.error, lists: [...RANKING_LISTS] },
+      { status: 400 }
+    );
+  }
+  const { list } = parsed;
+
   try {
     // Only use mock data in test environment
     if (process.env.NODE_ENV === "test") {
       // Dynamic import for test-only mock data
       const { getMockRankingsResponse } = await import("@/lib/test-utils/mock-rankings");
       const mockResponse = getMockRankingsResponse();
-      return cachedJsonResponse(mockResponse, "/api/rankings");
+      return cachedJsonResponse(
+        { ...mockResponse, list, list_meta: rankingListMeta(list, mockResponse.rankings.length) },
+        "/api/rankings"
+      );
     }
 
     // Get database connection - will throw if not available
@@ -31,7 +60,7 @@ export async function GET(): Promise<NextResponse> {
     loggers.api.debug("Getting rankings from database");
 
     // See #192: the home page reads the same snapshot rows through this function.
-    const current = await loadCurrentRankings();
+    const current = await loadCurrentRankings(list);
     if (!current) {
       loggers.api.warn("No current rankings found in database");
 
@@ -39,6 +68,8 @@ export async function GET(): Promise<NextResponse> {
       return cachedJsonResponse(
         {
           rankings: [],
+          list, // #186: D51, the response names its list
+          list_meta: rankingListMeta(list, 0),
           algorithm: {
             version: "v1.0",
             name: "No Rankings Available",
@@ -79,6 +110,10 @@ export async function GET(): Promise<NextResponse> {
     return cachedJsonResponse(
       {
         rankings: validRankings,
+        // #186: D51 names the list; list_meta carries the D53 and D54 rules for it.
+        list,
+        list_meta: rankingListMeta(list, validRankings.length),
+        list_source: current.source,
         // published_at reflects when the current snapshot was actually published,
         // so the public UI can surface an honest "Rankings as of <date>" marker
         // (falls back to created_at for legacy rows that predate published_at).

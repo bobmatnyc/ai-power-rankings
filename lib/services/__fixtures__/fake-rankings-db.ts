@@ -22,6 +22,8 @@ const dialect = new PgDialect();
 export interface FakeRankingRow {
   id: string;
   period: string;
+  /** #186: absent means 'combined', the column default. */
+  list?: string;
   algorithmVersion: string;
   isCurrent: boolean;
   publishedAt: Date | null;
@@ -37,6 +39,8 @@ export interface FakeToolRow {
   category: string;
   status: string;
   data: Record<string, unknown>;
+  /** #186: `tools.kind`, read by the per-list layout. */
+  kind?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -54,7 +58,13 @@ const COLUMN_TO_FIELD: Record<string, string> = {
   is_current: "isCurrent",
   status: "status",
   id: "id",
+  list: "list",
 };
+
+/** #186: a row's value for `field`, with the column default for an absent `list`. */
+function fieldValue(row: Record<string, unknown>, field: string): unknown {
+  return field === "list" ? (row["list"] ?? "combined") : row[field];
+}
 
 /** Turn `("t"."a" = $1 and "t"."b" = $2)` into a row predicate. */
 function predicate(condition: SQL | undefined): {
@@ -70,7 +80,7 @@ function predicate(condition: SQL | undefined): {
     const field = match ? COLUMN_TO_FIELD[match[1]!] : undefined;
     if (!match || !field) throw new Error(`fake-rankings-db: unsupported condition ${sql}`);
     const value = params[Number(match[2]) - 1];
-    return (row: Record<string, unknown>) => row[field] === value;
+    return (row: Record<string, unknown>) => fieldValue(row, field) === value;
   });
   return { test: (row) => checks.every((check) => check(row)), text: sql, params };
 }
@@ -110,8 +120,14 @@ export function createFakeRankingsDb(seed: { rankings?: FakeRankingRow[]; tools?
       values: (values: Record<string, unknown>) => {
         const now = new Date("2026-01-01T00:00:00Z");
         const row: Record<string, unknown> = { id: `row-${nextId++}`, createdAt: now, updatedAt: now, publishedAt: null, ...values };
-        if (rowsOf(table).some((existing) => existing["period"] === row["period"])) {
-          throw new Error("fake-rankings-db: duplicate key value violates rankings_period_idx");
+        // #186: rankings are unique per (period, list).
+        if (
+          rowsOf(table).some(
+            (existing) =>
+              existing["period"] === row["period"] && fieldValue(existing, "list") === fieldValue(row, "list")
+          )
+        ) {
+          throw new Error("fake-rankings-db: duplicate key value violates rankings_period_list_idx");
         }
         rowsOf(table).push(row);
         state.writes.push({ op: "insert", table: getTableName(table as never), values });
