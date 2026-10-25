@@ -20,14 +20,21 @@
  *   counts-only report from `formatMeasurementReport()`, except its closing
  *   private section, which names active tools missing from the sheet. All
  *   console output of the code it runs is swallowed (the engine names tools).
+ *   With `--per-tool` (ruling D8b), stdout also carries, after that report, a
+ *   private per-tool table (name, slug, v7.10 and v8 rank and score, shifts,
+ *   kind, D45 breach mark) from `formatScriptOutput()`. It goes to stdout
+ *   only; the script writes no file. Without the flag stdout is unchanged.
+ *   The flag never changes the exit code.
  *   An error prints the script's own message or the error class name only.
  *   Exit 0: reproduced, 0 D45 breaches. 3: a D45 breach. 4: v7.10 not
  *   reproduced. 5: harness list check failed. 2: refused (running under CI).
  *   1: any other error.
  * Test: `lib/v8-board-measurement.test.ts` (core and report),
+ *   `lib/v8-board-measurement-per-tool.test.ts` (per-tool table, unchanged default output),
  *   `tests/unit/measure-v8-board-script-185.test.ts` (CI refusal, no workflow runs it).
  *
- * Usage: MEASURE_V8_DATABASE_URL=<read-only connection string> npx tsx scripts/measure-v8-board.ts
+ * Usage: MEASURE_V8_DATABASE_URL=<read-only connection string> npx tsx scripts/measure-v8-board.ts [--per-tool]
+ *   --per-tool  also print the private per-tool table (do not post it)
  */
 
 // #185: first import, so it records the credential and stops env-file loading before
@@ -46,11 +53,11 @@ import { profileRouting } from "@/lib/scoring-kind-routing";
 import { loadCheckedInScoringProfiles, profileWeights } from "@/lib/scoring-profiles";
 import {
   EXIT_CODES,
-  formatMeasurementReport,
   kindSheetView,
   measureBoard,
   type MeasuredTool,
 } from "@/lib/v8-board-measurement";
+import { formatScriptOutput, PER_TOOL_FLAG } from "@/lib/v8-board-measurement-per-tool";
 
 /** The reviewed 0017 kind sheet, relative to the repo root the script runs from. */
 const KIND_SHEET_PATH = "docs/refresh/tool-kind-mapping.csv";
@@ -124,7 +131,9 @@ async function main(): Promise<number> {
     candidate,
     sheet,
   });
-  process.stdout.write(`${formatMeasurementReport(result)}\n`);
+  // D8b: private per-tool table for Bob's D4d sign-off
+  const perTool = process.argv.slice(2).includes(PER_TOOL_FLAG);
+  process.stdout.write(formatScriptOutput(result, { perTool }));
   return result.exitCode;
 }
 
