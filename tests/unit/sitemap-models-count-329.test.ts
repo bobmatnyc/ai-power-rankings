@@ -79,11 +79,12 @@ function seed(genuine: number, withRedirectAlias: boolean, withNoise = false) {
     };
   }
   const stamp = new Date("2026-10-01T00:00:00Z");
+  // #185: the models list's own board; after v8 activation the combined board is never read.
   current.rows = {
-    combined: {
-      id: "combined-row",
+    model: {
+      id: "model-row",
       period: "2026-10",
-      list: "combined",
+      list: "model",
       algorithm_version: "7.10",
       is_current: true,
       published_at: stamp,

@@ -3,7 +3,7 @@ import { cachedJsonResponse } from "@/lib/api-cache";
 import { getDb } from "@/lib/db/connection";
 import { loggers } from "@/lib/logger";
 import { loadCurrentRankings } from "@/lib/rankings/current-rankings";
-import { parseRankingListParam, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
+import { parseListQuery, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
 
 /**
  * `GET /api/rankings[?list=<list>]`: one list's current board (#186).
@@ -14,26 +14,16 @@ import { parseRankingListParam, RANKING_LISTS, rankingListMeta } from "@/lib/ran
  * What: `list` (or its alias `kind`, the issue's name) is a list id (`harness`,
  *   `model`, `productivity`) or its URL slug. An unknown value is 400 and lists the
  *   valid ones. The body is the #192 shape plus `list` and `list_meta` (entry count,
- *   D53 indexable flag and tier scheme, D54 provisional-note flag) and `list_source`
- *   (`list` for the list's own row, `combined` for the legacy board split by list).
- * Test: `tests/unit/api-rankings-per-list-186.test.ts`,
+ *   D53 indexable flag and tier scheme, D54 provisional-note flag). #185: the board is
+ *   the list's own current row only; with none the body is the empty board.
+ * Test: `tests/unit/rankings-per-list-read-186.test.ts`,
  *   `tests/unit/home-live-rankings-192.test.tsx`.
  */
 // #186: Next.js route exports require a non-optional Request
 export async function GET(request: Request): Promise<NextResponse> {
-  // #186: D51 — an absent list parameter means the coding-harness board.
-  const params = new URL(request.url).searchParams;
-  const rawList = params.get("list");
-  const rawKind = params.get("kind");
-  const parsed = parseRankingListParam(rawList ?? rawKind);
-  // #186: a present-but-empty list, or list and kind naming different lists, is an error, never the default.
-  const kindParsed = rawList !== null && rawKind !== null ? parseRankingListParam(rawKind) : null;
-  if ((rawList ?? rawKind)?.trim() === "" || (kindParsed && (!kindParsed.ok || (parsed.ok && kindParsed.list !== parsed.list)))) {
-    return NextResponse.json(
-      { error: "Unknown list", message: "list must name one list, and agree with kind when both are given", lists: [...RANKING_LISTS] },
-      { status: 400 }
-    );
-  }
+  // #186: D51 — an absent list parameter means the coding-harness board; a present-but-empty
+  // list, or list and kind naming different lists, is an error, never the default.
+  const parsed = parseListQuery(new URL(request.url).searchParams);
   if (!parsed.ok) {
     return NextResponse.json(
       { error: "Unknown list", message: parsed.error, lists: [...RANKING_LISTS] },
@@ -125,7 +115,6 @@ export async function GET(request: Request): Promise<NextResponse> {
         list,
         // #329: D63 — the models list is indexed only with 10+ active rows carrying metrics.
         list_meta: rankingListMeta(list, validRankings.length, current.metricRowCount),
-        list_source: current.source,
         // published_at reflects when the current snapshot was actually published,
         // so the public UI can surface an honest "Rankings as of <date>" marker
         // (falls back to created_at for legacy rows that predate published_at).
