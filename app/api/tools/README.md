@@ -10,7 +10,9 @@ database — there is no JSON-file data source.
 Source: `app/api/tools/route.ts`
 
 No query parameters. Returns every tool with `status: "active"`
-(`toolsRepo.findByStatus("active")`). Result is cached in-memory
+(`toolsRepo.findByStatus("active")`) except those whose slug the #191 URL
+table marks noindex (`isNoindexToolSlug`, #197). Those tools still resolve
+through `GET /api/tools/[slug]/json`. The filtered result is cached in-memory
 (`CACHE_TTL.tools`).
 
 Response body:

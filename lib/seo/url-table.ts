@@ -88,8 +88,11 @@ const HELD_SOURCES: ReadonlySet<string> = new Set(
     .map((row) => row.source)
 );
 
-/** Tool slugs whose pages carry noindex in every locale (Q-A85-3 included). */
-const NOINDEX_TOOL_SLUGS: ReadonlySet<string> = new Set(
+/**
+ * Tool slugs whose pages carry noindex in every locale (Q-A85-3 included).
+ * #197: exported so tests read the one set instead of copying the slug list.
+ */
+export const NOINDEX_TOOL_SLUGS: ReadonlySet<string> = new Set(
   URL_TABLE_ROWS.filter((row) => row.action === "noindex").map(
     (row) => row.source.split("/")[3] ?? ""
   )
