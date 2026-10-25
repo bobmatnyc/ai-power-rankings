@@ -19,21 +19,21 @@ import { describe, expect, it } from "vitest";
 const load = () => import("../../lib/news-tool-resolver");
 
 const TOOLS = [
-  { id: "t-claude-code", slug: "claude-code", name: "Claude Code" },
-  { id: "t-claude-artifacts", slug: "claude-artifacts", name: "Claude Artifacts" },
-  { id: "t-cursor", slug: "cursor", name: "Cursor" },
-  { id: "t-devin", slug: "devin", name: "Devin" },
-  { id: "t-copilot", db_id: "uuid-copilot", slug: "github-copilot", name: "GitHub Copilot" },
-  { id: "t-gemini", slug: "gemini-code-assist", name: "Gemini Code Assist" },
-  { id: "t-v0", slug: "v0-vercel", name: "v0" },
-  { id: "t-windsurf", slug: "windsurf", name: "Windsurf" },
-  { id: "t-bolt", slug: "bolt-new", name: "Bolt.new" },
+  { id: "t-claude-code", slug: "claude-code", name: "Claude Code", kind: "harness", status: "active" },
+  { id: "t-claude-artifacts", slug: "claude-artifacts", name: "Claude Artifacts", kind: "harness", status: "active" },
+  { id: "t-cursor", slug: "cursor", name: "Cursor", kind: "harness", status: "active" },
+  { id: "t-devin", slug: "devin", name: "Devin", kind: "harness", status: "active" },
+  { id: "t-copilot", db_id: "uuid-copilot", slug: "github-copilot", name: "GitHub Copilot", kind: "harness", status: "active" },
+  { id: "t-gemini", slug: "gemini-code-assist", name: "Gemini Code Assist", kind: "harness", status: "active" },
+  { id: "t-v0", slug: "v0-vercel", name: "v0", kind: "harness", status: "active" },
+  { id: "t-windsurf", slug: "windsurf", name: "Windsurf", kind: "harness", status: "active" },
+  { id: "t-bolt", slug: "bolt-new", name: "Bolt.new", kind: "harness", status: "active" },
   // Catalogue tools named with ordinary English words (critic probes, #109).
-  { id: "t-continue", slug: "continue", name: "Continue" },
-  { id: "t-warp", slug: "warp", name: "Warp" },
-  { id: "t-harness", slug: "harness", name: "Harness" },
-  { id: "t-amp", slug: "amp", name: "Amp" },
-  { id: "t-ai", slug: "ai", name: "AI" },
+  { id: "t-continue", slug: "continue", name: "Continue", kind: "harness", status: "active" },
+  { id: "t-warp", slug: "warp", name: "Warp", kind: "harness", status: "active" },
+  { id: "t-harness", slug: "harness", name: "Harness", kind: "harness", status: "active" },
+  { id: "t-amp", slug: "amp", name: "Amp", kind: "harness", status: "active" },
+  { id: "t-ai", slug: "ai", name: "AI", kind: "harness", status: "active" },
 ];
 
 async function resolve(article: { title?: unknown; toolMentions?: unknown }) {
