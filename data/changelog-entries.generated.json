@@ -594,10 +594,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-1b48f6caa87c",
+    "version": "Unreleased",
+    "date": "2026-10-25T15:35:05.428Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "db",
+    "title": "a dispatch-only workflow runs the D90 duplicate-tool merge against production (D96)",
+    "description": "a dispatch-only workflow runs the D90 duplicate-tool merge against production (D96). `.github/workflows/merge-duplicate-tools.yml` has no trigger but `workflow_dispatch`. With the default inputs it runs `scripts/merge-duplicate-tools.ts --dry-run` only and writes nothing. It applies only when dispatched with `dry_run: false` and `confirm: merge-d90-duplicates`: it repeats the dry run, takes the script's backup, and runs `--apply` only after the backup step succeeded. `DATABASE_URL` reaches the script from the repository secret as a step env value. Any non-zero exit fails the job, and the run summary records the mode, step outcomes and the script's count lines only. Tests: `tests/unit/merge-duplicate-tools-workflow-d96.test.ts`",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-50b332d0db5b",
     "version": "Unreleased",
-    "date": "2026-10-25T14:57:33.009Z",
-    "dateSource": "build",
+    "date": "2026-10-25T15:11:58.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "db",
     "title": "an admin script for the D90 merge of the seven duplicate tool rows",
@@ -849,8 +860,8 @@
   {
     "id": "unreleased-4066295ce8ba",
     "version": "Unreleased",
-    "date": "2026-10-25T15:06:14.390Z",
-    "dateSource": "build",
+    "date": "2026-10-25T15:10:26.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "news",
     "title": "article summaries are one paragraph of 80-120 words (#179)",

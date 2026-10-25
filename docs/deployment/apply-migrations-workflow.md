@@ -57,7 +57,32 @@ npx tsx scripts/apply-migrations.ts        # apply every pending migration
 The script never prints the connection string, or its host or password, even inside a
 driver error message — this repository is public and the Actions log is world-readable.
 
+## Merging the D90 duplicate tools
+
+The **Merge duplicate tools (D90)** workflow (`.github/workflows/merge-duplicate-tools.yml`,
+D96) runs `scripts/merge-duplicate-tools.ts` against production. Its only trigger is a
+manual dispatch from the Actions tab.
+
+| Input | Default | Meaning |
+|---|---|---|
+| `dry_run` | `true` | Print the merge plan and write nothing. |
+| `confirm` | empty | Must be `merge-d90-duplicates` to apply. Ignored on a dry run. |
+
+1. **Dry run.** Dispatch with the defaults. The job runs the script's SELECT-only dry run
+   and stops. It fails when a pair is unresolved. Review the per-pair plan in the log.
+2. **Apply.** Once the dry run is reviewed and cleared, dispatch once with `dry_run: false`
+   and `confirm: merge-d90-duplicates`. The job repeats the dry run, takes the script's
+   backup, and runs `--apply` against that backup in one transaction. A failed dry run or
+   backup stops the job before any write. A re-run is a no-op.
+
+`dry_run: false` with any other `confirm` fails the job and runs nothing. Any non-zero
+exit fails the job. The run summary records the mode, each step's outcome and the
+script's count lines only (D19); the database fingerprint line is dropped from the log.
+The backup file lives on the runner and is gone when the job ends.
+
 ## Files
 
 - `scripts/apply-migrations.ts` — the runner, and `tests/unit/apply-migrations.test.ts`
 - `.github/workflows/apply-migration.yml` — the dispatchable workflow
+- `.github/workflows/merge-duplicate-tools.yml` — the D90 merge dispatch, and
+  `tests/unit/merge-duplicate-tools-workflow-d96.test.ts`
