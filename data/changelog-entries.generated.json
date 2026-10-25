@@ -594,9 +594,20 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-ad6ea35c39a5",
+    "version": "Unreleased",
+    "date": "2026-10-25T15:59:41.401Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "db",
+    "title": "migrations for the D91 model family rows",
+    "description": "migrations for the D91 model family rows. `0018_create_model_family_rows.sql` inserts `glm`, `kimi`, `claude-opus` and `claude-sonnet` as inactive `kind = 'model'` rows (ON CONFLICT DO NOTHING; a guard and a post-count raise). `0019_fold_model_families.sql` is one DO block: it locks the eleven rows, refuses any other starting state, copies each survivor's data and scores to its family, re-points `tool_links` and `tool_metrics_history` with the D90 clash rules, activates the four, retires the seven per-version rows as `redirect` with `data.redirect_to`, and raises on any count mismatch; a re-run is a no-op. The tool page marks an inactive tool noindex. The kind sheet holds 118 rows and the links seed names the family rows. The held #197 308s stay held.",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-496330050bab",
     "version": "Unreleased",
-    "date": "2026-10-25T16:04:19.000Z",
+    "date": "2026-10-25T16:09:18.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "db",
@@ -607,7 +618,7 @@
   {
     "id": "unreleased-1b48f6caa87c",
     "version": "Unreleased",
-    "date": "2026-10-25T15:35:14.000Z",
+    "date": "2026-10-25T16:09:18.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "db",

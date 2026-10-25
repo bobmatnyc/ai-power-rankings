@@ -7,7 +7,8 @@
  * What: `MIGRATION_FILES` lists `lib/db/migrations/*.sql` in name order. `chainDb` applies
  *   every file before `upTo` statement by statement with the runner's own
  *   `splitStatements`, after one bridge: `automated_ingestion_runs` is created by files
- *   that are not in the repository (0002..0011), so 0012 and 0013 get a stub of it. It
+ *   that are not in the repository (0002..0011), so 0012 and 0013 get a stub of it, and
+ *   the tools scoring columns of the journal's 0003 (not on disk; D91's 0019 copies them). It
  *   inserts the audit's tools (slug, name, category; `kind` keeps the 0016 default) and
  *   `EXTRA_TOOLS`, minus `omit`. 0015 runs as plain statements here: its preflight gate
  *   is about production, and `tests/unit/timestamptz-237-preflight.test.ts` covers it.
@@ -36,6 +37,13 @@ const BRIDGE_BEFORE_0012 = `CREATE TABLE IF NOT EXISTS public."automated_ingesti
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
   "created_at" timestamp DEFAULT now() NOT NULL
 )`;
+
+/** D91: the four tools scoring columns of 0003_add_scoring_columns, as production has them. */
+const BRIDGE_SCORING_0003 = `ALTER TABLE public."tools"
+  ADD COLUMN IF NOT EXISTS "baseline_score" jsonb DEFAULT '{}'::jsonb,
+  ADD COLUMN IF NOT EXISTS "delta_score" jsonb DEFAULT '{}'::jsonb,
+  ADD COLUMN IF NOT EXISTS "current_score" jsonb DEFAULT '{}'::jsonb,
+  ADD COLUMN IF NOT EXISTS "score_updated_at" timestamp`;
 
 /** Tools outside the sheet: production holds rows the active-tool audit did not list. */
 export const EXTRA_TOOLS = [
@@ -68,7 +76,7 @@ export function auditSeedTools(): SeedTool[] {
 export async function chainDb(upTo: string, omit: readonly string[] = []): Promise<PGlite> {
   const db = new PGlite();
   for (const file of MIGRATION_FILES.filter((f) => f < upTo)) {
-    if (file.startsWith("0012")) await db.exec(BRIDGE_BEFORE_0012);
+    if (file.startsWith("0012")) await db.exec(`${BRIDGE_BEFORE_0012}; ${BRIDGE_SCORING_0003}`);
     for (const statement of splitStatements(readMigration(file))) await db.exec(statement);
   }
   for (const t of [...auditSeedTools(), ...EXTRA_TOOLS].filter((t) => !omit.includes(t.slug))) {
