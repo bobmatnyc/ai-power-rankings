@@ -433,3 +433,22 @@ describe("D91 0019 refusals and post-count checks roll back", () => {
     await ctx.db.close();
   }, 120_000);
 });
+
+describe("D91 0019 re-run after the fold refuses a row on a retired id", () => {
+  it.each([
+    ["a tool_links row", async (db: PGlite) => link(db, "opus-4-5", "windsurf", "supports", "2026-10-02T00:00:00Z")],
+    ["a tool_metrics_history row", async (db: PGlite) => metric(db, "kimi-2-5", "2026-10-05")],
+  ])("refuses %s pointing at a retired id, writing nothing", async (_name, arrange) => {
+    const ctx = await setup([F17, F18]);
+    await seedFold(ctx.db);
+    expect((await apply(ctx, F19)).exitCode).toBe(0);
+    await arrange(ctx.db);
+    const before = await snapshot(ctx.db);
+    const result = await apply(ctx, F19, { force: true });
+    expect(result.exitCode).toBe(1);
+    expect(result.lines.join("\n")).toContain("D91 0019: already folded, but rows point at a retired id again");
+    expect(await snapshot(ctx.db)).toEqual(before);
+    expect(await ctx.mdb.listAppliedFilenames()).toEqual([F17, F18, F19]);
+    await ctx.db.close();
+  }, 120_000);
+});

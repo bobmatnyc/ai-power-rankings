@@ -18,6 +18,8 @@
 --   the seven exactly as applyMerge does (status 'redirect', data.redirect_to,
 --   redirect_reason, previous_status); then count and raise on any mismatch.
 --   Slugs are matched by equality only: the unrelated 'opus' row is never touched.
+--   Recovery: the fold is not reversible row by row; the named Neon branch taken before
+--   the apply (D98) is the only recovery path.
 --   Apply with .github/workflows/apply-migration.yml, migration_file
 --   0019_fold_model_families.sql, show_columns_table tools, after 0018.
 
