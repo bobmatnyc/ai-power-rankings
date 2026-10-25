@@ -36,7 +36,7 @@ const D44_HARNESS: RankingWeightsV76 = {
   developerAdoption: 0.17,
 };
 
-/** D4b (provisional until D4d). Innovation, sentiment and resilience as v7.10. */
+/** D4b, signed off under D9b. Innovation, sentiment and resilience as v7.10. */
 const D4B_MODEL: RankingWeightsV76 = {
   agenticCapability: 0.18,
   innovation: 0.1,
@@ -62,12 +62,13 @@ beforeEach(() => {
 afterEach(() => vi.restoreAllMocks());
 
 describe("v8.0 model profile, D4b (#185)", () => {
-  it("is exactly the D4b table, sums to 1.00 and is marked provisional pending D4d", () => {
+  it("is exactly the D4b table, sums to 1.00 and is signed off under D9b, not provisional", () => {
     const model = v8.profiles["model"]!;
     expect(model.weights).toEqual(D4B_MODEL);
     expect(basisPoints(model.weights)).toBe(10_000);
     expect(model.declaredTotal).toBe(1);
-    expect(model.provisional).toMatch(/D4d/);
+    expect(model.provisional).toBeUndefined();
+    expect(v8.description).toMatch(/model: ruling D4b, signed off by the owner under D9b\./);
     // The three factors D4b leaves alone keep their v7.10 values.
     for (const key of ["innovation", "businessSentiment", "platformResilience"] as const) {
       expect(model.weights[key]).toBe(ALGORITHM_V76_WEIGHTS[key]);
