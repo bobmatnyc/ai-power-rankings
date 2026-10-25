@@ -594,10 +594,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-496330050bab",
+    "version": "Unreleased",
+    "date": "2026-10-25T16:04:19.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "db",
+    "title": "the D90 merge workflow runs only from main, and its recovery path is recorded (D98, D99)",
+    "description": "the D90 merge workflow runs only from `main`, and its recovery path is recorded (D98, D99). Before the apply dispatch the owner creates a named Neon branch of production (pattern `pre-d90-YYYYMMDD`) and records its name and UTC time; rollback restores from that branch. The dry run and backup share the writer `DATABASE_URL` secret; there is no read-only role. Docs: `docs/deployment/apply-migrations-workflow.md` (#276)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-1b48f6caa87c",
     "version": "Unreleased",
-    "date": "2026-10-25T15:35:05.428Z",
-    "dateSource": "build",
+    "date": "2026-10-25T15:35:14.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "db",
     "title": "a dispatch-only workflow runs the D90 duplicate-tool merge against production (D96)",
