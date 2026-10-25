@@ -8,7 +8,8 @@
  *   `non_numeric` flag, and an adapter per part. Each adapter calls the same
  *   class method its CLI calls, so the matching heuristics are the CLI's.
  *   A found package becomes `found`; a CLI "not found" becomes `not_found`; the
- *   GitHub CLI's "no metrics returned" becomes `failed`, as the CLI counts it.
+ *   GitHub adapter throws on a failed call (403, 429, network), which the shard
+ *   counts as `failed`; a spent request budget becomes `skipped_budget` (#95).
  * Test: `tests/unit/metrics-collect-route-95.test.ts`
  */
 
@@ -51,7 +52,9 @@ export type CollectOutcome =
   | { kind: "found"; metrics: Record<string, unknown> }
   /** `noRequest`: decided without any fetch, so no rate-limit pause is owed. */
   | { kind: "not_found"; noRequest?: boolean }
-  | { kind: "failed"; error: string };
+  | { kind: "failed"; error: string }
+  /** #95: the request budget cannot cover this tool; the shard stops fetching and skips the rest. */
+  | { kind: "skipped_budget"; reason: string };
 
 export interface CollectorAdapter {
   /** Runs once before the first tool; throws when the part cannot run at all. */
@@ -108,21 +111,26 @@ export function createCollectorAdapter(part: CollectorPart, options: AdapterOpti
     }
     case "github": {
       const token = options.env["GITHUB_TOKEN"];
-      const collector = new GitHubMetricsCollector(token ?? "", { signal });
+      // #95: no token is a supported mode (owner ruling A9e): repo metadata only, no throw.
+      const collector = new GitHubMetricsCollector(token, { signal });
       return {
         init: async () => {
-          if (!token) throw new Error("GITHUB_TOKEN is not set");
-          if (!(await collector.verifyToken())) throw new Error("GitHub token verification failed");
+          // #95: only a present token is verified; a bad token still fails the shard.
+          if (collector.authenticated && !(await collector.verifyToken())) {
+            throw new Error("GitHub token verification failed");
+          }
         },
         collect: async (tool) => {
           // Same discovery as the CLI: first parseable GitHub URL in tool.data.
           for (const url of collector.findGitHubUrls(tool.data ?? {})) {
             const repo = collector["parseGitHubUrl"](url);
             if (!repo) continue;
-            const metrics = await collector.collectMetrics(repo.owner, repo.repo);
-            return metrics
-              ? { kind: "found", metrics: asRecord(metrics) }
-              : { kind: "failed", error: "No metrics returned" };
+            // #95: stop before a tool the remaining budget cannot cover.
+            const stop = collector.budgetStopReason();
+            if (stop) return { kind: "skipped_budget", reason: stop };
+            // #95: a throw (403, 429, network) reaches the shard as a failed tool, never a 0 metric.
+            const metrics = await collector.fetchMetrics(repo.owner, repo.repo);
+            return { kind: "found", metrics: asRecord(metrics) };
           }
           return { kind: "not_found", noRequest: true };
         },

@@ -110,10 +110,21 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-df842dd8bee7",
+    "version": "Unreleased",
+    "date": "2026-10-25T23:28:55.543Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "metrics",
+    "title": "the github metrics collector runs without GITHUB_TOKEN (owner ruling A9e)",
+    "description": "the github metrics collector runs without `GITHUB_TOKEN` (owner ruling A9e). It no longer throws \"GITHUB_TOKEN is not set\", sends no `Authorization` header, and reads repo metadata only (`GET /repos/{owner}/{repo}`); `commit_count_30d` and `contributors_count` are not collected, so they are absent from `tool_metrics_history`, not stored as 0. With a token the commit and contributor calls still run. Any 403 or 429 (including `Retry-After`) now fails that tool instead of storing a 0. Rate-limit state is read from `x-ratelimit-*` response headers, and when the remaining budget is below what a tool needs the shard stops fetching: the unreached tools count as skipped (in `skipped_timeout`), the shard status is `partial`, and the stop reason is written to the `metrics_collection_runs.error` column (#95)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-f64128afa4ea",
     "version": "Unreleased",
-    "date": "2026-10-25T23:13:33.470Z",
-    "dateSource": "build",
+    "date": "2026-10-25T23:19:19.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "admin",
     "title": "the Tools Manager's edit and discontinue actions answered 405",
