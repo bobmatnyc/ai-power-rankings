@@ -761,8 +761,8 @@
   {
     "id": "unreleased-19eb6cb1bb03",
     "version": "Unreleased",
-    "date": "2026-10-25T21:00:12.836Z",
-    "dateSource": "build",
+    "date": "2026-10-25T21:00:12.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
     "title": "v8 activation code",
