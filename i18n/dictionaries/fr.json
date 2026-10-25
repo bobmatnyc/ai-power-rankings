@@ -54,7 +54,8 @@
     "categories": "Catégories",
     "features": "Fonctionnalités",
     "clearFilters": "Effacer les filtres",
-    "allCategories": "Toutes les catégories"
+    "allCategories": "Toutes les catégories",
+    "overallRankings": "Classement général"
   },
   "home": {
     "hero": {

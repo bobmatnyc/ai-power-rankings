@@ -54,7 +54,8 @@
     "categories": "카테고리",
     "features": "기능",
     "clearFilters": "필터 초기화",
-    "allCategories": "모든 카테고리"
+    "allCategories": "모든 카테고리",
+    "overallRankings": "종합 순위"
   },
   "home": {
     "hero": {
