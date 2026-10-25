@@ -80,8 +80,16 @@ exit fails the job. The run summary records the mode, each step's outcome and th
 script's count lines only (D19); the database fingerprint line is dropped from the log.
 The job runs only when dispatched from `main`; a dispatch from any other ref runs no step.
 
-The backup file lives only for the job, on the runner; it is not a restore path. Recovery
-is by the operator's database snapshot, taken before the apply dispatch.
+The backup file lives only for the job, on the runner; it is not a restore path.
+
+**Recovery (D98).** Before the apply dispatch, the owner creates a named Neon branch of
+production in the Neon console (name pattern: `pre-d90-YYYYMMDD`) as the recovery point.
+Record its name and the UTC time before the apply runs. The apply dispatch never runs
+before that branch exists. Rollback is a restore from that branch; a DELETE alone is not a
+rollback.
+
+**Known gap (D99).** The dry run and the backup use the same writer `DATABASE_URL`
+repository secret, by name. There is no read-only role.
 
 ## Files
 

@@ -18,8 +18,13 @@ name: Merge duplicate tools (D90)
 # is dropped before the output reaches the log. This repository is public.
 #
 # The backup file lives only for the job, on the runner; it is not a restore path.
-# Recovery is by the operator's database snapshot, taken before the apply dispatch.
-# Recovery: see docs/deployment/apply-migrations-workflow.md
+# Recovery (D98): before the apply dispatch, the owner creates a named Neon branch of
+# production in the Neon console (name pattern: pre-d90-YYYYMMDD) and records its name and
+# UTC time. The apply dispatch never runs before that branch exists. Rollback is a restore
+# from that branch; a DELETE alone is not a rollback.
+# Known gap (D99): the dry run and the backup use the same writer DATABASE_URL repository
+# secret, by name. There is no read-only role.
+# Details: docs/deployment/apply-migrations-workflow.md
 #
 # Test: tests/unit/merge-duplicate-tools-workflow-d96.test.ts.
 
