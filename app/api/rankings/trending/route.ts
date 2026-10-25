@@ -29,20 +29,24 @@ import {
   type RankingPeriod,
 } from "@/lib/trending-analyzer";
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
-import cacheInstance, { CACHE_TTL } from "@/lib/memory-cache";
+import cacheInstance from "@/lib/memory-cache";
+import { parseListQuery, RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
 
 /**
- * Reads all historical ranking periods from the database.
+ * Reads all historical ranking periods of one list from the database.
+ *
+ * #185: the history of a list is its own stored boards (`findAllForList`), so it
+ * starts at the list's first per-list publish; the legacy combined rows are not read.
  *
  * IMPLEMENTATION NOTE: We fetch all rankings from PostgreSQL and transform
  * them to the RankingPeriod format expected by the trending analyzer.
  * The database stores rankings in JSONB format with the structure:
  * { period: "2025-09", data: { rankings: [...] } }
  */
-async function readHistoricalRankings(): Promise<RankingPeriod[]> {
+async function readHistoricalRankings(list: RankingList): Promise<RankingPeriod[]> {
   try {
-    // Fetch all rankings from database
-    const allRankings = await rankingsRepository.findAll();
+    // #185: one list's boards only; never the combined board.
+    const allRankings = await rankingsRepository.findAllForList(list);
 
     if (!allRankings || allRankings.length === 0) {
       loggers.api.warn("No rankings found in database");
@@ -128,6 +132,11 @@ async function readHistoricalRankings(): Promise<RankingPeriod[]> {
  *
  * Query Parameters:
  * - months: number | 'all' - Time range to analyze (default: 'all')
+ * - list (alias kind): #185, the list whose history is analyzed; default the coding
+ *   harnesses (D51). Unknown, empty or conflicting is 400.
+ *
+ * #185: a failed read is 500 with no cached body; it is never an empty 200.
+ * Test: `tests/unit/rankings-current-trending-185.test.ts`.
  *
  * Response Format:
  * ```json
@@ -166,6 +175,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const monthsParam = searchParams.get("months");
+    // #185: one list's history, D51 default.
+    const parsed = parseListQuery(searchParams);
+    if (!parsed.ok) {
+      return NextResponse.json(
+        { error: "Unknown list", message: parsed.error, lists: [...RANKING_LISTS] },
+        { status: 400 }
+      );
+    }
+    const { list } = parsed;
 
     let timeRange: number | "all" = "all";
     if (monthsParam && monthsParam !== "all") {
@@ -176,7 +194,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Create cache key based on time range
-    const cacheKey = `trending:${timeRange}`;
+    const cacheKey = `trending:${list}:${timeRange}`;
 
     // Check cache first
     const cachedData = cacheInstance.get(cacheKey);
@@ -195,7 +213,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         // Add cache status header
         "X-Cache-Status": "HIT",
         // Add ETag for better cache validation
-        ETag: `"trending-${(cachedData as any).metadata.total_periods}-${timeRange}"`,
+        ETag: `"trending-${list}-${(cachedData as any).metadata.total_periods}-${timeRange}"`,
       });
 
       return new NextResponse(JSON.stringify(cachedData), {
@@ -207,32 +225,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Load historical ranking data
     let periods;
     try {
-      periods = await readHistoricalRankings();
+      periods = await readHistoricalRankings(list);
     } catch (readError) {
       loggers.api.error("Failed to read historical rankings", {
+        list,
         error: readError instanceof Error ? readError.message : "Unknown error",
         stack: readError instanceof Error ? readError.stack : undefined,
       });
-
-      // Return empty result instead of error
-      const processingTime = Date.now() - startTime;
-      loggers.api.warn("Returning empty trending data due to read error", {
-        processingTimeMs: processingTime,
-      });
-
+      // #185: a failed read is an error, never an empty 200 that a cache would keep.
       return NextResponse.json(
-        {
-          periods: [],
-          tools: [],
-          chart_data: [],
-          metadata: {
-            total_periods: 0,
-            date_range: { start: "", end: "" },
-            top_tools_count: 0,
-          },
-          warning: "No historical ranking data available",
-        },
-        { status: 200 }
+        { error: "Failed to read ranking history", list },
+        { status: 500, headers: { "Cache-Control": "no-store" } }
       );
     }
 
@@ -241,6 +244,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
       return NextResponse.json(
         {
+          list,
           periods: [],
           tools: [],
           chart_data: [],
@@ -259,8 +263,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const trendingData = analyzeTrendingData(periods);
 
     // Apply time range filter if specified
-    const finalData =
+    const filtered =
       timeRange === "all" ? trendingData : filterTrendingDataByTimeRange(trendingData, timeRange);
+    // #185: the response names the list whose history it holds.
+    const finalData = { list, ...filtered };
 
     // Store in cache (1 hour TTL)
     cacheInstance.set(cacheKey, finalData, 3600000); // 1 hour in milliseconds
@@ -284,7 +290,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       // Add cache status header
       "X-Cache-Status": "MISS",
       // Add ETag for better cache validation
-      ETag: `"trending-${finalData.metadata.total_periods}-${timeRange}"`,
+      ETag: `"trending-${list}-${finalData.metadata.total_periods}-${timeRange}"`,
     });
 
     return new NextResponse(JSON.stringify(finalData), {

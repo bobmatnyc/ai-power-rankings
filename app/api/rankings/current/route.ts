@@ -4,6 +4,7 @@ import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { getDb } from "@/lib/db/connection";
 import { loggers } from "@/lib/logger";
 import { getCachedOrFetch, CACHE_TTL } from "@/lib/memory-cache";
+import { parseListQuery, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
 
 /**
  * Derives complete factor scores from partial data using the overall score as a baseline.
@@ -27,9 +28,31 @@ function deriveCompleteScores(partialScores: any, overallScore: number) {
   };
 }
 
-export async function GET() {
+/**
+ * `GET /api/rankings/current[?list=<list>]`: one list's current board (#185 H1).
+ *
+ * Why: #185 activation ends the legacy combined board as a public view. This route
+ *   served the combined board; it now serves one list's board, the D51 default list
+ *   (coding harnesses) when no list is named, like `/api/rankings`.
+ * What: `list` (alias `kind`) is parsed by `parseListQuery()`; an unknown, empty or
+ *   conflicting value is 400. Reads only the list's `is_current` row
+ *   (`getCurrentRankings(list)`); with none it is 404, and a failed read is 500. It
+ *   never reads the combined row. The body keeps its shape and adds `data.list` and
+ *   `data.list_meta`. Cached in memory per list.
+ * Test: `tests/unit/rankings-current-trending-185.test.ts`.
+ */
+export async function GET(request?: Request) {
   const startTime = Date.now();
-  const cacheKey = "api:rankings:current";
+  // #185: one list's board, D51 default; never the combined board.
+  const parsed = parseListQuery(request ? new URL(request.url).searchParams : null);
+  if (!parsed.ok) {
+    return NextResponse.json(
+      { success: false, error: "Unknown list", message: parsed.error, lists: [...RANKING_LISTS] },
+      { status: 400 }
+    );
+  }
+  const { list } = parsed;
+  const cacheKey = `api:rankings:current:${list}`;
 
   try {
     const response = await getCachedOrFetch(
@@ -55,9 +78,10 @@ export async function GET() {
         // Get current rankings from database
         let currentRankings;
         try {
-          currentRankings = await rankingsRepository.getCurrentRankings();
+          currentRankings = await rankingsRepository.getCurrentRankings(list);
         } catch (dbError) {
           loggers.api.error("Database query failed for getCurrentRankings", {
+            list,
             error: dbError instanceof Error ? dbError.message : "Unknown error",
             stack: dbError instanceof Error ? dbError.stack : undefined,
           });
@@ -65,11 +89,13 @@ export async function GET() {
         }
 
         if (!currentRankings) {
-          loggers.api.warn("No current rankings found in database");
+          // #185: a list with no current row has no board; the combined row is not read.
+          loggers.api.warn("No current rankings found in database", { list });
           return {
             success: false,
             error: "No current rankings available",
-            message: "No rankings data is currently marked as active. Please check back later.",
+            list,
+            message: "No rankings data is currently marked as active for this list. Please check back later.",
             timestamp: new Date().toISOString(),
             statusCode: 404,
           };
@@ -210,6 +236,9 @@ export async function GET() {
         return {
           success: true,
           data: {
+            // #185: the response names its list and carries the D53/D54 list rules.
+            list,
+            list_meta: rankingListMeta(list, validRankings.length),
             period: currentRankings.period,
             algorithm_version: currentRankings.algorithm_version,
             rankings: validRankings,
