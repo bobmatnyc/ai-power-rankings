@@ -3,6 +3,31 @@
 import { useCallback, useState } from "react";
 import type { Ranking, Tool } from "@/types/database";
 
+// #197: the public /api/tools leaves noindex slugs out, so the admin list reads
+// the admin-auth route, which returns every active tool unfiltered.
+export const ADMIN_TOOLS_URL = "/api/admin/tools?status=active";
+
+/**
+ * Maps a raw repository row from the admin route to the shape the Tools Manager reads.
+ *
+ * Why: #197 — the admin route returns repository rows, where the description
+ * sits at `info.description`; the manager reads `info.product.description`.
+ * What: keeps every row field and fills `description` and
+ * `info.product.description` from `info.description` when they are absent.
+ * Test: `toManagerTool lifts info.description into info.product.description`
+ * in tests/unit/admin-tools-list-197.test.tsx.
+ */
+export function toManagerTool(row: Tool): Tool {
+  const info = row.info ?? {};
+  const description =
+    info.product?.description ?? (info["description"] as string | undefined) ?? row.description;
+  return {
+    ...row,
+    description: row.description ?? description,
+    info: { ...info, product: { ...info.product, description } },
+  };
+}
+
 export function usePayload() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [rankings, setRankings] = useState<Ranking[]>([]);
@@ -14,13 +39,14 @@ export function usePayload() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/tools");
+      // #197: admin route, so noindex slugs stay listed and editable here.
+      const response = await fetch(ADMIN_TOOLS_URL);
       if (!response.ok) {
         throw new Error("Failed to fetch tools");
       }
 
       const data = await response.json();
-      setTools(data.tools || []);
+      setTools(((data.tools as Tool[] | undefined) ?? []).map(toManagerTool));
     } catch (err) {
       setError(err as Error);
       console.error("Error fetching tools:", err);

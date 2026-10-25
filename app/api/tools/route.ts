@@ -6,13 +6,15 @@ import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { toolScoringService } from "@/lib/services/tool-scoring.service";
 import { loggers } from "@/lib/logger";
 import { CACHE_TTL, getCachedOrFetch } from "@/lib/memory-cache";
+import { isNoindexToolSlug } from "@/lib/seo/url-table";
 import type { APITool, ToolInfo, ToolsResponse } from "@/lib/types/api";
 import { toCompanyId, toToolId } from "@/lib/types/branded";
 
 export async function GET(): Promise<NextResponse> {
   try {
-    // Try to get from cache first
-    const cacheKey = "api:tools:all";
+    // Try to get from cache first.
+    // #197: new key, so no entry cached before the noindex filter is ever read.
+    const cacheKey = "api:tools:listed";
 
     const cachedResponse = await getCachedOrFetch(
       cacheKey,
@@ -27,8 +29,13 @@ export async function GET(): Promise<NextResponse> {
 
         const toolsRepo = new ToolsRepository();
 
-        // Get all active tools from database
-        const tools = await toolsRepo.findByStatus("active");
+        // Get all active tools from database.
+        // #197: the noindex non-AI entities of the #191 table stay out of the
+        // tools index; their own pages (/api/tools/[slug]/json) still resolve.
+        // Filtering inside the fetcher means only the filtered list is cached.
+        const tools = (await toolsRepo.findByStatus("active")).filter(
+          (tool) => !isNoindexToolSlug(tool.slug)
+        );
 
         if (!tools || tools.length === 0) {
           return { tools: [], _source: "database", _timestamp: new Date().toISOString() };
