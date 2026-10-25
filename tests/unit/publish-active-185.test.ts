@@ -13,12 +13,22 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *   checks the rows written, the version, per-kind weights, the D8f tie order and that
  *   no write touches the combined rows. With the checked-in config (v7.10 active) and
  *   with a set missing a list profile it checks the refusal writes nothing; a failed
- *   insert rolls the whole publish back.
+ *   insert rolls the whole publish back. #185 M3: a committed publish revalidates the
+ *   `rankings` tag and the home, rankings and tools layouts and clears the in-memory
+ *   rankings entries; a refused or failed publish revalidates nothing.
  * Test: `npx vitest run tests/unit/publish-active-185.test.ts`. No network.
  */
 
 const db = vi.hoisted(() => ({ client: null as unknown }));
 vi.mock("../../lib/db/connection", () => ({ getDb: () => db.client }));
+
+// #185 M3: record the Next.js revalidation calls a publish makes.
+const revalidation = vi.hoisted(() => ({ tags: [] as string[], paths: [] as string[] }));
+vi.mock("next/cache", () => ({
+  revalidateTag: (tag: string) => revalidation.tags.push(tag),
+  revalidatePath: (path: string, type?: string) => revalidation.paths.push(`${path}|${type ?? ""}`),
+  unstable_cache: <T,>(fn: T) => fn,
+}));
 
 // The cron route loads the checked-in config; a test may hand it another one.
 const profiles = vi.hoisted(() => ({ override: null as unknown }));
@@ -37,6 +47,7 @@ import { createFakeRankingsDb, type FakeToolRow, rankingRow } from "../../lib/se
 import { computeRankings } from "../../lib/services/ranking-generation.service";
 import { v8ActiveConfig, v8ActiveRaw } from "../fixtures/scoring-profiles-v8-active-185";
 import { parseScoringProfiles } from "../../lib/scoring-profiles";
+import cacheInstance from "../../lib/memory-cache";
 
 const stamp = new Date("2026-01-01T00:00:00Z");
 const now = () => new Date("2026-11-01T09:00:00.000Z");
@@ -81,6 +92,8 @@ beforeEach(() => {
   });
   db.client = fake.client;
   profiles.override = null;
+  revalidation.tags = [];
+  revalidation.paths = [];
   vi.spyOn(console, "warn").mockImplementation(() => {});
   vi.spyOn(console, "log").mockImplementation(() => {});
 });
@@ -187,6 +200,45 @@ describe("publish failure arms (#185, Fail-Open Check)", () => {
     await expect(publishActiveRankings({ now, loadProfiles: v8ActiveConfig })).rejects.toThrow(/insert failed/);
     expect(fake.state.rankings).toEqual(before);
     expect(fake.state.writes).toEqual([]);
+  });
+});
+
+describe("cache revalidation on publish (#185 M3)", () => {
+  it("a committed publish revalidates the rankings tag and layouts and clears the in-memory route entries", async () => {
+    cacheInstance.set("api:rankings:current:harness", { statusCode: 200, stale: true }, 60_000);
+    cacheInstance.set("trending:harness:all", { stale: true }, 60_000);
+    await publishActiveRankings({ now, loadProfiles: v8ActiveConfig });
+    expect(revalidation.tags).toContain("rankings");
+    expect(revalidation.paths).toEqual(expect.arrayContaining(["/|layout", "/rankings|layout", "/tools|layout"]));
+    expect(cacheInstance.get("api:rankings:current:harness")).toBeNull();
+    expect(cacheInstance.get("trending:harness:all")).toBeNull();
+  });
+
+  it("a refused publish revalidates nothing", async () => {
+    await expect(publishActiveRankings({ now })).rejects.toBeInstanceOf(ScoringProfileError);
+    expect(revalidation.tags).toEqual([]);
+    expect(revalidation.paths).toEqual([]);
+  });
+
+  it("a failed write revalidates nothing", async () => {
+    const client = fake.client as { insert: (table: unknown) => { values: (v: Record<string, unknown>) => unknown } };
+    client.insert = () => ({
+      values: () => {
+        throw new Error("fixture: insert failed");
+      },
+    });
+    await expect(publishActiveRankings({ now, loadProfiles: v8ActiveConfig })).rejects.toThrow(/insert failed/);
+    expect(revalidation.tags).toEqual([]);
+  });
+
+  it("the cron path revalidates after its publish", async () => {
+    vi.stubEnv("CRON_SECRET", "s");
+    profiles.override = v8ActiveConfig();
+    const response = await cronGET(
+      new Request("https://example.test/api/cron/regenerate-rankings", { headers: { authorization: "Bearer s" } })
+    );
+    expect(response.status).toBe(200);
+    expect(revalidation.tags).toContain("rankings");
   });
 });
 

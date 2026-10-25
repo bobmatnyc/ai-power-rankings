@@ -216,9 +216,12 @@ export async function invalidateRankingsCache(): Promise<InvalidationResult> {
     }
 
     // Clear in-memory caches
+    // #185: also the keys /api/rankings/current and /api/rankings/trending use.
     const memoryPatterns = [
       '^rankings:',
       '^tools:',
+      '^api:rankings:',
+      '^trending:',
     ];
 
     for (const pattern of memoryPatterns) {
