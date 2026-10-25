@@ -4,8 +4,7 @@
  */
 
 import { z } from "zod";
-import { and, eq } from "drizzle-orm";
-import { COMBINED_LIST } from "@/lib/rankings/lists";
+import { currentListBoardsWhere, listBoardEntries } from "@/lib/rankings/list-boards";
 import type { Article, DryRunResult, IngestedArticle } from "@/lib/db/article-schema";
 import { rankings } from "@/lib/db/schema";
 import { getDb } from "@/lib/db/connection";
@@ -1259,16 +1258,12 @@ export class ArticleIngestionService {
       const db = getDb();
       if (db) {
         try {
-          // Get the current rankings period
-          const [currentRankingsPeriod] = await db
-            .select()
-            .from(rankings)
-            // #186: the legacy combined board; per-list boards have their own current rows.
-            .where(and(eq(rankings.isCurrent, true), eq(rankings.list, COMBINED_LIST)))
-            .limit(1);
+          // #185: every list's current board, never the combined one. A tool is ranked in at
+          // most one list, and its rank here is its rank within that list (D2e).
+          const listRows = await db.select().from(rankings).where(currentListBoardsWhere());
 
-          if (currentRankingsPeriod?.data) {
-            const rankingsData = currentRankingsPeriod.data as any[];
+          if (listRows.length > 0) {
+            const rankingsData = listBoardEntries(listRows) as any[];
 
             // Convert to expected format for RankingsCalculator (tool-shaped, not Ranking rows)
             const currentRankings: Array<Record<string, unknown>> = rankingsData.map((item) => ({
@@ -1282,6 +1277,7 @@ export class ArticleIngestionService {
               status: item.status,
               movement: item.movement,
               factorScores: item.factor_scores,
+              list: item.list, // #185: the list `rank` is counted in
             }));
 
             const existingTools = rankingsData.map((item) => item.tool_name);
@@ -1301,7 +1297,9 @@ export class ArticleIngestionService {
             };
           }
         } catch (dbError) {
+          // #185: fail closed. A failed list-board read is not "no rankings".
           console.error("[ArticleIngestionService] Database query failed:", dbError);
+          throw dbError;
         }
       }
 
@@ -1313,12 +1311,9 @@ export class ArticleIngestionService {
         existingCompanies: [],
       };
     } catch (error) {
+      // #185: rethrown, not turned into an empty rank set.
       console.error("[ArticleIngestionService] Failed to load rankings:", error);
-      return {
-        currentRankings: [],
-        existingTools: [],
-        existingCompanies: [],
-      };
+      throw error;
     }
   }
 
