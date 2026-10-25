@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  activeIdentities,
   FIXTURE_DATE,
   harnessBoard,
   mixedBoard,
@@ -55,7 +56,7 @@ function measure(tools: MeasuredTool[], candidate = v8) {
     const published = publishedFor(tools, v710);
     const sheet = { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set<string>() };
     const harnessFloor = tools.filter((t) => t.kind === "harness").length;
-    return measureBoard({ tools, published, baseline: v710, candidate, sheet, harnessFloor });
+    return measureBoard({ tools, published, baseline: v710, candidate, sheet, harnessFloor, toolIdentities: activeIdentities(tools) });
   } finally {
     warn.mockRestore();
   }
@@ -67,10 +68,11 @@ describe("per-tool table (#185, D8b)", () => {
   // Digests of `${formatMeasurementReport(result)}\n` at base commit 9daf1d27.
   // #185: the mixed-board digest is re-pinned after its `other` tool became a productivity
   // tool (v8.0 has no other profile); the one changed line is the kind count.
+  // #185: re-pinned again for the added redirect-count line and the 1c v8 board scope section.
   it.each([
-    ["harness board, v8.0", () => measure(harnessBoard()), "799999d19c52779062b7b0fa24f393daa1aba8f77094743aea29f2423d54f8da"],
-    ["harness board, negative control", () => measure(harnessBoard(), wrong), "4ac8abc66aa52fe0ec3dec90a4be81d7c459ccdd668d849c6df516498c60b1f5"],
-    ["mixed board, v8.0", () => measure(mixedBoard()), "6723512f0030f05e1b4738a9d2ca621ae0324ec23f895d893269235ff6587083"],
+    ["harness board, v8.0", () => measure(harnessBoard()), "55cb1756895a659df73fe2618f8b49ed6e1bf4f5fae8f8253ce99ccbac51057b"],
+    ["harness board, negative control", () => measure(harnessBoard(), wrong), "674cd57d89a59f6cb090b2962ed2dc30104554bf069fc8816182d442d59ae569"],
+    ["mixed board, v8.0", () => measure(mixedBoard()), "96e821180435668b679c63cc77cc7ba4620320c400f6d4c721f4a895a317cd82"],
   ])("without the flag the output is byte-for-byte the base report (%s)", (_label, run, digest) => {
     const result = run();
     const output = formatScriptOutput(result, { perTool: false });
@@ -134,6 +136,7 @@ describe("per-tool table (#185, D8b)", () => {
       candidate: v8,
       sheet: { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set() },
       harnessFloor: 1,
+      toolIdentities: activeIdentities(tools),
     });
     expect(result.candidate).toBeUndefined();
     expect(formatPerToolTable(result)).toBe(`${PER_TOOL_SECTION_HEADER}\nno per-tool table: no candidate measurement`);
