@@ -11,10 +11,13 @@
  *   mismatch stops it there: no candidate number is computed. It then checks
  *   the harness list (at least `HARNESS_FLOOR` harness tools, known kinds
  *   only, not every tool harness) and stops if that fails. Otherwise it
- *   scores the candidate weights and returns counts and shift statistics. The
- *   D45 gate ranks harness tools within the harness list (basis D2e); global
- *   rank shift is information only. Baseline positions are the published
- *   ranks renumbered within each list; candidate ties rank in `tool_id` order. Engine console output, which names tools,
+ *   scores the candidate set through its kind routing (PR-2: a harness with
+ *   the harness profile, a model with the model profile) and returns counts
+ *   and shift statistics. The D45 gate ranks harness tools within the harness
+ *   list (basis D2e); global rank shift and the models-only rank shift (model
+ *   rank within the model list) are information only. Baseline positions are the published
+ *   ranks renumbered within each list; candidate ties rank by published v7.10
+ *   position (D8f, `v8TieOrder()`). Engine console output, which names tools,
  *   is swallowed while it runs and only counted.
  *   The harness list leaves out tools the kind sheet marks retired, and the
  *   result lists active tools missing from the sheet (ruling 12:33Z).
@@ -28,7 +31,13 @@ import { TOOL_KINDS } from "./db/schema";
 import type { KindSheetRow } from "./db/tool-kind-sheet";
 import type { RankingWeightsV76 } from "./ranking-algorithm-v76";
 import { diffSnapshots, type SnapshotRow } from "./ranking-snapshot-diff";
-import { computeRankings, type RankingEntry, type RankingSourceTool } from "./services/ranking-generation.service";
+import {
+  computeRankings,
+  type KindWeightRouting,
+  type RankingEntry,
+  type RankingSourceTool,
+} from "./services/ranking-generation.service";
+import { v8TieOrder } from "./v8-tie-order";
 
 /** A scored tool row plus its `tools.kind`. */
 export interface MeasuredTool extends RankingSourceTool {
@@ -47,8 +56,8 @@ export interface MeasureInput {
   published: PublishedSnapshot;
   /** The frozen v7.10 weights. */
   baseline: RankingWeightsV76;
-  /** The staged profile under test (v8.0 harness). */
-  candidate: RankingWeightsV76;
+  /** #185 PR-2: the staged set under test (v8.0), routed by kind (`profileRouting()`). */
+  candidate: KindWeightRouting;
   /** Fewest harness tools the D45 gate accepts. Default {@link HARNESS_FLOOR}; tests lower it. */
   harnessFloor?: number;
   /** #185: the reviewed kind sheet (`docs/refresh/tool-kind-mapping.csv`), by slug. */
@@ -184,6 +193,8 @@ export interface CandidateMeasurement {
   harnessGlobalRankShift: ShiftHistogram;
   /** Information only: every tool on the global board. */
   globalRankShift: ShiftHistogram;
+  /** #185 PR-2, information only: model tools (retired excluded) ranked within the model list. */
+  models: { scoreShift: ShiftStats; rankShift: ShiftHistogram };
   ties: {
     distinctScores: number;
     largestBlocks: number[];
@@ -404,26 +415,34 @@ function harnessGaps(harnessBase: RankingEntry[]): CandidateMeasurement["harness
   };
 }
 
-/** #185: tools in `tool_id` order, so equal candidate scores rank the same way every run. */
-function byToolId(tools: MeasuredTool[]): MeasuredTool[] {
-  return [...tools].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-}
-
 /** #185: renumber `ids` 1..n in their published order (ties keep the published order, never the read order). */
 function publishedOrder(ids: string[], published: Map<string, number>): Map<string, number> {
   const ordered = [...ids].sort((a, b) => published.get(a)! - published.get(b)!);
   return new Map(ordered.map((id, i) => [id, i + 1]));
 }
 
-function withinHarness(harness: MeasuredTool[], date: Date, before: Map<string, number>, weights: RankingWeightsV76) {
-  const after = rankMap(computeRankings(byToolId(harness), new Map(), date, weights));
-  const histogram = shiftHistogram(shiftsBetween(before, after, harness.map((t) => t.id)));
+/** #185: rank `list` on its own and histogram each tool's move from `before`. */
+function withinList(
+  list: MeasuredTool[],
+  date: Date,
+  before: Map<string, number>,
+  scoring: RankingWeightsV76 | KindWeightRouting,
+  v710: Map<string, number>
+) {
+  // D8f: break v8 ties by published v7.10 position
+  const after = rankMap(computeRankings(v8TieOrder(list, v710), new Map(), date, scoring));
+  const histogram = shiftHistogram(shiftsBetween(before, after, list.map((t) => t.id)));
   return { histogram, breaches: histogram.n - histogram.moved0 - histogram.moved1 - histogram.moved2 };
+}
+
+/** #185: tools of one kind, not retired in the sheet. */
+function kindList(tools: MeasuredTool[], sheet: KindSheetView, kind: string): MeasuredTool[] {
+  return tools.filter((t) => t.kind === kind && !sheet.retiredSlugs.has(t.slug));
 }
 
 /** #185: the D45 harness list: harness kind, not retired in the sheet (as the floor counts it). */
 export function d45HarnessList(tools: MeasuredTool[], sheet: KindSheetView): MeasuredTool[] {
-  return tools.filter((t) => t.kind === "harness" && !sheet.retiredSlugs.has(t.slug));
+  return kindList(tools, sheet, "harness");
 }
 
 /** #185: the harness list must be non-trivial and the kinds applied, or D45 proves nothing. */
@@ -452,7 +471,8 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
   // scores follows the unordered SELECT and is never used as the baseline.
   const pub = publishedMaps(published.rows);
   const baseRanks = publishedOrder(allIds, pub.ranks);
-  const cand = computeRankings(byToolId(tools), new Map(), date, candidate);
+  // D8f: break v8 ties by published v7.10 position
+  const cand = computeRankings(v8TieOrder(tools, pub.ranks), new Map(), date, candidate);
   const candRanks = rankMap(cand);
   const baseScores = new Map(base.map((e) => [e.tool_id, e.score]));
   const candScores = new Map(cand.map((e) => [e.tool_id, e.score]));
@@ -460,8 +480,18 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
 
   // D2e: harness ranks are counted within the harness list.
   const harnessBaseRanks = publishedOrder(harnessIds, pub.ranks);
-  const d45 = withinHarness(harness, date, harnessBaseRanks, candidate);
-  const stress = withinHarness(harness, date, harnessBaseRanks, doubledDelta(baseline, candidate));
+  const d45 = withinList(harness, date, harnessBaseRanks, candidate, pub.ranks);
+  const stress = withinList(
+    harness,
+    date,
+    harnessBaseRanks,
+    doubledDelta(baseline, candidate.route("harness").weights),
+    pub.ranks
+  );
+  // #185 PR-2: the model list, the same way (information only; D45 does not cover it).
+  const models = kindList(tools, input.sheet, "model");
+  const modelIds = models.map((t) => t.id);
+  const modelShift = withinList(models, date, publishedOrder(modelIds, pub.ranks), candidate, pub.ranks);
 
   const inPublishedOrder = [...base].sort((a, b) => baseRanks.get(a.tool_id)! - baseRanks.get(b.tool_id)!);
   const harnessBase = inPublishedOrder.filter((e) => harnessBaseRanks.has(e.tool_id));
@@ -479,6 +509,7 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
     d45Breaches: d45.breaches,
     harnessGlobalRankShift: shiftHistogram(shiftsBetween(baseRanks, candRanks, harnessIds)),
     globalRankShift: shiftHistogram(shiftsBetween(baseRanks, candRanks, allIds)),
+    models: { scoreShift: scoreShift(modelIds), rankShift: modelShift.histogram },
     ties: tieStructure(inPublishedOrder, candRanks),
     harnessGaps: harnessGaps(harnessBase),
     harnessToolsInTies: harnessBase.filter((e) => harnessScoreCounts.get(e.score)! > 1).length,
@@ -600,6 +631,8 @@ export function formatMeasurementReport(result: MeasurementResult): string {
       `D45 breaches: ${c.d45Breaches}`,
       histogramLine("harness on the global board (information)", c.harnessGlobalRankShift),
       histogramLine("all tools on the global board (information)", c.globalRankShift),
+      statsLine("models (retired excluded), score shift (information)", c.models.scoreShift),
+      histogramLine("models within the model list (information)", c.models.rankShift),
       "",
       "5. Ties (v7.10 global board)",
       `harness tools in equal-score blocks within the harness list: ${c.harnessToolsInTies}`,
