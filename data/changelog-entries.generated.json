@@ -110,6 +110,17 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-3e84d7d4975a",
+    "version": "Unreleased",
+    "date": "2026-10-25T23:07:30.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "admin",
+    "title": "the Tools Manager's edit and discontinue actions answered 405",
+    "description": "the Tools Manager's edit and discontinue actions answered 405. The hook sent PUT and DELETE to the public `/api/tools/[slug]/json`, which serves GET only. They now go to `PUT` and `DELETE /api/admin/tools/[slug]`, which call `requireAdmin()` before reading the body or the database: 401 without a session, 403 for a non-admin. PUT edits `name`, `category`, `status` (active, inactive, deprecated or discontinued) and `description`, refuses any other key or an empty edit with 400, and answers 404 for an unknown slug. DELETE discontinues the tool: it sets the status to `discontinued` and keeps the row and its history (the hard delete stays `DELETE /api/admin/tools?id=`). The confirm dialog now says Discontinue. The hook changes its list only when a 2xx answer carries the written row, mapped through `toManagerTool`; any other answer rejects with the server's error. `ToolsRepository.update` writes `name`, `category`, `status` and `slug` to the JSONB as well as the columns, so a stale `data.status` no longer hides a status change, and it updates the row by UUID, so a row with no `data.id` can be edited. Tests: `tests/unit/admin-tool-edit-288.test.ts`, `tests/unit/admin-tool-edit-hook-288.test.tsx`, `tests/unit/admin-tools-list-197.test.tsx` (#288)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-42648dcae11e",
     "version": "Unreleased",
     "date": "2026-10-25T22:18:24.000Z",
@@ -607,8 +618,8 @@
   {
     "id": "unreleased-2cfc870cbb99",
     "version": "Unreleased",
-    "date": "2026-10-25T22:55:18.665Z",
-    "dateSource": "build",
+    "date": "2026-10-25T23:01:07.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "nav",
     "title": "a header nav and a phone menu, built with the footer from one model in lib/navigation/site-nav.ts",
