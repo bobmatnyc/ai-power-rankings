@@ -8,7 +8,7 @@
  * Test: `tests/unit/metrics-collectors-95.test.ts`
  */
 
-import { abortableSleep, type CollectorOptions, fetchSignal } from "./fetch-signal";
+import { type CollectorOptions, fetchSignal } from "./fetch-signal";
 
 export interface GitHubMetrics {
   stars: number;
@@ -22,8 +22,9 @@ export interface GitHubMetrics {
   language: string | null;
   has_issues: boolean;
   has_wiki: boolean;
-  commit_count_30d: number;
-  contributors_count: number;
+  // #95: absent in unauthenticated mode; never a stand-in 0.
+  commit_count_30d?: number;
+  contributors_count?: number;
   last_updated: string;
 }
 
@@ -33,17 +34,83 @@ export interface GitHubRepoInfo {
   url: string;
 }
 
+/** #95: a 403 or 429 from GitHub. Never a metric value; the caller records the tool as failed. */
+export class GitHubRateLimitError extends Error {
+  constructor(
+    readonly status: number,
+    detail: string
+  ) {
+    super(`GitHub API rate limited or forbidden: ${status} ${detail}`);
+    this.name = "GitHubRateLimitError";
+  }
+}
+
+/** #95: rate-limit state read from response headers. `null` until a response reports it. */
+export interface GitHubRateLimit {
+  remaining: number | null;
+  reset: number | null;
+  limit: number | null;
+}
+
+/** #95: requests one tool costs: repo only without a token, repo + commits + contributors with one. */
+export const REQUESTS_PER_TOOL_UNAUTH = 1;
+export const REQUESTS_PER_TOOL_AUTH = 3;
+
+function headerInt(response: Response, name: string): number | null {
+  const raw = response.headers.get(name);
+  if (raw === null || raw.trim() === "") return null;
+  const value = Number.parseInt(raw, 10);
+  return Number.isFinite(value) ? value : null;
+}
+
 export class GitHubMetricsCollector {
   private token: string;
   private baseUrl = "https://api.github.com";
-  private rateLimit = { remaining: 5000, reset: 0 };
+  // #95: seeded from real response headers, not an assumed 5000.
+  private rateLimit: GitHubRateLimit = { remaining: null, reset: null, limit: null };
 
   // #95: the caller's signal (the cron run deadline) joins every fetch's timeout.
   private signal: AbortSignal | undefined;
 
-  constructor(token: string, options: CollectorOptions = {}) {
-    this.token = token;
+  constructor(token: string | undefined, options: CollectorOptions = {}) {
+    // #95: an absent or blank token means unauthenticated mode (owner ruling A9e).
+    this.token = (token ?? "").trim();
     this.signal = options.signal;
+  }
+
+  /** #95: true when a token is present; false means repo metadata only. */
+  get authenticated(): boolean {
+    return this.token !== "";
+  }
+
+  /** #95: a copy of the header-seeded rate-limit state. */
+  getRateLimit(): GitHubRateLimit {
+    return { ...this.rateLimit };
+  }
+
+  /** #95: never sends `Authorization` without a token (no `Bearer ""`). */
+  private requestHeaders(): Record<string, string> {
+    const headers: Record<string, string> = { Accept: "application/vnd.github.v3+json" };
+    if (this.authenticated) headers["Authorization"] = `Bearer ${this.token}`;
+    return headers;
+  }
+
+  /** #95: requests one tool needs in the current mode. */
+  requestsPerTool(): number {
+    return this.authenticated ? REQUESTS_PER_TOOL_AUTH : REQUESTS_PER_TOOL_UNAUTH;
+  }
+
+  /**
+   * #95: why the next tool must not be fetched, or null when it may run.
+   * Unknown budget (no response yet) allows the first tool; its headers seed the state.
+   */
+  budgetStopReason(nowMs: number = Date.now()): string | null {
+    const { remaining, reset } = this.rateLimit;
+    const need = this.requestsPerTool();
+    if (remaining === null || remaining >= need) return null;
+    if (reset !== null && reset * 1000 <= nowMs) return null; // window has rolled over
+    const resetAt = reset === null ? "unknown" : new Date(reset * 1000).toISOString();
+    return `github rate-limit budget exhausted: ${remaining} remaining, ${need} needed per tool, resets ${resetAt}`;
   }
 
   /**
@@ -74,17 +141,24 @@ export class GitHubMetricsCollector {
     }
   }
 
+  /** #95: folds a response's rate-limit headers into the state. Runs on every response, ok or not. */
+  private readRateLimit(response: Response): void {
+    const remaining = headerInt(response, "x-ratelimit-remaining");
+    const reset = headerInt(response, "x-ratelimit-reset");
+    const limit = headerInt(response, "x-ratelimit-limit");
+    if (remaining !== null) this.rateLimit.remaining = remaining;
+    if (reset !== null) this.rateLimit.reset = reset;
+    if (limit !== null) this.rateLimit.limit = limit;
+  }
+
   /**
-   * Verify GitHub token and check rate limits
+   * Verify GitHub token and check rate limits (authenticated mode only)
    */
   async verifyToken(): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/rate_limit`, {
         signal: fetchSignal(this.signal),
-        headers: {
-          Authorization: `Bearer ${this.token}`,
-          Accept: "application/vnd.github.v3+json",
-        },
+        headers: this.requestHeaders(),
       });
 
       if (!response.ok) {
@@ -96,12 +170,13 @@ export class GitHubMetricsCollector {
       this.rateLimit = {
         remaining: data.resources.core.remaining,
         reset: data.resources.core.reset,
+        limit: data.resources.core.limit ?? null,
       };
 
       console.log(`✅ GitHub token verified`);
-      console.log(`   Rate limit: ${this.rateLimit.remaining}/5000`);
+      console.log(`   Rate limit: ${this.rateLimit.remaining}/${this.rateLimit.limit}`);
       console.log(
-        `   Resets at: ${new Date(this.rateLimit.reset * 1000).toLocaleString()}`
+        `   Resets at: ${new Date((this.rateLimit.reset ?? 0) * 1000).toLocaleString()}`
       );
 
       return true;
@@ -112,35 +187,28 @@ export class GitHubMetricsCollector {
   }
 
   /**
-   * Make GitHub API request with rate limit handling
+   * Make GitHub API request. A 403 or 429 throws GitHubRateLimitError; it is never a value.
    */
   private async githubRequest(endpoint: string): Promise<any> {
-    // Check if we're approaching rate limit
-    if (this.rateLimit.remaining < 10) {
-      const waitTime = this.rateLimit.reset * 1000 - Date.now();
-      if (waitTime > 0) {
-        console.log(`⏳ Rate limit low, waiting ${Math.ceil(waitTime / 1000)}s...`);
-        // #95: the shard deadline ends the wait; the next fetch then aborts at once.
-        await abortableSleep(waitTime + 1000, this.signal);
-      }
-    }
-
+    // #95: no sleep on a low budget; the budget guard stops the run instead of waiting out a reset.
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       signal: fetchSignal(this.signal),
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        Accept: "application/vnd.github.v3+json",
-      },
+      headers: this.requestHeaders(),
     });
 
-    // Update rate limit info from response headers
-    const remaining = response.headers.get("x-ratelimit-remaining");
-    const reset = response.headers.get("x-ratelimit-reset");
-    if (remaining && reset) {
-      this.rateLimit = {
-        remaining: parseInt(remaining),
-        reset: parseInt(reset),
-      };
+    this.readRateLimit(response);
+
+    if (response.status === 403 || response.status === 429) {
+      // #95: Retry-After (secondary limit) closes the budget until it passes.
+      const retryAfter = headerInt(response, "retry-after");
+      if (retryAfter !== null) {
+        this.rateLimit.remaining = 0;
+        this.rateLimit.reset = Math.ceil(Date.now() / 1000) + retryAfter;
+      }
+      throw new GitHubRateLimitError(
+        response.status,
+        retryAfter === null ? response.statusText : `retry-after ${retryAfter}s`
+      );
     }
 
     if (!response.ok) {
@@ -151,74 +219,72 @@ export class GitHubMetricsCollector {
   }
 
   /**
-   * Get commit count for last 30 days
+   * Get commit count for last 30 days. Throws on any failed call (#95: no stored 0).
    */
   private async getCommitCount30d(owner: string, repo: string): Promise<number> {
-    try {
-      const since = new Date();
-      since.setDate(since.getDate() - 30);
+    const since = new Date();
+    since.setDate(since.getDate() - 30);
 
-      const commits = await this.githubRequest(
-        `/repos/${owner}/${repo}/commits?since=${since.toISOString()}&per_page=100`
-      );
+    const commits = await this.githubRequest(
+      `/repos/${owner}/${repo}/commits?since=${since.toISOString()}&per_page=100`
+    );
 
-      return Array.isArray(commits) ? commits.length : 0;
-    } catch (error) {
-      console.error(`   ⚠️  Failed to get commit count: ${error}`);
-      return 0;
-    }
+    return Array.isArray(commits) ? commits.length : 0;
   }
 
   /**
-   * Get contributors count
+   * Get contributors count. Throws on any failed call (#95: no stored 0).
    */
   private async getContributorsCount(owner: string, repo: string): Promise<number> {
-    try {
-      const contributors = await this.githubRequest(
-        `/repos/${owner}/${repo}/contributors?per_page=1&anon=true`
-      );
+    const contributors = await this.githubRequest(
+      `/repos/${owner}/${repo}/contributors?per_page=1&anon=true`
+    );
 
-      // GitHub doesn't return total count in response body, need to parse Link header
-      // For now, just return array length for first page
-      return Array.isArray(contributors) ? contributors.length : 0;
-    } catch (error) {
-      console.error(`   ⚠️  Failed to get contributors count: ${error}`);
-      return 0;
-    }
+    // GitHub doesn't return total count in response body, need to parse Link header
+    // For now, just return array length for first page
+    return Array.isArray(contributors) ? contributors.length : 0;
   }
 
   /**
-   * Collect all metrics for a GitHub repository
+   * Collect all metrics for a repository; throws on any failed call (#95).
+   * Without a token only `GET /repos/{o}/{r}` runs and the commit and contributor fields are absent.
+   */
+  async fetchMetrics(owner: string, repo: string): Promise<GitHubMetrics> {
+    console.log(`   Fetching repo data...`);
+    const repoData = await this.githubRequest(`/repos/${owner}/${repo}`);
+
+    const metrics: GitHubMetrics = {
+      stars: repoData.stargazers_count || 0,
+      forks: repoData.forks_count || 0,
+      watchers: repoData.watchers_count || 0,
+      open_issues: repoData.open_issues_count || 0,
+      subscribers_count: repoData.subscribers_count || 0,
+      created_at: repoData.created_at,
+      updated_at: repoData.updated_at,
+      pushed_at: repoData.pushed_at,
+      language: repoData.language,
+      has_issues: repoData.has_issues || false,
+      has_wiki: repoData.has_wiki || false,
+      last_updated: new Date().toISOString(),
+    };
+
+    if (this.authenticated) {
+      console.log(`   Fetching commit count (30 days)...`);
+      metrics.commit_count_30d = await this.getCommitCount30d(owner, repo);
+
+      console.log(`   Fetching contributors count...`);
+      metrics.contributors_count = await this.getContributorsCount(owner, repo);
+    }
+
+    return metrics;
+  }
+
+  /**
+   * CLI form of fetchMetrics: logs a failure and returns null.
    */
   async collectMetrics(owner: string, repo: string): Promise<GitHubMetrics | null> {
     try {
-      console.log(`   Fetching repo data...`);
-      const repoData = await this.githubRequest(`/repos/${owner}/${repo}`);
-
-      console.log(`   Fetching commit count (30 days)...`);
-      const commitCount = await this.getCommitCount30d(owner, repo);
-
-      console.log(`   Fetching contributors count...`);
-      const contributorsCount = await this.getContributorsCount(owner, repo);
-
-      const metrics: GitHubMetrics = {
-        stars: repoData.stargazers_count || 0,
-        forks: repoData.forks_count || 0,
-        watchers: repoData.watchers_count || 0,
-        open_issues: repoData.open_issues_count || 0,
-        subscribers_count: repoData.subscribers_count || 0,
-        created_at: repoData.created_at,
-        updated_at: repoData.updated_at,
-        pushed_at: repoData.pushed_at,
-        language: repoData.language,
-        has_issues: repoData.has_issues || false,
-        has_wiki: repoData.has_wiki || false,
-        commit_count_30d: commitCount,
-        contributors_count: contributorsCount,
-        last_updated: new Date().toISOString(),
-      };
-
-      return metrics;
+      return await this.fetchMetrics(owner, repo);
     } catch (error) {
       console.error(`   ❌ Failed to collect metrics: ${error}`);
       return null;
