@@ -14,7 +14,11 @@ import { describe, expect, it, vi } from "vitest";
  */
 
 const { lang } = vi.hoisted(() => ({ lang: { value: "en" } }));
-vi.mock("../../i18n/client", () => ({ useI18n: () => ({ lang: lang.value }) }));
+// #194: the footer builds its nav columns from the dictionary.
+vi.mock("../../i18n/client", async () => {
+  const en = (await import("../../i18n/dictionaries/en.json")).default;
+  return { useI18n: () => ({ dict: en, lang: lang.value }) };
+});
 
 import BestAICodingToolsPage from "../../app/[lang]/best-ai-coding-tools/page";
 import { Footer } from "../../components/layout/footer";

@@ -54,6 +54,7 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
     features: "",
     clearFilters: "",
     allCategories: "",
+    overallRankings: "", // #194: the Rankings menu's /rankings entry
   },
   home: {
     hero: {
