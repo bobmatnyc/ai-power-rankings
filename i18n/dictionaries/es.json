@@ -251,6 +251,12 @@
           "range": "36+",
           "description": "Herramientas con funcionalidades o adopción limitada"
         }
+      },
+      "thirds": {
+        "description": "Los niveles dividen la lista en tercios",
+        "S": "Tercio superior",
+        "A": "Tercio medio",
+        "B": "Tercio inferior"
       }
     },
     "algorithm": {
@@ -281,6 +287,24 @@
       },
       "methodologyText": "Nuestra metodología exhaustiva evalúa las herramientas de codificación IA en múltiples dimensiones, garantizando clasificaciones justas y precisas que reflejan el rendimiento y la adopción en el mundo real.",
       "viewMethodology": "Ver metodología completa"
+    },
+    "lists": {
+      "navLabel": "Listas de clasificación",
+      "harness": {
+        "title": "Herramientas de programación",
+        "description": "Herramientas y agentes de programación con IA, clasificados entre sí."
+      },
+      "model": {
+        "title": "Modelos",
+        "description": "Modelos de IA, clasificados entre sí. Los modelos de imagen y vídeo no están en esta lista."
+      },
+      "productivity": {
+        "title": "Herramientas de productividad",
+        "description": "Herramientas de productividad con IA, clasificadas entre sí."
+      },
+      "provisionalNote": "Provisional: esta lista se puntúa con los pesos de las herramientas de programación hasta que se decida su propio perfil de puntuación.",
+      "smallListNote": "Esta lista tiene menos de {min} entradas, así que sus niveles son S, A y B por tercios.",
+      "empty": "Todavía no hay herramientas clasificadas en esta lista."
     }
   },
   "news": {

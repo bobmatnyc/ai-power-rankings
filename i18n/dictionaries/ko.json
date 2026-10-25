@@ -280,7 +280,31 @@
           "range": "36+",
           "description": "기능이나 채택이 제한적인 도구"
         }
+      },
+      "thirds": {
+        "description": "등급은 목록을 3등분합니다",
+        "S": "상위 3분의 1",
+        "A": "중간 3분의 1",
+        "B": "하위 3분의 1"
       }
+    },
+    "lists": {
+      "navLabel": "랭킹 목록",
+      "harness": {
+        "title": "코딩 하네스",
+        "description": "AI 코딩 도구와 에이전트를 서로 비교한 순위입니다."
+      },
+      "model": {
+        "title": "모델",
+        "description": "AI 모델을 서로 비교한 순위입니다. 이미지 및 동영상 모델은 이 목록에 없습니다."
+      },
+      "productivity": {
+        "title": "생산성 도구",
+        "description": "AI 생산성 도구를 서로 비교한 순위입니다."
+      },
+      "provisionalNote": "잠정: 이 목록은 자체 채점 프로필이 정해질 때까지 코딩 하네스 가중치로 채점됩니다.",
+      "smallListNote": "이 목록은 항목이 {min}개 미만이므로 등급은 3등분한 S, A, B입니다.",
+      "empty": "이 목록에는 아직 순위가 매겨진 도구가 없습니다."
     }
   },
   "news": {

@@ -8,6 +8,7 @@ import { getDb } from "@/lib/db/connection";
 import { articles } from "@/lib/db/article-schema";
 import { rankings, tools } from "@/lib/db/schema";
 import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
+import { COMBINED_LIST } from "@/lib/rankings/lists";
 import { loggers } from "@/lib/logger";
 import { CHANGELOG_ENTRIES } from "@/lib/data/changelog-entries";
 
@@ -171,7 +172,8 @@ export class WhatsNewAggregationService {
             data: rankings.data,
           })
           .from(rankings)
-          .where(gte(rankings.publishedAt, startDate))
+          // #186: one entry per published period, as before: the legacy combined boards.
+          .where(and(gte(rankings.publishedAt, startDate), eq(rankings.list, COMBINED_LIST)))
           .orderBy(desc(rankings.publishedAt))
           .then((results) =>
             results.map((r) => ({

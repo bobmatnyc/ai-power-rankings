@@ -7,7 +7,8 @@
  * Categories change infrequently, so we can cache them with 5-minute revalidation
  */
 
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { COMBINED_LIST } from "@/lib/rankings/lists";
 import { unstable_cache } from "next/cache";
 import { getDb } from "../connection";
 import { rankings } from "../schema";
@@ -45,7 +46,8 @@ async function _getCategoriesWithCounts(): Promise<Category[]> {
     const currentRankings = await db
       .select()
       .from(rankings)
-      .where(eq(rankings.isCurrent, true))
+      // #186: the legacy combined board; per-list boards have their own current rows.
+      .where(and(eq(rankings.isCurrent, true), eq(rankings.list, COMBINED_LIST)))
       .limit(1);
 
     if (!currentRankings[0]?.data) {

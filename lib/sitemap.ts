@@ -16,6 +16,14 @@ import type { MetadataRoute } from "next";
 import { i18n, locales } from "@/i18n/config";
 import { newsRepository } from "@/lib/db/repositories/news";
 import { toolsRepository } from "@/lib/db/repositories/tools.repository";
+import {
+  DEFAULT_RANKING_LIST,
+  isListIndexable,
+  listOfTool,
+  RANKING_LISTS,
+  type RankingList,
+  rankingListPath,
+} from "@/lib/rankings/lists";
 import { listPeriods } from "@/lib/services/whats-new-summary.service";
 import { isNoindexToolSlug, isTableRedirectSource } from "@/lib/seo/url-table";
 
@@ -58,7 +66,10 @@ const staticPages = [
  * category pages under `/en`, each active tool in every locale, and each active
  * article once under `/en/news/<slug>` with `lastModified` set to its date, and
  * each stored monthly report once under `/en/whats-new/<period>` (#54). #191:
- * table 308 sources and noindex tools are left out. All URLs start with `baseUrl`. Rejects when any database read rejects.
+ * table 308 sources and noindex tools are left out. #186: each non-default list page
+ * (`/rankings/<slug>`) in every locale when the list has at least 10 active tools
+ * (D53); `/rankings` is the harness list's canonical, so `/rankings/coding-harnesses`
+ * is never listed. All URLs start with `baseUrl`. Rejects when any database read rejects.
  * Test: `tests/unit/sitemap-route.test.ts`, `tests/unit/seo-canonical-origin.test.ts`.
  */
 export async function buildSitemapEntries(
@@ -111,6 +122,25 @@ export async function buildSitemapEntries(
         lastModified: tool.updated_at ? new Date(tool.updated_at) : now,
         changeFrequency: "weekly",
         priority: 0.7,
+      });
+    }
+  }
+
+  // 3b. #186: list pages. A list below 10 entries is noindex (D53), so it is not listed.
+  const listSizes = new Map<RankingList, number>();
+  for (const tool of tools) {
+    if (tool.status !== "active") continue;
+    const list = listOfTool(tool["kind"], tool["modality"]);
+    if (list) listSizes.set(list, (listSizes.get(list) ?? 0) + 1);
+  }
+  for (const list of RANKING_LISTS) {
+    if (list === DEFAULT_RANKING_LIST || !isListIndexable(listSizes.get(list) ?? 0)) continue;
+    for (const locale of locales) {
+      routes.push({
+        url: `${baseUrl}/${locale}${rankingListPath(list)}`,
+        lastModified: now,
+        changeFrequency: "daily",
+        priority: 0.9,
       });
     }
   }
