@@ -20,8 +20,10 @@ import type { ToolIdentity } from "./v8-published-id-resolution";
  *   The published v7.10 snapshot still carries the old ids, so an id-keyed
  *   comparison counted every folded tool as "only published" and the
  *   reproduction failed on the T35 re-measure. A redirect that cannot be
- *   followed (cycle, no row, no target) or two published ids reaching one
- *   canonical id must still fail the reproduction, never pass silently.
+ *   followed (cycle, no row, no target), or two published ids reaching one
+ *   canonical id with no identifiable survivor, must still fail the
+ *   reproduction, never pass silently. An explained collision compares the
+ *   survivor and renumbers ranks past the retired rows (ruling option a).
  *   After the v8.0 switch (fd7565d6) the v8 board leaves out kind `other`,
  *   which v8.0 cannot route, while the v7.10 reproduction keeps it.
  * What: builds a current board in which some published tools now sit under a
@@ -48,6 +50,12 @@ function quietPublished(tools: MeasuredTool[]): PublishedSnapshot {
 
 const active = (t: MeasuredTool): ToolIdentity => ({ id: t.id, slug: t.slug, status: "active", redirectTo: null });
 const redirect = (id: string, slug: string, to: string | null): ToolIdentity => ({ id, slug, status: "redirect", redirectTo: to });
+
+/** The fixture tool the snapshot published at `rank`. */
+function atRank(tools: MeasuredTool[], published: PublishedSnapshot, rank: number): MeasuredTool {
+  const id = String(published.rows.find((r) => Number(r["rank"]) === rank)!["tool_id"]);
+  return tools.find((t) => t.id === id)!;
+}
 
 function run(tools: MeasuredTool[], published: PublishedSnapshot, toolIdentities: ToolIdentity[]) {
   const sheet = { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set<string>() };
@@ -83,16 +91,70 @@ describe("v7.10 baseline through redirects (#185)", () => {
     expect(result.reproduction.onlyPublished).toBe(0);
     expect(result.reproduction.onlyRecomputed).toBe(0);
     expect(result.reproduced).toBe(true);
-    expect(result.reproduction.redirects).toEqual({ mapped: 2, unmapped: 0, cycles: 0, collidedIds: 0, collisionTargets: 0 });
+    expect(result.reproduction.redirects).toEqual({
+      mapped: 2, unmapped: 0, cycles: 0, collidedIds: 0, collisionTargets: 0, retired: 0, unexplainedCollisions: 0,
+    });
     expect(result.exitCode).toBe(EXIT_CODES.ok);
   });
 
-  it("reports two published ids that reach one canonical id as a collision and does not reproduce", () => {
-    const { before, published } = foldedBoard();
-    const [keep, gone] = [before[3]!, before[9]!];
-    const tools = before.filter((t) => t !== gone);
-    const result = run(tools, published, [...tools.map(active), redirect(gone.id, gone.slug, keep.slug)]);
-    expect(result.reproduction.redirects).toEqual({ mapped: 1, unmapped: 0, cycles: 0, collidedIds: 2, collisionTargets: 1 });
+  // #185 (Architect ruling, option a): a collision is compared against its survivor; the rest retire.
+  it("D91 fold: compares the family against its carriedFrom survivor, retires the alias and renumbers ranks", () => {
+    const before = harnessBoard();
+    const published = quietPublished(before);
+    // The alias sits at published rank 2, so every rank below it must be renumbered to match.
+    const [survivor, alias] = [atRank(before, published, 6), atRank(before, published, 2)];
+    const family = { ...survivor, id: "family-id", slug: "family" };
+    const tools = [...before.filter((t) => t !== survivor && t !== alias), family];
+    const identities = [
+      ...tools.filter((t) => t !== family).map(active),
+      { ...active(family), carriedFrom: survivor.slug },
+      redirect(survivor.id, survivor.slug, family.slug),
+      redirect(alias.id, alias.slug, family.slug),
+    ];
+    const result = run(tools, published, identities);
+    expect(result.reproduction.redirects).toEqual({
+      mapped: 2, unmapped: 0, cycles: 0, collidedIds: 2, collisionTargets: 1, retired: 1, unexplainedCollisions: 0,
+    });
+    expect(result.reproduction.onlyPublished).toBe(0);
+    expect(result.reproduction.onlyRecomputed).toBe(0);
+    expect(result.reproduction.rankDiffs).toBe(0);
+    expect(result.reproduced).toBe(true);
+    expect(result.exitCode).toBe(EXIT_CODES.ok);
+  });
+
+  it("D90 merge: a target that is itself published is its own survivor; the old row retires", () => {
+    const before = harnessBoard();
+    const published = quietPublished(before);
+    const [target, old] = [atRank(before, published, 8), atRank(before, published, 3)];
+    const tools = before.filter((t) => t !== old);
+    const result = run(tools, published, [...tools.map(active), redirect(old.id, old.slug, target.slug)]);
+    expect(result.reproduction.redirects).toEqual({
+      mapped: 1, unmapped: 0, cycles: 0, collidedIds: 2, collisionTargets: 1, retired: 1, unexplainedCollisions: 0,
+    });
+    expect(result.reproduction.rankDiffs).toBe(0);
+    expect(result.reproduced).toBe(true);
+    expect(result.exitCode).toBe(EXIT_CODES.ok);
+  });
+
+  it.each([
+    ["no carriedFrom and the canonical id is not published", (_s: MeasuredTool, _o: MeasuredTool) => null],
+    ["carriedFrom naming a tool outside the group", (_s: MeasuredTool, other: MeasuredTool) => other.slug],
+    ["carriedFrom naming a slug with no row", (_s: MeasuredTool, _o: MeasuredTool) => "no-such-slug"],
+  ])("error arm: an unexplained collision (%s) fails the reproduction", (_label, carried) => {
+    const before = harnessBoard();
+    const published = quietPublished(before);
+    const [survivor, alias, other] = [atRank(before, published, 6), atRank(before, published, 2), atRank(before, published, 10)];
+    const family = { ...survivor, id: "family-id", slug: "family" };
+    const tools = [...before.filter((t) => t !== survivor && t !== alias), family];
+    const identities = [
+      ...tools.filter((t) => t !== family).map(active),
+      { ...active(family), carriedFrom: carried(survivor, other) },
+      redirect(survivor.id, survivor.slug, family.slug),
+      redirect(alias.id, alias.slug, family.slug),
+    ];
+    const result = run(tools, published, identities);
+    expect(result.reproduction.redirects.unexplainedCollisions).toBe(1);
+    expect(result.reproduction.redirects.retired).toBe(0);
     expect(result.reproduced).toBe(false);
     expect(result.exitCode).toBe(EXIT_CODES.notReproduced);
   });
@@ -125,7 +187,7 @@ describe("v7.10 baseline through redirects (#185)", () => {
   it("prints the redirect counts and no id or slug", () => {
     const { tools, published, identities, a, b } = foldedBoard();
     const report = formatMeasurementReport(run(tools, published, identities));
-    expect(report).toContain("published ids through redirects: mapped 2; unmapped 0; collided 0 onto 0 canonical ids; redirect cycles 0");
+    expect(report).toContain("published ids through redirects: mapped 2; unmapped 0; collided 0 onto 0 canonical ids (retired 0, unexplained 0); redirect cycles 0");
     for (const t of [a, b]) {
       expect(report).not.toContain(t.id);
       expect(report).not.toContain(t.slug);
