@@ -14,6 +14,8 @@ import { extractTextFromRichText, type RichTextBlock } from "@/lib/richtext-util
 
 interface RankingData {
   rank: number;
+  /** #186: the tier within the row's list (D53); absent rows use the rank tiers. */
+  tier?: string;
   previousRank?: number;
   rankChange?: number;
   changeReason?: string;
@@ -56,6 +58,8 @@ export function RankingCard({
   listName = "rankings",
 }: RankingCardProps): React.JSX.Element {
   const router = useRouter();
+  // #186: a list row carries its D53 tier (S/A/B by thirds on a short list).
+  const tier = ranking.tier && /^[SABCD]$/.test(ranking.tier) ? ranking.tier : calculateTier(ranking.rank);
   const toolSlug = ranking.tool.slug || ranking.tool.id;
 
   const getMedal = (rank: number): string => {
@@ -110,11 +114,7 @@ export function RankingCard({
               <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
                 <span className="text-xs mr-1">{getMedal(ranking.rank)}</span>#{ranking.rank}
               </Badge>
-              <Badge
-                className={`${getTierColor(calculateTier(ranking.rank))} font-bold px-2 py-0.5`}
-              >
-                {calculateTier(ranking.rank)}
-              </Badge>
+              <Badge className={`${getTierColor(tier)} font-bold px-2 py-0.5`}>{tier}</Badge>
               <RankingChange
                 previousRank={ranking.previousRank}
                 currentRank={ranking.rank}

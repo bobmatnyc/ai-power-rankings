@@ -11,7 +11,11 @@
  *   order. Nothing in the publish path calls this module (PR-2 is still
  *   inert); the v8 measurement script and `lib/scoring-kind-routing.ts` are
  *   its callers. An optional `provisional` string marks a profile that awaits
- *   a ruling; it is metadata and never changes a weight.
+ *   a ruling; it is metadata and never changes a weight. `publicNote: true`
+ *   marks a provisional profile whose list page says so in public (#186, D54).
+ *   Active-set rule (Architect amendment to the PR-3 criterion, #186): the set
+ *   named by `activeProfileSet` may hold a provisional profile only when it is
+ *   the `productivity` profile and carries `publicNote: true`.
  *   Rules: every profile has exactly the eight engine factors, each weight a
  *   finite number in [0, 1] on a 0.0001 grid, and the weights sum exactly to
  *   the profile's `declaredTotal` (compared in basis points, so float drift
@@ -45,6 +49,8 @@ export interface ScoringProfile {
   weights: RankingWeightsV76;
   /** #185: present while the profile awaits the ruling it names (e.g. the productivity profile). */
   provisional?: string;
+  /** #186 (D54): the list page shows a public note that this provisional profile is in use. */
+  publicNote?: true;
 }
 
 export interface ProfileSet {
@@ -134,7 +140,18 @@ function validateProfile(where: string, raw: unknown, legacy: boolean, problems:
     problems.push(`${where}.provisional must be a non-empty string naming the pending ruling`);
     return null;
   }
-  return { declaredTotal: declared as number, weights: ordered, ...(provisional ? { provisional } : {}) };
+  // #186: publicNote is a flag on a provisional profile only.
+  const publicNote = raw["publicNote"];
+  if (publicNote !== undefined && (publicNote !== true || !provisional)) {
+    problems.push(`${where}.publicNote must be true and only on a provisional profile`);
+    return null;
+  }
+  return {
+    declaredTotal: declared as number,
+    weights: ordered,
+    ...(provisional ? { provisional } : {}),
+    ...(publicNote === true ? { publicNote } : {}),
+  };
 }
 
 function validateSet(id: string, raw: unknown, problems: string[]): ProfileSet | null {
@@ -173,12 +190,37 @@ function validateSet(id: string, raw: unknown, problems: string[]): ProfileSet |
   };
 }
 
+/** #186: the profile a provisional profile in the active set may be, with a public note (D54). */
+export const PROVISIONAL_ACTIVE_PROFILE = "productivity";
+
+/**
+ * Problems with the set `activeProfileSet` names (PR-3 criterion, as amended for #186).
+ *
+ * Why: a provisional profile awaits a ruling, so publishing with one is refused, except
+ *   the productivity profile, which ships with provisional weights and a public note (D54).
+ * What: one problem per provisional profile that is not `productivity` with `publicNote: true`.
+ * Test: `tests/unit/scoring-profiles-active-set-186.test.ts`
+ */
+export function activeSetProblems(setId: string, set: ProfileSet): string[] {
+  const problems: string[] = [];
+  for (const [name, profile] of Object.entries(set.profiles)) {
+    if (!profile.provisional) continue;
+    if (name !== PROVISIONAL_ACTIVE_PROFILE) {
+      problems.push(`active set "${setId}" holds the provisional profile "${name}"; only ${PROVISIONAL_ACTIVE_PROFILE} may be provisional`);
+    } else if (profile.publicNote !== true) {
+      problems.push(`active set "${setId}" holds the provisional profile "${name}" without publicNote: true`);
+    }
+  }
+  return problems;
+}
+
 /**
  * Validate an already-parsed config object.
  *
  * Postcondition: every returned profile's weights sum, in basis points, to its
- * `declaredTotal`, and `activeProfileSet` names a returned set. Throws
- * `ScoringProfileError` otherwise; never returns a partial config.
+ * `declaredTotal`, and `activeProfileSet` names a returned set that passes
+ * `activeSetProblems()` (#186). Throws `ScoringProfileError` otherwise; never
+ * returns a partial config.
  */
 export function parseScoringProfiles(raw: unknown): ScoringProfilesConfig {
   const problems: string[] = [];
@@ -198,6 +240,8 @@ export function parseScoringProfiles(raw: unknown): ScoringProfilesConfig {
   const active = raw["activeProfileSet"];
   if (typeof active !== "string" || !isObject(rawSets) || !(active in rawSets)) {
     problems.push("activeProfileSet must name a set in profileSets");
+  } else if (sets[active]) {
+    problems.push(...activeSetProblems(active, sets[active]));
   }
   if (problems.length > 0) throw new ScoringProfileError(problems);
   return { schemaVersion: 1, activeProfileSet: active as string, profileSets: sets };

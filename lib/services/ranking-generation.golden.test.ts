@@ -71,9 +71,21 @@ describe("regenerateRankings publish path (golden, #93)", () => {
   it("deletes the same-period row, demotes the current row, then inserts, in that order", async () => {
     await regenerateRankings({ now: () => new Date(GOLDEN_NOW) });
 
+    // #186: both statements are scoped to the combined list, so per-list rows of the
+    // period and other lists' current rows are never deleted or demoted by this path.
     expect(fake.state.writes.map(({ op, table, where, params }) => ({ op, table, where, params }))).toEqual([
-      { op: "delete", table: "rankings", where: '"rankings"."period" = $1', params: ["2026-07"] },
-      { op: "update", table: "rankings", where: '"rankings"."is_current" = $1', params: [true] },
+      {
+        op: "delete",
+        table: "rankings",
+        where: '("rankings"."period" = $1 and "rankings"."list" = $2)',
+        params: ["2026-07", "combined"],
+      },
+      {
+        op: "update",
+        table: "rankings",
+        where: '("rankings"."is_current" = $1 and "rankings"."list" = $2)',
+        params: [true, "combined"],
+      },
       { op: "insert", table: "rankings", where: undefined, params: undefined },
     ]);
     expect(fake.state.rankings.map((r) => [r.period, r.isCurrent])).toEqual([

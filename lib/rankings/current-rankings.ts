@@ -1,26 +1,48 @@
 import { type RankingData, rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
+import {
+  COMBINED_LIST,
+  DEFAULT_RANKING_LIST,
+  listOfTool,
+  listTier,
+  type RankingList,
+} from "@/lib/rankings/lists";
 
-/**
- * Reads the current published rankings snapshot as display rows (#192).
- *
- * Why: `/api/rankings` and the home page must show the same rows, ranks and
- * rank changes, so both read the snapshot through this one function.
- * What: reads the `is_current` snapshot through `rankingsRepository`, takes its
- * rankings array (the JSONB is an array or holds one under `rankings` or
- * `data`), joins each entry to its tool by id then slug, drops entries whose
- * tool is missing (one warning each), and sorts by rank. Returns null when no
- * snapshot is current. Throws when the database read throws.
- * Test: `tests/unit/home-live-rankings-192.test.tsx`; the route keeps its
- * response shape (`app/api/rankings/route.ts`).
- */
-export async function loadCurrentRankings(): Promise<{
+/** #186: where a list's rows came from: its own current row, or the combined board split by list. */
+export type ListBoardSource = "list" | "combined";
+
+export interface CurrentListBoard {
+  list: RankingList;
+  source: ListBoardSource;
   snapshot: RankingData;
   rankings: CurrentRankingRow[];
-} | null> {
-  const snapshot = await rankingsRepository.getCurrentRankings();
+}
+
+/**
+ * Reads one list's current board as display rows (#192, #186).
+ *
+ * Why: `/api/rankings` and the home page must show the same rows, ranks and
+ * rank changes, so both read the snapshot through this one function. #186: each
+ * list has its own board, ranked within the list (D2e), and a tool is ranked in
+ * at most one list.
+ * What: reads the list's `is_current` row. When the list has none yet (before
+ * the per-list publish runs), reads the current legacy combined row instead and
+ * keeps only the tools `listOfTool()` puts in this list (`source: "combined"`).
+ * Takes the snapshot's rankings array (an array, or one under `rankings` or
+ * `data`), joins each entry to its tool by id then slug, drops entries whose tool
+ * is missing (one warning each) or belongs to another list (or none), sorts by
+ * stored rank and renumbers 1..n with D53 tiers. A combined row's movement is a
+ * global move, so its previous rank is renumbered within the list too. Returns
+ * null when neither row exists. Throws when a database read throws.
+ * Test: `tests/unit/home-live-rankings-192.test.tsx`,
+ *   `tests/unit/current-rankings-per-list-186.test.ts`.
+ */
+export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LIST): Promise<CurrentListBoard | null> {
+  const listRow = await rankingsRepository.getCurrentRankings(list);
+  const snapshot = listRow ?? (await rankingsRepository.getCurrentRankings(COMBINED_LIST));
   if (!snapshot) return null;
+  const source: ListBoardSource = listRow ? "list" : "combined";
 
   const rankingsData = snapshot.data;
   let rankings = [];
@@ -39,18 +61,57 @@ export async function loadCurrentRankings(): Promise<{
   const toolsRepo = new ToolsRepository();
   const formatted = await Promise.all(rankings.map((ranking: any) => formatRanking(ranking, toolsRepo)));
 
-  // Filter out null values (tools that weren't found)
-  const valid = formatted.filter((r): r is CurrentRankingRow => r !== null);
+  // Filter out null values (tools that weren't found), then the tools of other lists.
+  const members = formatted.filter((r): r is FormattedRanking => r !== null && inList(r, list, source));
 
   // Sort by rank to ensure proper ordering
-  valid.sort((a, b) => (a.rank || 999) - (b.rank || 999));
+  members.sort((a, b) => (a.row.rank || 999) - (b.row.rank || 999));
 
-  return { snapshot, rankings: valid };
+  return { list, source, snapshot, rankings: rankWithinList(members.map((m) => m.row), source) };
 }
 
-export type CurrentRankingRow = NonNullable<Awaited<ReturnType<typeof formatRanking>>>;
+/**
+ * #186: whether a joined row belongs on `list`'s board. A combined row needs the tool's
+ * list to be `list`. A list row was written for this list; it drops only a tool whose
+ * kind is known and now maps elsewhere (a row read without a kind is kept as written).
+ */
+function inList(entry: FormattedRanking, list: RankingList, source: ListBoardSource): boolean {
+  if (source === "combined") return entry.toolList === list;
+  return entry.kind === undefined || entry.toolList === list;
+}
 
-/** One snapshot entry joined to its tool, in the `/api/rankings` row shape; null when the tool is missing. */
+/**
+ * #186 PURE: ranks 1..n and D53 tiers for one list's rows, in the given order.
+ * For a combined source the stored previous ranks are global, so each is replaced by
+ * the tool's position among this list's tools that have one (D2e); a tool that left
+ * the list since then is not counted.
+ */
+export function rankWithinList(rows: CurrentRankingRow[], source: ListBoardSource): CurrentRankingRow[] {
+  const previousWithin = new Map<number, number>();
+  if (source === "combined") {
+    const previous = rows
+      .map((row, index) => ({ index, previous: row.previousRank }))
+      .filter((p): p is { index: number; previous: number } => typeof p.previous === "number" && p.previous > 0)
+      .sort((a, b) => a.previous - b.previous);
+    previous.forEach((p, position) => previousWithin.set(p.index, position + 1));
+  }
+  return rows.map((row, index) => {
+    const rank = index + 1;
+    const tier = listTier(rank, rows.length);
+    if (source === "list") return { ...row, rank, tier };
+    const previousRank = previousWithin.get(index) ?? null;
+    return { ...row, rank, tier, previousRank, rankChange: previousRank === null ? 0 : previousRank - rank };
+  });
+}
+
+export type CurrentRankingRow = NonNullable<Awaited<ReturnType<typeof formatRanking>>>["row"];
+
+type FormattedRanking = { row: CurrentRankingRow; kind: unknown; toolList: RankingList | null };
+
+/**
+ * One snapshot entry joined to its tool: the `/api/rankings` row shape plus the tool's
+ * kind and list (#186); null when the tool is missing.
+ */
 async function formatRanking(ranking: any, toolsRepo: ToolsRepository) {
   // Try to find tool by ID or slug
   let tool = null;
@@ -81,7 +142,11 @@ async function formatRanking(ranking: any, toolsRepo: ToolsRepository) {
     logoPath = logoPath.replace('/tools/', '/tool-icons/');
   }
 
-  return {
+  // #186: membership reads the kind column and data.modality (D52) of the joined tool.
+  const kind = toolAsAny?.["kind"];
+  const toolList = listOfTool(kind, toolAsAny?.["modality"]);
+
+  const row = {
     rank: ranking["rank"] || ranking["position"] || 1,
     previousRank:
       ranking["movement"]?.["previous_position"] || ranking["previous_rank"] || null,
@@ -133,4 +198,5 @@ async function formatRanking(ranking: any, toolsRepo: ToolsRepository) {
     },
     tier: ranking["tier"] || "standard",
   };
+  return { row, kind, toolList };
 }
