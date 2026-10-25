@@ -54,8 +54,11 @@ import { renderSitemapXml } from "../../lib/sitemap";
 
 const ORIGIN = "https://aipowerranking.com";
 
-/** Static pages + categories the sitemap lists with no database rows (#156). */
-const STATIC_URL_COUNT = 55;
+/**
+ * Static pages + categories the sitemap lists with no database rows (#156).
+ * #185: 55 -> 64: /methodology is translated, so it is listed in all 10 locales, not /en only.
+ */
+const STATIC_URL_COUNT = 64;
 
 interface ListedUrl {
   loc: string;

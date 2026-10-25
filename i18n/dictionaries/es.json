@@ -875,5 +875,36 @@
     "title": "AI Power Rankings - Las clasificaciones mensuales definitivas de herramientas de codificación IA",
     "description": "Las clasificaciones mensuales definitivas y el análisis de herramientas de codificación IA agénticas. Compara Cursor, GitHub Copilot, Claude y más de 50 asistentes IA de confianza para desarrolladores de todo el mundo.",
     "keywords": "herramientas de codificación IA, IA agéntica, codificación autónoma, clasificaciones de herramientas para desarrolladores, comparación de asistentes IA, benchmarks de IA para código, resultados SWE-bench, Claude vs Cursor vs GitHub Copilot"
+  },
+  "methodologyV8": {
+    "metaTitle": "Metodología del ranking (v{version}) - AI Power Rankings",
+    "metaDescription": "Cómo AI Power Rankings clasifica modelos, herramientas de programación y herramientas de productividad en listas separadas, con un perfil de puntuación para cada tipo.",
+    "title": "Cómo se elaboran los rankings",
+    "intro": "La versión {version} de AI Power Rankings clasifica cada tipo de herramienta en su propia lista y puntúa cada tipo con sus propios pesos.",
+    "listsHeading": "Tres listas",
+    "listsBody": "Los modelos, las herramientas de programación y las herramientas de productividad se clasifican en listas separadas. Una herramienta figura como máximo en una lista, y su posición, su nivel y su cambio se cuentan dentro de esa lista. Las posiciones no se comparan entre listas.",
+    "listsDefault": "La página principal de rankings muestra la lista de herramientas de programación.",
+    "listsExcluded": "Los modelos de imagen y de vídeo no están en la lista de modelos. Las herramientas de otros tipos no se clasifican.",
+    "smallLists": "Una lista con menos de {min} entradas usa los niveles S, A y B por tercios y los buscadores no la indexan.",
+    "profilesHeading": "Perfiles de puntuación",
+    "profilesBody": "Cada lista se puntúa con el perfil de su tipo. Todos los perfiles usan los mismos ocho factores y sus pesos suman el 100 %, por lo que todas las puntuaciones están en la misma escala de 0 a 100.",
+    "factorHeader": "Factor",
+    "weightHeader": "Peso",
+    "factors": {
+      "agenticCapability": "Capacidad agéntica",
+      "innovation": "Innovación",
+      "technicalPerformance": "Rendimiento técnico",
+      "developerAdoption": "Adopción por desarrolladores",
+      "marketTraction": "Tracción de mercado",
+      "businessSentiment": "Percepción empresarial",
+      "developmentVelocity": "Velocidad de desarrollo",
+      "platformResilience": "Resiliencia de la plataforma"
+    },
+    "provisionalNote": "Provisional: la lista de herramientas de productividad usa los pesos de las herramientas de programación hasta que se decida su propio perfil de puntuación.",
+    "openWeight": "Que los pesos de un modelo sean abiertos no es un factor de puntuación.",
+    "tiesHeading": "Empates",
+    "tiesBody": "Cuando dos herramientas de una lista tienen la misma puntuación, va primero la que tenía mejor posición en los últimos rankings publicados antes de la versión {version}. Una herramienta que entonces no estaba clasificada va después.",
+    "dataHeading": "Fuentes de datos",
+    "dataBody": "Las puntuaciones usan las métricas guardadas de cada herramienta: resultados de benchmarks, adopción como descargas, estrellas y usuarios, financiación y noticias de negocio, y actividad de lanzamientos. Los rankings se recalculan una vez al mes."
   }
 }
