@@ -100,6 +100,9 @@ export const rankings = pgTable(
     // Primary identifiers
     id: uuid("id").defaultRandom().primaryKey(),
     period: text("period").notNull(), // e.g., '2025-09'
+    // #186: the list this board ranks (migration 0020). 'combined' is the legacy one-board
+    // row (D55); the others hold one row per (period, list), ranked within the list.
+    list: text("list", { enum: ["combined", "harness", "model", "productivity"] }).notNull().default("combined"),
 
     // Metadata
     algorithmVersion: text("algorithm_version").notNull().default("v1.0"),
@@ -116,8 +119,12 @@ export const rankings = pgTable(
   },
   (table) => ({
     // Indexes
-    periodIdx: uniqueIndex("rankings_period_idx").on(table.period),
+    // #186: one row per (period, list); replaces the period-only rankings_period_idx.
+    periodListIdx: uniqueIndex("rankings_period_list_idx").on(table.period, table.list),
     currentIdx: index("rankings_current_idx").on(table.isCurrent),
+    // #186: at most one current board per list.
+    oneCurrentPerListIdx: uniqueIndex("rankings_one_current_per_list_idx").on(table.list).where(sql`is_current`),
+    listCheck: check("rankings_list_check", sql`list IN ('combined', 'harness', 'model', 'productivity')`),
     publishedIdx: index("rankings_published_idx").on(table.publishedAt),
     // GIN index for JSONB queries
     dataIdx: index("rankings_data_gin_idx").using("gin", table.data),

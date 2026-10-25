@@ -16,11 +16,16 @@
  *   snapshot for the target period (idempotent re-runs), unset the prior
  *   `is_current` row, then insert the new snapshot with `is_current = true`.
  * - An in-process guard rejects concurrent runs for the same period; the unique
- *   `rankings_period_idx` index is the durable backstop across instances.
+ *   `rankings_period_list_idx` index is the durable backstop across instances.
  * - #93: `mode` selects what is written. "publish" (the default, used by the
  *   cron and the CLI) is the transaction above. "draft" (admin build) writes a
  *   non-current row and never touches the current one. "dry-run" (admin build
  *   with dry_run, admin preview) writes nothing.
+ * - #186: `layout` selects the boards. "combined" (the default) is the legacy
+ *   one-board row (`rankings.list = 'combined'`). "per-list" writes one row per
+ *   (period, list), each ranking only the tools of its list (`listOfTool()`), with
+ *   ranks and D53 tiers counted within the list. Both layouts score through the
+ *   same `computeRankings()` call with no scoring argument.
  */
 
 import { existsSync, readFileSync } from "node:fs";
@@ -33,6 +38,14 @@ import {
   RankingEngineV76,
   type RankingWeightsV76,
 } from "@/lib/ranking-algorithm-v76";
+import {
+  COMBINED_LIST,
+  listOfTool,
+  listTier,
+  RANKING_LISTS,
+  type RankingList,
+  type StoredRankingList,
+} from "@/lib/rankings/lists";
 
 /**
  * The version persisted on `rankings` rows. Derived from the engine's
@@ -101,6 +114,15 @@ export type RegenerateMode = "publish" | "draft" | "dry-run";
 
 const REGENERATE_MODES: readonly RegenerateMode[] = ["publish", "draft", "dry-run"];
 
+/**
+ * #186: which boards a run computes.
+ * - "combined": the legacy one board of every active tool.
+ * - "per-list": one board per list in `RANKING_LISTS`, each ranked within itself.
+ */
+export type RankingLayout = "combined" | "per-list";
+
+const RANKING_LAYOUTS: readonly RankingLayout[] = ["combined", "per-list"];
+
 /** Summary returned to callers (cron route surfaces this as JSON). */
 export interface RankingGenerationResult {
   period: string;
@@ -112,6 +134,9 @@ export interface RankingGenerationResult {
   mode: RegenerateMode;
   /** #93: the computed rows, for the admin dry-run and draft responses. */
   entries: RankingEntry[];
+  /** #186: the layout that ran, and the row count of each board it computed. */
+  layout: RankingLayout;
+  boards: Array<{ list: StoredRankingList; toolCount: number }>;
 }
 
 /** The rows one run computed, as handed to the persistence port. */
@@ -120,14 +145,25 @@ export interface RankingSnapshotInput {
   algorithmVersion: string;
   publishedAt: Date;
   data: RankingEntry[];
+  /** #186: the list of a per-list board; absent for the legacy combined board. */
+  list?: RankingList;
 }
 
 /** Injectable persistence boundary so orchestration is DB-agnostic in tests. */
 export interface RankingPersistencePort {
   loadActiveTools(): Promise<RankingSourceTool[]>;
-  /** #93: `period` is optional so existing ports keep compiling; the DB adapter sets it. */
-  loadCurrentRankings(): Promise<{ data: unknown; period?: string } | null>;
+  /**
+   * #93: `period` is optional so existing ports keep compiling; the DB adapter sets it.
+   * #186: `list` names the board; absent means the legacy combined board.
+   */
+  loadCurrentRankings(list?: StoredRankingList): Promise<{ data: unknown; period?: string } | null>;
   saveSnapshot(input: RankingSnapshotInput): Promise<void>;
+  /**
+   * #186: publish every per-list board of one run in one transaction: per list, replace
+   * the row for (period, list), demote that list's current row and insert the new one as
+   * current. Never touches another list's rows. Required for layout "per-list" only.
+   */
+  saveListSnapshots?(inputs: RankingSnapshotInput[]): Promise<void>;
   /**
    * #93: write a non-current row for `input.period`, replacing only a
    * non-current row for that period. Must never change `is_current` on any
@@ -154,6 +190,8 @@ export interface RegenerateRankingsOptions {
   metricsOverridePath?: string;
   /** #93: what to write. Defaults to "publish", the cron and CLI behaviour. */
   mode?: RegenerateMode;
+  /** #186: which boards to compute. Defaults to "combined", the cron and CLI behaviour. */
+  layout?: RankingLayout;
 }
 
 /** Raised when a regeneration for the same period is already in flight. */
@@ -228,6 +266,55 @@ export function buildPreviousRankMap(prevData: unknown): Map<string, number> {
     }
   }
   return map;
+}
+
+/**
+ * #186 PURE: previous ranks renumbered within one list (D2e).
+ *
+ * Keeps the tools in `memberIds` that have a previous rank and numbers them 1..n in
+ * previous-rank order. Used for a list's first per-list run, whose only prior board
+ * is the combined one, so a global rank is never reported as a list rank.
+ */
+export function renumberWithinList(previous: Map<string, number>, memberIds: readonly string[]): Map<string, number> {
+  const ranked = memberIds
+    .filter((id) => previous.has(id))
+    .sort((a, b) => previous.get(a)! - previous.get(b)!);
+  return new Map(ranked.map((id, index) => [id, index + 1]));
+}
+
+/** #186: D53 tiers for one list's rows (ranks are already 1..n within the list). */
+function withListTiers(rows: RankingEntry[]): RankingEntry[] {
+  return rows.map((row) => ({ ...row, tier: listTier(row.rank, rows.length) }));
+}
+
+/** #186: one board a run computes; `list` is absent for the legacy combined board. */
+interface RankingBoard {
+  list?: RankingList;
+  sourceTools: RankingSourceTool[];
+  previousRankMap: Map<string, number>;
+}
+
+/**
+ * #186: one board per list. Each list ranks only the tools `listOfTool()` puts in it,
+ * so no tool is ranked in two lists; a tool in no list (kind `other`, an image or video
+ * model) is ranked nowhere. Previous ranks come from the list's current row, else the
+ * combined board renumbered within the list.
+ */
+async function listBoards(
+  scoredTools: RankingSourceTool[],
+  combinedPrevious: unknown,
+  persistence: RankingPersistencePort
+): Promise<RankingBoard[]> {
+  const previousRows = await Promise.all(RANKING_LISTS.map((list) => persistence.loadCurrentRankings(list)));
+  const combinedRanks = buildPreviousRankMap(combinedPrevious);
+  return RANKING_LISTS.map((list, index) => {
+    const members = scoredTools.filter((tool) => listOfTool(tool.kind, tool.data?.["modality"]) === list);
+    const listRow = previousRows[index];
+    const previousRankMap = listRow
+      ? buildPreviousRankMap(listRow.data)
+      : renumberWithinList(combinedRanks, members.map((tool) => tool.id));
+    return { list, sourceTools: members, previousRankMap };
+  });
 }
 
 /**
@@ -442,16 +529,18 @@ export function createDbPersistence(): RankingPersistencePort {
         category: row.category,
         status: row.status,
         data: (row.data ?? {}) as Record<string, unknown>,
+        // #186: the per-list layout partitions by kind; the combined layout ignores it.
+        kind: row.kind,
       }));
     },
 
-    async loadCurrentRankings() {
+    async loadCurrentRankings(list: StoredRankingList = COMBINED_LIST) {
       const db = getDb();
       if (!db) throw new Error("Database connection not available");
       const result = await db
         .select()
         .from(rankings)
-        .where(eq(rankings.isCurrent, true))
+        .where(and(eq(rankings.isCurrent, true), eq(rankings.list, list)))
         .limit(1);
       // #93: period lets draft mode refuse the current period before computing.
       return result.length > 0 ? { data: result[0]!.data, period: result[0]!.period } : null;
@@ -461,11 +550,15 @@ export function createDbPersistence(): RankingPersistencePort {
       const db = getDb();
       if (!db) throw new Error("Database connection not available");
       await db.transaction(async (tx) => {
-        // Idempotent: drop any prior snapshot for this exact period.
-        await tx.delete(rankings).where(eq(rankings.period, period));
-        // Demote the previous current snapshot.
-        await tx.update(rankings).set({ isCurrent: false }).where(eq(rankings.isCurrent, true));
-        // Insert the fresh snapshot as current.
+        // Idempotent: drop any prior combined snapshot for this exact period.
+        // #186: scoped to the combined list, so per-list rows of the period survive.
+        await tx.delete(rankings).where(and(eq(rankings.period, period), eq(rankings.list, COMBINED_LIST)));
+        // Demote the previous current combined snapshot (#186: never another list's).
+        await tx
+          .update(rankings)
+          .set({ isCurrent: false })
+          .where(and(eq(rankings.isCurrent, true), eq(rankings.list, COMBINED_LIST)));
+        // Insert the fresh snapshot as current (list defaults to 'combined').
         await tx.insert(rankings).values({
           period,
           algorithmVersion,
@@ -476,15 +569,40 @@ export function createDbPersistence(): RankingPersistencePort {
       });
     },
 
+    // #186: every list's board of one run, in one transaction.
+    async saveListSnapshots(inputs) {
+      const db = getDb();
+      if (!db) throw new Error("Database connection not available");
+      await db.transaction(async (tx) => {
+        for (const { period, algorithmVersion, publishedAt, data, list } of inputs) {
+          if (!list) throw new Error("saveListSnapshots needs a list on every board");
+          await tx.delete(rankings).where(and(eq(rankings.period, period), eq(rankings.list, list)));
+          await tx
+            .update(rankings)
+            .set({ isCurrent: false })
+            .where(and(eq(rankings.isCurrent, true), eq(rankings.list, list)));
+          await tx.insert(rankings).values({
+            period,
+            list,
+            algorithmVersion,
+            isCurrent: true,
+            publishedAt,
+            data: data as never,
+          });
+        }
+      });
+    },
+
     // #93: admin build. One transaction that never sets or clears is_current.
     async saveDraft({ period, algorithmVersion, data }) {
       const db = getDb();
       if (!db) throw new Error("Database connection not available");
       await db.transaction(async (tx) => {
+        // #186: drafts are combined boards; a per-list row of the period is not this draft.
         const existing = await tx
           .select()
           .from(rankings)
-          .where(eq(rankings.period, period))
+          .where(and(eq(rankings.period, period), eq(rankings.list, COMBINED_LIST)))
           .limit(1);
         if (existing[0]?.isCurrent) {
           throw new RankingPeriodIsCurrentError(period);
@@ -492,7 +610,9 @@ export function createDbPersistence(): RankingPersistencePort {
         // Replace only a non-current row for this period.
         await tx
           .delete(rankings)
-          .where(and(eq(rankings.period, period), eq(rankings.isCurrent, false)));
+          .where(
+            and(eq(rankings.period, period), eq(rankings.isCurrent, false), eq(rankings.list, COMBINED_LIST))
+          );
         // published_at stays null until set-current publishes the row.
         await tx.insert(rankings).values({
           period,
@@ -516,8 +636,11 @@ export function createDbPersistence(): RankingPersistencePort {
  * #93: `mode` "draft" writes through `saveDraft` and refuses the current
  * period; "dry-run" writes nothing. Neither mode takes the publish guard, so
  * neither blocks a publish run. All modes compute rows with the same function and inputs.
+ * #186: `layout` "per-list" publishes one current row per list through
+ * `saveListSnapshots` (dry-run writes nothing; draft is refused).
  * Test: `lib/services/ranking-generation.golden.test.ts` (publish unchanged),
- * `lib/services/ranking-generation.modes.test.ts` (draft, dry-run).
+ * `lib/services/ranking-generation.modes.test.ts` (draft, dry-run),
+ * `tests/unit/ranking-generation-per-list-186.test.ts` (per-list layout).
  */
 export async function regenerateRankings(
   options: RegenerateRankingsOptions = {}
@@ -534,13 +657,26 @@ export async function regenerateRankings(
   if (mode === "draft" && !persistence.saveDraft) {
     throw new Error("Draft mode needs a persistence port with saveDraft");
   }
+  // #186: the combined board stays the default until activation switches it.
+  const layout = options.layout ?? "combined";
+  if (!RANKING_LAYOUTS.includes(layout)) {
+    throw new Error(`Unknown ranking layout: ${String(layout)}`);
+  }
+  if (layout === "per-list" && mode === "draft") {
+    throw new Error("Per-list drafts are not supported; use dry-run or publish (#186)");
+  }
+  if (layout === "per-list" && mode === "publish" && !persistence.saveListSnapshots) {
+    throw new Error("Per-list publish needs a persistence port with saveListSnapshots");
+  }
   // #93: a dry-run writes nothing, so it takes no slot in either guard.
   const guard = mode === "publish" ? inFlightPeriods : mode === "draft" ? inFlightDrafts : null;
+  // #186: a per-list run writes other rows than a combined run of the same period.
+  const guardKey = layout === "combined" ? period : `${period}:${layout}`;
 
-  if (guard?.has(period)) {
+  if (guard?.has(guardKey)) {
     throw new RankingGenerationInProgressError(period);
   }
-  guard?.add(period);
+  guard?.add(guardKey);
 
   try {
     const [loadedTools, prevSnapshot] = await Promise.all([
@@ -551,12 +687,12 @@ export async function regenerateRankings(
     // Additive historical-backfill path: if a period-specific override file is
     // provided AND exists on disk, score the reconstructed metrics instead of
     // the live `tools.data`. Otherwise the live tools are scored unchanged.
-    let sourceTools = loadedTools;
+    let scoredTools = loadedTools;
     if (options.metricsOverridePath && existsSync(options.metricsOverridePath)) {
       const overrides = JSON.parse(
         readFileSync(options.metricsOverridePath, "utf8")
       ) as HistoricalMetricsOverride;
-      sourceTools = applyHistoricalMetricsOverride(loadedTools, overrides);
+      scoredTools = applyHistoricalMetricsOverride(loadedTools, overrides);
     }
 
     // #93: refuse before scoring; saveDraft re-checks inside its transaction.
@@ -564,16 +700,31 @@ export async function regenerateRankings(
       throw new RankingPeriodIsCurrentError(period);
     }
 
-    const previousRankMap = buildPreviousRankMap(prevSnapshot?.data ?? null);
-    const data = computeRankings(sourceTools, previousRankMap, publishedAt);
-    const snapshot = { period, algorithmVersion: RANKING_ALGORITHM_VERSION, publishedAt, data };
+    // #186: one board for the combined layout, one per list for the per-list layout.
+    const boards: RankingBoard[] =
+      layout === "combined"
+        ? [{ sourceTools: scoredTools, previousRankMap: buildPreviousRankMap(prevSnapshot?.data ?? null) }]
+        : await listBoards(scoredTools, prevSnapshot?.data ?? null, persistence);
+
+    const snapshots: RankingSnapshotInput[] = boards.map(({ list, sourceTools, previousRankMap }) => {
+      const data = computeRankings(sourceTools, previousRankMap, publishedAt);
+      // #186: a list board's ranks are already within the list; its tiers follow D53.
+      return list
+        ? { period, algorithmVersion: RANKING_ALGORITHM_VERSION, publishedAt, data: withListTiers(data), list }
+        : { period, algorithmVersion: RANKING_ALGORITHM_VERSION, publishedAt, data };
+    });
 
     if (mode === "publish") {
-      await persistence.saveSnapshot(snapshot);
+      if (layout === "combined") {
+        await persistence.saveSnapshot(snapshots[0]!);
+      } else {
+        await persistence.saveListSnapshots!(snapshots);
+      }
     } else if (mode === "draft") {
-      await persistence.saveDraft!(snapshot);
+      await persistence.saveDraft!(snapshots[0]!);
     }
 
+    const data = snapshots.flatMap((snapshot) => snapshot.data);
     const topMovers = [...data]
       .filter((r) => Math.abs(r.movement.change) >= 5)
       .sort((a, b) => Math.abs(b.movement.change) - Math.abs(a.movement.change))
@@ -593,8 +744,10 @@ export async function regenerateRankings(
       topMovers,
       mode,
       entries: data,
+      layout,
+      boards: snapshots.map((snapshot) => ({ list: snapshot.list ?? COMBINED_LIST, toolCount: snapshot.data.length })),
     };
   } finally {
-    guard?.delete(period);
+    guard?.delete(guardKey);
   }
 }

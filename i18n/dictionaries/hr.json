@@ -280,7 +280,31 @@
           "range": "36+",
           "description": "Alati s ograničenim značajkama ili prihvaćanjem"
         }
+      },
+      "thirds": {
+        "description": "Razine dijele popis na trećine",
+        "S": "Gornja trećina",
+        "A": "Srednja trećina",
+        "B": "Donja trećina"
       }
+    },
+    "lists": {
+      "navLabel": "Ljestvice",
+      "harness": {
+        "title": "Alati za kodiranje",
+        "description": "AI alati i agenti za kodiranje, rangirani međusobno."
+      },
+      "model": {
+        "title": "Modeli",
+        "description": "AI modeli, rangirani međusobno. Modeli za slike i video nisu na ovom popisu."
+      },
+      "productivity": {
+        "title": "Alati za produktivnost",
+        "description": "AI alati za produktivnost, rangirani međusobno."
+      },
+      "provisionalNote": "Privremeno: ovaj se popis ocjenjuje težinama alata za kodiranje dok se ne odluči njegov vlastiti profil ocjenjivanja.",
+      "smallListNote": "Ovaj popis ima manje od {min} unosa pa su njegove razine S, A i B po trećinama.",
+      "empty": "Na ovom popisu još nema rangiranih alata."
     }
   },
   "news": {

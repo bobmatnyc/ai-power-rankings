@@ -3,7 +3,8 @@
  * Handles data access for AI tool rankings from PostgreSQL database
  */
 
-import { desc, eq, lt, sql } from "drizzle-orm";
+import { and, desc, eq, lt, sql } from "drizzle-orm";
+import { COMBINED_LIST, type StoredRankingList } from "@/lib/rankings/lists";
 import { getDb } from "../connection";
 import { type NewRanking, type Ranking, rankings } from "../schema";
 import { BaseRepository } from "./base.repository";
@@ -11,6 +12,8 @@ import { BaseRepository } from "./base.repository";
 export interface RankingData {
   id: string;
   period: string;
+  /** #186: the list this board ranks; 'combined' is the legacy one-board row (D55). */
+  list?: StoredRankingList;
   algorithm_version: string;
   is_current: boolean;
   published_at: Date | null;
@@ -21,16 +24,22 @@ export interface RankingData {
 
 export class RankingsRepository extends BaseRepository<RankingData> {
   /**
-   * Get current rankings (marked as is_current = true)
+   * Get the current board of one list (marked as is_current = true).
+   * #186: every list has its own current row; callers that predate #186 read the
+   * legacy combined board, so the default stays 'combined'.
    */
-  async getCurrentRankings(): Promise<RankingData | null> {
+  async getCurrentRankings(list: StoredRankingList = COMBINED_LIST): Promise<RankingData | null> {
     const db = getDb();
     if (!db) {
       throw new Error("Database connection not available");
     }
 
     try {
-      const result = await db.select().from(rankings).where(eq(rankings.isCurrent, true)).limit(1);
+      const result = await db
+        .select()
+        .from(rankings)
+        .where(and(eq(rankings.isCurrent, true), eq(rankings.list, list)))
+        .limit(1);
 
       if (result.length === 0) {
         return null;
@@ -44,16 +53,20 @@ export class RankingsRepository extends BaseRepository<RankingData> {
   }
 
   /**
-   * Get rankings by period (e.g., '2025-09')
+   * Get rankings by period (e.g., '2025-09') for one list (#186: default 'combined').
    */
-  async getByPeriod(period: string): Promise<RankingData | null> {
+  async getByPeriod(period: string, list: StoredRankingList = COMBINED_LIST): Promise<RankingData | null> {
     const db = getDb();
     if (!db) {
       throw new Error("Database connection not available");
     }
 
     try {
-      const result = await db.select().from(rankings).where(eq(rankings.period, period)).limit(1);
+      const result = await db
+        .select()
+        .from(rankings)
+        .where(and(eq(rankings.period, period), eq(rankings.list, list)))
+        .limit(1);
 
       if (result.length === 0) {
         return null;
@@ -72,7 +85,7 @@ export class RankingsRepository extends BaseRepository<RankingData> {
    * #193: the tool page's "change since last month" compares the current
    * period with this one. Read-only; one row.
    */
-  async getLatestBefore(period: string): Promise<RankingData | null> {
+  async getLatestBefore(period: string, list: StoredRankingList = COMBINED_LIST): Promise<RankingData | null> {
     const db = getDb();
     if (!db) {
       throw new Error("Database connection not available");
@@ -81,7 +94,7 @@ export class RankingsRepository extends BaseRepository<RankingData> {
     const result = await db
       .select()
       .from(rankings)
-      .where(lt(rankings.period, period))
+      .where(and(lt(rankings.period, period), eq(rankings.list, list)))
       .orderBy(desc(rankings.period))
       .limit(1);
 
@@ -89,16 +102,22 @@ export class RankingsRepository extends BaseRepository<RankingData> {
   }
 
   /**
-   * Get all rankings, ordered by period descending
+   * Get all legacy combined rankings, ordered by period descending.
+   * #186: per-list rows are left out, so a period appears once, as before.
    */
   async findAll(): Promise<RankingData[]> {
+    const list: StoredRankingList = COMBINED_LIST;
     const db = getDb();
     if (!db) {
       throw new Error("Database connection not available");
     }
 
     try {
-      const result = await db.select().from(rankings).orderBy(desc(rankings.period));
+      const result = await db
+        .select()
+        .from(rankings)
+        .where(eq(rankings.list, list))
+        .orderBy(desc(rankings.period));
 
       return result.map((r) => this.mapToRankingData(r));
     } catch (error) {
@@ -119,6 +138,7 @@ export class RankingsRepository extends BaseRepository<RankingData> {
     try {
       const newRanking: NewRanking = {
         period: data.period!,
+        ...(data.list ? { list: data.list } : {}),
         algorithmVersion: data.algorithm_version || "v1.0",
         isCurrent: data.is_current || false,
         publishedAt: data.published_at || null,
@@ -174,7 +194,8 @@ export class RankingsRepository extends BaseRepository<RankingData> {
   }
 
   /**
-   * Set current rankings (unset all others, set one as current)
+   * Set current rankings (unset the other rows of the same list, set one as current).
+   * #186: each list keeps its own current row, so only rows of the target's list are demoted.
    */
   async setAsCurrent(id: string): Promise<boolean> {
     const db = getDb();
@@ -185,8 +206,17 @@ export class RankingsRepository extends BaseRepository<RankingData> {
     try {
       // Start a transaction
       await db.transaction(async (tx) => {
-        // Unset all current flags
-        await tx.update(rankings).set({ isCurrent: false });
+        const target = await tx.select().from(rankings).where(eq(rankings.id, id)).limit(1);
+        // #93: an admin rebuild replaces a draft row (new id); nothing is demoted for a missing id.
+        if (target.length === 0) {
+          throw new Error(`Ranking ${id} not found; current ranking left unchanged`);
+        }
+        // #186: unset the current flag within the target's list only
+        await tx
+          .update(rankings)
+          .set({ isCurrent: false })
+          // (a row read without the column is a pre-0020 row: the column default, 'combined')
+          .where(and(eq(rankings.isCurrent, true), eq(rankings.list, target[0]!.list ?? COMBINED_LIST)));
 
         // Set the specified ranking as current
         const promoted = await tx
@@ -214,16 +244,16 @@ export class RankingsRepository extends BaseRepository<RankingData> {
   }
 
   /**
-   * Delete rankings by period
+   * Delete rankings by period, for one list (#186: default 'combined')
    */
-  async deleteByPeriod(period: string): Promise<boolean> {
+  async deleteByPeriod(period: string, list: StoredRankingList = COMBINED_LIST): Promise<boolean> {
     const db = getDb();
     if (!db) {
       throw new Error("Database connection not available");
     }
 
     try {
-      await db.delete(rankings).where(eq(rankings.period, period));
+      await db.delete(rankings).where(and(eq(rankings.period, period), eq(rankings.list, list)));
 
       return true;
     } catch (error) {
@@ -307,6 +337,7 @@ export class RankingsRepository extends BaseRepository<RankingData> {
     return {
       id: ranking.id,
       period: ranking.period,
+      list: ranking.list,
       algorithm_version: ranking.algorithmVersion,
       is_current: ranking.isCurrent,
       published_at: ranking.publishedAt,

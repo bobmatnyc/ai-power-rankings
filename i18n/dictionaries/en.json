@@ -251,6 +251,12 @@
           "range": "36+",
           "description": "Tools with limited features or adoption"
         }
+      },
+      "thirds": {
+        "description": "Tiers split the list into thirds",
+        "S": "Top third",
+        "A": "Middle third",
+        "B": "Bottom third"
       }
     },
     "algorithm": {
@@ -281,6 +287,24 @@
       },
       "methodologyText": "Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
       "viewMethodology": "View Full Methodology"
+    },
+    "lists": {
+      "navLabel": "Ranking lists",
+      "harness": {
+        "title": "Coding harnesses",
+        "description": "AI coding tools and agents, ranked against each other."
+      },
+      "model": {
+        "title": "Models",
+        "description": "AI models, ranked against each other. Image and video models are not in this list."
+      },
+      "productivity": {
+        "title": "Productivity tools",
+        "description": "AI productivity tools, ranked against each other."
+      },
+      "provisionalNote": "Provisional: this list is scored with the coding-harness weights until its own scoring profile is decided.",
+      "smallListNote": "This list has fewer than {min} entries, so its tiers are S, A and B by thirds.",
+      "empty": "No tools are ranked in this list yet."
     }
   },
   "news": {

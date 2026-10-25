@@ -251,6 +251,12 @@
           "range": "36+",
           "description": "Outils avec des fonctionnalités ou une adoption limitées"
         }
+      },
+      "thirds": {
+        "description": "Les niveaux divisent la liste en tiers",
+        "S": "Premier tiers",
+        "A": "Tiers du milieu",
+        "B": "Dernier tiers"
       }
     },
     "algorithm": {
@@ -281,6 +287,24 @@
       },
       "methodologyText": "Notre méthodologie complète évalue les outils de codage IA à travers de multiples dimensions, garantissant des classements équitables et précis qui reflètent les performances et l'adoption du monde réel.",
       "viewMethodology": "Voir la méthodologie complète"
+    },
+    "lists": {
+      "navLabel": "Listes de classement",
+      "harness": {
+        "title": "Harnais de code",
+        "description": "Outils et agents de codage IA, classés entre eux."
+      },
+      "model": {
+        "title": "Modèles",
+        "description": "Modèles d'IA, classés entre eux. Les modèles d'image et de vidéo ne figurent pas dans cette liste."
+      },
+      "productivity": {
+        "title": "Outils de productivité",
+        "description": "Outils de productivité IA, classés entre eux."
+      },
+      "provisionalNote": "Provisoire : cette liste est notée avec les pondérations des harnais de code jusqu'à ce que son propre profil de notation soit décidé.",
+      "smallListNote": "Cette liste compte moins de {min} entrées, ses niveaux sont donc S, A et B par tiers.",
+      "empty": "Aucun outil n'est encore classé dans cette liste."
     }
   },
   "news": {
