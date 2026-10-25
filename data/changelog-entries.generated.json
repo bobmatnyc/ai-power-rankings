@@ -596,8 +596,8 @@
   {
     "id": "unreleased-6da38b171707",
     "version": "Unreleased",
-    "date": "2026-10-25T16:19:42.585Z",
-    "dateSource": "build",
+    "date": "2026-10-25T16:30:31.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
     "title": "scoring profiles and a read-only v8 board measurement",
@@ -889,6 +889,17 @@
     "title": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside…",
     "description": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside SWE-bench (best scaffold+model row per tool via a hand-curated allowlist, tunable `TB_BLEND_WEIGHT` default 0.4, no factor-weight change); wired matched `terminal_bench` leaves into `data/historical-metrics/2026-06.json` with full provenance and a curated source capture at `data/historical-metrics/sources/terminal-bench-2.1.json`",
     "changeType": "feature"
+  },
+  {
+    "id": "unreleased-7e339f65ac30",
+    "version": "Unreleased",
+    "date": "2026-10-25T18:15:38.804Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "seo",
+    "title": "the 70 URL-table redirect rows held for the model-family pages (#197) now ship",
+    "description": "the 70 URL-table redirect rows held for the model-family pages (#197) now ship. The seven retired versioned slugs (`opus-4-6`, `opus-4-5`, `sonnet-4-5`, `glm-5-0`, `zhipu-glm-5-0`, `kimi-2-5`, `moonshot-kimi-2-5`) answer one 308 in every locale to `claude-opus`, `claude-sonnet`, `glm` or `kimi`, and leave the sitemap. The table now ships 151 of its 268 redirect rows; the other 117 wait for #196 and #198. Tests: `tests/unit/url-table-197-release.test.ts`, `tests/unit/url-table-191.test.ts` (#191)",
+    "changeType": "improvement"
   },
   {
     "id": "unreleased-4066295ce8ba",
