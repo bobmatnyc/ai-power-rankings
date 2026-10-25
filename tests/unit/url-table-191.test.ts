@@ -96,8 +96,8 @@ describe("the committed map", () => {
   });
 
   it("ships every 308 row except those whose destination page is missing", () => {
-    expect(shipped).toHaveLength(81);
-    expect(held).toHaveLength(187);
+    expect(shipped).toHaveLength(151);
+    expect(held).toHaveLength(117);
     // #198: the 20 /whats-new rows wait for /en/insights.
     expect(held.filter((row) => row.destination === "/en/insights")).toHaveLength(20);
     expect(shipped.length + held.length).toBe(redirectRows.length);
@@ -237,8 +237,8 @@ describe("sitemap", () => {
       expect(paths.has(`/${locale}/tools/stripe`)).toBe(false);
       expect(paths.has(`/${locale}/tools/ollama`)).toBe(false);
       expect(paths.has(`/${locale}/tools/clawdbot`)).toBe(false);
-      // Held: its destination (#197) is missing, so the URL is unchanged.
-      expect(paths.has(`/${locale}/tools/opus-4-6`)).toBe(true);
+      // #197: released, so the retired slug leaves the sitemap like any shipped source.
+      expect(paths.has(`/${locale}/tools/opus-4-6`)).toBe(false);
     }
     for (const row of noindexRows) expect(paths.has(row.source)).toBe(false);
     for (const row of shipped) expect(paths.has(pathOf(row.source))).toBe(false);

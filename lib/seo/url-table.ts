@@ -32,7 +32,7 @@ export const URL_TABLE_ROWS: readonly UrlTableRow[] = rows as UrlTableRow[];
  */
 export const PENDING_TARGETS: readonly RegExp[] = [
   /^\/en\/rankings\/coding-harnesses$/, // #196: the harness ranking page and its category filter
-  /^\/[a-z]{2}\/tools\/(claude-opus|claude-sonnet|glm|kimi)$/, // #197: model family pages
+  // #197: the model family pages shipped with D91 (migrations 0018, 0019); their 70 rows now 308. See #191
   /^\/en\/insights$/, // #198: the Insights hub (the 20 /whats-new rows)
 ];
 
