@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  * Route-level regression tests for #197 (b) — `/api/tools` leaves the noindex
  * non-AI entities of the #191 URL table out of the tools index.
  *
- * Why: the 31 noindex tool slugs are `status: active`, so `/api/tools` returned
+ * Why: every slug of NOINDEX_TOOL_SLUGS is `status: active`, so `/api/tools` returned
  * them, and `/en/tools` plus its client-side search listed them.
  * What: the tools, companies and scoring reads are replaced by fixtures. The
  * active-tool fixture holds every slug of the real `NOINDEX_TOOL_SLUGS` set, one
