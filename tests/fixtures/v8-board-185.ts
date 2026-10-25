@@ -18,6 +18,7 @@
 import type { RankingWeightsV76 } from "../../lib/ranking-algorithm-v76";
 import { computeRankings } from "../../lib/services/ranking-generation.service";
 import type { MeasuredTool, PublishedSnapshot } from "../../lib/v8-board-measurement";
+import type { ToolIdentity } from "../../lib/v8-published-id-resolution";
 
 export const SENTINEL = "Qzsentinel";
 export const FIXTURE_DATE = new Date("2026-10-01T09:00:00.000Z");
@@ -99,6 +100,11 @@ export function tiedHarnessBoard(): MeasuredTool[] {
  */
 export function retiredMoverBoard(): MeasuredTool[] {
   return [...mixedBoard(), tool("r0", "harness", 95_000, 60_000)];
+}
+
+/** #185: the `tools` identity rows of a board with no redirects: every tool active under its own id. */
+export function activeIdentities(tools: MeasuredTool[]): ToolIdentity[] {
+  return tools.map((t) => ({ id: t.id, slug: t.slug, status: "active", redirectTo: null }));
 }
 
 /** The snapshot `computeRankings()` would have published for `tools` with `weights`. */

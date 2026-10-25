@@ -10,7 +10,7 @@ import { assertSelectOnly } from "../../lib/ranking-snapshot-diff";
  * #185 — the v8 measurement script stays local, read-only and quiet.
  *
  * Why: the script reads production with a credential and is the D45 proof.
- *   It must never run in GitHub Actions (public logs), send anything but two
+ *   It must never run in GitHub Actions (public logs), send anything but three
  *   SELECTs in a READ ONLY transaction, or print a database error's text.
  * What: runs the script with tsx and no database variable, once with
  *   GITHUB_ACTIONS=true (refused, exit 2) and once without (exit 1 with the
@@ -86,9 +86,10 @@ describe("measure-v8-board script (#185)", () => {
 
   it("sends only single SELECTs on tools and rankings, in a READ ONLY transaction", () => {
     const statements = [...source.matchAll(/"(SELECT [^"]+)"/g)].map((m) => m[1]!);
-    expect(statements).toHaveLength(2);
+    // #185: the third reads ids, slugs, statuses and redirect targets to map published ids.
+    expect(statements).toHaveLength(3);
     for (const statement of statements) expect(() => assertSelectOnly(statement)).not.toThrow();
-    expect(statements.map((s) => /\bFROM (\w+)/.exec(s)![1])).toEqual(["tools", "rankings"]);
+    expect(statements.map((s) => /\bFROM (\w+)/.exec(s)![1])).toEqual(["tools", "tools", "rankings"]);
     expect(source).toMatch(/\{ readOnly: true \}/);
     expect(source).not.toMatch(/getDb\(|dotenv|["'][^"'\s]*\.env/);
   });
