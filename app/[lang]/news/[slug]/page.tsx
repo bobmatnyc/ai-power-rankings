@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { toMetaDescription } from "@/lib/article-summary";
 import { getUrl } from "@/lib/get-url";
 import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
@@ -71,7 +72,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const { article, tool } = await fetchArticle(slug);
 
     const toolName = tool ? ` - ${tool.name}` : "";
-    const description = article.summary || article.content.substring(0, 160);
+    // #179: cap at ~160 characters on a word boundary; summaries ran 400-500 words.
+    const description = toMetaDescription(article.summary || article.content);
 
     // #156: article bodies are English-only, so every locale canonicalises to
     // /en with no hreflang; og:url reads the same canonical.
