@@ -7,10 +7,37 @@ import { createHash } from "crypto";
 import { getDb } from "@/lib/db/connection";
 import { articles } from "@/lib/db/article-schema";
 import { rankings, tools } from "@/lib/db/schema";
-import { and, desc, eq, gte, lte, sql } from "drizzle-orm";
-import { COMBINED_LIST } from "@/lib/rankings/lists";
+import { and, desc, eq, gte, inArray, lte, sql } from "drizzle-orm";
+import { RANKING_LISTS } from "@/lib/rankings/lists";
+import { snapshotRows } from "@/lib/rankings/snapshot-rows";
 import { loggers } from "@/lib/logger";
 import { CHANGELOG_ENTRIES } from "@/lib/data/changelog-entries";
+
+/**
+ * #185 PURE: one What's New ranking entry per published period, from that period's
+ * per-list boards (rows newest first). `toolCount` sums the boards (a tool is ranked
+ * in at most one list); `algorithmVersion` lists each distinct version once; the
+ * entry's `publishedAt` is the latest of its boards. Order: newest period first.
+ * Test: `tests/unit/list-boards-185.test.ts`.
+ */
+export function rankingChangesByPeriod(
+  rows: ReadonlyArray<{ period: string; algorithmVersion: string; publishedAt: Date | null; data: unknown }>
+): MonthlyDataSources["rankingChanges"] {
+  const byPeriod = new Map<string, { versions: string[]; publishedAt: Date | null; toolCount: number }>();
+  for (const row of rows) {
+    const entry = byPeriod.get(row.period) ?? { versions: [], publishedAt: null, toolCount: 0 };
+    if (!entry.versions.includes(row.algorithmVersion)) entry.versions.push(row.algorithmVersion);
+    if (row.publishedAt && (!entry.publishedAt || row.publishedAt > entry.publishedAt)) entry.publishedAt = row.publishedAt;
+    entry.toolCount += snapshotRows(row.data).length;
+    byPeriod.set(row.period, entry);
+  }
+  return [...byPeriod].map(([period, e]) => ({
+    period,
+    algorithmVersion: e.versions.join(", "),
+    publishedAt: e.publishedAt,
+    toolCount: e.toolCount,
+  }));
+}
 
 export interface MonthlyDataSources {
   newsArticles: Array<{
@@ -172,17 +199,10 @@ export class WhatsNewAggregationService {
             data: rankings.data,
           })
           .from(rankings)
-          // #186: one entry per published period, as before: the legacy combined boards.
-          .where(and(gte(rankings.publishedAt, startDate), eq(rankings.list, COMBINED_LIST)))
+          // #185: the per-list boards, never the combined ones; one entry per published period.
+          .where(and(gte(rankings.publishedAt, startDate), inArray(rankings.list, [...RANKING_LISTS])))
           .orderBy(desc(rankings.publishedAt))
-          .then((results) =>
-            results.map((r) => ({
-              period: r.period,
-              algorithmVersion: r.algorithmVersion,
-              publishedAt: r.publishedAt,
-              toolCount: Array.isArray(r.data) ? r.data.length : 0,
-            }))
-          ),
+          .then(rankingChangesByPeriod),
 
         // 3. New Tools (created in last 30 days)
         db

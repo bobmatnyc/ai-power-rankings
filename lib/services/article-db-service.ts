@@ -3,8 +3,8 @@
  * Enhanced service that integrates with the database for full article management
  */
 
-import { and, eq, inArray } from "drizzle-orm";
-import { COMBINED_LIST } from "@/lib/rankings/lists";
+import { eq, inArray } from "drizzle-orm";
+import { currentListBoardsWhere, listBoardEntries } from "@/lib/rankings/list-boards";
 import type {
   Article,
   ArticleProcessingLog,
@@ -17,7 +17,6 @@ import type {
 import { getDb } from "@/lib/db/connection";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { companies, rankings, tools } from "@/lib/db/schema";
-import { snapshotRows } from "@/lib/rankings/snapshot-rows";
 import type {
   CurrentRanking,
   RankingChange,
@@ -901,23 +900,22 @@ export class ArticleDatabaseService {
   }
 
   /**
-   * Get current rankings from database
+   * Get current rankings from database.
+   *
+   * #185: the union of every list's current board, never the combined board. A tool is
+   * ranked in at most one list, and its `rank` is its rank within that list (D2e). A
+   * failed read throws, so no caller builds a snapshot or a change from missing ranks.
+   * Test: `tests/unit/list-boards-185.test.ts`.
    */
   private async getCurrentRankings(): Promise<CurrentRanking[]> {
     // First try to get from database
     if (this.db) {
       try {
-        // Get the most recent rankings
-        const [latestRanking] = await this.db
-          .select()
-          .from(rankings)
-          // #186: the legacy combined board; per-list boards have their own current rows.
-          .where(and(eq(rankings.isCurrent, true), eq(rankings.list, COMBINED_LIST)))
-          .limit(1);
+        const listRows = await this.db.select().from(rankings).where(currentListBoardsWhere());
 
-        if (latestRanking?.data) {
-          // #256: the current row is a bare array (cron) or `{ rankings: [...] }`.
-          const rankingArray: any[] = snapshotRows(latestRanking.data);
+        if (listRows.length > 0) {
+          // #256: each row is a bare array (cron) or `{ rankings: [...] }`.
+          const rankingArray: any[] = listBoardEntries(listRows);
 
           console.log(
             "[ArticleDatabaseService] Sample raw ranking data:",
@@ -945,7 +943,8 @@ export class ArticleDatabaseService {
             tool_id: String(item.tool_id ?? `unknown_${index}`),
             tool_name: toolMap.get(item.tool_id) || item.tool_slug || "Unknown Tool",
             name: toolMap.get(item.tool_id) || item.tool_slug || "Unknown Tool",
-            rank: typeof item.position === "number" ? item.position : index + 1,
+            // #185: the stored rank within the tool's list; the array index spans lists.
+            rank: typeof item.rank === "number" ? item.rank : typeof item.position === "number" ? item.position : index + 1,
             score: typeof item.score === "number" ? item.score : 0,
             metrics: item.factor_scores || {},
           }));
@@ -960,10 +959,9 @@ export class ArticleDatabaseService {
           return mappedRankings;
         }
       } catch (error) {
-        console.warn(
-          "[ArticleDatabaseService] Database query failed, falling back to static data:",
-          error
-        );
+        // #185: fail closed. An empty rank set would be written into snapshots and changes.
+        console.error("[ArticleDatabaseService] Current list boards could not be read:", error);
+        throw error;
       }
     }
 

@@ -4,6 +4,7 @@ import { getDb } from "@/lib/db/connection";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
+import { listOfTool } from "@/lib/rankings/lists";
 import { entryRank, matchesTool, rankingEntries } from "@/lib/tools/ranking-entry";
 import { loggers } from "@/lib/logger";
 import { describeReadError, readToolLinks, type ToolLinkEntry } from "@/lib/tools/tool-links";
@@ -74,9 +75,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     // Get current rankings to find this tool's rank and scores
+    // #185: the tool's rank comes from its own list's board; a tool in no list is unranked.
+    // The combined board is never read, also when the list read fails (rank stays null).
     let ranking = null;
+    const toolList = listOfTool((tool as Record<string, unknown>)["kind"], (tool as Record<string, unknown>)["modality"]);
     try {
-      const currentRankings = await rankingsRepository.getCurrentRankings();
+      const currentRankings = toolList ? await rankingsRepository.getCurrentRankings(toolList) : null;
 
       if (currentRankings) {
         // #193: the tool page's server profile block reads the same row through
@@ -93,6 +97,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           const completeScores = deriveCompleteScores(partialFactorScores, overallScore);
 
           ranking = {
+            list: toolList, // #185: the list `rank` is counted in
             rank: entryRank(toolRanking),
             previousRank: toolRanking["movement"]?.["previous_position"] || toolRanking["previous_rank"],
             rankChange: toolRanking["movement"]?.["change"] || toolRanking["rank_change"] || 0,
