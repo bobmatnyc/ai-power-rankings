@@ -7,12 +7,15 @@
  *   pure core of `scripts/measure-v8-board.ts`; it never reads a database.
  * What: `measureBoard()` first recomputes every tool with the baseline (v7.10)
  *   weights through `computeRankings()`, the publish path, and compares the
- *   result to the published snapshot with the #93 `diffSnapshots()`. Any
- *   mismatch stops it there: no candidate number is computed. It then checks
+ *   result to the published snapshot with the #93 `diffSnapshots()`, after
+ *   mapping each published id through `tools` redirects to its canonical id
+ *   (`resolvePublishedIds()`; an unmapped id, a cycle or a collision is a
+ *   mismatch). Any mismatch stops it there: no candidate number is computed. It then checks
  *   the harness list (at least `HARNESS_FLOOR` harness tools, known kinds
  *   only, not every tool harness) and stops if that fails. Otherwise it
  *   scores the candidate set through its kind routing (PR-2: a harness with
- *   the harness profile, a model with the model profile) and returns counts
+ *   the harness profile, a model with the model profile; kind `other` is left
+ *   out of the v8 board and counted, ruling "Dad") and returns counts
  *   and shift statistics. The D45 gate ranks harness tools within the harness
  *   list (basis D2e); global rank shift and the models-only rank shift (model
  *   rank within the model list) are information only. Baseline positions are the published
@@ -26,7 +29,8 @@
  *   section of tools missing from the sheet. `candidate.perTool` holds one
  *   row per tool from the same rank and score maps, for the private D8b
  *   table (`lib/v8-board-measurement-per-tool.ts`), which this report never prints.
- * Test: `lib/v8-board-measurement.test.ts`, `lib/v8-board-measurement-per-tool.test.ts`
+ * Test: `lib/v8-board-measurement.test.ts`, `lib/v8-board-measurement-per-tool.test.ts`,
+ *   `lib/v8-board-measurement-redirects.test.ts`
  */
 
 import { TOOL_KINDS } from "./db/schema";
@@ -40,6 +44,7 @@ import {
   type RankingSourceTool,
 } from "./services/ranking-generation.service";
 import { perToolRows, type PerToolRow } from "./v8-board-measurement-per-tool";
+import { resolvePublishedIds, type RedirectCounts, type ToolIdentity } from "./v8-published-id-resolution";
 import { v8TieOrder } from "./v8-tie-order";
 
 /** A scored tool row plus its `tools.kind`. */
@@ -65,6 +70,8 @@ export interface MeasureInput {
   harnessFloor?: number;
   /** #185: the reviewed kind sheet (`docs/refresh/tool-kind-mapping.csv`), by slug. */
   sheet: KindSheetView;
+  /** #185: every `tools` row (any status), to map published ids through redirects. */
+  toolIdentities: readonly ToolIdentity[];
 }
 
 /** #185: the kind sheet as the measurement needs it. */
@@ -157,6 +164,8 @@ export interface Reproduction {
   duplicatePublishedIds: number;
   /** #185: published rows sharing a rank with a row of a different score. */
   duplicatePublishedRanksOutsideTies: number;
+  /** #185: published ids mapped through redirects (0018/0019, D90); any but `mapped` fails. */
+  redirects: RedirectCounts;
 }
 
 /** #185: the harness list the D45 gate ranks. It must be checkable before PASS can print. */
@@ -224,6 +233,8 @@ export interface MeasurementResult {
   harness?: HarnessCheck;
   /** Absent unless the baseline reproduced and the harness list passed its check. */
   candidate?: CandidateMeasurement;
+  /** #185 (ruling "Dad"): active tools of kind `other`, left out of the v8 board only. */
+  v8ExcludedOtherKind: number;
   engineLogLinesSuppressed: number;
   exitCode: number;
 }
@@ -318,10 +329,16 @@ function publishedDuplicates(rows: SnapshotRow[]) {
   };
 }
 
-function checkReproduction(input: MeasureInput, recomputed: RankingEntry[]): Reproduction {
+function checkReproduction(
+  input: MeasureInput,
+  allRecomputed: RankingEntry[],
+  resolution: ReturnType<typeof resolvePublishedIds>
+): Reproduction {
   const { published } = input;
-  const diffs = diffSnapshots(recomputed as unknown as SnapshotRow[], published.rows, REPRODUCED_FIELDS);
-  const pub = publishedMaps(published.rows);
+  // #185: compare on canonical ids; a collided canonical id is left out of both sides and counted.
+  const recomputed = allRecomputed.filter((e) => !resolution.collidedCanonicalIds.has(e.tool_id));
+  const diffs = diffSnapshots(recomputed as unknown as SnapshotRow[], resolution.rows, REPRODUCED_FIELDS);
+  const pub = publishedMaps(resolution.rows);
   const mine = new Map(recomputed.map((e) => [e.tool_id, e.score]));
   const common = [...mine.keys()].filter((id) => pub.scores.has(id));
 
@@ -356,7 +373,7 @@ function checkReproduction(input: MeasureInput, recomputed: RankingEntry[]): Rep
   return {
     publishedVersion: published.algorithmVersion,
     versionMatches: published.algorithmVersion === EXPECTED_BASELINE_VERSION,
-    toolsScored: recomputed.length,
+    toolsScored: allRecomputed.length,
     publishedRows: published.rows.length,
     onlyRecomputed: diffs.filter((d) => d.kind === "only-left").length,
     onlyPublished: diffs.filter((d) => d.kind === "only-right").length,
@@ -367,6 +384,7 @@ function checkReproduction(input: MeasureInput, recomputed: RankingEntry[]): Rep
     ordinalDiffsInsideTies: tieSwaps.length,
     tieSwaps,
     ...publishedDuplicates(published.rows),
+    redirects: resolution.counts,
   };
 }
 
@@ -379,6 +397,10 @@ export function isReproduced(r: Reproduction): boolean {
     r.publishedRows === r.toolsScored &&
     r.duplicatePublishedIds === 0 &&
     r.duplicatePublishedRanksOutsideTies === 0 &&
+    // #185: an unresolvable or colliding published id is a mismatch, never a pass.
+    r.redirects.unmapped === 0 &&
+    r.redirects.cycles === 0 &&
+    r.redirects.collidedIds === 0 &&
     r.onlyRecomputed === 0 &&
     r.onlyPublished === 0 &&
     r.scoreOrFactorDiffs === 0 &&
@@ -467,8 +489,15 @@ export function checkHarness(tools: MeasuredTool[], sheet: KindSheetView, floor 
   };
 }
 
-function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateMeasurement {
-  const { tools, published, baseline, candidate } = input;
+/** #185 (ruling "Dad"): v8.0 has no `other` profile, so the v8 board leaves those tools out. */
+function v8BoardTools(tools: MeasuredTool[]): MeasuredTool[] {
+  return tools.filter((t) => t.kind !== "other");
+}
+
+function measureCandidate(input: MeasureInput, base: RankingEntry[], publishedRows: SnapshotRow[]): CandidateMeasurement {
+  const { published, baseline, candidate } = input;
+  // #185: kind `other` is scored for the v7.10 reproduction only, never routed through v8.0.
+  const tools = v8BoardTools(input.tools);
   const date = published.publishedAt;
   // #185: retired sheet rows are out of the harness list for v7.10 and the candidate alike.
   const harness = d45HarnessList(tools, input.sheet);
@@ -477,7 +506,8 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
 
   // #185: v7.10 positions are the published ranks; the recomputed order of equal
   // scores follows the unordered SELECT and is never used as the baseline.
-  const pub = publishedMaps(published.rows);
+  // #185: published rows re-keyed to canonical ids (the reproduction passed on them).
+  const pub = publishedMaps(publishedRows);
   const baseRanks = publishedOrder(allIds, pub.ranks);
   // D8f: break v8 ties by published v7.10 position
   const cand = computeRankings(v8TieOrder(tools, pub.ranks), new Map(), date, candidate);
@@ -541,10 +571,12 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
 export function measureBoard(input: MeasureInput): MeasurementResult {
   const run = quietly(() => {
     const base = computeRankings(input.tools, new Map(), input.published.publishedAt, input.baseline);
-    const reproduction = checkReproduction(input, base);
+    // #185: published v7.10 ids carry pre-0018/0019 (and D90) ids; map them through redirects first.
+    const resolution = resolvePublishedIds(input.published.rows, input.toolIdentities);
+    const reproduction = checkReproduction(input, base, resolution);
     const reproduced = isReproduced(reproduction);
     const harness = reproduced ? checkHarness(input.tools, input.sheet, input.harnessFloor) : undefined;
-    const candidate = harness?.ok ? measureCandidate(input, base) : undefined;
+    const candidate = harness?.ok ? measureCandidate(input, base, resolution.rows) : undefined;
     return { reproduction, reproduced, harness, candidate };
   });
   const { reproduction, reproduced, harness, candidate } = run.value;
@@ -567,6 +599,7 @@ export function measureBoard(input: MeasureInput): MeasurementResult {
     sheet,
     ...(harness ? { harness } : {}),
     ...(candidate ? { candidate } : {}),
+    v8ExcludedOtherKind: input.tools.length - v8BoardTools(input.tools).length,
     engineLogLinesSuppressed: run.lines,
     exitCode,
   };
@@ -608,6 +641,8 @@ export function formatMeasurementReport(result: MeasurementResult): string {
         `  tie swap: block ${s.block} (size ${s.blockSize}), published position ${s.publishedPosition}, recomputed position ${s.recomputedPosition}`
     ),
     `duplicate published tool ids: ${r.duplicatePublishedIds}; duplicate published ranks across different scores: ${r.duplicatePublishedRanksOutsideTies}`,
+    // #185: counts only; unmapped, cycles and collisions each fail the reproduction.
+    `published ids through redirects: mapped ${r.redirects.mapped}; unmapped ${r.redirects.unmapped}; collided ${r.redirects.collidedIds} onto ${r.redirects.collisionTargets} canonical ids; redirect cycles ${r.redirects.cycles}`,
     `reproduced: ${result.reproduced ? "yes" : "NO"}`,
   ];
   const h = result.harness;
@@ -618,6 +653,12 @@ export function formatMeasurementReport(result: MeasurementResult): string {
       `harness tools (retired in the sheet excluded): ${h.harnessTools} (floor ${h.floor}); unknown kinds: ${h.unknownKinds}; every tool harness: ${h.allHarness ? "YES" : "no"}; ok: ${h.ok ? "yes" : "NO"}`
     );
   }
+  lines.push(
+    "",
+    "1c. v8 board scope",
+    // #185 (ruling "Dad"): kept apart so the v7.10 tool count and the v8 board size reconcile.
+    `tools of kind other left out of the v8 board (kept in the v7.10 reproduction): ${result.v8ExcludedOtherKind}`
+  );
   const c = result.candidate;
   if (!c) {
     lines.push(

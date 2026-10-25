@@ -7,6 +7,7 @@ import { backfillSheetRows, KIND_SHEET_CONTRACT, parseKindSheet } from "./db/too
 import { TOOL_KINDS } from "./db/schema";
 import { computeRankings } from "./services/ranking-generation.service";
 import {
+  activeIdentities,
   FIXTURE_DATE,
   harnessBoard,
   mixedBoard,
@@ -74,12 +75,12 @@ function measure(
   published: PublishedSnapshot = quietPublished(tools),
   sheet: KindSheetView = fullSheet(tools)
 ) {
-  return measureBoard({ tools, published, baseline: v710, candidate, sheet, harnessFloor: fixtureFloor(tools) });
+  return measureBoard({ tools, published, baseline: v710, candidate, sheet, harnessFloor: fixtureFloor(tools), toolIdentities: activeIdentities(tools) });
 }
 
 /** The same run at the production floor. */
 function measureAtDefaultFloor(tools: MeasuredTool[]) {
-  return measureBoard({ tools, published: quietPublished(tools), baseline: v710, candidate: v8, sheet: fullSheet(tools) });
+  return measureBoard({ tools, published: quietPublished(tools), baseline: v710, candidate: v8, sheet: fullSheet(tools), toolIdentities: activeIdentities(tools) });
 }
 
 /** Per-tool strings no part of a report may contain: slugs, ids and per-tool scores. */
@@ -199,7 +200,7 @@ describe("measureBoard D45 gate (#185)", () => {
     expect(control.exitCode).toBe(EXIT_CODES.d45Breach);
 
     const sheet = { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set([mover.slug]) };
-    const result = measureBoard({ tools, published, baseline: v710, candidate: wrong, sheet, harnessFloor: fixtureFloor(tools) - 1 });
+    const result = measureBoard({ tools, published, baseline: v710, candidate: wrong, sheet, harnessFloor: fixtureFloor(tools) - 1, toolIdentities: activeIdentities(tools) });
     expect(result.sheet.retiredHarnessActive).toBe(1);
     expect(result.harness!.harnessTools).toBe(fixtureFloor(tools) - 1);
     expect(result.candidate!.harnessRankShift.n).toBe(fixtureFloor(tools) - 1);
@@ -219,7 +220,7 @@ describe("measureBoard D45 gate (#185)", () => {
       slugs: new Set(tools.map((t) => t.slug)),
       retiredSlugs: new Set([harnessRetired.slug, modelRetired.slug]),
     };
-    const result = measureBoard({ tools, published, baseline: v710, candidate: v8, sheet, harnessFloor: fixtureFloor(tools) - 1 });
+    const result = measureBoard({ tools, published, baseline: v710, candidate: v8, sheet, harnessFloor: fixtureFloor(tools) - 1, toolIdentities: activeIdentities(tools) });
     expect(result.sheet.retiredHarnessActive).toBe(1);
     expect(result.sheet.retiredActiveAllKinds).toBe(2);
     const report = formatMeasurementReport(result);
@@ -399,6 +400,7 @@ describe("measureBoard v7.10 reproduction gate (#185)", () => {
       baseline: v8Harness,
       candidate: v8,
       sheet: fullSheet(tools),
+      toolIdentities: activeIdentities(tools),
     });
     expect(result.reproduced).toBe(false);
     expect(result.exitCode).toBe(EXIT_CODES.notReproduced);
