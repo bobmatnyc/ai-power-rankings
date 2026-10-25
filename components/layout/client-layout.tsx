@@ -16,6 +16,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { BuildTimeBadge } from "@/components/layout/build-time-badge";
 import { Footer } from "@/components/layout/footer";
 import { LanguageSelector } from "@/components/layout/language-selector";
+import { DesktopSiteNav, MobileSiteNav } from "@/components/layout/site-nav";
 import { Button } from "@/components/ui/button";
 import { CrownIcon } from "@/components/ui/crown-icon-server";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -84,12 +85,16 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
                 {/* Mobile logo */}
                 <div className="flex items-end gap-2 md:hidden">
                   <CrownIcon size="sm" className="w-6 h-6" />
-                  <span className="font-bold text-sm leading-none">{dict.common.appName}</span>
+                  {/* #194: name hidden under sm so the menu button fits at 375px */}
+                  <span className="hidden sm:inline font-bold text-sm leading-none">{dict.common.appName}</span>
                 </div>
+                {/* #194: the site nav, from xl up; MobileSiteNav covers smaller widths */}
+                <DesktopSiteNav />
               </div>
 
               <div className="flex-1 flex justify-center">
-                <div className="hidden md:block">
+                {/* #194: shown from 2xl so the header nav fits beside it */}
+                <div className="hidden 2xl:block">
                   <BuildTimeBadge />
                 </div>
               </div>
@@ -110,6 +115,8 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
                 <SignedInDirect>
                   <UserButtonDirect afterSignOutUrl={`/${lang}`} />
                 </SignedInDirect>
+
+                <MobileSiteNav />
               </div>
             </div>
           </div>

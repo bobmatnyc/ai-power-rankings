@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  BarChart3,
-  Filter,
-  FlaskConical,
-  Home,
-  Info,
-  List,
-  Newspaper,
-  TrendingUp,
-  Wrench,
-} from "lucide-react";
+import { Filter, List } from "lucide-react";
 // Note: Using native <img> instead of next/image to avoid Next.js generating invalid preload tags
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -18,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Sidebar, useSidebar } from "@/components/ui/sidebar";
-import { useRankingChanges } from "@/contexts/ranking-changes-context";
 import { useI18n } from "@/i18n/client";
 import { pageTypeFromPath, trackEvent } from "@/lib/analytics/track";
 import type { Category } from "@/lib/db/repositories/categories";
@@ -34,7 +23,6 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
   const searchParams = useSearchParams();
   const router = useRouter();
   const { isMobile, setOpenMobile } = useSidebar();
-  const { changes } = useRankingChanges();
   const currentCategory = searchParams.get("category") || "all";
   const currentTags = searchParams.get("tags")?.split(",") || [];
   const { dict, lang } = useI18n();
@@ -43,39 +31,6 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
   if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
     console.log("[Sidebar] currentCategory:", currentCategory, "from URL:", searchParams.get("category"));
   }
-
-  const navigationItems = [
-    {
-      title: dict.navigation.home,
-      href: `/${lang}`,
-      icon: Home,
-    },
-    {
-      title: dict.navigation.rankings,
-      href: `/${lang}/rankings`,
-      icon: List,
-    },
-    {
-      title: dict.navigation.news,
-      href: `/${lang}/news`,
-      icon: Newspaper,
-    },
-    {
-      title: dict.navigation.tools,
-      href: `/${lang}/tools`,
-      icon: Wrench,
-    },
-    {
-      title: dict.navigation.methodology,
-      href: `/${lang}/methodology`,
-      icon: FlaskConical,
-    },
-    {
-      title: dict.navigation.about,
-      href: `/${lang}/about`,
-      icon: Info,
-    },
-  ];
 
   const handleNavClick = (): void => {
     if (isMobile) {
@@ -162,101 +117,7 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
         </Link>
 
         <div className="space-y-6">
-          {/* Navigation */}
-          <div>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              {dict.sidebar.navigation}
-            </h3>
-            <nav className="space-y-1">
-              {navigationItems.map((item) => {
-                // Calculate badge count based on navigation item
-                let badgeCount = 0;
-                let badgeVariant: "default" | "secondary" | "success" | "destructive" = "default";
-
-                if (changes && changes.totalChanges > 0 && changes.lastUpdated) {
-                  const hoursSinceUpdate =
-                    (Date.now() - new Date(changes.lastUpdated).getTime()) / (1000 * 60 * 60);
-
-                  if (hoursSinceUpdate < 24) {
-                    if (item.href === `/${lang}/rankings`) {
-                      badgeCount = changes.totalChanges;
-                      badgeVariant = "default";
-                    } else if (item.href === `/${lang}/news`) {
-                      badgeCount = changes.newEntries;
-                      badgeVariant = "success";
-                    } else if (item.href === `/${lang}/tools`) {
-                      badgeCount = changes.movedUp + changes.movedDown;
-                      badgeVariant = "secondary";
-                    }
-                  }
-                }
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={handleNavClick}
-                    className={cn(
-                      "flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors",
-                      pathname === item.href
-                        ? "bg-primary/10 text-primary font-medium"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <item.icon className="h-4 w-4" />
-                      <span>{item.title}</span>
-                    </div>
-                    {badgeCount > 0 && (
-                      <Badge variant={badgeVariant} className="ml-auto">
-                        {badgeCount}
-                      </Badge>
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-
-          <Separator className="bg-border/50" />
-
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              {dict.sidebar.quickLinks}
-            </h3>
-            <nav className="space-y-1">
-              <Link
-                href={`/${lang}/rankings?sort=trending`}
-                onClick={handleNavClick}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
-                  pathname === `/${lang}/rankings` && searchParams.get("sort") === "trending"
-                    ? "bg-primary/10 text-primary font-medium"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                )}
-              >
-                <TrendingUp className="h-4 w-4" />
-                <span>{dict.sidebar.trending}</span>
-              </Link>
-              <Link
-                href={`/${lang}/trending`}
-                onClick={handleNavClick}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-colors",
-                  pathname === `/${lang}/trending`
-                    ? "bg-primary/10 text-primary font-medium"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                )}
-              >
-                <BarChart3 className="h-4 w-4" />
-                <span>{dict.sidebar.historicalTrends}</span>
-              </Link>
-            </nav>
-          </div>
-
-          <Separator className="bg-border/50" />
-
+          {/* #194: the page links moved to the header nav (components/layout/site-nav.tsx) */}
           {/* Categories */}
           <div>
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
