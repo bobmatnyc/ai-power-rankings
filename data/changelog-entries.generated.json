@@ -651,8 +651,8 @@
   {
     "id": "unreleased-4f70c6714fec",
     "version": "Unreleased",
-    "date": "2026-10-25T20:58:03.025Z",
-    "dateSource": "build",
+    "date": "2026-10-25T20:58:03.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
     "title": "v8 scoring routes each tool to the profile for its tools.kind",
@@ -668,6 +668,17 @@
     "scope": "rankings",
     "title": "v8 ties follow the published v7.10 order (ruling D8f)",
     "description": "v8 ties follow the published v7.10 order (ruling D8f). In `scripts/measure-v8-board.ts`, tools with an equal v8 score rank by their position on the published v7.10 snapshot instead of by `tool_id`; a tied tool with no v7.10 position goes after every tied tool that has one, and such tools rank by `tool_id`. Tools with different scores keep their order, and no weight changes. `lib/v8-tie-order.ts` holds the rule. v8 stays unpublished: the publish path is unchanged. Tests: `lib/v8-tie-order.test.ts`, `lib/v8-board-measurement.test.ts` (#185)",
+    "changeType": "feature"
+  },
+  {
+    "id": "unreleased-2eb221e07fbb",
+    "version": "Unreleased",
+    "date": "2026-10-25T20:58:52.546Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "rankings",
+    "title": "scripts/measure-v8-board.ts --per-tool also prints a private per-tool table after the aggregate report (ruling D8b, for…",
+    "description": "`scripts/measure-v8-board.ts --per-tool` also prints a private per-tool table after the aggregate report (ruling D8b, for the D4d sign-off). Each row has the tool name and slug, v7.10 rank and score, v8 rank and score, signed rank and score shifts, kind, the move within the D45 harness list, and a mark on a D45 breach; rows are sorted by v8 rank. The rows come from the same rank and score maps as the aggregate report, with the D8f tie order, so they agree with its histograms and breach count. The table goes to stdout only and the script writes no file. Without the flag the output is unchanged, and the flag does not change the exit code, the two read-only SELECTs or the CI refusal. Tests: `lib/v8-board-measurement-per-tool.test.ts` (#185)",
     "changeType": "feature"
   },
   {
