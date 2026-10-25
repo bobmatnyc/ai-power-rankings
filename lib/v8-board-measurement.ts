@@ -164,7 +164,7 @@ export interface Reproduction {
   duplicatePublishedIds: number;
   /** #185: published rows sharing a rank with a row of a different score. */
   duplicatePublishedRanksOutsideTies: number;
-  /** #185: published ids mapped through redirects (0018/0019, D90); any but `mapped` fails. */
+  /** #185: published ids mapped through redirects (0018/0019, D90); unmapped, cycles and unexplained collisions fail. */
   redirects: RedirectCounts;
 }
 
@@ -394,13 +394,15 @@ export function isReproduced(r: Reproduction): boolean {
     r.versionMatches &&
     r.toolsScored > 0 &&
     // #185: a duplicated published row collapses in any id-keyed comparison, so count rows.
-    r.publishedRows === r.toolsScored &&
+    // #185 (ruling option a): rows retired into a survivor are not on today's board.
+    r.publishedRows - r.redirects.retired === r.toolsScored &&
     r.duplicatePublishedIds === 0 &&
     r.duplicatePublishedRanksOutsideTies === 0 &&
     // #185: an unresolvable or colliding published id is a mismatch, never a pass.
     r.redirects.unmapped === 0 &&
     r.redirects.cycles === 0 &&
-    r.redirects.collidedIds === 0 &&
+    // #185 (ruling option a): an explained collision compares its survivor; only an unexplained one fails.
+    r.redirects.unexplainedCollisions === 0 &&
     r.onlyRecomputed === 0 &&
     r.onlyPublished === 0 &&
     r.scoreOrFactorDiffs === 0 &&
@@ -642,7 +644,7 @@ export function formatMeasurementReport(result: MeasurementResult): string {
     ),
     `duplicate published tool ids: ${r.duplicatePublishedIds}; duplicate published ranks across different scores: ${r.duplicatePublishedRanksOutsideTies}`,
     // #185: counts only; unmapped, cycles and collisions each fail the reproduction.
-    `published ids through redirects: mapped ${r.redirects.mapped}; unmapped ${r.redirects.unmapped}; collided ${r.redirects.collidedIds} onto ${r.redirects.collisionTargets} canonical ids; redirect cycles ${r.redirects.cycles}`,
+    `published ids through redirects: mapped ${r.redirects.mapped}; unmapped ${r.redirects.unmapped}; collided ${r.redirects.collidedIds} onto ${r.redirects.collisionTargets} canonical ids (retired ${r.redirects.retired}, unexplained ${r.redirects.unexplainedCollisions}); redirect cycles ${r.redirects.cycles}`,
     `reproduced: ${result.reproduced ? "yes" : "NO"}`,
   ];
   const h = result.harness;
