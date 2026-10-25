@@ -1,7 +1,7 @@
 {
-  "$comment": "#185: scoring profile sets, read by lib/scoring-profiles.ts. #185 PR-3: the publish path (lib/rankings/publish-active.ts) scores each list with the set activeProfileSet names, and refuses a legacy set; activeProfileSet is the one switch to v8.0. Weights are fractions. A set with status legacy is frozen, has the one profile all for every tool, and may declare a total other than 1.00; every other set routes each tool to the profile named after its tools.kind and must declare 1.00. A profile with provisional set awaits the ruling it names. #186: publicNote true marks a provisional profile whose list page carries a public note (D54); the active set may hold a provisional profile only when it is productivity with publicNote true.",
+  "$comment": "#185: scoring profile sets, read by lib/scoring-profiles.ts. #185 PR-3: the publish path (lib/rankings/publish-active.ts) scores each list with the set activeProfileSet names, and refuses a legacy set; activeProfileSet is the one switch to v8.0. #185: activeProfileSet names v8.0, which holds no other profile (owner ruling, v8 Q3), so no other list is scored or published. Weights are fractions. A set with status legacy is frozen, has the one profile all for every tool, and may declare a total other than 1.00; every other set routes each tool to the profile named after its tools.kind and must declare 1.00. A profile with provisional set awaits the ruling it names. #186: publicNote true marks a provisional profile whose list page carries a public note (D54); the active set may hold a provisional profile only when it is productivity with publicNote true.",
   "schemaVersion": 1,
-  "activeProfileSet": "v7.10",
+  "activeProfileSet": "v8.0",
   "profileSets": {
     "v7.10": {
       "label": "v7.10",
@@ -26,9 +26,9 @@
     },
     "v8.0": {
       "label": "v8.0",
-      "status": "staged",
+      "status": "active",
       "frozen": false,
-      "description": "Staged v8 profiles, routed by tools.kind. harness: ruling D44 (technical and adoption each 0.18 -> 0.17, other factors unchanged, sum 1.00). model: ruling D4b, signed off by the owner under D9b. productivity and other: the D44 harness weights, pending an Architect decision. Open-weight status is not a factor (D2f). Not selected by the publish path.",
+      "description": "Active v8 profiles, routed by tools.kind. harness: ruling D44 (technical and adoption each 0.18 -> 0.17, other factors unchanged, sum 1.00). model: ruling D4b, signed off by the owner under D9b. productivity: the D44 harness weights, pending an Architect decision, with a public note (D54). No other profile: the owner ruling (v8 Q3) dropped it, so a tool of kind other is ranked in no list. Open-weight status is not a factor (D2f). Selected by activeProfileSet for the per-list publish.",
       "profiles": {
         "harness": {
           "declaredTotal": 1,
@@ -60,20 +60,6 @@
           "declaredTotal": 1,
           "provisional": "D44 harness weights, pending an Architect decision on the productivity profile",
           "publicNote": true,
-          "weights": {
-            "agenticCapability": 0.12,
-            "innovation": 0.1,
-            "technicalPerformance": 0.17,
-            "developerAdoption": 0.17,
-            "marketTraction": 0.12,
-            "businessSentiment": 0.12,
-            "developmentVelocity": 0.12,
-            "platformResilience": 0.08
-          }
-        },
-        "other": {
-          "declaredTotal": 1,
-          "provisional": "D44 harness weights, pending an Architect decision on the other profile",
           "weights": {
             "agenticCapability": 0.12,
             "innovation": 0.1,

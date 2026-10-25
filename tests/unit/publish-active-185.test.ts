@@ -11,11 +11,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *   Drizzle stand-in, seeded with a current combined v7.10 row and tools of every kind.
  *   With a v8.0-active config (`tests/fixtures/scoring-profiles-v8-active-185.ts`) it
  *   checks the rows written, the version, per-kind weights, the D8f tie order and that
- *   no write touches the combined rows. With the checked-in config (v7.10 active) and
- *   with a set missing a list profile it checks the refusal writes nothing; a failed
+ *   no write touches the combined rows. With a v7.10-active config and with a set
+ *   missing a list profile it checks the refusal writes nothing; a failed
  *   insert rolls the whole publish back. #185 M3: a committed publish revalidates the
  *   `rankings` tag and the home, rankings and tools layouts and clears the in-memory
- *   rankings entries; a refused or failed publish revalidates nothing.
+ *   rankings entries; a refused or failed publish revalidates nothing. #185 (owner
+ *   ruling, v8 Q3): the checked-in active set is v8.0 with no `other` profile, and no
+ *   publish writes an `other` board.
  * Test: `npx vitest run tests/unit/publish-active-185.test.ts`. No network.
  */
 
@@ -45,7 +47,8 @@ import { publishActiveRankings, resolvePublishScoring } from "../../lib/rankings
 import { loadCheckedInScoringProfiles, profileWeights, ScoringProfileError } from "../../lib/scoring-profiles";
 import { createFakeRankingsDb, type FakeToolRow, rankingRow } from "../../lib/services/__fixtures__/fake-rankings-db";
 import { computeRankings } from "../../lib/services/ranking-generation.service";
-import { v8ActiveConfig, v8ActiveRaw } from "../fixtures/scoring-profiles-v8-active-185";
+import { legacyActiveConfig, v8ActiveConfig, v8ActiveRaw } from "../fixtures/scoring-profiles-v8-active-185";
+import { RANKING_LISTS } from "../../lib/rankings/lists";
 import { parseScoringProfiles } from "../../lib/scoring-profiles";
 import cacheInstance from "../../lib/memory-cache";
 
@@ -108,8 +111,14 @@ type Entry = { tool_id: string; rank: number; score: number };
 const entries = (list: string) => rowOf(list)!.data as Entry[];
 
 describe("resolvePublishScoring (#185)", () => {
-  it("refuses the checked-in config: its active set is the legacy v7.10 table", () => {
-    expect(() => resolvePublishScoring(loadCheckedInScoringProfiles())).toThrow(/legacy one-table set/);
+  it("refuses a config whose active set is the legacy v7.10 table", () => {
+    expect(() => resolvePublishScoring(legacyActiveConfig())).toThrow(/legacy one-table set/);
+  });
+
+  it("resolves the checked-in config to the v8.0 routing and stored version 8.0", () => {
+    const scoring = resolvePublishScoring(loadCheckedInScoringProfiles());
+    expect(scoring.setId).toBe("v8.0");
+    expect(scoring.algorithmVersion).toBe("8.0");
   });
 
   it("refuses a per-kind set with no profile for a list", () => {
@@ -178,10 +187,12 @@ describe("publishActiveRankings with v8.0 active (#185)", () => {
 });
 
 describe("publish failure arms (#185, Fail-Open Check)", () => {
-  it("the checked-in config (v7.10 active) is refused before any read or write", async () => {
+  it("a v7.10-active config is refused before any read or write", async () => {
     const loadActiveTools = vi.fn();
     const persistence = { loadActiveTools, loadCurrentRankings: vi.fn(), saveSnapshot: vi.fn(), saveListSnapshots: vi.fn() };
-    await expect(publishActiveRankings({ now, persistence })).rejects.toBeInstanceOf(ScoringProfileError);
+    await expect(publishActiveRankings({ now, persistence, loadProfiles: legacyActiveConfig })).rejects.toBeInstanceOf(
+      ScoringProfileError
+    );
     expect(loadActiveTools).not.toHaveBeenCalled();
     expect(persistence.saveSnapshot).not.toHaveBeenCalled();
     expect(persistence.saveListSnapshots).not.toHaveBeenCalled();
@@ -215,7 +226,9 @@ describe("cache revalidation on publish (#185 M3)", () => {
   });
 
   it("a refused publish revalidates nothing", async () => {
-    await expect(publishActiveRankings({ now })).rejects.toBeInstanceOf(ScoringProfileError);
+    await expect(publishActiveRankings({ now, loadProfiles: legacyActiveConfig })).rejects.toBeInstanceOf(
+      ScoringProfileError
+    );
     expect(revalidation.tags).toEqual([]);
     expect(revalidation.paths).toEqual([]);
   });
@@ -260,7 +273,8 @@ describe("GET /api/cron/regenerate-rankings (#185)", () => {
     expect(fake.state.rankings.find((r) => r.id === "combined-2026-10")?.isCurrent).toBe(true);
   });
 
-  it("answers 500 and writes nothing while the checked-in active set is v7.10", async () => {
+  it("answers 500 and writes nothing while the active set is v7.10", async () => {
+    profiles.override = legacyActiveConfig();
     const before = structuredClone(fake.state.rankings);
     const response = await cron();
     const body = await response.json();
@@ -268,5 +282,41 @@ describe("GET /api/cron/regenerate-rankings (#185)", () => {
     expect(body.details).toMatch(/legacy one-table set/);
     expect(fake.state.writes).toEqual([]);
     expect(fake.state.rankings).toEqual(before);
+  });
+});
+
+describe("no other list under v8 (#185, owner ruling v8 Q3)", () => {
+  it("the checked-in active set has no other profile, the cron publishes no other board, and other cannot re-enter", async () => {
+    // The checked-in config itself, with no override: what the cron and the CLI publish.
+    const config = loadCheckedInScoringProfiles();
+    const active = config.profileSets[config.activeProfileSet]!;
+    expect(config.activeProfileSet).toBe("v8.0");
+    expect(Object.keys(active.profiles).sort()).toEqual(["harness", "model", "productivity"]);
+    expect([...RANKING_LISTS]).not.toContain("other");
+    expect(() => resolvePublishScoring(config).routing.route("other")).toThrow(/no profile for kind "other"/);
+
+    vi.stubEnv("CRON_SECRET", "s");
+    const response = await cronGET(
+      new Request("https://example.test/api/cron/regenerate-rankings", { headers: { authorization: "Bearer s" } })
+    );
+    const body = await response.json();
+    expect(response.status).toBe(200);
+    expect(body.boards.map((b: { list: string }) => b.list)).toEqual(["harness", "model", "productivity"]);
+    expect(fake.state.rankings.filter((r) => r.list === "other")).toEqual([]);
+    const ranked = fake.state.rankings
+      .filter((r) => r.list !== null && r.list !== undefined && r.list !== "combined")
+      .flatMap((r) => (r.data as Entry[]).map((e) => e.tool_id));
+    expect(ranked).not.toContain("o1");
+
+    // The provisional other profile re-entering the active set is refused (S5).
+    const reentered = v8ActiveRaw();
+    reentered["profileSets"]["v8.0"]["profiles"]["other"] = {
+      ...reentered["profileSets"]["v8.0"]["profiles"]["harness"],
+      provisional: "D44 harness weights, pending an Architect decision on the other profile",
+    };
+    expect(() => parseScoringProfiles(reentered)).toThrow(/holds the provisional profile "other"/);
+    // Without the provisional marker it parses, but the publish refuses a profile with no list.
+    delete reentered["profileSets"]["v8.0"]["profiles"]["other"]["provisional"];
+    expect(() => resolvePublishScoring(parseScoringProfiles(reentered))).toThrow(/profile\(s\) for no list: other/);
   });
 });
