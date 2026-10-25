@@ -8,7 +8,8 @@
  *   `non_numeric` flag, and an adapter per part. Each adapter calls the same
  *   class method its CLI calls, so the matching heuristics are the CLI's.
  *   A found package becomes `found`; a CLI "not found" becomes `not_found`; the
- *   GitHub CLI's "no metrics returned" becomes `failed`, as the CLI counts it.
+ *   GitHub adapter throws on a failed call (403, 429, network), which the shard
+ *   counts as `failed`; a spent request budget becomes `skipped_budget` (#95).
  * Test: `tests/unit/metrics-collect-route-95.test.ts`
  */
 

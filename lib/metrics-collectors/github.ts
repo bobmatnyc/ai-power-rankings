@@ -3,9 +3,9 @@
  *
  * Why: the CLI and the collect-metrics cron route share one class, so both use
  *   the same matching heuristics. The only changes are a per-fetch timeout and
- *   a rate-limit wait that the caller's signal ends early.
+ *   a request-budget guard (no rate-limit sleep) and 403/429 failures (tokenless mode, #95).
  * What: see scripts/collect-github-metrics.ts for the CLI that drives it.
- * Test: `tests/unit/metrics-collectors-95.test.ts`
+ * Test: `tests/unit/metrics-collectors-95.test.ts`, `tests/unit/metrics-github-tokenless-95.test.ts`
  */
 
 import { type CollectorOptions, fetchSignal } from "./fetch-signal";

@@ -181,8 +181,9 @@ export async function runMetricsShard(request: ShardRequest, deps: ShardDeps): P
       }
 
       if (pastDeadline()) {
-        // #95: the deadline aborted this tool's fetches, and the collectors turn an
-        // aborted sub-fetch into 0, so no result after it is real: write no row.
+        // #95: the deadline aborted this tool's fetches; the npm, pypi and vscode collectors
+        // turn an aborted sub-fetch into 0 (github throws instead), so no result after it
+        // is trusted: write no row.
         counts.skipped_timeout++;
       } else if (outcome.kind === "found") {
         const { leaves, flagged } = buildLeaves(request.part, outcome.metrics, new Date(now()).toISOString());

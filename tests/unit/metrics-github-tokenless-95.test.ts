@@ -152,6 +152,16 @@ describe("#95 403 and 429 are failures, never a 0", () => {
     expect(result.status).toBe("partial");
   });
 
+  it("429 with Retry-After closes the budget: the second tool is skipped and no second /repos call is made", async () => {
+    const calls = stubFetch(() => new Response("{}", { status: 429, headers: { "retry-after": "60" } }));
+    const { store, result } = await runShard([tool("alpha"), tool("beta")], {});
+    expect(calls.filter((c) => c.url.startsWith("/repos/"))).toHaveLength(1);
+    expect(store.rows.size).toBe(0);
+    expect(result.counts).toMatchObject({ attempted: 2, recorded: 0, failed: 1, skipped_timeout: 1 });
+    expect(result.status).toBe("partial");
+    expect(result.error).toMatch(/budget exhausted: 0 remaining/);
+  });
+
   it("403 on commits in authenticated mode fails the tool; no stored commit_count_30d of 0", async () => {
     stubFetch((url) =>
       url.endsWith("/rate_limit")
