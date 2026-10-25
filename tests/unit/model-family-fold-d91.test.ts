@@ -363,7 +363,8 @@ describe("D91 0019 folds the seven rows into the four families", () => {
 
   it("the generator, /api/tools and the sitemap list the four families instead of the seven", async () => {
     // After 0018 alone: the inactive families are off every list; the seven are on it.
-    expect(beforeSelections).toEqual({ generator: [...OLD].sort(), api: [...OLD].sort(), sitemap: [...OLD].sort() });
+    // #197: the seven are shipped 308 sources, so the sitemap drops them whatever their status.
+    expect(beforeSelections).toEqual({ generator: [...OLD].sort(), api: [...OLD].sort(), sitemap: [] });
     expect(await selections(ctx.db)).toEqual({ generator: FAMILIES, api: FAMILIES, sitemap: FAMILIES });
   });
 
