@@ -8,8 +8,10 @@
  * What: `parseScoringProfilesText()` / `parseScoringProfiles()` validate the
  *   whole file and throw `ScoringProfileError` listing every problem.
  *   `profileWeights()` returns one profile's weights in the engine's factor
- *   order. Nothing in the publish path calls this module yet (PR-1 is inert);
- *   the v8 measurement script is its only caller.
+ *   order. Nothing in the publish path calls this module (PR-2 is still
+ *   inert); the v8 measurement script and `lib/scoring-kind-routing.ts` are
+ *   its callers. An optional `provisional` string marks a profile that awaits
+ *   a ruling; it is metadata and never changes a weight.
  *   Rules: every profile has exactly the eight engine factors, each weight a
  *   finite number in [0, 1] on a 0.0001 grid, and the weights sum exactly to
  *   the profile's `declaredTotal` (compared in basis points, so float drift
@@ -41,6 +43,8 @@ export type ProfileSetStatus = "legacy" | "active" | "staged";
 export interface ScoringProfile {
   declaredTotal: number;
   weights: RankingWeightsV76;
+  /** #185: present while the profile awaits the ruling it names (e.g. the productivity profile). */
+  provisional?: string;
 }
 
 export interface ProfileSet {
@@ -125,7 +129,12 @@ function validateProfile(where: string, raw: unknown, legacy: boolean, problems:
 
   // Engine factor order, so the weighted sum adds in the same order as ALGORITHM_V76_WEIGHTS.
   const ordered = Object.fromEntries(FACTOR_KEYS.map((key) => [key, weights[key] as number])) as unknown as RankingWeightsV76;
-  return { declaredTotal: declared as number, weights: ordered };
+  const provisional = raw["provisional"];
+  if (provisional !== undefined && (typeof provisional !== "string" || provisional.trim() === "")) {
+    problems.push(`${where}.provisional must be a non-empty string naming the pending ruling`);
+    return null;
+  }
+  return { declaredTotal: declared as number, weights: ordered, ...(provisional ? { provisional } : {}) };
 }
 
 function validateSet(id: string, raw: unknown, problems: string[]): ProfileSet | null {

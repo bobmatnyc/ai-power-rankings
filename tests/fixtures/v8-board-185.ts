@@ -80,9 +80,9 @@ export function mixedBoard(): MeasuredTool[] {
 
 /**
  * #185: four identical harness tools (an exact tie under any weights) among
- * distinct ones, in `tool_id` order, so a candidate run ranks the tie in the
- * same order as the input. Reversing the published order inside the tie moves
- * one tool 3 places under D45.
+ * distinct ones. A candidate run ranks the tie by published v7.10 position
+ * (D8f), so reversing the published order inside the tie moves no tool; under
+ * the earlier `tool_id` order it moved one tool 3 places.
  */
 export function tiedHarnessBoard(): MeasuredTool[] {
   const tie = ["t-a", "t-b", "t-c", "t-d"].map((id) => tool(id, "harness", 40_000, 300_000));

@@ -49,6 +49,17 @@ export interface RankingSourceTool {
   category: string;
   status: string;
   data: Record<string, unknown> | null;
+  /** #185: `tools.kind`; read only when `computeRankings()` is handed a `KindWeightRouting`. */
+  kind?: string | null;
+}
+
+/**
+ * #185: per-kind weight tables for one profile set (built by
+ * `lib/scoring-kind-routing.ts`). `route()` throws for a kind it cannot score.
+ */
+export interface KindWeightRouting {
+  readonly setId: string;
+  route(kind: unknown): { profile: string; weights: RankingWeightsV76 };
 }
 
 /** A single persisted ranking row (shape stored in the snapshot JSONB). */
@@ -187,6 +198,21 @@ export function calculateTier(rank: number): string {
   return "D";
 }
 
+/** #185: the engine for each tool; a routing gets one engine per profile it returns. */
+function scoringEngines(scoring: RankingWeightsV76 | KindWeightRouting): (tool: RankingSourceTool) => RankingEngineV76 {
+  if (!("route" in scoring)) {
+    const engine = new RankingEngineV76(scoring);
+    return () => engine;
+  }
+  const engines = new Map<string, RankingEngineV76>();
+  return (tool) => {
+    const { profile, weights } = scoring.route(tool.kind);
+    let engine = engines.get(profile);
+    if (!engine) engines.set(profile, (engine = new RankingEngineV76(weights)));
+    return engine;
+  };
+}
+
 /** Build a tool_id -> previous rank map from a prior snapshot's JSONB data. */
 export function buildPreviousRankMap(prevData: unknown): Map<string, number> {
   const map = new Map<string, number>();
@@ -208,22 +234,27 @@ export function buildPreviousRankMap(prevData: unknown): Map<string, number> {
  * PURE: score, sort, rank, and shape a set of tools into ranking entries.
  * No database, no wall-clock, no side effects — safe to unit test directly.
  *
- * #185: `weights` lets the read-only v8 measurement score the same board with a
- * staged profile. Every publish caller omits it, so they score with
- * `ALGORITHM_V76_WEIGHTS` exactly as before.
+ * #185: `scoring` is one weight table for every tool, or a `KindWeightRouting`
+ * that picks each tool's table by `tool.kind` (and throws for a kind it cannot
+ * route). Every publish caller omits it, so they score with
+ * `ALGORITHM_V76_WEIGHTS` exactly as before. Per-kind scores are combined
+ * without rescaling: each profile sums to its declared total (1.00 for v8), so
+ * every score is on the same 0-100 scale, and one sort over all tools gives one
+ * global rank (equal scores keep input order).
  * Test: `lib/services/ranking-generation.golden.test.ts`,
- *   `lib/scoring-profiles.inert-185.test.ts`
+ *   `lib/scoring-profiles.inert-185.test.ts`, `lib/scoring-kind-routing.test.ts`
  */
 export function computeRankings(
   sourceTools: RankingSourceTool[],
   previousRankMap: Map<string, number>,
   currentDate: Date = new Date(),
-  weights: RankingWeightsV76 = ALGORITHM_V76_WEIGHTS
+  scoring: RankingWeightsV76 | KindWeightRouting = ALGORITHM_V76_WEIGHTS
 ): RankingEntry[] {
-  const engine = new RankingEngineV76(weights);
+  const engineFor = scoringEngines(scoring);
 
   const scored = sourceTools
     .map((tool) => {
+      const engine = engineFor(tool);
       const toolData = (tool.data ?? {}) as Record<string, unknown>;
       const metrics = {
         tool_id: tool.id,
