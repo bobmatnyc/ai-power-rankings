@@ -157,6 +157,26 @@ describe("GET /api/rankings/current (#185 H1)", () => {
     expect(body.data).toBeUndefined();
     noCombinedRead();
   });
+
+  // #185 M3: a non-200 must not be kept by the CDN or the in-memory cache.
+  const cacheControl = async (query = "") =>
+    (await currentGET(new Request(`https://example.test/api/rankings/current${query}`))).headers.get("Cache-Control");
+
+  // #311: the edge cannot be purged on publish, so a 200 is no-store too.
+  it("a 200, a 404 and a 500 are all no-store", async () => {
+    expect(await cacheControl()).toBe("no-store");
+    expect(await cacheControl("?list=productivity")).toBe("no-store");
+    repo.failing = "model";
+    expect(await cacheControl("?list=model")).toBe("no-store");
+  });
+
+  it("a 404 is not held in memory: the list's first board is served on the next request", async () => {
+    expect((await get("?list=productivity")).status).toBe(404);
+    repo.current["productivity"] = row("productivity", "2026-11", ["p1"]);
+    const { status, body } = await get("?list=productivity");
+    expect(status).toBe(200);
+    expect(ids(body.data.rankings)).toEqual(["p1"]);
+  });
 });
 
 describe("GET /api/rankings/trending (#185 H1)", () => {
