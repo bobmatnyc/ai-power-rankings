@@ -14,6 +14,8 @@ import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 // actually shown — see the call site in AIAnalyzer.analyzeContent.
 import { sanitizeRelatedLinksBlock } from "@/lib/article-content-links";
 import { extractJsonObject, readCompletion } from "@/lib/services/llm-completion";
+// #179: the one-paragraph summary rule every prompt site below interpolates.
+import { countWords, SUMMARY_PROMPT_RULE } from "@/lib/article-summary";
 import { jinaReaderService } from "./jina-reader.service";
 
 // Validation schemas
@@ -525,14 +527,13 @@ export class ContentExtractor {
 }
 
 /**
- * #172: completion budget for one article analysis. The reply asks for a 400-500 word
- * summary plus an 800-1000 word rewrite (~1,500 words, ~2,000 tokens at ~1.35 tokens per
- * English word, more once JSON-escaped) and the mention arrays, insights and tags (~800-
- * 1,000 tokens): ~3,000 tokens at the requested sizes. 4,000 left a model that overshoots
- * "approximately" by a third no room; 8,000 gives 2.5x. At ~70-100 tokens/s a full 8,000
- * still fits the 120 s per-article request timeout.
+ * #172: completion budget for one article analysis. 4,000 truncated sonnet-5.5 replies.
+ * #179: the summary shrank from 400-500 words to one 80-120 word paragraph, so the reply
+ * is an 80-120 word summary plus an 800-1000 word rewrite (~1,100 words, ~1,500 tokens at
+ * ~1.35 tokens per English word, more once JSON-escaped) and the mention arrays, insights
+ * and tags (~800-1,000 tokens): ~2,500 tokens at the requested sizes. 6,500 gives 2.6x.
  */
-export const ANALYSIS_MAX_TOKENS = 8000;
+export const ANALYSIS_MAX_TOKENS = 6500;
 
 /**
  * AI Analysis Service
@@ -558,6 +559,7 @@ export class AIAnalyzer {
   ): Promise<AIAnalysisResult & { model: string }> {
     console.log("[AIAnalyzer] Starting content analysis");
 
+    // #179: both prompts state the summary rule only through SUMMARY_PROMPT_RULE.
     const systemPrompt = `You are an expert AI industry analyst specializing in AI tools, technologies, and market trends.
 Your task is to analyze articles and extract structured information about AI tools, companies, and their potential impact on rankings.
 
@@ -575,7 +577,7 @@ Focus on:
 4. Predicting potential ranking impacts based on the news
 5. Extracting key insights and trends
 6. Creating CONCISE content:
-   - Summary: **400-500 words** - This is the MAIN content readers will see. Must be concise with clear introduction, body, and conclusion
+   - Summary: ${SUMMARY_PROMPT_RULE}. This is the MAIN content readers will see
    - Rewritten content: Approximately 800-1000 words - Optional extended version for archival/reference
    - Include key analysis and context (be concise, not verbose)
    - #122: Only if directly story-relevant source links actually appear in the
@@ -638,7 +640,7 @@ ${metadata?.fileName ? `File: ${metadata.fileName}` : ""}${linksContext}
 Return a detailed JSON analysis with this structure:
 {
   "title": "Article title",
-  "summary": "A concise 400-500 word summary that serves as the main article content. This should:\n- Have a clear introduction that hooks the reader\n- Cover the key points from the source concisely\n- Provide essential context and analysis\n- Include the most important examples and data points\n- End with a strong conclusion\n- Maintain logical flow throughout\n- Be self-contained and informative",
+  "summary": "The main article content: ${SUMMARY_PROMPT_RULE}. State the news, its key facts and data, and why it matters, in a self-contained paragraph",
   "rewritten_content": "Optional extended version of approximately 800-1000 words with additional details that:\n- Covers important points from the source in more depth\n- Provides additional context and analysis\n- Explains implications for the AI industry\n- Maintains journalistic quality\n- If, and only if, one or more links from the article text or the candidate list above are directly relevant to THIS story, ends with them in markdown format:\n\n**Related Links:**\n- [Link Title](url)\n- [Another Link](url)\n\n  Never include navigation, footer, subscription/newsletter, \"about us\", or sister-site links. Never include a link you were not given above or that does not appear in the article text. Omit the \"Related Links:\" block entirely when nothing qualifies.",
   "source": "Publication or domain",
   "url": "Source URL if available",
@@ -674,13 +676,13 @@ Return a detailed JSON analysis with this structure:
 }
 
 CRITICAL REQUIREMENTS:
-- "summary" field: **400-500 words** - This is the MAIN article content. Must be CONCISE with clear beginning, middle, and end
+- "summary" field: ${SUMMARY_PROMPT_RULE}. This is the MAIN article content
 - "rewritten_content" field: Approximately 800-1000 words - Optional extended archival version
 - #122: ONLY story-relevant links that appear in the article text or the candidate list MUST go in the "Related Links:" block, in markdown format at the end of rewritten_content. NEVER include navigation, footer, subscription, "about us", or sister-site links, and NEVER invent a link from what you know about the publisher. Omit the block entirely if nothing qualifies — an empty block is correct, not a failure.
 - Be concise but informative - no padding or filler content
 - Write in a professional, journalistic style
 - CRITICAL: Never truncate mid-sentence. Always complete your thoughts and end with proper conclusion
-- Ensure the summary field is 400-500 words with logical flow from start to finish
+- Ensure the summary field is ${SUMMARY_PROMPT_RULE}
 - Number ranges: "sentiment" and "overall_sentiment" are -1 to 1; "relevance" is 0 to 1 (how central to the article); "importance_score" is 0 to 10
 - The output must be strict JSON: no comments, no trailing commas
 
@@ -797,6 +799,11 @@ Return ONLY the JSON object above with actual data. No additional text or explan
       }
 
       let result = AIAnalysisSchema.parse(parsed);
+      // #179: measure only; a summary outside 80-120 words still ingests (rejection is #180).
+      console.info("[AIAnalyzer] Summary word count", {
+        words: countWords(result.summary),
+        model: modelName,
+      });
 
       // Normalize tool names using our mapping system
       result = {
