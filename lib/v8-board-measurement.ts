@@ -496,10 +496,14 @@ function v8BoardTools(tools: MeasuredTool[]): MeasuredTool[] {
   return tools.filter((t) => t.kind !== "other");
 }
 
-function measureCandidate(input: MeasureInput, base: RankingEntry[], publishedRows: SnapshotRow[]): CandidateMeasurement {
+function measureCandidate(input: MeasureInput, allBase: RankingEntry[], publishedRows: SnapshotRow[]): CandidateMeasurement {
   const { published, baseline, candidate } = input;
   // #185: kind `other` is scored for the v7.10 reproduction only, never routed through v8.0.
   const tools = v8BoardTools(input.tools);
+  // #185: every v8-side statistic (ties included) reads the v7.10 board of the v8 tools only,
+  // so no comparator meets an `other` id with no v8 rank.
+  const v8Ids = new Set(tools.map((t) => t.id));
+  const base = allBase.filter((e) => v8Ids.has(e.tool_id));
   const date = published.publishedAt;
   // #185: retired sheet rows are out of the harness list for v7.10 and the candidate alike.
   const harness = d45HarnessList(tools, input.sheet);
