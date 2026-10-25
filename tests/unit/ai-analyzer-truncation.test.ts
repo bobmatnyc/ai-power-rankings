@@ -125,9 +125,9 @@ describe("AIAnalyzer.analyzeContent", () => {
     await new AIAnalyzer().analyzeContent("article body");
 
     const request = requests[0];
-    // 400-500 + 800-1000 words at ~1.35 tokens/word plus ~1,000 structure tokens is about
-    // 3,000; the budget must leave at least 2.5x that.
-    expect(request?.max_tokens).toBeGreaterThanOrEqual(7500);
+    // #179: 80-120 + 800-1000 words at ~1.35 tokens/word plus ~1,000 structure tokens is
+    // about 2,500; the budget must leave at least 2.5x that.
+    expect(request?.max_tokens).toBeGreaterThanOrEqual(6250);
     expect(request?.max_tokens).toBe(ANALYSIS_MAX_TOKENS);
     // JS comments in the template invite the model to emit invalid JSON.
     expect(request?.messages[1]?.content).not.toMatch(/\d,?\s*\/\/ /);

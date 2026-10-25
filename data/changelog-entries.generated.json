@@ -596,7 +596,7 @@
   {
     "id": "unreleased-dbb9f159174b",
     "version": "Unreleased",
-    "date": "2026-10-24T11:24:17.000Z",
+    "date": "2026-10-24T11:31:05.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "tools",
@@ -607,7 +607,7 @@
   {
     "id": "unreleased-d51e6ebeee06",
     "version": "Unreleased",
-    "date": "2026-10-24T11:23:57.000Z",
+    "date": "2026-10-24T11:31:05.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "refresh",
@@ -836,10 +836,21 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-4066295ce8ba",
+    "version": "Unreleased",
+    "date": "2026-10-25T15:06:14.390Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "news",
+    "title": "article summaries are one paragraph of 80-120 words (#179)",
+    "description": "article summaries are one paragraph of 80-120 words (#179). The analysis prompt asked for a 400-500 word summary and outlined it as bullets; all four summary instructions in `AIAnalyzer.analyzeContent` now interpolate one rule, `SUMMARY_PROMPT_RULE` in `lib/article-summary.ts`: one plain-prose paragraph with no bullets, lists, headings or line breaks. The analysis call's `max_tokens` drops from 8000 to 6500. Each analysis logs the summary's word count; a summary outside 80-120 words still ingests (rejection is #180). The news article meta description, which used the whole summary, is cut to at most 160 characters on a word boundary by `toMetaDescription`. Existing articles are not rewritten. `tests/unit/article-summary-179.test.ts` pins the prompt text, the budget, the log-only count and the description cap.",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-e6d3c42ff208",
     "version": "Unreleased",
-    "date": "2026-10-25T14:33:50.668Z",
-    "dateSource": "build",
+    "date": "2026-10-25T14:38:07.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "seo",
     "title": "the signed URL table (#191) ships 81 of its 268 redirect rows and all 311 noindex rows",
