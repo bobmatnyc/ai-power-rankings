@@ -836,6 +836,17 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-e6d3c42ff208",
+    "version": "Unreleased",
+    "date": "2026-10-25T14:33:50.668Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "seo",
+    "title": "the signed URL table (#191) ships 81 of its 268 redirect rows and all 311 noindex rows",
+    "description": "the signed URL table (#191) ships 81 of its 268 redirect rows and all 311 noindex rows. A shipped row answers one 308 to its destination from the middleware, ahead of the #233 search-key strip; one pattern rule (Q-A85-1) sends a non-locale first segment to its `/en` equivalent. The other 187 redirect rows are held until their destination pages ship (#196: 97, #197: 70, #198: 20) and their sources are served as before. The noindex rows cover 38 tool slugs: those pages carry robots noindex in every locale and leave the sitemap, as do shipped 308 sources. `/{lang}/contact` now answers 308 instead of 307, and the footer links to `/{lang}/contact/default`. Tests: `tests/unit/url-table-191.test.ts`, `tests/unit/url-table-links-191.test.tsx` (#191)",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-927a6317b615",
     "version": "Unreleased",
     "date": "2026-10-24T08:15:46.000Z",

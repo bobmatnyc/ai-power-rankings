@@ -152,7 +152,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href={`/${lang}/contact`} className="hover:text-ds-text-on-fill transition-colors">
+                {/* #191: the final URL; /{lang}/contact 308s here. */}
+                <Link href={`/${lang}/contact/default`} className="hover:text-ds-text-on-fill transition-colors">
                   Contact Us
                 </Link>
               </li>
