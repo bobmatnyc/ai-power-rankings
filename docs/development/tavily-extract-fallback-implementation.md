@@ -139,7 +139,7 @@ Updated `fetchArticleContent()` to implement a three-tier extraction chain:
 
 ```bash
 # Required for Tavily Extract
-TAVILY_API_KEY=tvly-your-api-key-here
+TAVILY_API_KEY=tvly-REDACTED
 
 # Already configured
 JINA_API_KEY=jina-your-api-key-here

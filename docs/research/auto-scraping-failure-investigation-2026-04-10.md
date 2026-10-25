@@ -142,7 +142,7 @@ TAVILY_API_KEY: SET (tvly-prod-5...)
    ```bash
    # Check Vercel Dashboard → Project → Settings → Environment Variables
    # Ensure these are set for Production environment:
-   TAVILY_API_KEY=TAVILY_API_KEY-REDACTED
+   TAVILY_API_KEY=tvly-REDACTED
    CRON_SECRET=CRON_SECRET-REDACTED
    OPENROUTER_API_KEY=[value]
    DATABASE_URL=[value]
