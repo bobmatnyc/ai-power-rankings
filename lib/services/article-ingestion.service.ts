@@ -4,7 +4,7 @@
  */
 
 import { z } from "zod";
-import { currentListBoardsWhere, listBoardEntries } from "@/lib/rankings/list-boards";
+import { currentListBoardsWhere, listBoardEntries, NoCurrentListBoardsError } from "@/lib/rankings/list-boards";
 import type { Article, DryRunResult, IngestedArticle } from "@/lib/db/article-schema";
 import { rankings } from "@/lib/db/schema";
 import { getDb } from "@/lib/db/connection";
@@ -1301,6 +1301,9 @@ export class ArticleIngestionService {
           console.error("[ArticleIngestionService] Database query failed:", dbError);
           throw dbError;
         }
+        // #185: the database answered with no current list board: refuse instead of
+        // predicting rank changes against an empty rank set.
+        throw new NoCurrentListBoardsError("ArticleIngestionService");
       }
 
       // Fallback: return empty data if database is unavailable
