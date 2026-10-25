@@ -4,7 +4,7 @@
  */
 
 import { eq, inArray } from "drizzle-orm";
-import { currentListBoardsWhere, listBoardEntries } from "@/lib/rankings/list-boards";
+import { currentListBoardsWhere, listBoardEntries, NoCurrentListBoardsError } from "@/lib/rankings/list-boards";
 import type {
   Article,
   ArticleProcessingLog,
@@ -963,6 +963,9 @@ export class ArticleDatabaseService {
         console.error("[ArticleDatabaseService] Current list boards could not be read:", error);
         throw error;
       }
+      // #185: the database answered with no current list board. Refuse: snapshots and
+      // rank changes recorded against an empty rank set would be wrong data.
+      throw new NoCurrentListBoardsError("ArticleDatabaseService");
     }
 
     // Return empty array when DB is unavailable and no static file exists
