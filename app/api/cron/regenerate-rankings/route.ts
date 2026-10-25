@@ -3,18 +3,20 @@
  *
  * GET /api/cron/regenerate-rankings
  * - Runs on the 1st of the month at 09:00 UTC (configured in vercel.json)
- * - Recomputes v7.6 rankings for the current period and persists a new current
- *   snapshot (previous snapshot demoted, new row `is_current = true`)
+ * - #185: publishes one current board per list (models, coding harnesses,
+ *   productivity tools), scored by the active scoring profile set, through
+ *   `publishActiveRankings()`. Each list's previous current row is demoted; the
+ *   legacy combined rows are neither written nor changed (D55). A refused or
+ *   invalid profile set fails the run (500 and alert) before any write.
  * - Requires CRON_SECRET authentication via Bearer token (same as sibling crons)
  * - Idempotent per period; concurrent/duplicate runs for the same period return 409
+ * Test: `tests/unit/publish-active-185.test.ts`.
  */
 
 import { NextResponse } from "next/server";
 import { loggers } from "@/lib/logger";
-import {
-  RankingGenerationInProgressError,
-  regenerateRankings,
-} from "@/lib/services/ranking-generation.service";
+import { publishActiveRankings } from "@/lib/rankings/publish-active";
+import { RankingGenerationInProgressError } from "@/lib/services/ranking-generation.service";
 
 /**
  * Send a failure alert via webhook when the cron route encounters an error.
@@ -107,7 +109,8 @@ export async function GET(request: Request) {
     });
 
     // 2. Regenerate rankings (idempotent per period, guarded against concurrent runs)
-    const result = await regenerateRankings();
+    // #185: per-list boards under the active profile set; never the combined layout.
+    const result = await publishActiveRankings();
 
     const duration = Date.now() - startTime;
     loggers.api.info("Cron: Ranking regeneration complete", {
@@ -126,6 +129,8 @@ export async function GET(request: Request) {
         period: result.period,
         algorithm_version: result.algorithmVersion,
         tool_count: result.toolCount,
+        // #185: the row count of each list board written.
+        boards: result.boards,
         published_at: result.publishedAt,
         top_movers: result.topMovers,
         durationMs: duration,
