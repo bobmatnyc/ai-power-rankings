@@ -3,11 +3,16 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isApiPath, routeAccess } from "./lib/route-access";
 import { searchKeyRedirect } from "./lib/search-url-keys";
+import { urlTableRedirect } from "./lib/url-table-redirect";
 
 // Quick Win #4: Only log in development to save 10-30ms TTFB in production
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 export default clerkMiddleware(async (auth, req: NextRequest) => {
+  // #191: the signed URL table's 308s, first, so a table source never takes two hops.
+  const moved = urlTableRedirect(req);
+  if (moved) return moved;
+
   // #233: strip search-term keys from page URLs before any HTML (and gtag) loads; runs even with auth disabled.
   const stripped = searchKeyRedirect(req);
   if (stripped) return stripped;

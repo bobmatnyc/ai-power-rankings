@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
+import { isNoindexToolSlug } from "@/lib/seo/url-table";
 import type { Tool } from "@/types/database";
 
 interface GenerateMetadataProps {
@@ -128,6 +129,8 @@ export function generateToolMetadata(tool: Tool, lang: string): Metadata {
     path: `/tools/${tool.slug}`,
     keywords,
     ogImage: `/api/og?title=${encodeURIComponent(tool.name)}&subtitle=${encodeURIComponent(tool.category)}&logo=${encodeURIComponent(tool.info?.metadata?.logo_url || "")}`,
+    // #191: the signed URL table keeps these pages served but out of the index.
+    noIndex: isNoindexToolSlug(tool.slug),
   });
 }
 
