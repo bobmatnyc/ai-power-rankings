@@ -11,6 +11,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *   (the page's data source) and through `GET /api/rankings?list=model`. A retired row
  *   must be absent and the ranks, tiers and previous ranks renumbered from 1. A retired
  *   row in a list's own stored board is kept as written.
+ *   #185: after v8 activation the combined board is never read, so the combined-board
+ *   filter (#302) has nothing left to filter; its tests now assert that a combined row
+ *   holding retired tools yields no board, and the list-row test is kept as written.
  * Test: `npx vitest run tests/unit/models-list-inactive-rows.test.ts`. No network.
  */
 
@@ -85,27 +88,18 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-describe("models list from the combined board", () => {
-  it("page data path: a retired row is absent and ranks, tiers and previous ranks are renumbered", async () => {
+describe("models list with only the combined board current (#185; was: from the combined board, #302)", () => {
+  it("page data path: the combined row is not read, so no retired row can show", async () => {
     seed("combined");
-    const board = (await loadCurrentRankings("model"))!;
-    expect(board.source).toBe("combined");
-    expect(board.rankings.map((r) => r.tool.slug)).toEqual(["second", "fourth", "sixth"]);
-    expect(board.rankings.map((r) => r.rank)).toEqual([1, 2, 3]);
-    expect(board.rankings.map((r) => r.tier)).toEqual(["S", "A", "B"]);
-    // Stored previous positions run in reverse: sixth was first among the kept rows.
-    expect(board.rankings.map((r) => r.previousRank)).toEqual([3, 2, 1]);
-    expect(board.rankings.every((r) => r.tool.status === "active")).toBe(true);
+    expect(await loadCurrentRankings("model")).toBeNull();
   });
 
-  it("API path: /api/rankings?list=model drops the retired rows and reports the new count", async () => {
+  it("API path: /api/rankings?list=model answers an empty board, not the combined rows", async () => {
     seed("combined");
     const response = await GET(new Request("https://example.test/api/rankings?list=model"));
     const body = await response.json();
     expect(response.status).toBe(200);
-    expect(body.rankings.map((r: { tool: { slug: string } }) => r.tool.slug)).toEqual(["second", "fourth", "sixth"]);
-    expect(body.rankings.map((r: { rank: number }) => r.rank)).toEqual([1, 2, 3]);
-    expect(body.list_meta.entry_count).toBe(3);
+    expect(body.rankings).toEqual([]);
   });
 
   it("does not modify the stored board", async () => {
@@ -117,10 +111,9 @@ describe("models list from the combined board", () => {
 });
 
 describe("a list's own stored board", () => {
-  it("is read as written: a retired row stays (the filter applies to combined-board reads)", async () => {
+  it("is read as written: a retired row stays (the publish writes only active tools)", async () => {
     seed("model");
     const board = (await loadCurrentRankings("model"))!;
-    expect(board.source).toBe("list");
     expect(board.rankings.map((r) => r.tool.slug)).toEqual(["first", "second", "third", "fourth", "fifth", "sixth"]);
   });
 });

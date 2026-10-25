@@ -89,6 +89,27 @@ export function parseRankingListParam(raw: string | null | undefined): ParsedLis
   return { ok: false, error: `unknown list "${raw}"; expected one of ${RANKING_LISTS.join(", ")}` };
 }
 
+/**
+ * The list a request's query names, from `list` or its alias `kind` (#186, #185).
+ *
+ * Both absent means the default list (D51). A present-but-empty value, an unknown
+ * value, or `list` and `kind` naming different lists is an error, never the default.
+ * Shared by every public rankings route so they read the same list for one query.
+ */
+export function parseListQuery(params: URLSearchParams | null | undefined): ParsedListParam {
+  const rawList = params?.get("list") ?? null;
+  const rawKind = params?.get("kind") ?? null;
+  const raw = rawList ?? rawKind;
+  if (raw !== null && raw.trim() === "") return { ok: false, error: "list must name one list" };
+  const parsed = parseRankingListParam(raw);
+  if (!parsed.ok || rawList === null || rawKind === null) return parsed;
+  const kind = parseRankingListParam(rawKind);
+  if (!kind.ok || rawKind.trim() === "" || kind.list !== parsed.list) {
+    return { ok: false, error: "list and kind must name the same list" };
+  }
+  return parsed;
+}
+
 /** The path (without locale) of a list's canonical page. D51: the harness board is `/rankings`. */
 export function rankingListPath(list: RankingList): string {
   return list === DEFAULT_RANKING_LIST ? "/rankings" : `/rankings/${LIST_SLUGS[list]}`;
