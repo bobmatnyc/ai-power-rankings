@@ -22,6 +22,7 @@ interface CatalogueRow {
   name: string;
   category: string;
   status: string;
+  kind: string;
   info: Record<string, unknown>;
 }
 
@@ -31,6 +32,7 @@ const tool = (slug: string, name: string, status = "active"): CatalogueRow => ({
   name,
   category: "code-editor",
   status,
+  kind: "harness",
   info: { product: { tagline: `${name} tagline` } },
 });
 
@@ -100,7 +102,7 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
       (db.catalogue as Array<{ slug: string }>).find((r) => r.slug === slug) ?? null;
     findByStatus = async (status: string) =>
       (db.catalogue as Array<{ status: string }>).filter((r) => r.status === status);
-    findAll = async () => db.catalogue;
+    findNewsCatalogueRows = async () => db.catalogue; // #187: the loader reads the column-backed rows
   }
   return { ToolsRepository, toolsRepository: new ToolsRepository() };
 });
@@ -252,8 +254,11 @@ describe("related news on the server-rendered tool page (#193)", () => {
     expect(body).not.toContain(FAILED);
   });
 
-  it("non-active tools still render the section, with their articles or the empty text", async () => {
-    expect(newsSlugs(await renderPage("trae"))).toEqual(["story-t1"]);
+  // #187: a non-active row is never a tag target, so its page lists no articles.
+  it("non-active tools still render the section, with the empty text", async () => {
+    const trae = await renderPage("trae");
+    expect(newsSlugs(trae)).toEqual([]);
+    expect(newsSection(trae)).toContain(`${EMPTY} Trae yet.`);
     request.memo = new Map();
     const pending = await renderPage("stealth-editor");
     expect([...sectionBodies(pending).keys()]).toEqual(HEADINGS);

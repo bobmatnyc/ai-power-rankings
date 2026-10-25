@@ -40,6 +40,24 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   }
 
   /**
+   * Every tools row for news attribution, with `status` and `kind` from the columns (#187).
+   *
+   * Why: `findAll()` spreads the JSONB `data` over the mapped row, so a stale
+   *   `data.status` ("active" on a row 0019 retired to "redirect") hides the column,
+   *   and it does not map `kind` at all. Attribution must see the real status and kind.
+   * What: the `findAll()` mapping, then `status` and `kind` set from the columns. Any
+   *   status; `buildToolCatalogue` decides which rows are tag targets. Read-only; throws
+   *   when there is no database or the read fails.
+   * Test: `tests/unit/news-kind-matcher-187.test.ts` ("the catalogue loader").
+   */
+  async findNewsCatalogueRows(): Promise<Array<ToolData & { kind: string; status: string }>> {
+    const db = getDb();
+    if (!db) throw new Error("Database not connected");
+    const rows = await db.select().from(tools);
+    return rows.map((row) => ({ ...this.mapDbToolToData(row), status: row.status, kind: row.kind }));
+  }
+
+  /**
    * Find tool by ID
    */
   async findById(id: string): Promise<ToolData | null> {

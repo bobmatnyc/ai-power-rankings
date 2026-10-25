@@ -3,7 +3,7 @@ import { getDb } from "@/lib/db/connection";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { loggers } from "@/lib/logger";
 import { loadNewsToolCatalogueOrNull } from "@/lib/news-tool-catalogue";
-import { primaryArticleTool } from "@/lib/news-tool-resolver";
+import { articleToolTags, primaryArticleTool } from "@/lib/news-tool-resolver";
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
@@ -52,6 +52,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const catalogue = await loadNewsToolCatalogueOrNull("/api/news/[slug]");
     // See #109: the same primary-tool rule as /api/news and the tool page.
     const matchingTool = catalogue ? primaryArticleTool(article, catalogue) : null;
+    // #187: one tag per kind, as /api/news reports; null when the catalogue read failed.
+    const toolTags = catalogue
+      ? articleToolTags(article, catalogue).map((t) => ({ slug: t.slug, name: t.name, kind: t.kind }))
+      : null;
 
     // Transform to the format expected by the frontend
     const transformedArticle = {
@@ -76,6 +80,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         id: matchingTool.id,
         slug: matchingTool.slug,
         name: matchingTool.name,
+        kind: matchingTool.kind, // #187
         description: matchingTool.description,
         category: matchingTool.category,
         info: matchingTool.info || {},
@@ -85,6 +90,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({
       article: transformedArticle,
       tool: toolInfo,
+      tools: toolTags, // #187
       _source: "database",
       _timestamp: new Date().toISOString(),
     });

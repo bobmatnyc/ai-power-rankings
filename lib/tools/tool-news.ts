@@ -4,13 +4,15 @@
  * Why: the tool page lists a tool's latest articles. Attribution is not stored;
  * `/api/news` computes it at read time, so the page must compute it the same way
  * or the page and the API would disagree about an article's tool.
- * What: pure, no DB access. Each article goes to its PRIMARY resolved tool only
- * (`primaryArticleTool`, the value `/api/news` reports as `tool_slug`);
- * a secondary mention never counts. Per slug, newest first by `published_date`,
- * else `created_at`, then `id` descending; at most `perTool` items.
- * Test: `tests/unit/tool-news-193.test.tsx`.
+ * What: pure, no DB access. Each article goes to its tags (`articleToolTags`):
+ * the primary tool (`/api/news` `tool_slug`) and, since #187, the top tool of
+ * each other kind, so a harness-and-model article is on both pages. A second
+ * tool of the same kind never counts. Per slug, newest first by
+ * `published_date`, else `created_at`, then `id` descending; at most `perTool`
+ * items.
+ * Test: `tests/unit/tool-news-193.test.tsx`, `tests/unit/news-kind-matcher-187.test.ts`.
  */
-import { primaryArticleTool, type CatalogueTool, type ToolCatalogue } from "@/lib/news-tool-resolver";
+import { articleToolTags, type CatalogueTool, type ToolCatalogue } from "@/lib/news-tool-resolver";
 
 /** The row fields grouping reads; `ToolNewsRow` from the news repository satisfies it. */
 export interface ToolNewsSource {
@@ -50,18 +52,19 @@ export function groupNewsByPrimaryTool<T extends CatalogueTool>(
 ): ToolNewsBySlug {
   const bySlug = new Map<string, ToolNewsItem[]>();
   for (const row of rows) {
-    // #193: primary tool only, through the same resolver and input shape as /api/news. See #109.
-    const primary = primaryArticleTool({ title: row.title, toolMentions: row.toolMentions }, catalogue);
-    if (!primary) continue;
-    const items = bySlug.get(primary.slug) ?? [];
-    items.push({
-      id: row.id,
-      slug: row.slug,
-      title: row.title,
-      source: row.sourceName?.trim() || null,
-      date: toIso(row.publishedDate ?? row.createdAt),
-    });
-    bySlug.set(primary.slug, items);
+    // #187: one tag per kind (primary first), through the same resolver and input shape as /api/news.
+    const tags = articleToolTags({ title: row.title, toolMentions: row.toolMentions }, catalogue);
+    for (const tag of tags) {
+      const items = bySlug.get(tag.slug) ?? [];
+      items.push({
+        id: row.id,
+        slug: row.slug,
+        title: row.title,
+        source: row.sourceName?.trim() || null,
+        date: toIso(row.publishedDate ?? row.createdAt),
+      });
+      bySlug.set(tag.slug, items);
+    }
   }
 
   const result: ToolNewsBySlug = {};

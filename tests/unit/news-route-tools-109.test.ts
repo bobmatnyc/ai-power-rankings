@@ -36,15 +36,18 @@ vi.mock("../../lib/db/repositories/news", () => ({
 
 vi.mock("../../lib/db/repositories/tools.repository", () => ({
   ToolsRepository: class {
-    findAll = findAll;
+    findNewsCatalogueRows = findAll; // #187: the loader reads the column-backed rows
     findBySlug = findBySlug;
   },
 }));
 
 const CATALOGUE = [
-  { id: "t-copilot", slug: "github-copilot", name: "GitHub Copilot", description: "d", category: "ide-assistant", info: {} },
-  { id: "t-claude-code", slug: "claude-code", name: "Claude Code", description: "d", category: "autonomous-agent", info: {} },
-  { id: "t-gemini", slug: "gemini-code-assist", name: "Gemini Code Assist", description: "Google", category: "ide-assistant", info: { a: 1 } },
+  { id: "t-copilot", slug: "github-copilot", name: "GitHub Copilot", kind: "harness", status: "active", description: "d", category: "ide-assistant", info: {} },
+  { id: "t-claude-code", slug: "claude-code", name: "Claude Code", kind: "harness", status: "active", description: "d", category: "autonomous-agent", info: {} },
+  { id: "t-gemini", slug: "gemini-code-assist", name: "Gemini Code Assist", kind: "harness", status: "active", description: "Google", category: "ide-assistant", info: { a: 1 } },
+  // #187: a model family row and a D91 per-version row retired to it.
+  { id: "t-claude-opus", slug: "claude-opus", name: "Claude Opus", kind: "model", status: "active", description: "m", category: "other", info: {} },
+  { id: "t-opus-4-6", slug: "opus-4-6", name: "Claude Opus 4.6", kind: "model", status: "redirect", redirect_to: "claude-opus", description: "m", category: "other", info: {} },
 ];
 
 function article(id: string, overrides: Record<string, unknown> = {}) {
@@ -225,6 +228,7 @@ describe("GET /api/news/[slug] tool attribution (#109)", () => {
       id: "t-gemini",
       slug: "gemini-code-assist",
       name: "Gemini Code Assist",
+      kind: "harness",
       description: "Google",
       category: "ide-assistant",
       info: { a: 1 },
@@ -277,5 +281,61 @@ describe("primary tool by mention relevance in both routes (#109)", () => {
 
     expect(status).toBe(200);
     expect(body.tool).toBeNull();
+  });
+});
+
+describe("kind-aware tags in both routes (#187)", () => {
+  const both = () =>
+    article("12", {
+      title: "Claude Code switches its default model",
+      toolMentions: [
+        { name: "Claude Code", toolId: "t-claude-code", relevance: 1 },
+        { name: "Claude Opus 4.6", toolId: "t-opus-4-6", relevance: 0.7 },
+      ],
+    });
+
+  it("lists the harness and the model with their kinds; the retired row resolves to its family", async () => {
+    getPaginatedFiltered.mockResolvedValue({ articles: [both()], total: 1, hasMore: false });
+    const { getList } = await loadRoutes();
+
+    const { body } = await getList();
+
+    expect(body.news[0].tool_slug).toBe("claude-code");
+    expect(body.news[0].tool_kind).toBe("harness");
+    expect(body.news[0].tools).toEqual([
+      { slug: "claude-code", name: "Claude Code", kind: "harness" },
+      { slug: "claude-opus", name: "Claude Opus", kind: "model" },
+    ]);
+  });
+
+  it("returns the tags and the primary tool's kind from the detail route", async () => {
+    getBySlug.mockResolvedValue(both());
+    const { getDetail } = await loadRoutes();
+
+    const { body } = await getDetail("article-12");
+
+    expect(body.tool).toMatchObject({ slug: "claude-code", kind: "harness" });
+    expect(body.tools.map((t: { slug: string; kind: string }) => `${t.slug}:${t.kind}`)).toEqual([
+      "claude-code:harness",
+      "claude-opus:model",
+    ]);
+  });
+
+  it("reports tools [] for an untagged article and null when the catalogue read failed", async () => {
+    getPaginatedFiltered.mockResolvedValue({
+      articles: [article("13", { title: "No tool here" })],
+      total: 1,
+      hasMore: false,
+    });
+    const ok = await loadRoutes();
+    expect((await ok.getList()).body.news[0].tools).toEqual([]);
+
+    findAll.mockRejectedValue(new Error("tools read failed"));
+    vi.resetModules();
+    const failed = await loadRoutes();
+    const { status, body } = await failed.getList();
+    expect(status).toBe(200);
+    expect(body.news[0].tools).toBeNull();
+    expect(body.news[0].tool_kind).toBeUndefined();
   });
 });

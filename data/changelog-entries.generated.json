@@ -891,10 +891,21 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-976dc6306487",
+    "version": "Unreleased",
+    "date": "2026-10-25T21:57:04.000Z",
+    "dateSource": "commit",
+    "section": "Changed",
+    "scope": "news",
+    "title": "kind-aware article tagging",
+    "description": "kind-aware article tagging. News attribution now reads `tools.kind` and `tools.status` from the table columns (`ToolsRepository.findNewsCatalogueRows()`), not the JSONB copies `findAll()` spreads over them. Only active rows are tag targets: a redirect row's id, slug and name resolve to the active row it redirects to, so mentions of the seven D91 per-version slugs (`opus-4-6`, `opus-4-5`, `sonnet-4-5`, `glm-5-0`, `zhipu-glm-5-0`, `kimi-2-5`, `moonshot-kimi-2-5`) are tagged `claude-opus`, `claude-sonnet`, `glm` or `kimi`; an inactive, pending_review or deprecated row is never tagged. An article gets one tag per kind (`articleToolTags` in `lib/news-tool-resolver.ts`): its primary tool, then the highest-relevance mention of each other kind, then a title match for a kind no mention names, so an article about a harness and a model is tagged with both. An article with no primary tool (its top mention is not in the catalogue) gets no tags. `/api/news` items add `tool_kind` and `tools` (`{ slug, name, kind }` per tag; `[]` when untagged, `null` when the catalogue read failed); `/api/news/[slug]` adds `tool.kind` and `tools`. `tool_slug` keeps the #109 primary-tool rule. The tool page's Related news lists an article under each of its tags, so a model page lists articles about harnesses running that model; a non-active tool's page now lists none. Ranking code and scores are unchanged. Tests: `tests/unit/news-kind-matcher-187.test.ts`, `tests/unit/news-route-tools-109.test.ts`, `tests/unit/tool-news-193.test.tsx` (#187)",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-7e339f65ac30",
     "version": "Unreleased",
-    "date": "2026-10-25T18:15:38.804Z",
-    "dateSource": "build",
+    "date": "2026-10-25T18:22:29.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "seo",
     "title": "the 70 URL-table redirect rows held for the model-family pages (#197) now ship",

@@ -17,10 +17,10 @@ import { describe, expect, it } from "vitest";
  */
 
 const TOOLS = [
-  { id: "t-cursor", slug: "cursor", name: "Cursor" },
-  { id: "t-lovable", slug: "lovable", name: "Lovable" },
-  { id: "t-replit", slug: "replit-agent", name: "Replit Agent" },
-  { id: "t-claude-code", slug: "claude-code", name: "Claude Code" },
+  { id: "t-cursor", slug: "cursor", name: "Cursor", kind: "harness", status: "active" },
+  { id: "t-lovable", slug: "lovable", name: "Lovable", kind: "harness", status: "active" },
+  { id: "t-replit", slug: "replit-agent", name: "Replit Agent", kind: "harness", status: "active" },
+  { id: "t-claude-code", slug: "claude-code", name: "Claude Code", kind: "harness", status: "active" },
 ];
 
 type Mention = { name: string; toolId?: string; relevance?: number };

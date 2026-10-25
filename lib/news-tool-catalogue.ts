@@ -4,7 +4,7 @@
  * Why: both news routes need the whole catalogue once per request; reading the
  * tools table for every request repeats the same query the CDN window already
  * covers.
- * What: `ToolsRepository.findAll()`, indexed by `buildToolCatalogue`, kept in
+ * What: `ToolsRepository.findNewsCatalogueRows()`, indexed by `buildToolCatalogue`, kept in
  * module memory for `CATALOGUE_TTL_MS`. A failed read throws and is never
  * cached; the caller decides what a failure means.
  * Test: `tests/unit/news-route-tools-109.test.ts`.
@@ -13,7 +13,8 @@ import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
 import { buildToolCatalogue, type ToolCatalogue } from "@/lib/news-tool-resolver";
 
-type CatalogueRow = Awaited<ReturnType<ToolsRepository["findAll"]>>[number];
+// #187: rows carry the `kind` and `status` columns, not the JSONB copies.
+type CatalogueRow = Awaited<ReturnType<ToolsRepository["findNewsCatalogueRows"]>>[number];
 export type NewsToolCatalogue = ToolCatalogue<CatalogueRow>;
 
 /** Matches the news routes' `s-maxage=300` CDN window. */
@@ -26,11 +27,12 @@ let cached: { loadedAt: number; catalogue: NewsToolCatalogue } | null = null;
  *
  * Why: the tool page's related news (#193) keeps its own tagged cache and must
  * attribute articles exactly as `/api/news` does, so both build it here.
- * What: every catalogue row, any status, indexed by `buildToolCatalogue`.
- * Throws when the read fails.
+ * What: every catalogue row, indexed by `buildToolCatalogue`, which keeps active
+ * rows and redirects only (#187). Throws when the read fails, so a failure is
+ * never an empty catalogue.
  */
 export async function readNewsToolCatalogue(): Promise<NewsToolCatalogue> {
-  return buildToolCatalogue(await new ToolsRepository().findAll());
+  return buildToolCatalogue(await new ToolsRepository().findNewsCatalogueRows());
 }
 
 /** The catalogue, from memory when younger than the TTL. Throws when the read fails. */
