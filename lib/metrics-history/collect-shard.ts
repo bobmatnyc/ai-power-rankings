@@ -171,9 +171,19 @@ export async function runMetricsShard(request: ShardRequest, deps: ShardDeps): P
         outcome = { kind: "failed" as const, error: message(collectError) };
       }
 
+      if (outcome.kind === "skipped_budget") {
+        // #95: the request budget cannot cover this tool. Stop fetching; this tool and every
+        // unreached one count as skipped (stored in skipped_timeout, the only skip column), the
+        // shard is partial, and the reason goes to the ledger `error` column.
+        counts.skipped_timeout += members.length - done;
+        error = outcome.reason;
+        break;
+      }
+
       if (pastDeadline()) {
-        // #95: the deadline aborted this tool's fetches, and the collectors turn an
-        // aborted sub-fetch into 0, so no result after it is real: write no row.
+        // #95: the deadline aborted this tool's fetches; the npm, pypi and vscode collectors
+        // turn an aborted sub-fetch into 0 (github throws instead), so no result after it
+        // is trusted: write no row.
         counts.skipped_timeout++;
       } else if (outcome.kind === "found") {
         const { leaves, flagged } = buildLeaves(request.part, outcome.metrics, new Date(now()).toISOString());
