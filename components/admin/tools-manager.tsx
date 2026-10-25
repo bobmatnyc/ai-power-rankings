@@ -40,7 +40,7 @@ interface ToolWithRanking extends Tool {
 }
 
 export function ToolsManager() {
-  const { tools, rankings, loading, fetchTools, fetchRankings, deleteTool } = usePayload();
+  const { tools, rankings, loading, fetchTools, fetchRankings, discontinueTool } = usePayload();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [, setSelectedTool] = useState<Tool | null>(null);
@@ -99,10 +99,10 @@ export function ToolsManager() {
 
     setDeleteError(null);
     try {
-      await deleteTool(toolToDelete);
+      await discontinueTool(toolToDelete);
     } catch (error) {
-      console.error("Error deleting tool:", error);
-      setDeleteError("Failed to delete tool. Please try again.");
+      console.error("Error discontinuing tool:", error);
+      setDeleteError("Failed to discontinue tool. Please try again.");
       throw error;
     }
   };
@@ -342,9 +342,10 @@ export function ToolsManager() {
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         onConfirm={handleDeleteConfirm}
-        title="Delete Tool"
-        description="Are you sure you want to delete this tool? This action cannot be undone."
-        confirmText="Delete"
+        // #288: the action sets status to discontinued and keeps the row.
+        title="Discontinue Tool"
+        description="Mark this tool as discontinued? Its data and history are kept."
+        confirmText="Discontinue"
         cancelText="Cancel"
         variant="destructive"
       />

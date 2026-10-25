@@ -400,21 +400,28 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     if (!existing) return null;
 
     const { slug, name, category, status, company_id, ...rest } = data;
-
-    const updateData: Partial<Tool> = {
+    // #288: the read mapping spreads the JSONB over the columns, so a column field
+    // written to the column only would read back stale. Write it to both.
+    const columns = {
       ...(slug && { slug }),
       ...(name && { name }),
       ...(category && { category }),
       ...(status && { status }),
+    };
+
+    const updateData: Partial<Tool> = {
+      ...columns,
       ...(company_id && { companyId: company_id }),
-      data: { ...existing, ...rest },
+      data: { ...existing, ...rest, ...columns },
       updatedAt: new Date(),
     };
 
+    // #288: match the row the lookup found by its UUID; a row with no `data.id`
+    // (the lookup's UUID fallback) matched nothing under `data->>'id'`.
     const results = await db
       .update(tools)
       .set(updateData)
-      .where(sql`${tools.data}->>'id' = ${id}`)
+      .where(eq(tools.id, existing.db_id ?? id))
       .returning();
 
     const firstResult = results[0];
