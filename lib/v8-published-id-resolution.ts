@@ -9,10 +9,16 @@
  *   `tools` row through `redirect_to` slugs until a row that is not a
  *   redirect, and re-keys the published rows to that row's id. A cycle, an id
  *   with no row, and a redirect with no target or a target slug with no row
- *   are counted and their rows dropped from the comparison; two or more
- *   published ids reaching one canonical id are counted as a collision, and
- *   all of their rows and that canonical id are left out of the comparison
- *   (never merged). The caller fails the reproduction on any of these counts.
+ *   are counted and their rows dropped from the comparison. Two or more
+ *   published ids reaching one canonical id are a collision (Architect ruling,
+ *   option a): the survivor is the published id whose slug the canonical row's
+ *   `data.carriedFrom` names (0019), else the canonical id itself when it was
+ *   published (a D90 target). The survivor's row stands for the canonical id,
+ *   the others are counted as retired and removed, and every published rank
+ *   below a retired row moves up by one per retired row above it. A collision
+ *   with no survivor, or a survivor outside the group, is unexplained: its rows
+ *   and canonical id are left out of the comparison. The caller fails the
+ *   reproduction on any unmapped id, cycle or unexplained collision.
  * Test: `lib/v8-board-measurement-redirects.test.ts`
  */
 
@@ -28,6 +34,8 @@ export interface ToolIdentity {
   status: string;
   /** `data->>'redirect_to'`: the canonical row's slug, or null. */
   redirectTo: string | null;
+  /** #185: `data->>'carriedFrom'`, the slug of the row 0019 copied onto this family row. */
+  carriedFrom?: string | null;
 }
 
 /** Counts only (D19): no id, slug or name. */
@@ -42,12 +50,16 @@ export interface RedirectCounts {
   collidedIds: number;
   /** Canonical ids reached by more than one published id. */
   collisionTargets: number;
+  /** #185: collided published ids other than their group's survivor, removed before the comparison. */
+  retired: number;
+  /** #185: collisions with no survivor, or a survivor outside the group. */
+  unexplainedCollisions: number;
 }
 
 export interface PublishedIdResolution {
-  /** Published rows re-keyed to canonical ids; unmapped, cyclic and collided rows left out. */
+  /** Published rows re-keyed to canonical ids, ranks renumbered past retired rows; unmapped, cyclic, retired and unexplained rows left out. */
   rows: SnapshotRow[];
-  /** Canonical ids of collisions: the caller leaves them out of the recomputed side too. */
+  /** Canonical ids of unexplained collisions: the caller leaves them out of the recomputed side too. */
   collidedCanonicalIds: ReadonlySet<string>;
   counts: RedirectCounts;
 }
@@ -75,7 +87,8 @@ function resolveId(id: string, byId: Map<string, ToolIdentity>, bySlug: Map<stri
  * Re-key `rows` (a published snapshot) to canonical ids.
  *
  * Postcondition: every returned row's `tool_id` is the id of a non-redirect
- * row in `identities`, and no two distinct published ids share one;
+ * row in `identities`, and no two distinct published ids share one (a
+ * collision keeps only its survivor's row);
  * `mapped + unmapped + cycles` plus the unchanged ids equals the distinct
  * published ids.
  */
@@ -88,9 +101,23 @@ export function resolvePublishedIds(rows: readonly SnapshotRow[], identities: re
     if (!outcomes.has(id)) outcomes.set(id, resolveId(id, byId, bySlug));
   }
 
-  const sources = new Map<string, number>();
-  for (const o of outcomes.values()) if (o.kind === "canonical") sources.set(o.id, (sources.get(o.id) ?? 0) + 1);
-  const collided = new Set([...sources].filter(([, n]) => n > 1).map(([id]) => id));
+  const groups = new Map<string, string[]>();
+  for (const [published, o] of outcomes) if (o.kind === "canonical") groups.set(o.id, [...(groups.get(o.id) ?? []), published]);
+  const collided = new Set([...groups].filter(([, ids]) => ids.length > 1).map(([id]) => id));
+  // #185 (ruling option a): each collision keeps its survivor's row; the other members retire.
+  const survivors = new Map<string, string>();
+  for (const canonical of collided) {
+    const members = groups.get(canonical)!;
+    const carried = byId.get(canonical)?.carriedFrom;
+    const survivor = carried ? bySlug.get(carried)?.id : canonical;
+    if (survivor && members.includes(survivor)) survivors.set(canonical, survivor);
+  }
+  const unexplained = new Set([...collided].filter((id) => !survivors.has(id)));
+  const keep = (published: string, o: Outcome) =>
+    o.kind === "canonical" && !unexplained.has(o.id) && (!collided.has(o.id) || survivors.get(o.id) === published);
+  const retiredIds = new Set(
+    [...outcomes].filter(([published, o]) => o.kind === "canonical" && survivors.has(o.id) && survivors.get(o.id) !== published).map(([id]) => id)
+  );
 
   const list = [...outcomes.values()];
   const counts: RedirectCounts = {
@@ -99,10 +126,18 @@ export function resolvePublishedIds(rows: readonly SnapshotRow[], identities: re
     cycles: list.filter((o) => o.kind === "cycle").length,
     collidedIds: list.filter((o) => o.kind === "canonical" && collided.has(o.id)).length,
     collisionTargets: collided.size,
+    retired: retiredIds.size,
+    unexplainedCollisions: unexplained.size,
   };
+  const rankOf = (row: SnapshotRow) => Number(row["rank"] ?? row["position"]);
+  const retiredRanks = rows.filter((row) => retiredIds.has(String(row["tool_id"]))).map(rankOf);
   const resolved = rows.flatMap((row) => {
-    const o = outcomes.get(String(row["tool_id"]))!;
-    return o.kind === "canonical" && !collided.has(o.id) ? [{ ...row, tool_id: o.id }] : [];
+    const published = String(row["tool_id"]);
+    const o = outcomes.get(published)!;
+    if (o.kind !== "canonical" || !keep(published, o)) return [];
+    // #185: renumber: a rank moves up one place for each retired row ranked above it.
+    const rank = rankOf(row) - retiredRanks.filter((r) => r < rankOf(row)).length;
+    return [{ ...row, tool_id: o.id, rank }];
   });
-  return { rows: resolved, collidedCanonicalIds: collided, counts };
+  return { rows: resolved, collidedCanonicalIds: unexplained, counts };
 }
