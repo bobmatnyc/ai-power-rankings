@@ -112,8 +112,8 @@
   {
     "id": "unreleased-df842dd8bee7",
     "version": "Unreleased",
-    "date": "2026-10-25T23:28:55.543Z",
-    "dateSource": "build",
+    "date": "2026-10-25T23:36:05.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "metrics",
     "title": "the github metrics collector runs without GITHUB_TOKEN (owner ruling A9e)",
@@ -638,6 +638,17 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-0daa6a3e9d91",
+    "version": "Unreleased",
+    "date": "2026-10-25T23:45:36.827Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "rankings",
+    "title": "one ranking board per list: coding harnesses, models and productivity tools",
+    "description": "one ranking board per list: coding harnesses, models and productivity tools. `lib/rankings/lists.ts` holds the rules: a tool is ranked in the list named by its `tools.kind`, `other` tools in none, and image and video models (`data.modality`) in none (D52). `/<locale>/rankings` and `/api/rankings` with no list parameter show the coding-harness board (D51); `/<locale>/rankings/models` and `/<locale>/rankings/productivity-tools` show the others, and `/<locale>/rankings/coding-harnesses` shows the harness board with `/rankings` as its canonical. `/api/rankings?list=<list>` (alias `kind`) accepts a list id or its slug, answers 400 for an unknown list, and every response names its `list` and carries `list_meta`. Ranks, previous ranks and tiers are counted within the list. A list of 10 or more entries is indexed with the normal tiers; a shorter one is `noindex`, left out of the sitemap, and its tiers are S, A and B by thirds (D53). The productivity page shows a note that it uses provisional harness weights (D54). Until a list has its own row, its board is the current combined board split by list. `regenerateRankings({ layout: \"per-list\" })` writes one current row per (period, list) in one transaction and never touches the combined rows, which stay for rollback and export (D55); the cron and CLI still write the combined board. Migration `0020_rankings_per_list.sql` (written, not applied) adds `rankings.list` (existing rows become `combined`), keys rows by (period, list), allows one current row per list, and sets `data.modality` on the image and video model rows. The scoring-profile loader refuses an active set that holds a provisional profile unless it is the productivity profile with `publicNote: true`; the staged v8.0 productivity profile carries that flag. New list strings are in every locale. Tests: `tests/unit/ranking-lists-186.test.ts`, `tests/unit/rankings-per-list-read-186.test.ts`, `tests/unit/ranking-generation-per-list-186.test.ts`, `tests/unit/ranking-list-pages-186.test.tsx`, `tests/unit/rankings-per-list-migration-186.test.ts`, `tests/unit/scoring-profiles-active-set-186.test.ts` (#186)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-6da38b171707",
     "version": "Unreleased",
     "date": "2026-10-25T16:30:31.000Z",
@@ -651,7 +662,7 @@
   {
     "id": "unreleased-4f70c6714fec",
     "version": "Unreleased",
-    "date": "2026-10-25T20:58:03.000Z",
+    "date": "2026-10-25T23:42:18.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
@@ -662,7 +673,7 @@
   {
     "id": "unreleased-834d487b9c6a",
     "version": "Unreleased",
-    "date": "2026-10-25T20:57:59.000Z",
+    "date": "2026-10-25T23:42:18.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
@@ -673,8 +684,8 @@
   {
     "id": "unreleased-2eb221e07fbb",
     "version": "Unreleased",
-    "date": "2026-10-25T20:58:52.546Z",
-    "dateSource": "build",
+    "date": "2026-10-25T23:45:10.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
     "title": "scripts/measure-v8-board.ts --per-tool also prints a private per-tool table after the aggregate report (ruling D8b, for…",

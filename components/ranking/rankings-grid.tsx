@@ -1,12 +1,10 @@
 "use client";
 
 import { ArrowUpDown, Grid, List, Star, TrendingUp } from "lucide-react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -15,19 +13,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { trackEvent } from "@/lib/analytics/track";
 import { formatUtcDate } from "@/lib/format-utc-date";
 import { loggers } from "@/lib/logger-client";
+import {
+  DEFAULT_RANKING_LIST,
+  listTierScheme,
+  type RankingList,
+  rankingListPath,
+} from "@/lib/rankings/lists";
+import { AlgorithmInfoCard } from "./algorithm-info-card";
 import { RankingCard } from "./ranking-card";
+import { RankingsStatsCards } from "./rankings-stats-cards";
 import { SearchEmptyState } from "./search-empty-state";
 import { TierLegend } from "./tier-legend";
 import { useRankingsSearch } from "./use-rankings-search";
 
 interface RankingData {
   rank: number;
+  /** #186: the tier within the list (D53). */
+  tier?: string;
   tool: {
     id: string;
     name: string;
@@ -66,12 +73,23 @@ interface RankingsGridProps {
   lang: Locale;
   dict: Dictionary;
   initialRankings?: RankingData[];
+  /** #186: the list this grid shows; default the coding-harness list (D51). */
+  list?: RankingList;
+}
+
+/** #186: `/api/rankings` for a list; the default list keeps the unqualified URL (D51). */
+function rankingsApiPath(list: RankingList, extra: Record<string, string> = {}): string {
+  const params = new URLSearchParams(extra);
+  if (list !== DEFAULT_RANKING_LIST) params.set("list", list);
+  const query = params.toString();
+  return `/api/rankings${query ? `?${query}` : ""}`;
 }
 
 function RankingsGridContent({
   lang,
   dict,
   initialRankings = [],
+  list = DEFAULT_RANKING_LIST,
 }: RankingsGridProps): React.JSX.Element {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -85,6 +103,10 @@ function RankingsGridContent({
   const [totalTools, setTotalTools] = useState<number>(0);
   const [categoriesCount, setCategoriesCount] = useState<number>(0);
   const [avgScore, setAvgScore] = useState<number>(0);
+  // #186: once the list's rows are read, show its real counts (a list may be empty).
+  const [statsLoaded, setStatsLoaded] = useState(initialRankings.length > 0);
+  // #186: sort and filter links stay on this list's page.
+  const listPath = `/${lang}${rankingListPath(list)}`;
 
   // Get filters from URL
   const categoryParam = searchParams.get("category") || "all";
@@ -124,7 +146,7 @@ function RankingsGridContent({
 
   const fetchAlgorithmDate = useCallback(async (): Promise<void> => {
     try {
-      const response = await fetch("/api/rankings?metadata=true");
+      const response = await fetch(rankingsApiPath(list, { metadata: "true" }));
       if (response.ok) {
         const data = await response.json();
         if (data.algorithm?.date) {
@@ -151,13 +173,13 @@ function RankingsGridContent({
     } catch {
       // Silently fail, will use fallback
     }
-  }, [lang]);
+  }, [lang, list]);
 
   const fetchRankings = useCallback(async (): Promise<void> => {
     try {
       const isDev = process.env["NODE_ENV"] === "development";
       const timestamp = Date.now();
-      const url = `/api/rankings${isDev ? `?_t=${timestamp}` : ""}`;
+      const url = rankingsApiPath(list, isDev ? { _t: String(timestamp) } : {});
       const response = await fetch(url, {
         cache: isDev ? "no-store" : "default",
       });
@@ -173,6 +195,8 @@ function RankingsGridContent({
         setRankings([]);
       } else {
         setRankings(data.rankings);
+        setTotalTools(data.rankings.length);
+        setStatsLoaded(true);
 
         // Calculate stats from rankings if available
         if (data.rankings && data.rankings.length > 0) {
@@ -221,11 +245,11 @@ function RankingsGridContent({
 
       setLoading(false);
     } catch (error) {
-      loggers.ranking.error("Failed to fetch rankings", { error });
+      loggers.ranking.error("Failed to fetch rankings", { error, list });
       setRankings([]); // Ensure rankings is always an array
       setLoading(false);
     }
-  }, [lang]);
+  }, [lang, list]);
 
   useEffect(() => {
     // Only fetch if no initial rankings provided
@@ -304,90 +328,19 @@ function RankingsGridContent({
       </div>
 
       {/* Stats Cards - Optimized for T-031 & T-040 CLS fix */}
-      <div
-        className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 mb-8 stats-grid"
-        style={{ minHeight: "140px" }} // Reserve space to prevent layout shift
-      >
-        <Card
-          className="border-border/50"
-          style={{ minHeight: "120px" }} // Consistent card height
-        >
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {dict.rankings.stats.totalTools}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {loading ? (
-                <div className="animate-pulse bg-ds-surface-skeleton h-8 w-12 rounded" />
-              ) : totalTools > 0 ? (
-                totalTools
-              ) : (
-                "42"
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50" style={{ minHeight: "120px" }}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {dict.rankings.stats.categories}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {loading ? (
-                <div className="animate-pulse bg-ds-surface-skeleton h-8 w-8 rounded" />
-              ) : categoriesCount > 0 ? (
-                categoriesCount
-              ) : (
-                "8"
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50" style={{ minHeight: "120px" }}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {dict.rankings.stats.avgScore}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {loading ? (
-                <div className="animate-pulse bg-ds-surface-skeleton h-8 w-12 rounded" />
-              ) : avgScore > 0 ? (
-                avgScore.toFixed(1)
-              ) : (
-                "72.5"
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50" style={{ minHeight: "120px" }}>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              {dict.rankings.stats.lastUpdate}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {loading ? (
-                <div className="animate-pulse bg-ds-surface-skeleton h-8 w-16 rounded" />
-              ) : lastUpdateDate && !lastUpdateDate.includes("2025") ? (
-                lastUpdateDate
-              ) : (
-                dict.rankings.stats.thisWeek || "This Week"
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <RankingsStatsCards
+        dict={dict}
+        loading={loading}
+        statsLoaded={statsLoaded}
+        totalTools={totalTools}
+        categoriesCount={categoriesCount}
+        avgScore={avgScore}
+        lastUpdateDate={lastUpdateDate}
+      />
 
       {/* Tier Legend */}
       <div className="mb-6">
-        <TierLegend dict={dict} />
+        <TierLegend dict={dict} scheme={listTierScheme(rankings.length)} />
       </div>
 
       {/* Controls */}
@@ -405,7 +358,7 @@ function RankingsGridContent({
                 params.set("sort", value);
               }
               // #175: client-side navigation keeps the page loaded, so gtag sends filter_use from its normal batch.
-              router.push(`/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`);
+              router.push(`${listPath}${params.toString() ? `?${params.toString()}` : ""}`);
             }}
           >
             <SelectTrigger className="w-[180px]">
@@ -473,7 +426,7 @@ function RankingsGridContent({
               onClick={() => {
                 const params = new URLSearchParams(searchParams.toString());
                 params.delete("category");
-                window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+                window.location.href = `${listPath}${params.toString() ? `?${params.toString()}` : ""}`;
               }}
             >
               {categoryParam.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())} ✕
@@ -498,7 +451,7 @@ function RankingsGridContent({
                 } else {
                   params.set("tags", newTags.join(","));
                 }
-                window.location.href = `/${lang}/rankings${params.toString() ? `?${params.toString()}` : ""}`;
+                window.location.href = `${listPath}${params.toString() ? `?${params.toString()}` : ""}`;
               }}
             >
               {tag.replace(/-/g, " ")} ✕
@@ -510,7 +463,10 @@ function RankingsGridContent({
       {/* Rankings Display */}
       {/* #207: a typed term that matches no row gets a message and a clear button,
           not a blank grid. Loading returns early above; a category filter alone shows nothing new. */}
-      {sortedRankings.length === 0 && searchTerm.trim() ? (
+      {rankings.length === 0 ? (
+        // #186: a list with no ranked tool says so instead of rendering an empty grid.
+        <p className="text-muted-foreground">{dict.rankings.lists.empty}</p>
+      ) : sortedRankings.length === 0 && searchTerm.trim() ? (
         <SearchEmptyState
           term={searchTerm.trim()}
           message={dict.rankings.noResults}
@@ -532,114 +488,7 @@ function RankingsGridContent({
       )}
 
       {/* Algorithm Info */}
-      <Card className="mt-12">
-        <CardHeader>
-          <CardTitle>{dict.rankings.algorithm.title}</CardTitle>
-          <CardDescription>{dict.rankings.algorithm.description}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="factors" className="w-full">
-            <TabsList>
-              <TabsTrigger value="factors">{dict.rankings.algorithm.tabs.factors}</TabsTrigger>
-              <TabsTrigger value="modifiers">{dict.rankings.algorithm.tabs.modifiers}</TabsTrigger>
-              <TabsTrigger value="methodology">
-                {dict.rankings.algorithm.tabs.methodology}
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="factors" className="mt-4">
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">{dict.rankings.algorithm.primaryFactors}</h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span>{dict.rankings.algorithm.factors.agentic}</span>
-                        <span className="text-muted-foreground">30.0%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>{dict.rankings.algorithm.factors.innovation}</span>
-                        <span className="text-muted-foreground">15.0%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>{dict.rankings.algorithm.factors.performance}</span>
-                        <span className="text-muted-foreground">12.5%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>{dict.rankings.algorithm.factors.adoption}</span>
-                        <span className="text-muted-foreground">10.0%</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2">
-                      {dict.rankings.algorithm.secondaryFactors}
-                    </h4>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span>{dict.rankings.algorithm.factors.traction}</span>
-                        <span className="text-muted-foreground">12.5%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>{dict.rankings.algorithm.factors.sentiment}</span>
-                        <span className="text-muted-foreground">7.5%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>{dict.rankings.algorithm.factors.velocity}</span>
-                        <span className="text-muted-foreground">5.0%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>{dict.rankings.algorithm.factors.resilience}</span>
-                        <span className="text-muted-foreground">5.0%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="modifiers" className="mt-4">
-              <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold mb-2">
-                    💡 {dict.home.methodology.modifiers.decay.name}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {dict.rankings.algorithm.modifiers.decay}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">
-                    ⚠️ {dict.home.methodology.modifiers.risk.name}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {dict.rankings.algorithm.modifiers.risk}
-                  </p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">
-                    💰 {dict.home.methodology.modifiers.revenue.name}
-                  </h4>
-                  <p className="text-sm text-muted-foreground">
-                    {dict.rankings.algorithm.modifiers.revenue}
-                  </p>
-                </div>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="methodology" className="mt-4">
-              <div className="prose prose-sm text-muted-foreground">
-                <p>{dict.rankings.algorithm.methodologyText}</p>
-                <Button variant="outline" size="sm" className="mt-4" asChild>
-                  <Link href={`/${lang}/methodology`}>
-                    {dict.rankings.algorithm.viewMethodology}
-                  </Link>
-                </Button>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+      <AlgorithmInfoCard lang={lang} dict={dict} />
     </div>
   );
 }
@@ -648,6 +497,7 @@ export default function RankingsGrid({
   lang,
   dict,
   initialRankings,
+  list,
 }: RankingsGridProps): React.JSX.Element {
   return (
     <Suspense
@@ -657,7 +507,7 @@ export default function RankingsGrid({
         </div>
       }
     >
-      <RankingsGridContent lang={lang} dict={dict} initialRankings={initialRankings} />
+      <RankingsGridContent lang={lang} dict={dict} initialRankings={initialRankings} list={list} />
     </Suspense>
   );
 }

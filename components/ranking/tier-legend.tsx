@@ -2,22 +2,28 @@ import { Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Dictionary } from "@/i18n/get-dictionary";
+import type { TierScheme } from "@/lib/rankings/lists";
 
 interface TierLegendProps {
   dict?: Dictionary;
+  /** #186: "thirds" for a list of fewer than 10 entries (D53); default "standard". */
+  scheme?: TierScheme;
 }
 
-export function TierLegend({ dict }: TierLegendProps) {
+export function TierLegend({ dict, scheme = "standard" }: TierLegendProps) {
   const title = dict?.rankings?.tierLegend?.title || "Ranking Tiers";
+  const thirds = dict?.rankings?.tierLegend?.thirds;
   const description =
-    dict?.rankings?.tierLegend?.description ||
-    "Tools are assigned tiers based on their ranking position";
+    scheme === "thirds"
+      ? thirds?.description || "Tiers split the list into thirds"
+      : dict?.rankings?.tierLegend?.description ||
+        "Tools are assigned tiers based on their ranking position";
   const tierData = dict?.rankings?.tierLegend?.tiers;
 
   // #190 C2 (Option B): solid --ds-score-* bands with --ds-score-fg text (AA in
   // both modes), the same classes as getTierColor in lib/ranking-utils.ts, including
   // the band repeated as the hover fill, so Badge's default primary hover never shows.
-  const tiers = [
+  const standardTiers = [
     {
       name: "S",
       label: tierData?.S?.label || "Elite",
@@ -54,6 +60,16 @@ export function TierLegend({ dict }: TierLegendProps) {
       description: tierData?.D?.description || "Tools with limited features or adoption",
     },
   ];
+  // #186 (D53): a short list keeps S, A and B only, each a third of the list.
+  const thirdsRange: Record<string, string> = {
+    S: thirds?.S || "Top third",
+    A: thirds?.A || "Middle third",
+    B: thirds?.B || "Bottom third",
+  };
+  const tiers =
+    scheme === "thirds"
+      ? standardTiers.slice(0, 3).map((tier) => ({ ...tier, range: thirdsRange[tier.name]! }))
+      : standardTiers;
 
   return (
     <Card className="border-border/50">
@@ -73,7 +89,7 @@ export function TierLegend({ dict }: TierLegendProps) {
                 <span className="text-sm font-medium">{tier.label}</span>
               </div>
               <div className="text-xs text-muted-foreground">
-                <div className="font-medium">Rank {tier.range}</div>
+                <div className="font-medium">{scheme === "thirds" ? tier.range : `Rank ${tier.range}`}</div>
                 <div className="mt-1">{tier.description}</div>
               </div>
             </div>

@@ -210,6 +210,16 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
       score: "",
       name: "",
     },
+    // #186: the per-list ranking pages
+    lists: {
+      navLabel: "",
+      harness: { title: "", description: "" },
+      model: { title: "", description: "" },
+      productivity: { title: "", description: "" },
+      provisionalNote: "",
+      smallListNote: "",
+      empty: "",
+    },
     algorithm: {
       title: "",
       subtitle: "",

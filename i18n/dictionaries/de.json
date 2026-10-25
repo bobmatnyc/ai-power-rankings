@@ -274,7 +274,31 @@
           "range": "36+",
           "description": "Tools mit begrenzten Funktionen oder Akzeptanz"
         }
+      },
+      "thirds": {
+        "description": "Die Stufen teilen die Liste in Drittel",
+        "S": "Oberes Drittel",
+        "A": "Mittleres Drittel",
+        "B": "Unteres Drittel"
       }
+    },
+    "lists": {
+      "navLabel": "Ranglisten",
+      "harness": {
+        "title": "Coding-Harnesses",
+        "description": "KI-Coding-Tools und -Agenten im Vergleich miteinander."
+      },
+      "model": {
+        "title": "Modelle",
+        "description": "KI-Modelle im Vergleich miteinander. Bild- und Videomodelle sind nicht in dieser Liste."
+      },
+      "productivity": {
+        "title": "Produktivitätstools",
+        "description": "KI-Produktivitätstools im Vergleich miteinander."
+      },
+      "provisionalNote": "Vorläufig: Diese Liste wird mit den Gewichten der Coding-Harnesses bewertet, bis ihr eigenes Bewertungsprofil feststeht.",
+      "smallListNote": "Diese Liste hat weniger als {min} Einträge, daher sind ihre Stufen S, A und B nach Dritteln.",
+      "empty": "In dieser Liste ist noch kein Tool gerankt."
     }
   },
   "news": {

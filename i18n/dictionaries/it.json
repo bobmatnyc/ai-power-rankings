@@ -280,7 +280,31 @@
           "range": "36+",
           "description": "Strumenti con funzionalità o adozione limitate"
         }
+      },
+      "thirds": {
+        "description": "I livelli dividono la lista in terzi",
+        "S": "Primo terzo",
+        "A": "Terzo centrale",
+        "B": "Ultimo terzo"
       }
+    },
+    "lists": {
+      "navLabel": "Classifiche",
+      "harness": {
+        "title": "Harness di programmazione",
+        "description": "Strumenti e agenti di programmazione IA, classificati tra loro."
+      },
+      "model": {
+        "title": "Modelli",
+        "description": "Modelli di IA, classificati tra loro. I modelli di immagini e video non sono in questa lista."
+      },
+      "productivity": {
+        "title": "Strumenti di produttività",
+        "description": "Strumenti di produttività IA, classificati tra loro."
+      },
+      "provisionalNote": "Provvisorio: questa lista è valutata con i pesi degli harness di programmazione finché non sarà deciso il suo profilo di punteggio.",
+      "smallListNote": "Questa lista ha meno di {min} voci, quindi i suoi livelli sono S, A e B per terzi.",
+      "empty": "Nessuno strumento è ancora classificato in questa lista."
     }
   },
   "news": {

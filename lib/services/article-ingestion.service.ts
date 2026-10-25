@@ -4,7 +4,8 @@
  */
 
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { COMBINED_LIST } from "@/lib/rankings/lists";
 import type { Article, DryRunResult, IngestedArticle } from "@/lib/db/article-schema";
 import { rankings } from "@/lib/db/schema";
 import { getDb } from "@/lib/db/connection";
@@ -1214,7 +1215,8 @@ export class ArticleIngestionService {
           const [currentRankingsPeriod] = await db
             .select()
             .from(rankings)
-            .where(eq(rankings.isCurrent, true))
+            // #186: the legacy combined board; per-list boards have their own current rows.
+            .where(and(eq(rankings.isCurrent, true), eq(rankings.list, COMBINED_LIST)))
             .limit(1);
 
           if (currentRankingsPeriod?.data) {

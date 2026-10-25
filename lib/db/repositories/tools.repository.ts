@@ -469,6 +469,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       updated_at: dbTool.updatedAt.toISOString(),
       ...toolData, // Spread JSONB data first
       db_id: dbTool.id, // Then override with authoritative database UUID to prevent overwriting
+      kind: dbTool.kind, // #186: the column decides list membership, never a JSONB copy
     };
   }
 
