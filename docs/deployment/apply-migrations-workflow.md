@@ -78,7 +78,10 @@ manual dispatch from the Actions tab.
 `dry_run: false` with any other `confirm` fails the job and runs nothing. Any non-zero
 exit fails the job. The run summary records the mode, each step's outcome and the
 script's count lines only (D19); the database fingerprint line is dropped from the log.
-The backup file lives on the runner and is gone when the job ends.
+The job runs only when dispatched from `main`; a dispatch from any other ref runs no step.
+
+The backup file lives only for the job, on the runner; it is not a restore path. Recovery
+is by the operator's database snapshot, taken before the apply dispatch.
 
 ## Files
 

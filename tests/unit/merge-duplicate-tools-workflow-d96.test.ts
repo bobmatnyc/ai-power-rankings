@@ -6,7 +6,8 @@
  * DATABASE_URL secret in `run:` text would each write without clearance or leak the secret.
  * What: reads the workflow as text. `workflow_dispatch` is the only trigger; `dry_run`
  * defaults to true and apply also needs the typed `confirm`; the secret appears only as an
- * `env:` value; the apply step runs only after a successful backup. Each text check is also
+ * `env:` value; the apply step runs only after a successful backup; the job runs only from
+ * main; `--apply` occurs once, in the apply step. Each text check is also
  * run against a mutated copy (push trigger, apply default, secret in a run line) and must
  * throw. The step scripts run under bash with a stub `npx`: mode selection, a failing or
  * file-less backup, and a summary that carries counts but no fingerprint or file path.
@@ -101,7 +102,39 @@ describe("merge-duplicate-tools workflow (D96)", () => {
     expect(() => assertDryRunDefault(applyByDefault)).toThrow();
     expect(() => assertSecretEnvOnly(secretInRun)).toThrow();
   });
+
+  it("runs the job only when dispatched from main", () => assertMainOnly(load()));
+  it("has exactly one --apply, in the apply step", () => assertSingleApply(load()));
+
+  it("fails the ref guard, single-apply, confirm and backup-gate checks against mutated workflows", () => {
+    const text = load();
+    const noGuard = text.replace("    if: github.ref == 'refs/heads/main'\n", "");
+    const secondApply = `${text.trimEnd()}\n\n      - name: Apply again\n        run: npx tsx scripts/merge-duplicate-tools.ts --apply backup.json\n`;
+    const noConfirm = text.replace(
+      /\n {10}if \[ "\$CONFIRM" != "merge-d90-duplicates" \]; then\n(?: {12}.*\n)+? {10}fi\n/,
+      "\n"
+    );
+    const noBackupGate = text.replace(" && steps.backup.outcome == 'success'", "");
+    for (const mutated of [noGuard, secondApply, noConfirm, noBackupGate]) expect(mutated).not.toBe(text);
+    expect(() => assertMainOnly(noGuard)).toThrow();
+    expect(() => assertSingleApply(secondApply)).toThrow();
+    expect(() => assertDryRunDefault(noConfirm)).toThrow();
+    expect(() => assertDryRunDefault(noBackupGate)).toThrow();
+  });
 });
+
+/** The job carries a job-level guard, so a dispatch from another ref runs no step. */
+function assertMainOnly(text: string): void {
+  expect(codeLines(text).join("\n")).toMatch(
+    /\njobs:\n {2}merge-duplicate-tools:\n(?: {4}\S.*\n)*? {4}if: github\.ref == 'refs\/heads\/main'\n(?: {4}\S.*\n)*? {4}steps:\n/
+  );
+}
+
+/** `--apply` occurs once in the whole file, comments included, inside the apply step. */
+function assertSingleApply(text: string): void {
+  expect(text.split("--apply").length - 1).toBe(1);
+  expect(stepRunScript(text, "apply")).toContain("--apply");
+}
 
 /** The `run: |` block of the step whose `id:` is `stepId`, de-indented. */
 function stepRunScript(text: string, stepId: string): string {
@@ -132,13 +165,21 @@ afterEach(() => {
   for (const dir of tempDirs.splice(0)) rmSync(dir, { recursive: true, force: true });
 });
 
-function runStep(stepId: string, env: Record<string, string>, dir?: string) {
+// A grep that always errors the way a real one does on an unreadable file.
+const STUB_GREP_ERROR = `#!/bin/bash
+echo "grep: stub read error" >&2
+exit 2
+`;
+
+function runStep(stepId: string, env: Record<string, string>, dir?: string, stubs: Record<string, string> = {}) {
   const work = dir ?? mkdtempSync(join(tmpdir(), "d96-"));
   if (!dir) tempDirs.push(work);
   const bin = join(work, "bin");
   if (!existsSync(bin)) mkdirSync(bin);
-  writeFileSync(join(bin, "npx"), STUB_NPX);
-  chmodSync(join(bin, "npx"), 0o755);
+  for (const [name, body] of Object.entries({ npx: STUB_NPX, ...stubs })) {
+    writeFileSync(join(bin, name), body);
+    chmodSync(join(bin, name), 0o755);
+  }
   const script = join(work, `${stepId}.sh`);
   writeFileSync(script, stepRunScript(load(), stepId));
   const read = (name: string) => (existsSync(join(work, name)) ? readFileSync(join(work, name), "utf8") : "");
@@ -182,6 +223,23 @@ describe("merge-duplicate-tools workflow step scripts (D96)", () => {
   it("propagates a failing dry run or backup exit code", () => {
     expect(runStep("dryrun", { STUB_OUTPUT: "ERROR: connection refused", STUB_EXIT: "1" }).code).toBe(1);
     expect(runStep("backup", { STUB_OUTPUT: "ERROR: permission denied", STUB_EXIT: "1" }).code).toBe(1);
+  });
+
+  it("propagates a failing apply exit code", () => {
+    const r = runStep("apply", { STUB_OUTPUT: "--apply: rolled back, nothing written: deadlock", STUB_EXIT: "1" });
+    expect(r.code).toBe(1);
+    expect(r.read("d90-counts-apply.txt")).toBe("");
+  });
+
+  it("tolerates a count grep with no match but fails on a grep error", () => {
+    const noMatch = runStep("dryrun", { STUB_OUTPUT: "pair 1/7: a -> b [ready]" });
+    expect(noMatch.code).toBe(0);
+    expect(noMatch.read("d90-counts-dry-run.txt")).toBe("");
+    for (const step of ["dryrun", "apply"]) {
+      expect(runStep(step, { STUB_OUTPUT: "totals: 7 pair(s), 0 unresolved" }, undefined, { grep: STUB_GREP_ERROR }).code).toBe(2);
+    }
+    const backup = runStep("backup", { STUB_BACKUP: "{}", STUB_OUTPUT: "backup: wrote x: 1 tools" }, undefined, { grep: STUB_GREP_ERROR });
+    expect(backup.code).toBe(2);
   });
 
   it("fails a backup that exits 0 without writing the backup file", () => {

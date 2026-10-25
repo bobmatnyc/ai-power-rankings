@@ -9,12 +9,17 @@ name: Merge duplicate tools (D90)
 # What: a manual dispatch over scripts/merge-duplicate-tools.ts. Every run starts with the
 # script's SELECT-only dry run, which exits 1 on an unresolved pair. A dispatch with the
 # default inputs stops there and writes nothing. Applying needs `dry_run: false` AND
-# `confirm: merge-d90-duplicates`; it then takes the script's backup and runs `--apply`
-# against that backup only when the backup step succeeded. Any non-zero exit fails the job.
+# `confirm: merge-d90-duplicates`; it then takes the script's backup and runs the apply
+# against that backup only when the backup step succeeded. The job runs only when
+# dispatched from main, so no other ref reaches the secret-bearing steps. Any non-zero exit fails the job.
 # The job summary carries the mode, each step's outcome and the script's count lines only
 # (D19): no host, database fingerprint, role name, rank or score. The script redacts
 # anything URL-shaped from its errors, and the `using ... database sha256:` line it prints
 # is dropped before the output reaches the log. This repository is public.
+#
+# The backup file lives only for the job, on the runner; it is not a restore path.
+# Recovery is by the operator's database snapshot, taken before the apply dispatch.
+# Recovery: see docs/deployment/apply-migrations-workflow.md
 #
 # Test: tests/unit/merge-duplicate-tools-workflow-d96.test.ts.
 
@@ -44,6 +49,8 @@ concurrency:
 jobs:
   merge-duplicate-tools:
     name: D90 duplicate-tool merge
+    # Only a dispatch from main runs; a branch's edited copy of this file never gets the secret.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -92,13 +99,13 @@ jobs:
           set -uo pipefail
           status=0
           npx tsx scripts/merge-duplicate-tools.ts --dry-run > "$RUNNER_TEMP/d90-dry-run.raw" 2>&1 || status=$?
-          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/d90-dry-run.raw" > "$RUNNER_TEMP/d90-dry-run.txt" || true
+          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/d90-dry-run.raw" > "$RUNNER_TEMP/d90-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/d90-dry-run.raw"
           cat "$RUNNER_TEMP/d90-dry-run.txt"
-          grep -E '^totals: ' "$RUNNER_TEMP/d90-dry-run.txt" > "$RUNNER_TEMP/d90-counts-dry-run.txt" || true
+          grep -E '^totals: ' "$RUNNER_TEMP/d90-dry-run.txt" > "$RUNNER_TEMP/d90-counts-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
           exit "$status"
 
-      # The script refuses --apply without a fresh backup of the same database; this step
+      # The script refuses to apply without a fresh backup of the same database; this step
       # also fails when it exits 0 but leaves no backup file.
       - name: Back up affected rows
         id: backup
@@ -110,10 +117,11 @@ jobs:
           set -uo pipefail
           status=0
           npx tsx scripts/merge-duplicate-tools.ts --backup "$RUNNER_TEMP/d90-backup.json" > "$RUNNER_TEMP/d90-backup.raw" 2>&1 || status=$?
-          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/d90-backup.raw" > "$RUNNER_TEMP/d90-backup.txt" || true
+          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/d90-backup.raw" > "$RUNNER_TEMP/d90-backup.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/d90-backup.raw"
           cat "$RUNNER_TEMP/d90-backup.txt"
-          grep -E '^backup: wrote ' "$RUNNER_TEMP/d90-backup.txt" | sed -E 's/^backup: wrote [^:]+: //' > "$RUNNER_TEMP/d90-counts-backup.txt" || true
+          grep -E '^backup: wrote ' "$RUNNER_TEMP/d90-backup.txt" > "$RUNNER_TEMP/d90-backup-lines.txt" || [ "$?" -eq 1 ] || exit 2
+          sed -E 's/^backup: wrote [^:]+: //' "$RUNNER_TEMP/d90-backup-lines.txt" > "$RUNNER_TEMP/d90-counts-backup.txt" || exit 2
           if [ "$status" -eq 0 ] && [ ! -s "$RUNNER_TEMP/d90-backup.json" ]; then
             echo "::error::the backup step exited 0 but wrote no backup file; nothing was applied"
             status=1
@@ -131,10 +139,10 @@ jobs:
           set -uo pipefail
           status=0
           npx tsx scripts/merge-duplicate-tools.ts --apply "$RUNNER_TEMP/d90-backup.json" > "$RUNNER_TEMP/d90-apply.raw" 2>&1 || status=$?
-          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/d90-apply.raw" > "$RUNNER_TEMP/d90-apply.txt" || true
+          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/d90-apply.raw" > "$RUNNER_TEMP/d90-apply.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/d90-apply.raw"
           cat "$RUNNER_TEMP/d90-apply.txt"
-          grep -E '^(totals: |--apply: committed)' "$RUNNER_TEMP/d90-apply.txt" > "$RUNNER_TEMP/d90-counts-apply.txt" || true
+          grep -E '^(totals: |.*apply: committed)' "$RUNNER_TEMP/d90-apply.txt" > "$RUNNER_TEMP/d90-counts-apply.txt" || [ "$?" -eq 1 ] || exit 2
           exit "$status"
 
       # Counts only (D19). Runs on failure too, so a failed run still records its mode and
