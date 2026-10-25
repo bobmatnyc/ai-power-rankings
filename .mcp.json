@@ -18,7 +18,7 @@
     },
     "tavily": {
       "type": "sse",
-      "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=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"
+      "url": "https://mcp.tavily.com/mcp/?tavilyApiKey=${TAVILY_API_KEY}"
     },
     "trusty-memory": {
       "args": [

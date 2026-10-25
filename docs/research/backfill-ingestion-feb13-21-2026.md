@@ -65,7 +65,7 @@ The cron runs daily at 6 AM UTC but Tavily keys were misconfigured/expired durin
 
 ```bash
 DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
-TAVILY_API_KEY="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" \
+TAVILY_API_KEY="tvly-REDACTED" \
 npx tsx scripts/trigger-ingestion.ts [--dry-run] [--max-articles=N]
 ```
 
@@ -121,7 +121,7 @@ Since the system cannot target specific past dates, the best approach is to run 
 ```bash
 # Run 1 - now (will get Feb 18-21 news)
 DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
-TAVILY_API_KEY="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" \
+TAVILY_API_KEY="tvly-REDACTED" \
 npx tsx scripts/trigger-ingestion.ts --max-articles=15
 
 # Wait 30-60 minutes, then run again
@@ -137,12 +137,12 @@ This will get you coverage for roughly the past 5-7 days:
 ```bash
 # Dry run first to verify it works
 DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
-TAVILY_API_KEY="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" \
+TAVILY_API_KEY="tvly-REDACTED" \
 npx tsx scripts/trigger-ingestion.ts --dry-run --max-articles=15
 
 # Live run (remove --dry-run)
 DATABASE_URL="postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require" \
-TAVILY_API_KEY="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" \
+TAVILY_API_KEY="tvly-REDACTED" \
 npx tsx scripts/trigger-ingestion.ts --max-articles=15
 ```
 
@@ -187,7 +187,7 @@ Use these for running scripts locally against the production database:
 
 ```
 DATABASE_URL=postgresql://neondb_owner:<REDACTED>@<REDACTED_ENDPOINT>-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require
-TAVILY_API_KEY=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
+TAVILY_API_KEY=tvly-REDACTED
 ```
 
 Note: The `.env.local` points to a development/staging database endpoint (`<REDACTED_ENDPOINT>`). The production database is `<REDACTED_ENDPOINT>` from `.env.production.local`.
