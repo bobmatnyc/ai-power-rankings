@@ -3,7 +3,7 @@ import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { getDb } from "@/lib/db/connection";
 import { loggers } from "@/lib/logger";
-import { getCachedOrFetch, CACHE_TTL } from "@/lib/memory-cache";
+import cacheInstance, { CACHE_TTL } from "@/lib/memory-cache";
 import { parseListQuery, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
 
 /**
@@ -55,8 +55,9 @@ export async function GET(request?: Request) {
   const cacheKey = `api:rankings:current:${list}`;
 
   try {
-    const response = await getCachedOrFetch(
-      cacheKey,
+    // #185: only a 200 body is held in the in-memory cache; a 404 or 503 is never replayed.
+    const cached = cacheInstance.get<Record<string, unknown>>(cacheKey);
+    const response = cached ?? await (
       async () => {
         // Get database connection
         const db = getDb();
@@ -253,15 +254,15 @@ export async function GET(request?: Request) {
           timestamp: new Date().toISOString(),
           statusCode: 200,
         };
-      },
-      CACHE_TTL.rankings // 60 seconds
-    );
+      }
+    )();
 
     const processingTime = Date.now() - startTime;
 
     // Extract status code from response
     const statusCode = (response as any).statusCode || 200;
     const isSuccess = (response as any).success !== false;
+    if (!cached && statusCode === 200) cacheInstance.set(cacheKey, response, CACHE_TTL.rankings); // 60 seconds
 
     if (isSuccess) {
       loggers.api.info("Current rankings fetched successfully", {
@@ -277,7 +278,10 @@ export async function GET(request?: Request) {
       status: statusCode,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        // #185: only a 200 may be cached by the CDN; a 404 (no list board yet) or 503
+        // must not outlive the publish that fixes it.
+        "Cache-Control":
+          statusCode === 200 ? "public, s-maxage=3600, stale-while-revalidate=86400" : "no-store",
         "X-Processing-Time": `${processingTime}ms`,
       },
     });
@@ -298,7 +302,7 @@ export async function GET(request?: Request) {
         message: error instanceof Error ? error.message : "An unexpected error occurred",
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500, headers: { "Cache-Control": "no-store" } } // #185: never cache a failure
     );
   }
 }
