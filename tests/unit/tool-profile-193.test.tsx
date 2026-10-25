@@ -17,6 +17,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * cached across requests. `pickVerdict()` and `buildToolProfile()` are also
  * tested directly. React `cache()` is replaced as in tool-not-found-193.test.tsx:
  * one test is one request unless a test resets the memo itself.
+ * #185: a tool's rank comes from its own list's board. The catalogue rows now carry
+ * `kind` (harness, the list every fixture board belongs to); the "#185" tests cover a
+ * model tool (model board), a tool in no list (no read, unranked) and that the
+ * combined board is never read.
  * Test: `npx vitest run tests/unit/tool-profile-193.test.tsx`. No database, no network.
  */
 
@@ -27,6 +31,8 @@ interface CatalogueRow {
   category: string;
   status: string;
   info: Record<string, unknown>;
+  /** #185: `tools.kind`, which picks the list board the page reads. */
+  kind: string;
 }
 
 interface SnapshotRow {
@@ -35,7 +41,14 @@ interface SnapshotRow {
   data: { rankings: Array<Record<string, unknown>> };
 }
 
-function tool(slug: string, name: string, category = "code-editor", status = "active", info?: Record<string, unknown>) {
+function tool(
+  slug: string,
+  name: string,
+  category = "code-editor",
+  status = "active",
+  info?: Record<string, unknown>,
+  kind = "harness"
+) {
   return {
     id: `tool-${slug}`,
     slug,
@@ -43,6 +56,7 @@ function tool(slug: string, name: string, category = "code-editor", status = "ac
     category,
     status,
     info: info ?? { product: { tagline: `${name} tagline` } },
+    kind,
   } satisfies CatalogueRow;
 }
 
@@ -57,6 +71,9 @@ const CATALOGUE: CatalogueRow[] = [
   tool("stealth-editor", "Stealth Editor", "code-editor", "pending_review"),
   tool("lonely-agent", "Lonely Agent", "autonomous-agent"),
   tool("blank-tool", "Blank Tool", "autonomous-agent", "active", {}),
+  // #185: a model (its own list) and a tool in no list.
+  tool("some-model", "Some Model", "llm", "active", undefined, "model"),
+  tool("other-thing", "Other Thing", "code-editor", "active", undefined, "other"),
 ];
 
 const entry = (slug: string, rank: number, score: number) => ({
@@ -108,6 +125,10 @@ const db = vi.hoisted(() => ({
   previous: null as unknown,
   rankingError: null as Error | null,
   rankingReads: 0,
+  /** #185: the list argument of every ranking read. */
+  listsRead: [] as unknown[],
+  /** #185: the model list's current board, when a test sets one. */
+  modelCurrent: null as unknown,
 }));
 
 vi.mock("server-only", () => ({}));
@@ -130,12 +151,16 @@ vi.mock("../../lib/db/repositories/news", () => ({
 
 vi.mock("../../lib/db/repositories/rankings.repository", () => {
   const repo = {
-    getCurrentRankings: async () => {
+    getCurrentRankings: async (list?: unknown) => {
       db.rankingReads++;
+      db.listsRead.push(list);
       if (db.rankingError) throw db.rankingError;
+      if (list === "model") return db.modelCurrent ? { ...(db.modelCurrent as object), is_current: true } : null;
       return db.current ? { ...(db.current as object), is_current: true } : null;
     },
-    getLatestBefore: async (period: string) => {
+    getLatestBefore: async (period: string, list?: unknown) => {
+      db.listsRead.push(list);
+      if (list === "model") return null;
       const previous = db.previous as { period: string } | null;
       return previous && previous.period < period ? previous : null;
     },
@@ -183,6 +208,8 @@ beforeEach(() => {
   db.previous = PREVIOUS;
   db.rankingError = null;
   db.rankingReads = 0;
+  db.listsRead = [];
+  db.modelCurrent = null;
   dataCache.entries = new Map();
   request.memo = new Map();
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -311,6 +338,36 @@ describe("tool profile block on the server-rendered page (#193)", () => {
     expect(db.rankingReads).toBe(1);
     expect(dataCache.options).toContainEqual(expect.objectContaining({ revalidate: 1800 }));
     expect(dataCache.options).toContainEqual(expect.objectContaining({ tags: ["rankings", "tools"] }));
+  });
+});
+
+describe("tool profile reads the tool's own list (#185)", () => {
+  it("a harness tool reads only the harness board, never the combined board", async () => {
+    await renderPage("cursor");
+    expect(db.listsRead.length).toBeGreaterThan(0);
+    expect(new Set(db.listsRead)).toEqual(new Set(["harness"]));
+  });
+
+  it("a model tool's rank comes from the model board", async () => {
+    db.modelCurrent = { period: "2026-10", algorithm_version: "8.0", data: { rankings: [entry("some-model", 1, 77)] } };
+    const html = await renderPage("some-model");
+    expect(section(html, "Score and rank")).toContain("#1");
+    expect(section(html, "Score and rank")).toContain("77.0");
+    expect(new Set(db.listsRead)).toEqual(new Set(["model"]));
+  });
+
+  it("a tool in no list is unranked and makes no ranking read", async () => {
+    const html = await renderPage("other-thing");
+    expect(headings(html)).toEqual(ORDER);
+    expect(section(html, "Score and rank")).toContain("not in the current rankings");
+    expect(db.rankingReads).toBe(0);
+  });
+
+  it("a failed list read shows the unavailable text and reads no other board", async () => {
+    db.rankingError = new Error("fixture: harness board down");
+    const html = await renderPage("cursor");
+    expect(section(html, "Change since last month")).toContain("Ranking data is unavailable");
+    expect(db.listsRead).toEqual(["harness"]);
   });
 });
 

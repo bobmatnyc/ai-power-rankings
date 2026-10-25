@@ -24,6 +24,8 @@ interface CatalogueRow {
   status: string;
   kind: string;
   info: Record<string, unknown>;
+  /** #185: the list board the page reads follows `tools.kind`; the fixture board is the harness one. */
+  kind: string;
 }
 
 const tool = (slug: string, name: string, status = "active"): CatalogueRow => ({
@@ -34,6 +36,7 @@ const tool = (slug: string, name: string, status = "active"): CatalogueRow => ({
   status,
   kind: "harness",
   info: { product: { tagline: `${name} tagline` } },
+  kind: "harness",
 });
 
 const CATALOGUE: CatalogueRow[] = [

@@ -4,6 +4,7 @@ import { generateToolMetadata } from "./metadata";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { ToolDetailClient } from "./tool-detail-client";
+import { listOfTool } from "@/lib/rankings/lists";
 import { canonicalLocale } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import { findToolBySlug } from "@/lib/tools/tool-page-request";
@@ -50,9 +51,11 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
   // never rejects, so ranking data trouble shows fallback text, not a 5xx.
   // #193: related news is the same kind of read: cached, shared, never rejects.
   // #183 B-2: the model <-> harness links read is fail-soft too: `null` on failure.
+  // #185: the tool's rank, change and alternatives come from its own list's board.
+  const toolList = listOfTool((tool as Record<string, unknown>)["kind"], (tool as Record<string, unknown>)["modality"]);
   const [dict, rankingData, newsBySlug, toolLinks] = await Promise.all([
     getDictionary(lang as Locale),
-    getToolProfileRankingData(),
+    getToolProfileRankingData(toolList),
     getToolNewsBySlug(),
     getToolLinksForPage(tool.slug),
   ]);
