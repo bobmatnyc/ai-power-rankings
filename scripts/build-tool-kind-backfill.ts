@@ -18,6 +18,7 @@ import fs from "fs";
 import path from "path";
 import {
   auditToolSlugs,
+  backfillSheetRows,
   buildKindBackfillSql,
   KIND_SHEET_CONTRACT,
   parseKindSheet,
@@ -46,7 +47,9 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-fs.writeFileSync(outPath, buildKindBackfillSql(rows));
-const counts = rows.reduce<Record<string, number>>((acc, r) => ({ ...acc, [r.kind]: (acc[r.kind] ?? 0) + 1 }), {});
-console.log(`Wrote ${outPath} from ${rows.length} rows. Expected count by kind after the apply:`);
+// D91: the family rows 0018 creates are not part of 0017; the file stays as applied.
+const backfillRows = backfillSheetRows(rows, KIND_SHEET_CONTRACT);
+fs.writeFileSync(outPath, buildKindBackfillSql(backfillRows));
+const counts = backfillRows.reduce<Record<string, number>>((acc, r) => ({ ...acc, [r.kind]: (acc[r.kind] ?? 0) + 1 }), {});
+console.log(`Wrote ${outPath} from ${backfillRows.length} rows. Expected count by kind after the apply:`);
 for (const [kind, n] of Object.entries(counts).sort()) console.log(`  ${kind}: ${n}`);

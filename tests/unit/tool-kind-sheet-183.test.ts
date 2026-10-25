@@ -3,12 +3,12 @@
  *
  * Why: plan 1.8 — the reviewed sheet (`docs/refresh/tool-kind-mapping.csv`, R-1) is the
  *   only source of the 0017 backfill. The rules run against a small synthetic fixture and
- *   a fixture contract; the committed sheet runs against the real 114-row contract.
+ *   a fixture contract; the committed sheet runs against the real 118-row contract (D91).
  * What: a valid fixture passes; each rule (header, kind set, unique slugs, audit slugs,
  *   counts by kind, retired rows follow their survivor, open_weight only on models,
  *   app_builder only on the listed harnesses, subcategory pattern) has one failing row.
  *   Also: the CSV reader handles quoted commas, the real audit CSV yields 114 tools, the
- *   committed sheet passes the contract (69/15/30, seven app builders) and a one-row
+ *   committed sheet passes the contract (69/19/30, seven app builders) and a one-row
  *   drift from it is refused.
  * Test: `npx vitest run tests/unit/tool-kind-sheet-183.test.ts`. No database.
  */
@@ -20,6 +20,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   auditToolSlugs,
+  backfillSheetRows,
   buildKindBackfillSql,
   KIND_SHEET_CONTRACT,
   type KindSheetContract,
@@ -27,6 +28,7 @@ import {
   parseKindSheet,
   validateKindSheet,
 } from "../../lib/db/tool-kind-sheet";
+import { D91_FAMILY_ROWS, D91_FOLD_PAIRS } from "../../lib/db/model-families";
 
 const HEADER = "slug,kind,subcategory,open_weight,retired,survivor,confidence,note";
 // A synthetic sheet: one row per shape the real sheet has. Not real reviewed data.
@@ -42,6 +44,7 @@ const FIXTURE_CONTRACT: KindSheetContract = {
   rowCount: 6,
   kindCounts: { harness: 3, model: 2, other: 1, productivity: 0 },
   appBuilders: ["builder-a"],
+  addedSlugs: [],
 };
 const AUDIT = new Set(["harness-a", "builder-a", "model-a", "model-a-old", "other-a", "harness-a-old", "extra"]);
 
@@ -115,6 +118,13 @@ describe("#183 mapping sheet validator", () => {
     expect(problems(rows as string[]).join("\n")).toMatch(message);
   });
 
+  // D91: a row created by a later migration is exempt from the audit check, and only it.
+  it("accepts a contract's added slug that is not in the audit", () => {
+    const rows = withRow("other-a", "ghost,other,non_ai,,false,,low,");
+    expect(problems(rows, { ...FIXTURE_CONTRACT, addedSlugs: ["ghost"] })).toEqual([]);
+    expect(problems(rows, { ...FIXTURE_CONTRACT, addedSlugs: ["other-a"] }).join("\n")).toMatch(/ghost: not an active tool/);
+  });
+
   it("refuses a row count off the contract", () => {
     expect(problems(VALID_ROWS, { ...FIXTURE_CONTRACT, rowCount: 7 }).join("\n")).toMatch(/6 rows, expected 7/);
   });
@@ -131,10 +141,12 @@ function realSheetProblems(edit: (line: string) => string = (line) => line): str
 }
 
 describe("#183 the real contract and audit", () => {
-  it("the 114-row contract adds up and names the seven app builders (criterion 2, D2b)", () => {
+  // D91: 114 audit rows plus the four model family rows of migration 0018.
+  it("the 118-row contract adds up and names the seven app builders (criterion 2, D2b, D91)", () => {
     const total = Object.values(KIND_SHEET_CONTRACT.kindCounts).reduce((a, b) => a + b, 0);
     expect(total).toBe(KIND_SHEET_CONTRACT.rowCount);
-    expect(KIND_SHEET_CONTRACT.kindCounts).toEqual({ harness: 69, model: 15, other: 30, productivity: 0 });
+    expect(KIND_SHEET_CONTRACT.kindCounts).toEqual({ harness: 69, model: 19, other: 30, productivity: 0 });
+    expect(KIND_SHEET_CONTRACT.addedSlugs).toEqual(["claude-opus", "claude-sonnet", "glm", "kimi"]);
     expect([...KIND_SHEET_CONTRACT.appBuilders].sort()).toEqual([
       "bolt-new",
       "claude-artifacts",
@@ -151,14 +163,22 @@ describe("#183 the real contract and audit", () => {
     const kinds = new Map(parseKindSheet(REAL_SHEET).rows.map((r) => [r.slug, [r.kind, r.subcategory, r.retired]]));
     for (const slug of ["crossbeam", "infosys-topaz", "nova-act"]) expect(kinds.get(slug)?.[0]).toBe("other");
     expect(kinds.get("flint")).toEqual(["harness", "app_builder", false]);
-    for (const slug of ["opus-4-6", "sonnet-4-5", "glm-5-0", "kimi-2-5"]) expect(kinds.get(slug)).toEqual(["model", null, false]);
+    // D91: the seven per-version rows are retired into their family rows, which are live.
+    const rows = new Map(parseKindSheet(REAL_SHEET).rows.map((r) => [r.slug, r]));
+    for (const { oldSlug, newSlug } of D91_FOLD_PAIRS) {
+      expect([oldSlug, rows.get(oldSlug)?.kind, rows.get(oldSlug)?.retired, rows.get(oldSlug)?.survivor]).toEqual([oldSlug, "model", true, newSlug]);
+    }
+    for (const family of D91_FAMILY_ROWS) {
+      expect([family.slug, ...kinds.get(family.slug)!, rows.get(family.slug)?.openWeight]).toEqual([family.slug, "model", null, false, family.openWeight]);
+    }
+    expect(backfillSheetRows(parseKindSheet(REAL_SHEET).rows, KIND_SHEET_CONTRACT)).toHaveLength(114);
   });
 
   it.each([
     ["a harness moved to other", (l: string) => (l.startsWith("aider,") ? "aider,other,non_ai,,false,,normal," : l), /kind harness: 68 rows, expected 69/],
     ["flint without app_builder", (l: string) => (l.startsWith("flint,") ? "flint,harness,,,false,,normal," : l), /flint: app builder must be/],
     ["an eighth app builder", (l: string) => (l.startsWith("cursor,") ? "cursor,harness,app_builder,,false,,normal," : l), /cursor: app_builder outside the 7/],
-    ["a dropped row", (l: string) => (l.startsWith("zed,") ? "" : l), /113 rows, expected 114/],
+    ["a dropped row", (l: string) => (l.startsWith("zed,") ? "" : l), /117 rows, expected 118/],
   ])("refuses the committed sheet with %s", (_name, edit, message) => {
     expect(realSheetProblems(edit).join("\n")).toMatch(message);
   });
@@ -216,7 +236,7 @@ describe("#183 the 0017 builder", () => {
     const dir = mkdtempSync(path.join(tmpdir(), "kind-sheet-183-"));
     const sheetPath = path.join(dir, "sheet.csv");
     const outPath = path.join(dir, "0017_backfill_tool_kind.sql");
-    writeFileSync(sheetPath, sheet(VALID_ROWS)); // 6 rows, off the 114-row contract
+    writeFileSync(sheetPath, sheet(VALID_ROWS)); // 6 rows, off the 118-row contract
     const root = path.resolve(__dirname, "../..");
     const result = spawnSync(
       path.join(root, "node_modules/.bin/tsx"),
@@ -225,7 +245,7 @@ describe("#183 the 0017 builder", () => {
     );
     expect(result.status).toBe(1);
     expect(result.stderr).toContain("Refusing to build 0017_backfill_tool_kind.sql");
-    expect(result.stderr).toContain("6 rows, expected 114");
+    expect(result.stderr).toContain("6 rows, expected 118"); // D91: the contract is 118 rows
     expect(existsSync(outPath)).toBe(false);
   });
 });

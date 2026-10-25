@@ -17,6 +17,8 @@ clacky-ai,harness,,,false,,normal,
 claude-artifacts,harness,app_builder,,false,,normal,D2b: app builder ranked under harnesses. Ambiguous (productivity by name).
 claude-code,harness,autonomous_agent,,false,,normal,"Harness with native models opus-4-6, sonnet-4-5 (D29)."
 claude-desktop-extensions,harness,autonomous_agent,,false,,normal,Ambiguous (productivity by name). Kept harness per audit.
+claude-opus,model,,false,false,,normal,"D91: family entity (migration 0018); opus-4-6 and opus-4-5 fold into it. open_weight from survivor opus-4-6: no weights offered."
+claude-sonnet,model,,false,false,,normal,"D91: family entity (migration 0018); sonnet-4-5 folds into it. open_weight from survivor sonnet-4-5: no weights offered."
 clawdbot,harness,,,true,openclaw,normal,"Retired. Merge into openclaw confirmed 2026-10-24: earlier name of the same project (see openclaw row). B-series item openclaw-lineage-merge-and-description-fix (plan B-5): one data change: the merge of clawdbot and moltbot into openclaw, plus the description fix (project joined no acquirer; it moved to the OpenClaw Foundation). Plan record only."
 cline,harness,open_source_framework,,false,,normal,
 code-review-bench,other,benchmark,,false,,normal,
@@ -45,7 +47,8 @@ gemini-code-assist,harness,ide_assistant,,false,,normal,
 github-copilot,harness,ide_assistant,,false,,normal,"Harness that also sells models; no model profile exists, none invented."
 gitlab-duo,harness,,,false,,normal,
 gitlab-duo-agent-platform,harness,,,false,,normal,
-glm-5-0,model,,true,false,,normal,"Model card: license mit; 744B total, 40B active."
+glm,model,,true,false,,normal,"D91: family entity (migration 0018); glm-5-0 and zhipu-glm-5-0 fold into it. open_weight and licence (mit) from survivor glm-5-0."
+glm-5-0,model,,true,true,glm,normal,"Model card: license mit; 744B total, 40B active."
 google-gemini-cli,harness,open_source_framework,,false,,normal,
 google-jules,harness,autonomous_agent,,false,,normal,
 google-maps-ai-code-generation-agent,harness,,,false,,normal,
@@ -59,7 +62,8 @@ infosys-topaz,other,non_ai,,false,,normal,"Confidence: medium. Infosys describes
 jetbrains-ai,harness,ide_assistant,,false,,normal,
 junie,harness,ide_assistant,,false,,normal,"Confidence: high. Junie by JetBrains: coding agent in JetBrains IDEs, plus a CLI and GitHub/GitLab CI integrations; any model or BYOK. Same subcategory as jetbrains-ai."
 kilocode,harness,ide_assistant,,false,,normal,
-kimi-2-5,model,,true,false,,normal,"Model card: weights and code under Modified MIT; 1T total, 32B active. Modification clause text not read."
+kimi,model,,true,false,,normal,"D91: family entity (migration 0018); kimi-2-5 and moonshot-kimi-2-5 fold into it. open_weight and licence (Modified MIT) from survivor kimi-2-5."
+kimi-2-5,model,,true,true,kimi,normal,"Model card: weights and code under Modified MIT; 1T total, 32B active. Modification clause text not read."
 kiro,harness,proprietary_ide,,false,,normal,
 launchdarkly,other,non_ai,,false,,normal,
 lovable,harness,app_builder,,false,,normal,
@@ -69,7 +73,7 @@ model-context-protocol,other,protocol,,false,,normal,"Protocol, not a tool. Audi
 model-context-protocol-mcp-,other,protocol,,true,model-context-protocol,normal,
 moltbook,other,non_ai,,false,,normal,
 moltbot,harness,,,true,openclaw,normal,"Retired. Merge into openclaw confirmed 2026-10-24: earlier name of the same project (see openclaw row). B-series item openclaw-lineage-merge-and-description-fix (plan B-5): one data change: the merge of clawdbot and moltbot into openclaw, plus the description fix (project joined no acquirer; it moved to the OpenClaw Foundation). Plan record only."
-moonshot-kimi-2-5,model,,true,true,kimi-2-5,normal,"Retired duplicate; open_weight inherited from survivor kimi-2-5. Model card: weights and code under Modified MIT; 1T total, 32B active. Modification clause text not read."
+moonshot-kimi-2-5,model,,true,true,kimi,normal,"Retired duplicate; open_weight inherited from survivor kimi-2-5. Model card: weights and code under Modified MIT; 1T total, 32B active. Modification clause text not read."
 nano-banana-pro,model,,false,false,,normal,Image model. Noindex. Keep off coding-model list (Q-A6). Nano Banana Pro = gemini-3-pro-image; docs describe Gemini API and AI Studio access only. Image model.
 nova-act,other,non_ai,,false,,normal,"Confidence: medium. Amazon Nova Act: AWS service and Apache-2.0 Python SDK for agents that automate browser UI workflows. Identity is certain; the kind is a judgement, since it automates the browser, not coding. Changed from harness. Note other/non_ai rows are noindexed in #197. Kind pending D3c."
 openai-codex,harness,autonomous_agent,,false,,normal,Ambiguous: live description calls it an AI model (legacy Codex). Audit and plan keep it a harness; not merged with openai-codex-cli. No GPT model exists in the catalog to link.
@@ -78,8 +82,8 @@ openai-reinforcement-fine-tuning,other,non_ai,,false,,low,Low confidence in audi
 openclaw,harness,autonomous_agent,,false,,normal,"Survivor of clawdbot and moltbot. Lineage confirmed 2026-10-24: one project renamed Clawd/Clawdbot (2025-11) to Moltbot (2026-01-27) to OpenClaw (2026-01-30); Anthropic asked for the first rename over trademark. Same repo and creator (Peter Steinberger); not forks. Steinberger joined OpenAI in Feb 2026; the project moved to the independent OpenClaw Foundation (not an acquisition). Moltbook (separate project, Matt Schlicht) is not part of the lineage. Sources: docs.openclaw.ai/start/lore, steipete.me/posts/2026/openclaw. B-series item openclaw-lineage-merge-and-description-fix (plan B-5): one data change: the merge of clawdbot and moltbot into openclaw, plus the description fix (project joined no acquirer; it moved to the OpenClaw Foundation). Plan record only."
 openhands,harness,open_source_framework,,false,,normal,
 openrouter,other,non_ai,,false,,low,Model router; low confidence. Not a coding tool.
-opus-4-5,model,,false,true,opus-4-6,normal,"Retired duplicate; open_weight inherited from survivor opus-4-6. Docs list Claude models as API and cloud-platform models; no weights offered. Absence of a weights page, not an explicit closed-weights statement."
-opus-4-6,model,,false,false,,normal,"Survivor of opus-4-5 (versioning: per version or one family needs owner confirmation). Docs list Claude models as API and cloud-platform models; no weights offered. Absence of a weights page, not an explicit closed-weights statement. D38: model lines become one family entity (claude-opus); per-version slugs 308 to the family. Pending B-5 family entity; not expressible until claude-opus exists in the sheet and audit."
+opus-4-5,model,,false,true,claude-opus,normal,"Retired duplicate; open_weight inherited from survivor opus-4-6. Docs list Claude models as API and cloud-platform models; no weights offered. Absence of a weights page, not an explicit closed-weights statement."
+opus-4-6,model,,false,true,claude-opus,normal,"Survivor of opus-4-5 (versioning: per version or one family needs owner confirmation). Docs list Claude models as API and cloud-platform models; no weights offered. Absence of a weights page, not an explicit closed-weights statement. D38: model lines become one family entity (claude-opus); per-version slugs 308 to the family. Pending B-5 family entity; not expressible until claude-opus exists in the sheet and audit."
 perplexity,other,non_ai,,false,,low,Ambiguous: audit non-ai (low). Earlier proposal said productivity; no productivity kind in the schema. Chose other/non_ai; Architect 2026-10-24: stays other/non_ai unless Bob raises it.
 qoder,harness,code_editor,,false,,normal,
 qodo-gen,harness,testing_tool,,false,,normal,
@@ -95,7 +99,7 @@ semrush,other,non_ai,,false,,normal,
 shell-tool,other,non_ai,,false,,normal,
 snowflake-cortex-code,harness,,,false,,normal,
 snyk-code,harness,security,,false,,normal,
-sonnet-4-5,model,,false,false,,normal,Same basis as opus-4-6. Sonnet 4.5 is not on the current overview page; model ID claude-sonnet-4-5 appears in https://code.claude.com/docs/en/model-config.
+sonnet-4-5,model,,false,true,claude-sonnet,normal,Same basis as opus-4-6. Sonnet 4.5 is not on the current overview page; model ID claude-sonnet-4-5 appears in https://code.claude.com/docs/en/model-config.
 sourcegraph-cody,harness,ide_assistant,,false,,normal,
 sourcery,harness,code_review,,false,,normal,
 split,other,non_ai,,false,,normal,
@@ -112,4 +116,4 @@ wabi,harness,app_builder,,false,,normal,
 warp,harness,autonomous_agent,,false,,normal,
 windsurf,harness,code_editor,,false,,normal,
 zed,harness,code_editor,,false,,normal,
-zhipu-glm-5-0,model,,true,true,glm-5-0,normal,"Retired duplicate; open_weight inherited from survivor glm-5-0. Model card: license mit; 744B total, 40B active."
+zhipu-glm-5-0,model,,true,true,glm,normal,"Retired duplicate; open_weight inherited from survivor glm-5-0. Model card: license mit; 744B total, 40B active."

@@ -48,6 +48,8 @@ export interface KindSheetContract {
   kindCounts: Readonly<Record<ToolKind, number>>;
   /** The only slugs allowed `subcategory = 'app_builder'`; each must be a harness. */
   appBuilders: readonly string[];
+  /** D91: rows created by a later migration, so absent from the #177 audit; never in 0017. */
+  addedSlugs: readonly string[];
 }
 
 /**
@@ -55,13 +57,20 @@ export interface KindSheetContract {
  * (66 survivors, 3 retired), model 15 (9 survivors, 6 retired), other 30 (29 survivors,
  * 1 retired protocol row), as the reviewed sheet holds them. D3c: crossbeam, infosys-topaz
  * and nova-act are other. Architect 2026-10-24: flint stays a harness app builder, so
- * there are seven app builders.
+ * there are seven app builders. D91: four model family rows (migration 0018) join the
+ * sheet, so 118 rows and 19 models; the seven per-version rows they replace are retired.
  */
 export const KIND_SHEET_CONTRACT: KindSheetContract = {
-  rowCount: 114,
-  kindCounts: { harness: 69, model: 15, other: 30, productivity: 0 },
+  rowCount: 118,
+  kindCounts: { harness: 69, model: 19, other: 30, productivity: 0 },
   appBuilders: ["bolt-new", "claude-artifacts", "flint", "lovable", "rocket-new", "v0-vercel", "wabi"],
+  addedSlugs: ["claude-opus", "claude-sonnet", "glm", "kimi"],
 };
+
+/** D91: the sheet rows 0017 was built from: every row except the contract's added slugs. */
+export function backfillSheetRows(rows: readonly KindSheetRow[], contract: KindSheetContract): KindSheetRow[] {
+  return rows.filter((row) => !contract.addedSlugs.includes(row.slug));
+}
 
 /** RFC 4180 CSV: quoted fields may hold commas, `""` and newlines. Throws on an open quote. */
 export function parseCsv(text: string): string[][] {
@@ -179,7 +188,10 @@ export function validateKindSheet(
   }
 
   for (const row of rows) {
-    if (!auditSlugs.has(row.slug)) errors.push(`${row.slug}: not an active tool in the audit`);
+    // D91: a row a later migration created is not in the audit.
+    if (!auditSlugs.has(row.slug) && !contract.addedSlugs.includes(row.slug)) {
+      errors.push(`${row.slug}: not an active tool in the audit`);
+    }
     if (row.subcategory !== null && !SUBCATEGORY_PATTERN.test(row.subcategory)) {
       errors.push(`${row.slug}: subcategory ${JSON.stringify(row.subcategory)} must match ${SUBCATEGORY_PATTERN}`);
     }

@@ -206,6 +206,19 @@ describe("noindex rows", () => {
     const { generateToolMetadata } = await import("../../app/[lang]/tools/[slug]/metadata");
     expect((await generateToolMetadata("cline", "en")).robots).toMatchObject({ index: true });
   });
+
+  // D91: an inactive row (a family row before 0019) is noindex; active and redirect rows
+  // keep the index they had, so a retired row stays indexed until its 308 ships.
+  it.each([
+    ["claude-opus", "inactive", false],
+    ["glm", "active", true],
+    ["opus-4-6", "redirect", true],
+    ["legacy-tool", "deprecated", true],
+  ])("a %s row with status %s is indexable: %s", async (slug, status, indexable) => {
+    findToolBySlug.mockResolvedValue({ id: "1", slug, name: slug, category: "other", status, info: {} });
+    const { generateToolMetadata } = await import("../../app/[lang]/tools/[slug]/metadata");
+    expect((await generateToolMetadata(slug, "en")).robots).toMatchObject({ index: indexable });
+  });
 });
 
 describe("sitemap", () => {
