@@ -9,8 +9,19 @@ data source.
 
 Source: `app/api/rankings/route.ts`
 
-No query parameters. Returns the current rankings snapshot with resolved
-tool details.
+Returns one list's current board with resolved tool details (#186).
+
+| Parameter | Values | Default |
+|---|---|---|
+| `list` (alias `kind`) | `harness`, `model`, `productivity`, or the slugs `coding-harnesses`, `models`, `productivity-tools` | `harness` |
+
+An unknown list is a 400 whose body lists the valid ones. Every response
+names its `list` and carries `list_meta` (`entry_count`, `indexable`,
+`tier_scheme`, `provisional_note`) and `list_source` (`list` when the list
+has its own current row, `combined` when the legacy board was split by
+list). Ranks, `previousRank`, `rankChange` and `tier` are counted within the
+list; a list below 10 entries uses S/A/B tiers by thirds. Rules:
+`lib/rankings/lists.ts`.
 
 In `NODE_ENV=test`, this route returns mock data from
 `lib/test-utils/mock-rankings` instead of querying the database.
