@@ -65,7 +65,7 @@ The article ingestion system is operational as of 2026-03-28. Recent articles ha
 ### 4. Environment Configuration Status ✅
 
 **Production Environment Variables** (from `.env.production.local`):
-- ✅ `TAVILY_API_KEY`: Set (`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`)
+- ✅ `TAVILY_API_KEY`: Set (`tvly-REDACTED`)
 - ✅ `CRON_SECRET`: Set (`cron-secret-aipowerranking-2026-v2-a65HfuSHbwxkXkhn`)
 - ✅ `OPENROUTER_API_KEY`: Set
 - ⚠️ `DATABASE_URL`: Empty in snapshot (likely managed via Vercel integration)

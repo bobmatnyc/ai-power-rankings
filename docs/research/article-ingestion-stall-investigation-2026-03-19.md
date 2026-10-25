@@ -91,7 +91,7 @@ if (!useTavily && !useBrave) {
 - `DATABASE_URL`: Set
 
 ### `.env.production.local` (production snapshot pulled via Vercel CLI):
-- `TAVILY_API_KEY`: **SET** — `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`
+- `TAVILY_API_KEY`: **SET** — `tvly-REDACTED`
 - `BRAVE_SEARCH_API_KEY`: **SET** — `BSAQQh-MpVe_EZlRV8yQgiw88BfCZms`
 - `CRON_SECRET`: **SET** — `cron-secret-aipowerranking-2026-v2-a65HfuSHbwxkXkhn`
 - `OPENROUTER_API_KEY`: Set
@@ -164,7 +164,7 @@ If `CRON_SECRET` is missing from Vercel's environment variables for production, 
 
 ### Secondary Cause: TAVILY_API_KEY quota/expiry
 
-`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` is set in the production env snapshot. However, Tavily API keys can hit monthly quota limits (the free tier caps at 1,000 calls/month; even paid tiers can exhaust). If the key expired or quota was exhausted, `TavilySearchService.isConfigured()` would return `true` but all search calls would return 401/429 errors. The pipeline would then also check `BraveSearchService.isAvailable()` — Brave key is set in `.env.production.local` so it should fall back. Unless Brave Search API key also expired/was removed from the live Vercel env.
+`tvly-REDACTED` is set in the production env snapshot. However, Tavily API keys can hit monthly quota limits (the free tier caps at 1,000 calls/month; even paid tiers can exhaust). If the key expired or quota was exhausted, `TavilySearchService.isConfigured()` would return `true` but all search calls would return 401/429 errors. The pipeline would then also check `BraveSearchService.isAvailable()` — Brave key is set in `.env.production.local` so it should fall back. Unless Brave Search API key also expired/was removed from the live Vercel env.
 
 ### Tertiary Cause: maxDuration timeout
 
@@ -184,7 +184,7 @@ The cron route sets `maxDuration = 800` (800 seconds = ~13 min). Vercel Pro plan
 
 ### Verify TAVILY_API_KEY quota
 
-1. Log into https://app.tavily.com and check usage/quota for `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`.
+1. Log into https://app.tavily.com and check usage/quota for `tvly-REDACTED`.
 2. If exhausted, upgrade plan or rotate key and update in Vercel.
 
 ### Test the pipeline directly (bypasses auth)
@@ -217,7 +217,7 @@ If it returns 200 with `articlesIngested: 0`, the pipeline ran but found nothing
 | Auth mechanism | Bearer token only | `Authorization: Bearer <CRON_SECRET>` |
 | Auth check file/line | `app/api/cron/daily-news/route.ts` lines 35–50 | `isAuthorizedCronRequest()` |
 | TAVILY_API_KEY in .env.local | NOT SET | Local dev only; production has it |
-| TAVILY_API_KEY in production | SET | `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` |
+| TAVILY_API_KEY in production | SET | `tvly-REDACTED` |
 | CRON_SECRET in .env.local | NOT SET | Not needed for local dev |
 | CRON_SECRET in production | SET in snapshot | Must be confirmed in live Vercel dashboard |
 | Manual trigger script | Available | `scripts/trigger-ingestion.ts` |
