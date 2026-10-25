@@ -229,7 +229,7 @@ describe("measureBoard D45 gate (#185)", () => {
   });
 
   it("counts tools by kind", () => {
-    expect(measure(mixedBoard()).candidate!.kindCounts).toEqual({ harness: 12, model: 16, other: 1 });
+    expect(measure(mixedBoard()).candidate!.kindCounts).toEqual({ harness: 12, model: 16, productivity: 1 });
   });
 });
 
