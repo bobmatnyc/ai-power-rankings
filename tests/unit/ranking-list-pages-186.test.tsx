@@ -137,9 +137,32 @@ describe("list page metadata (#186)", () => {
     expect(metadata.robots).toEqual({ index: false, follow: true });
   });
 
-  it("a failed read adds no robots tag, so an outage never de-indexes a page", async () => {
-    fetchMock.mockImplementationOnce(async () => new Response("down", { status: 503 }));
-    expect((await listMetadata("en", "models")).robots).toBeUndefined();
+  // #186 review: an unknown list size fails closed, so a thin list never renders indexable.
+  describe("an unknown list size is noindex", () => {
+    const NOINDEX = { index: false, follow: true };
+    const arms: Array<[string, () => void]> = [
+      ["a non-OK response", () => fetchMock.mockImplementationOnce(async () => new Response("down", { status: 503 }))],
+      [
+        "a thrown read",
+        () =>
+          fetchMock.mockImplementationOnce(async () => {
+            throw new TypeError("fetch failed");
+          }),
+      ],
+    ];
+
+    it.each(arms)("on /rankings/models after %s", async (_label, arrange) => {
+      counts["model"] = 3;
+      arrange();
+      expect((await listMetadata("en", "models")).robots).toEqual(NOINDEX);
+    });
+
+    it.each(arms)("on the default /rankings board after %s", async (_label, arrange) => {
+      arrange();
+      const mod = await import("../../app/[lang]/rankings/page");
+      const metadata = (await mod.generateMetadata(params({ lang: "en" }))) as Meta;
+      expect(metadata.robots).toEqual(NOINDEX);
+    });
   });
 
   it("an unknown slug is a 404", async () => {

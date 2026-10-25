@@ -22,7 +22,17 @@ import { parseRankingListParam, RANKING_LISTS, rankingListMeta } from "@/lib/ran
 export async function GET(request?: Request): Promise<NextResponse> {
   // #186: D51 — an absent list parameter means the coding-harness board.
   const params = request ? new URL(request.url).searchParams : null;
-  const parsed = parseRankingListParam(params?.get("list") ?? params?.get("kind"));
+  const rawList = params?.get("list") ?? null;
+  const rawKind = params?.get("kind") ?? null;
+  const parsed = parseRankingListParam(rawList ?? rawKind);
+  // #186: a present-but-empty list, or list and kind naming different lists, is an error, never the default.
+  const kindParsed = rawList !== null && rawKind !== null ? parseRankingListParam(rawKind) : null;
+  if ((rawList ?? rawKind)?.trim() === "" || (kindParsed && (!kindParsed.ok || (parsed.ok && kindParsed.list !== parsed.list)))) {
+    return NextResponse.json(
+      { error: "Unknown list", message: "list must name one list, and agree with kind when both are given", lists: [...RANKING_LISTS] },
+      { status: 400 }
+    );
+  }
   if (!parsed.ok) {
     return NextResponse.json(
       { error: "Unknown list", message: parsed.error, lists: [...RANKING_LISTS] },

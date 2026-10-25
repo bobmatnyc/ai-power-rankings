@@ -235,6 +235,21 @@ describe("GET /api/rankings (#186)", () => {
     expect(body.rankings).toBeUndefined();
   });
 
+  it.each(["?list=", "?kind=", "?list=model&kind=harness", "?list=models&kind=bogus"])(
+    "%s is a 400, never a silent default",
+    async (query) => {
+      const { status, body } = await get(query);
+      expect(status).toBe(400);
+      expect(body.rankings).toBeUndefined();
+    }
+  );
+
+  it("list and kind may both be given when they agree", async () => {
+    const { status, body } = await get("?list=models&kind=model");
+    expect(status).toBe(200);
+    expect(body.list).toBe("model");
+  });
+
   it("D53: list_meta reports 9 models as noindex and 10 as indexed", async () => {
     expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 9, indexable: false, tier_scheme: "thirds" });
     current.rows = { combined: combinedRow([...ALL, EXTRA_MODEL]) };

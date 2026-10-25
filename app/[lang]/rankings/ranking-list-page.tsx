@@ -32,8 +32,9 @@ import { siteOrigin } from "@/lib/site-origin";
  * What: `rankingListMetadata()` builds the title, description, Open Graph image and
  *   the localized canonical and hreflang for the list's canonical path
  *   (`rankingListPath()`), and adds `robots: noindex` when `/api/rankings` reports the
- *   list below 10 entries (D53). An unknown entry count (a failed read) adds no
- *   robots tag, so a transient error never de-indexes a page. `RankingListPage`
+ *   list below 10 entries (D53). An unknown entry count (a non-OK or thrown read,
+ *   or a response without `list_meta`) is noindex as well, on every list including
+ *   `/rankings`: a thin list must never render indexable. `RankingListPage`
  *   renders the list navigation, the D54 provisional note for productivity, the
  *   D53 short-list note, and the grid seeded with the list's rows.
  *   The rankings fetch keeps `getUrl()`, which must reach this deployment's own API
@@ -148,8 +149,9 @@ export async function rankingListMetadata(lang: string, list: RankingList): Prom
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
     // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
     alternates,
-    // #186: D53 — a list below 10 entries is noindex; an unknown count adds nothing.
-    ...(meta && !meta.indexable ? { robots: { index: false, follow: true } } : {}),
+    // #186: D53 — a list below 10 entries is noindex. An unknown count (failed or
+    // thrown read, or no list_meta) is noindex too: fail closed, for every list.
+    ...(meta?.indexable === true ? {} : { robots: { index: false, follow: true } }),
   };
 }
 
