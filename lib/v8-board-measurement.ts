@@ -16,7 +16,8 @@
  *   and shift statistics. The D45 gate ranks harness tools within the harness
  *   list (basis D2e); global rank shift and the models-only rank shift (model
  *   rank within the model list) are information only. Baseline positions are the published
- *   ranks renumbered within each list; candidate ties rank in `tool_id` order. Engine console output, which names tools,
+ *   ranks renumbered within each list; candidate ties rank by published v7.10
+ *   position (D8f, `v8TieOrder()`). Engine console output, which names tools,
  *   is swallowed while it runs and only counted.
  *   The harness list leaves out tools the kind sheet marks retired, and the
  *   result lists active tools missing from the sheet (ruling 12:33Z).
@@ -36,6 +37,7 @@ import {
   type RankingEntry,
   type RankingSourceTool,
 } from "./services/ranking-generation.service";
+import { v8TieOrder } from "./v8-tie-order";
 
 /** A scored tool row plus its `tools.kind`. */
 export interface MeasuredTool extends RankingSourceTool {
@@ -413,11 +415,6 @@ function harnessGaps(harnessBase: RankingEntry[]): CandidateMeasurement["harness
   };
 }
 
-/** #185: tools in `tool_id` order, so equal candidate scores rank the same way every run. */
-function byToolId(tools: MeasuredTool[]): MeasuredTool[] {
-  return [...tools].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-}
-
 /** #185: renumber `ids` 1..n in their published order (ties keep the published order, never the read order). */
 function publishedOrder(ids: string[], published: Map<string, number>): Map<string, number> {
   const ordered = [...ids].sort((a, b) => published.get(a)! - published.get(b)!);
@@ -429,9 +426,11 @@ function withinList(
   list: MeasuredTool[],
   date: Date,
   before: Map<string, number>,
-  scoring: RankingWeightsV76 | KindWeightRouting
+  scoring: RankingWeightsV76 | KindWeightRouting,
+  v710: Map<string, number>
 ) {
-  const after = rankMap(computeRankings(byToolId(list), new Map(), date, scoring));
+  // D8f: break v8 ties by published v7.10 position
+  const after = rankMap(computeRankings(v8TieOrder(list, v710), new Map(), date, scoring));
   const histogram = shiftHistogram(shiftsBetween(before, after, list.map((t) => t.id)));
   return { histogram, breaches: histogram.n - histogram.moved0 - histogram.moved1 - histogram.moved2 };
 }
@@ -472,7 +471,8 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
   // scores follows the unordered SELECT and is never used as the baseline.
   const pub = publishedMaps(published.rows);
   const baseRanks = publishedOrder(allIds, pub.ranks);
-  const cand = computeRankings(byToolId(tools), new Map(), date, candidate);
+  // D8f: break v8 ties by published v7.10 position
+  const cand = computeRankings(v8TieOrder(tools, pub.ranks), new Map(), date, candidate);
   const candRanks = rankMap(cand);
   const baseScores = new Map(base.map((e) => [e.tool_id, e.score]));
   const candScores = new Map(cand.map((e) => [e.tool_id, e.score]));
@@ -480,12 +480,18 @@ function measureCandidate(input: MeasureInput, base: RankingEntry[]): CandidateM
 
   // D2e: harness ranks are counted within the harness list.
   const harnessBaseRanks = publishedOrder(harnessIds, pub.ranks);
-  const d45 = withinList(harness, date, harnessBaseRanks, candidate);
-  const stress = withinList(harness, date, harnessBaseRanks, doubledDelta(baseline, candidate.route("harness").weights));
+  const d45 = withinList(harness, date, harnessBaseRanks, candidate, pub.ranks);
+  const stress = withinList(
+    harness,
+    date,
+    harnessBaseRanks,
+    doubledDelta(baseline, candidate.route("harness").weights),
+    pub.ranks
+  );
   // #185 PR-2: the model list, the same way (information only; D45 does not cover it).
   const models = kindList(tools, input.sheet, "model");
   const modelIds = models.map((t) => t.id);
-  const modelShift = withinList(models, date, publishedOrder(modelIds, pub.ranks), candidate);
+  const modelShift = withinList(models, date, publishedOrder(modelIds, pub.ranks), candidate, pub.ranks);
 
   const inPublishedOrder = [...base].sort((a, b) => baseRanks.get(a.tool_id)! - baseRanks.get(b.tool_id)!);
   const harnessBase = inPublishedOrder.filter((e) => harnessBaseRanks.has(e.tool_id));
