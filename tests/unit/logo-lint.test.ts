@@ -95,6 +95,8 @@ describe("lintLogos", () => {
     ["permitted", "public/logos/../tool-icons/v.svg"],
     ["permitted", "public/logos/./v.svg"],
     ["permitted", "/public/logos/v.svg"],
+    ["permitted", "public/logos/%2e%2e/tool-icons/v.svg"],
+    ["permitted", "public/logos/..\\tool-icons\\v.svg"],
   ])("rejects a non-normalised %s file path (%s)", (status, file) => {
     const logos = [entry({ status, file })];
     expect(validateManifest({ version: 1, logos }).join("\n")).toMatch(/not a normalised repo-relative path/);

@@ -24,6 +24,7 @@ export const REFERENCE_DIR = "data/logos/reference";
 
 const nonEmpty = z.string().trim().min(1);
 const kebab = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "must be a kebab-case slug");
+const LOGO_SEGMENT = /^[A-Za-z0-9_-][A-Za-z0-9._-]*$/;
 
 export const logoEntrySchema = z.object({
   vendor: kebab,
@@ -74,10 +75,10 @@ export function validateManifest(raw: unknown): string[] {
     if (entry.file !== null) {
       // #303: everything in public/ is served, so a mark we may not display stays out of it.
       const dir = entry.status === "permitted" ? LOGOS_DIR : REFERENCE_DIR;
-      // #303: a `..`, `./`, `//` or leading `/` passes the prefix check yet resolves elsewhere.
-      // Segment test equals `path.posix.normalize(file) !== file`; no `node:path`, since the
-      // client bundle imports this module (`permittedLogoUrl`).
-      if (entry.file.split("/").some((seg) => seg === "" || seg === "." || seg === "..")) {
+      // #303: a `..`, `./`, `//`, leading `/`, `%2e%2e` or `\` passes the prefix check yet resolves
+      // elsewhere. Allowlist each segment (first char cannot be `.`, so `.`/`..`/empty fail); no
+      // `node:path`, since the client bundle imports this module (`permittedLogoUrl`).
+      if (!entry.file.split("/").every((seg) => LOGO_SEGMENT.test(seg))) {
         errors.push(`${at}: file ${entry.file} is not a normalised repo-relative path`);
       }
       if (!entry.file.startsWith(`${dir}/`)) errors.push(`${at}: ${entry.status} file must be under ${dir}/`);
