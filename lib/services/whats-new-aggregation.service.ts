@@ -194,7 +194,9 @@ export class WhatsNewAggregationService {
             scoreUpdatedAt: tools.scoreUpdatedAt,
           })
           .from(tools)
-          .where(gte(tools.createdAt, startDate))
+          // #184: an inactive tool (e.g. a seeded open-weight model) is not public, so it must not
+          // reach the summary prompt or the change hash.
+          .where(and(eq(tools.status, "active"), gte(tools.createdAt, startDate)))
           .orderBy(desc(tools.createdAt))
           .limit(20),
 

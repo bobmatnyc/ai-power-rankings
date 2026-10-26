@@ -14,6 +14,8 @@ import path from "node:path";
 import type { PGlite } from "@electric-sql/pglite";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
+  applyOpenWeightRow,
+  planOpenWeightRow,
   type OpenWeightSeed,
   type OpenWeightSeedDb,
   parseOpenWeightSeed,
@@ -158,8 +160,26 @@ describe("#184 load-open-weight-models", () => {
     const { out, log } = lines();
     const code = await loadOpenWeightModels(db, bad, true, log);
     expect(code).toBe(1);
-    expect(out.join("\n")).toMatch(/rolled back|REFUSED/);
+    expect(out.join("\n")).toMatch(/rolled back/);
     expect(await count()).toBe(EXISTING.length);
+  });
+
+  it("write time: a value set after planning is kept, and a row that stopped qualifying fails the write", async () => {
+    const seed = seedOf({}, {});
+    const plan = await planOpenWeightRow(db, seed.models[1]!);
+    if (!plan.ok) throw new Error("plan should be ok");
+    // Another writer sets the licence between plan and write.
+    await pg.query(`UPDATE public."tools" SET licence = 'set-later' WHERE slug = 'seed-model-1'`);
+    await applyOpenWeightRow(db, seed.models[1]!, plan, seed);
+    const row = (await pg.query<Record<string, unknown>>(`SELECT licence, hf_repo FROM public."tools" WHERE slug = 'seed-model-1'`)).rows[0]!;
+    expect(row["licence"]).toBe("set-later");
+    expect(row["hf_repo"]).toBe("acme/m1");
+
+    // The row is then marked closed; the same stale plan must throw and change nothing.
+    await pg.query(`UPDATE public."tools" SET open_weight = false, hf_repo = NULL WHERE slug = 'seed-model-1'`);
+    await expect(applyOpenWeightRow(db, seed.models[1]!, plan, seed)).rejects.toThrow(/changed since planning/);
+    const after = (await pg.query<Record<string, unknown>>(`SELECT hf_repo FROM public."tools" WHERE slug = 'seed-model-1'`)).rows[0]!;
+    expect(after["hf_repo"]).toBeNull();
   });
 
   it("parses arguments: dry run by default, exclusive flags, default seed path", () => {
