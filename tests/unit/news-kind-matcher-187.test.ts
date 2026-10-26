@@ -134,19 +134,16 @@ describe("an article gets one tag per kind (#187)", () => {
     expect(await primary(article)).toBe("claude-code");
   });
 
-  it("tags both from the title when the article has no mentions", async () => {
-    expect(await tags({ title: "Claude Code now runs Claude Opus 4.6 by default" })).toEqual([
-      "claude-code:harness",
-      "claude-opus:model",
-    ]);
+  it("tags only the first title tool when the article has no mentions (#285: title-fill removed)", async () => {
+    expect(await tags({ title: "Claude Code now runs Claude Opus 4.6 by default" })).toEqual(["claude-code:harness"]);
   });
 
-  it("reads the title for a kind no mention resolves to", async () => {
+  it("still resolves the title tool for a kind no mention names, but no longer tags it (#285)", async () => {
     const article = {
       title: "Cursor adds Claude Sonnet to its model picker",
       toolMentions: [{ toolId: "t-cursor", name: "Cursor", relevance: 1 }],
     };
-    expect(await tags(article)).toEqual(["cursor:harness", "claude-sonnet:model"]);
+    expect(await tags(article)).toEqual(["cursor:harness"]);
     expect(await resolved(article)).toEqual(["cursor", "claude-sonnet"]);
   });
 
@@ -194,7 +191,10 @@ describe("the tool page groups an article under each kind's tag (#187)", () => {
           sourceName: null,
           publishedDate: at,
           createdAt: at,
-          toolMentions: [],
+          toolMentions: [
+            { name: "Claude Code", relevance: 1 },
+            { name: "Claude Opus 4.6", relevance: 0.8 },
+          ],
         },
       ],
       buildToolCatalogue(TOOLS),

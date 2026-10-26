@@ -1001,10 +1001,21 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-4ea5a68958da",
+    "version": "Unreleased",
+    "date": "2026-10-26T01:15:37.147Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "news",
+    "title": "second-kind and title-fill news tags are gated by relevance",
+    "description": "second-kind and title-fill news tags are gated by relevance. `articleToolTags` (`lib/news-tool-resolver.ts`) tagged the best mention of each other tool kind whatever its relevance, and filled a kind from the title with no relevance at all, so a passing mention or a headline word produced a tag. A second-kind tag now needs a stored mention relevance of at least `SECOND_KIND_TAG_MIN_RELEVANCE` (0.5); a title match no longer adds a tag. The primary tag and `resolveArticleTools` are unchanged. Display only: no ranking score reads these tags. Tests: `tests/unit/news-tag-relevance-285.test.ts`, `tests/unit/news-kind-matcher-187.test.ts` (#285)",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-a7962f4a17c3",
     "version": "Unreleased",
-    "date": "2026-10-26T01:01:31.392Z",
-    "dateSource": "build",
+    "date": "2026-10-26T01:11:41.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "ci",
     "title": "npm run gate:local also runs npm run build:next (next build alone, so no tracked file is regenerated) and reports it as…",

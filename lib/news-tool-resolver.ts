@@ -199,6 +199,13 @@ export function resolveArticleTools<T extends CatalogueTool>(
 }
 
 /**
+ * Lowest stored mention `relevance` (0..1) at which a tool of a second kind is
+ * tagged on an article (#285). Display only: no ranking score reads it.
+ * The primary tag keeps its own rule (the top-relevance mention) and ignores it.
+ */
+export const SECOND_KIND_TAG_MIN_RELEVANCE = 0.5;
+
+/**
  * The article's tags: at most one catalogue tool per kind, primary first (#187).
  *
  * Why: an article about a harness running a model ("Claude Code now runs
@@ -209,12 +216,14 @@ export function resolveArticleTools<T extends CatalogueTool>(
  *    tagged to nothing.
  * 2. The primary tool tags its own kind.
  * 3. Each other kind is tagged by its highest-relevance resolved mention
- *    (stored order breaks a tie); a kind no mention resolves to is tagged by
- *    its first catalogue name in the title, by the title rule above.
+ *    (stored order breaks a tie) whose relevance is at least
+ *    `SECOND_KIND_TAG_MIN_RELEVANCE` (#285). A title match has no relevance
+ *    basis, so it adds no tag (#285; #187 added title-fill tags).
  *
  * Every tag is an active row and carries `kind`. Kind "other" rows are tagged
  * like any other kind; issue #187 does not exclude them.
- * Test: `tests/unit/news-kind-matcher-187.test.ts`.
+ * Test: `tests/unit/news-kind-matcher-187.test.ts`,
+ * `tests/unit/news-tag-relevance-285.test.ts`.
  */
 export function articleToolTags<T extends CatalogueTool>(
   article: { title?: unknown; toolMentions?: unknown },
@@ -231,12 +240,13 @@ export function articleToolTags<T extends CatalogueTool>(
   const stored = Array.isArray(article.toolMentions) ? article.toolMentions : [];
   stored
     .map((m, order) => ({ tool: resolveMention(readMention(m), catalogue), relevance: readRelevance(m), order }))
+    // #285: a second-kind tag needs a stored relevance at or above the threshold; a weak or unscored mention tags nothing.
+    .filter(({ relevance }) => relevance >= SECOND_KIND_TAG_MIN_RELEVANCE)
     .sort((a, b) => b.relevance - a.relevance || a.order - b.order)
     .forEach(({ tool }) => add(tool));
 
-  if (typeof article.title === "string") {
-    for (const tool of matchTitle(article.title, catalogue)) add(tool);
-  }
+  // #285: a title match carries no relevance, so it can no longer add a second-kind tag. Only the primary
+  // tool (`primaryArticleTool`) still falls back to the title, when an article has no mentions.
   return tags;
 }
 
