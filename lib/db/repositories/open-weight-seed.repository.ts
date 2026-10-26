@@ -14,7 +14,7 @@
  * Test: `tests/unit/open-weight-seed-184.test.ts`
  */
 
-import { eq, sql } from "drizzle-orm";
+import { and, type AnyColumn, eq, isNull, or, sql } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import { isValidRepoId } from "../../metrics-collectors/huggingface";
 import { tools } from "../schema";
@@ -179,12 +179,24 @@ export async function applyOpenWeightRow(
     });
     return;
   }
-  await db
+  // #184: planning ran earlier, so re-check at write time. Each column is COALESCE(column, value),
+  // which never overwrites a value set since the plan, and the WHERE re-checks kind and
+  // open_weight; a row that no longer qualifies matches nothing and the write throws.
+  const fills: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(plan.patch)) {
+    if (key === "openWeight") fills[key] = sql`COALESCE(${tools.openWeight}, true)`;
+    else fills[key] = sql`COALESCE(${(tools as unknown as Record<string, AnyColumn>)[key]}, ${value})`;
+  }
+  const written = await db
     .update(tools)
     .set({
-      ...plan.patch,
+      ...fills,
       data: sql`${tools.data} || ${JSON.stringify(data)}::jsonb`,
       updatedAt: sql`now()`,
     })
-    .where(eq(tools.slug, row.slug));
+    .where(
+      and(eq(tools.slug, row.slug), eq(tools.kind, "model"), or(isNull(tools.openWeight), eq(tools.openWeight, true)))
+    )
+    .returning({ id: tools.id });
+  if (written.length === 0) throw new Error(`${row.slug}: row changed since planning and is no longer an open-weight-eligible model`);
 }
