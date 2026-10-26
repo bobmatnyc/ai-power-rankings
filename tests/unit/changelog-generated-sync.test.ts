@@ -72,7 +72,7 @@ describe("parseChangelog (#231)", () => {
     "- #95 — not a change",
     "## [1.0.0] - 2026-01-02",
     "### Added",
-    "- **Bold Title**: bold description",
+    "- feat(ui): bold description",
   ].join("\n");
 
   it("keeps [Unreleased] bullets, skips nested bullets and non-change sections", () => {
