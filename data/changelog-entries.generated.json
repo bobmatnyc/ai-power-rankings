@@ -110,6 +110,17 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-7fd656d6f671",
+    "version": "Unreleased",
+    "date": "2026-10-25T23:52:06.290Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "rankings",
+    "title": "GET /api/rankings takes a required request: Request",
+    "description": "`GET /api/rankings` takes a required `request: Request`. #279 declared it `request?: Request`, which `next build` rejects as an invalid route export, so the production build failed. A request with no `list` parameter still returns the coding-harness board (D51). Tests: `tests/unit/rankings-per-list-read-186.test.ts`, `tests/unit/home-live-rankings-192.test.tsx` (#186)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-df842dd8bee7",
     "version": "Unreleased",
     "date": "2026-10-25T23:36:05.000Z",
@@ -640,8 +651,8 @@
   {
     "id": "unreleased-0daa6a3e9d91",
     "version": "Unreleased",
-    "date": "2026-10-25T23:45:36.827Z",
-    "dateSource": "build",
+    "date": "2026-10-25T23:48:52.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
     "title": "one ranking board per list: coding harnesses, models and productivity tools",

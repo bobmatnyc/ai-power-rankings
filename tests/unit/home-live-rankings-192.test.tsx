@@ -133,7 +133,7 @@ describe("home page live rankings (#192)", () => {
     // Same rows as /api/rankings returns for this snapshot.
     vi.stubEnv("NODE_ENV", "production");
     const { GET } = await import("../../app/api/rankings/route");
-    const api = await (await GET()).json();
+    const api = await (await GET(new Request("https://aipowerranking.com/api/rankings"))).json();
     expect(props.initialRankings).toEqual(api.rankings);
     expect(props.moversSnapshotDate).toBe(api.published_at);
 
