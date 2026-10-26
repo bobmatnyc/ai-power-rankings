@@ -1,22 +1,24 @@
 import { describe, expect, it } from "vitest";
 
 /**
- * #285: second-kind and title-fill news tags are gated by relevance.
+ * #285: second-kind mention tags are gated by relevance; title-fill is kept.
  *
  * Why: #187 tagged an article with the best mention of each other tool kind
- * whatever its relevance, and filled a kind from the title with no relevance at
- * all, so a passing mention or a headline word produced a tag. Display only.
- * What: a small synthetic catalogue (one harness, one model). Each case pins one
- * rule of `articleToolTags`: a second-kind mention tags only at or above
- * `SECOND_KIND_TAG_MIN_RELEVANCE`, a title match adds no tag, the primary tag
- * does not move.
+ * whatever its relevance, so a passing mention produced a tag. The owner ruled
+ * a 0.5 threshold on mention tags and kept title-fill tags. Display only.
+ * What: a small synthetic catalogue (one harness, one model, one agent). Each
+ * case pins one rule of `articleToolTags`: a second-kind mention tags only at or
+ * above `SECOND_KIND_TAG_MIN_RELEVANCE`, a title-fill tag is emitted with no
+ * relevance gate, the primary tag does not move.
  * Test: `npx vitest run tests/unit/news-tag-relevance-285.test.ts`. No DB, no network.
  */
 
 const load = () => import("../../lib/news-tool-resolver");
 
 const row = (slug: string, name: string, kind: string) => ({ id: `t-${slug}`, slug, name, kind, status: "active" });
-const TOOLS = [row("alpha-code", "Alpha Code", "harness"), row("beta-model", "Beta Model", "model")];
+const TOOLS = [row("alpha-code", "Alpha Code", "harness"), row("beta-model", "Beta Model", "model"),
+  row("gamma-agent", "Gamma Agent", "agent"),
+];
 
 async function tags(article: { title?: unknown; toolMentions?: unknown }) {
   const { buildToolCatalogue, articleToolTags } = await load();
@@ -58,15 +60,27 @@ describe("second-kind tags need a minimum relevance (#285)", () => {
   });
 });
 
-describe("title-fill tags have no relevance basis (#285)", () => {
-  it("does not tag a kind named only in the title", async () => {
+describe("title-fill tags are kept, with no relevance gate (#285)", () => {
+  it("tags a kind named only in the title", async () => {
     expect(
       await tags({ title: "Alpha Code adds Beta Model", toolMentions: [{ name: "Alpha Code", relevance: 1 }] })
-    ).toEqual(["alpha-code"]);
+    ).toEqual(["alpha-code", "beta-model"]);
   });
 
-  it("does not add a second title tool when there are no mentions", async () => {
-    expect(await tags({ title: "Alpha Code now runs Beta Model" })).toEqual(["alpha-code"]);
+  it("adds a second title tool when there are no mentions", async () => {
+    expect(await tags({ title: "Alpha Code now runs Beta Model" })).toEqual(["alpha-code", "beta-model"]);
+  });
+
+  it("emits a title-fill tag even when a below-threshold mention names another tool", async () => {
+    expect(
+      await tags({
+        title: "Alpha Code adds Gamma Agent",
+        toolMentions: [
+          { name: "Alpha Code", relevance: 1 },
+          { name: "Beta Model", relevance: 0.1 },
+        ],
+      })
+    ).toEqual(["alpha-code", "gamma-agent"]);
   });
 });
 
