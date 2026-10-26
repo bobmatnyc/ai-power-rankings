@@ -19,11 +19,12 @@ import { parseRankingListParam, RANKING_LISTS, rankingListMeta } from "@/lib/ran
  * Test: `tests/unit/api-rankings-per-list-186.test.ts`,
  *   `tests/unit/home-live-rankings-192.test.tsx`.
  */
-export async function GET(request?: Request): Promise<NextResponse> {
+// #186: Next.js route exports require a non-optional Request
+export async function GET(request: Request): Promise<NextResponse> {
   // #186: D51 — an absent list parameter means the coding-harness board.
-  const params = request ? new URL(request.url).searchParams : null;
-  const rawList = params?.get("list") ?? null;
-  const rawKind = params?.get("kind") ?? null;
+  const params = new URL(request.url).searchParams;
+  const rawList = params.get("list");
+  const rawKind = params.get("kind");
   const parsed = parseRankingListParam(rawList ?? rawKind);
   // #186: a present-but-empty list, or list and kind naming different lists, is an error, never the default.
   const kindParsed = rawList !== null && rawKind !== null ? parseRankingListParam(rawKind) : null;
