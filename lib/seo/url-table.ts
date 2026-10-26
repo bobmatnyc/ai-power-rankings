@@ -51,6 +51,7 @@ export const RESERVED_FIRST_SEGMENTS: ReadonlySet<string> = new Set([
   "sign-up",
   "data",
   "fonts",
+  "logos",
   "old-favicons",
   "partytown",
   "tool-icons",
