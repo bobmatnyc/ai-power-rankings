@@ -13,7 +13,16 @@
  * `renderData` prints the generated JSON, which `lib/data/changelog-entries.ts`
  * types and exports. No filesystem, git or clock access happens here;
  * `scripts/generate-changelog-data.ts` supplies them.
- * Test: `tests/unit/changelog-generated-sync.test.ts`.
+ * Public rule (owner ruling 2026-10-26, #303): the feed lists only content or
+ * feature changes a reader sees. An entry is public only when its
+ * conventional-commit type is in `PUBLIC_TYPES`; infrastructure, lint, tests,
+ * refactors, CI and docs, and any bullet with no recognised type, stay out
+ * (fail closed). CHANGELOG.md keeps them as the developer record.
+ * Example public: `feat(tools): tool pages list linked models`.
+ * Example not public: `chore(logos): vendor-logo infrastructure` (use
+ * `chore`, `refactor`, `test`, `ci` or `docs` for work a reader does not see).
+ * Test: `tests/unit/changelog-generated-sync.test.ts`,
+ * `tests/unit/changelog-public-filter-303.test.ts`.
  */
 
 import { createHash } from "crypto";
@@ -77,6 +86,23 @@ const SECTION_TYPES: Record<string, ChangeType> = {
 
 const TITLE_MAX = 120;
 
+/**
+ * Conventional-commit types that mark a reader-visible content or feature
+ * change. Everything else is excluded from the public feed (#303).
+ */
+export const PUBLIC_TYPES: ReadonlySet<string> = new Set(["feat", "fix", "data"]);
+
+/** The conventional-commit type of a bullet (`fix(auth): ...` gives "fix"), else null. */
+export function bulletType(text: string): string | null {
+  return /^([a-z]+)(?:\([^)]*\))?!?:\s/.exec(text)?.[1] ?? null;
+}
+
+/** True when the bullet is a reader-visible content or feature change. */
+export function isPublicBullet(text: string): boolean {
+  const type = bulletType(text);
+  return type !== null && PUBLIC_TYPES.has(type);
+}
+
 /** Lists every top-level change bullet in CHANGELOG.md, in file order. */
 export function parseChangelog(markdown: string): ParsedBullet[] {
   const bullets: ParsedBullet[] = [];
@@ -126,7 +152,7 @@ export function buildEntries(
   resolveDate: (bullet: ParsedBullet, id: string) => ResolvedDate
 ): ChangelogEntry[] {
   const seen = new Map<string, number>();
-  return bullets.map((bullet) => {
+  return bullets.filter((bullet) => isPublicBullet(bullet.text)).map((bullet) => {
     const base = entryId(bullet);
     const count = (seen.get(base) ?? 0) + 1;
     seen.set(base, count);
