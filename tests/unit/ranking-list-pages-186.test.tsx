@@ -124,10 +124,10 @@ describe("list page metadata (#186)", () => {
   });
 
   it("D53: a list of exactly 9 entries is noindex; exactly 10 is indexed", async () => {
-    counts["model"] = 9;
-    expect((await listMetadata("en", "models")).robots).toEqual({ index: false, follow: true });
-    counts["model"] = 10;
-    expect((await listMetadata("en", "models")).robots).toBeUndefined();
+    counts["productivity"] = 9;
+    expect((await listMetadata("en", "productivity-tools")).robots).toEqual({ index: false, follow: true });
+    counts["productivity"] = 10;
+    expect((await listMetadata("en", "productivity-tools")).robots).toBeUndefined();
   });
 
   it("D53 also applies to the default list on /rankings", async () => {
@@ -215,7 +215,7 @@ describe("sitemap list pages (#186, D53)", () => {
     id: `m${i}`,
     slug: `model-${i}`,
     status: "active",
-    kind: "model",
+    kind: "productivity",
     ...(modality ? { modality } : {}),
     updated_at: "2026-01-02T00:00:00.000Z",
   });
@@ -226,14 +226,13 @@ describe("sitemap list pages (#186, D53)", () => {
     return (await buildSitemapEntries(ORIGIN)).map((e) => new URL(e.url).pathname);
   }
 
-  it("lists /rankings/models in every locale with 10 active models, and not with 9", async () => {
-    // The image model does not count toward the models list (D52).
-    const nine = await paths([...Array.from({ length: 9 }, (_, i) => model(i)), model(99, "image")]);
-    expect(nine.filter((p) => p.endsWith("/rankings/models"))).toEqual([]);
+  it("lists /rankings/productivity-tools in every locale with 10 active tools, and not with 9", async () => {
+    const nine = await paths(Array.from({ length: 9 }, (_, i) => model(i)));
+    expect(nine.filter((p) => p.endsWith("/rankings/productivity-tools"))).toEqual([]);
 
     const ten = await paths(Array.from({ length: 10 }, (_, i) => model(i)));
-    expect(ten.filter((p) => p.endsWith("/rankings/models")).sort()).toEqual(
-      locales.map((l) => `/${l}/rankings/models`).sort()
+    expect(ten.filter((p) => p.endsWith("/rankings/productivity-tools")).sort()).toEqual(
+      locales.map((l) => `/${l}/rankings/productivity-tools`).sort()
     );
   });
 

@@ -13,7 +13,9 @@ import { generateRankingOGImageUrl } from "@/lib/og-utils";
 import {
   DEFAULT_RANKING_LIST,
   INDEX_MIN_ENTRIES,
+  listHasMetricsPendingNote,
   listHasProvisionalNote,
+  NOINDEX_LISTS,
   type RankingList,
   type RankingListMeta,
   RANKING_LISTS,
@@ -32,7 +34,7 @@ import { siteOrigin } from "@/lib/site-origin";
  * What: `rankingListMetadata()` builds the title, description, Open Graph image and
  *   the localized canonical and hreflang for the list's canonical path
  *   (`rankingListPath()`), and adds `robots: noindex` when `/api/rankings` reports the
- *   list below 10 entries (D53). An unknown entry count (a non-OK or thrown read,
+ *   list not indexable: below 10 entries (D53), or the models list at any size. An unknown entry count (a non-OK or thrown read,
  *   or a response without `list_meta`) is noindex as well, on every list including
  *   `/rankings`: a thin list must never render indexable. `RankingListPage`
  *   renders the list navigation, the D54 provisional note for productivity, the
@@ -151,7 +153,8 @@ export async function rankingListMetadata(lang: string, list: RankingList): Prom
     alternates,
     // #186: D53 — a list below 10 entries is noindex. An unknown count (failed or
     // thrown read, or no list_meta) is noindex too: fail closed, for every list.
-    ...(meta?.indexable === true ? {} : { robots: { index: false, follow: true } }),
+    // The models list is noindex at any size (NOINDEX_LISTS), whatever the API says.
+    ...(meta?.indexable === true && !NOINDEX_LISTS.includes(list) ? {} : { robots: { index: false, follow: true } }),
   };
 }
 
@@ -217,7 +220,13 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
           </p>
         )}
         {/* #186: D53 — a short list's tiers are S/A/B by thirds. */}
-        {meta && !meta.indexable && (
+        {/* The models list has no model metrics yet; it is noindex whatever its size. */}
+        {listHasMetricsPendingNote(list) && (
+          <p role="note" data-note="metrics-pending" className="mb-4 rounded-md border px-4 py-3 text-sm">
+            {listText.modelsMetricsPendingNote}
+          </p>
+        )}
+        {meta && meta.tier_scheme === "thirds" && (
           <p role="note" data-note="short-list" className="mb-4 text-sm text-muted-foreground">
             {listText.smallListNote.replace("{min}", String(INDEX_MIN_ENTRIES))}
           </p>

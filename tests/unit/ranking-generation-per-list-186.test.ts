@@ -101,8 +101,10 @@ describe("per-list publish (#186)", () => {
     const model = rowOf("model")!.data as Array<{ tool_id: string; rank: number }>;
     const productivity = rowOf("productivity")!.data as Array<{ tool_id: string; rank: number }>;
 
-    expect(ids(harness)).toEqual(TOOLS.slice(0, 10).map((t) => t.id));
-    expect(ids(model)).toEqual(TOOLS.slice(10, 19).map((t) => t.id));
+    // The fixture tools all tie on score, so each list ranks in slug order.
+    const bySlug = (tools: typeof TOOLS) => [...tools].sort((a, b) => (a.slug < b.slug ? -1 : 1)).map((t) => t.id);
+    expect(ids(harness)).toEqual(bySlug(TOOLS.slice(0, 10)));
+    expect(ids(model)).toEqual(bySlug(TOOLS.slice(10, 19)));
     expect(ids(productivity)).toEqual(["p1", "p2"]);
     for (const rows of [harness, model, productivity]) {
       expect(rows.map((r) => r.rank)).toEqual(rows.map((_, i) => i + 1));

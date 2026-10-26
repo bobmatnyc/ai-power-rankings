@@ -29,7 +29,7 @@
  */
 
 import { existsSync, readFileSync } from "node:fs";
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import { rankings, tools } from "@/lib/db/schema";
 import {
@@ -521,7 +521,13 @@ export function createDbPersistence(): RankingPersistencePort {
     async loadActiveTools() {
       const db = getDb();
       if (!db) throw new Error("Database connection not available");
-      const rows = await db.select().from(tools).where(eq(tools.status, "active"));
+      // Ordered by slug so tools with equal scores rank in slug order, not in the
+      // database's read order. A higher score still ranks first (computeRankings).
+      const rows = await db
+        .select()
+        .from(tools)
+        .where(eq(tools.status, "active"))
+        .orderBy(asc(tools.slug));
       return rows.map((row) => ({
         id: row.id,
         name: row.name,

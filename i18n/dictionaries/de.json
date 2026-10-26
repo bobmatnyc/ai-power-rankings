@@ -298,6 +298,7 @@
       },
       "provisionalNote": "Vorläufig: Diese Liste wird mit den Gewichten der Coding-Harnesses bewertet, bis ihr eigenes Bewertungsprofil feststeht.",
       "smallListNote": "Diese Liste hat weniger als {min} Einträge, daher sind ihre Stufen S, A und B nach Dritteln.",
+      "modelsMetricsPendingNote": "Vorläufig: Modellkennzahlen werden noch nicht erhoben, daher ist diese Reihenfolge keine Rangfolge nach Qualität.",
       "empty": "In dieser Liste ist noch kein Tool gerankt."
     }
   },
