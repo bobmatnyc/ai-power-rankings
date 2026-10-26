@@ -35,6 +35,12 @@ export interface OpenWeightSeedRow {
   priceInPerMtok: number | null;
   priceOutPerMtok: number | null;
   sourceUrl: string;
+  /** The licence tag the Hub shows; `licence` may differ where a reviewed sheet names it. */
+  hubLicence: string;
+  /** #184: Hub licence is 'other' or cc-by-nc-*; kept in the seed, text reviewed before activation. */
+  restrictedLicence: boolean;
+  licenceReview: string;
+  flagshipBasis: string;
 }
 
 export interface OpenWeightSeed {
@@ -86,9 +92,18 @@ export function parseOpenWeightSeed(jsonText: string): OpenWeightSeed {
       priceInPerMtok: num(e, "price_in_per_mtok"),
       priceOutPerMtok: num(e, "price_out_per_mtok"),
       sourceUrl: text(e, "source_url"),
+      hubLicence: text(e, "hub_licence"),
+      restrictedLicence: e["restricted_licence"] === true,
+      licenceReview: text(e, "licence_review"),
+      flagshipBasis: text(e, "flagship_basis"),
     } satisfies OpenWeightSeedRow;
   });
   return { checkedAt: text(doc, "checked_at"), sources: doc["sources"] ?? null, basis: doc["basis"] ?? null, models };
+}
+
+/** #184: the licence tags whose text has not been reviewed or that restrict use. */
+export function isRestrictedLicence(hubLicence: string): boolean {
+  return hubLicence === "other" || hubLicence.startsWith("cc-by-nc");
 }
 
 /** Returns the first problem with a row, or null. */
@@ -96,6 +111,14 @@ export function validateOpenWeightRow(row: OpenWeightSeedRow): string | null {
   if (!SLUG.test(row.slug)) return "slug must be lowercase letters, digits and hyphens";
   if (row.name === "" || row.vendor === "" || row.licence === "") return "name, vendor and licence are required";
   if (!isValidRepoId(row.hfRepo)) return "hf_repo must be owner/name";
+  if (row.hubLicence === "" || row.flagshipBasis === "") return "hub_licence and flagship_basis are required";
+  // #184: the restriction flag follows the Hub licence tag, and a restricted row awaits review.
+  if (row.restrictedLicence !== isRestrictedLicence(row.hubLicence)) {
+    return "restricted_licence must be true exactly when the Hub licence is 'other' or cc-by-nc-*";
+  }
+  if (row.licenceReview !== (row.restrictedLicence ? "pending" : "not_required")) {
+    return "licence_review must be 'pending' for a restricted row, else 'not_required'";
+  }
   if (!HTTPS.test(row.licenceUrl) || !HTTPS.test(row.sourceUrl)) return "licence_url and source_url must be https URLs";
   if (!Number.isFinite(row.parametersB) || row.parametersB <= 0) return "parameters_b must be a positive number";
   const nonNegative = [row.activeParametersB, row.priceInPerMtok, row.priceOutPerMtok];
@@ -151,6 +174,10 @@ function provenance(row: OpenWeightSeedRow, seed: Pick<OpenWeightSeed, "checkedA
       vendor: row.vendor,
       sourceUrl: row.sourceUrl,
       licenceUrl: row.licenceUrl,
+      hubLicence: row.hubLicence,
+      restrictedLicence: row.restrictedLicence,
+      licenceReview: row.licenceReview,
+      flagshipBasis: row.flagshipBasis,
       sources: seed.sources,
       basis: seed.basis,
     },

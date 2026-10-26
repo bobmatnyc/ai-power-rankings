@@ -4,7 +4,7 @@
  * Why: the seed is the reviewed source for licence, size and price of the open-weight models.
  *   The loader must be all-or-nothing, must not overwrite a reviewed value, and must create
  *   rows that no public list shows (`inactive`).
- * What: validates the committed seed file (shape, 25-ish rows, unique slugs, https sources),
+ * What: validates the committed seed file (shape, 19 family rows, unique slugs, https sources),
  *   then drives `loadOpenWeightModels` over a PGlite `tools` table at migration 0016.
  * Test: `npx vitest run tests/unit/open-weight-seed-184.test.ts`. No server, no network.
  */
@@ -38,9 +38,9 @@ function seedOf(...models: Partial<OpenWeightSeed["models"][number]>[]): OpenWei
 }
 
 describe("#184 committed seed file", () => {
-  it("has about 25 models, unique slugs, and every row passes validation", () => {
-    expect(REAL.models.length).toBeGreaterThanOrEqual(20);
-    expect(REAL.models.length).toBeLessThanOrEqual(30);
+  it("has one row per family (19), unique slugs and repos, and every row passes validation", () => {
+    expect(REAL.models).toHaveLength(19);
+    expect(new Set(REAL.models.map((m) => m.hfRepo)).size).toBe(REAL.models.length);
     expect(new Set(REAL.models.map((m) => m.slug)).size).toBe(REAL.models.length);
     for (const row of REAL.models) expect(validateOpenWeightRow(row), row.slug).toBeNull();
   });
@@ -56,6 +56,41 @@ describe("#184 committed seed file", () => {
     for (const source of Object.values(sources)) {
       expect(source.url).toMatch(/^https:\/\//);
       expect(source.terms.length).toBeGreaterThan(10);
+    }
+  });
+
+  it("uses family slugs: none is a per-version slug, none collides with a non-model row, the existing family rows are kept", () => {
+    const sheet = readFileSync(path.join(ROOT, "docs/refresh/tool-kind-mapping.csv"), "utf8").trim().split("\n").slice(1);
+    const kindBySlug = new Map(sheet.map((line) => [line.split(",")[0]!, line.split(",")[1]!]));
+    const slugs = REAL.models.map((m) => m.slug);
+    for (const slug of slugs) expect(kindBySlug.get(slug) ?? "model", slug).toBe("model");
+    for (const old of ["llama-3-3-70b", "llama-3-1-405b", "qwen3-coder-480b-a35b", "qwen2-5-coder-32b", "gpt-oss-120b", "gpt-oss-20b"]) {
+      expect(slugs).not.toContain(old);
+    }
+    for (const kept of ["glm", "kimi", "deepseek", "devstral-small-2"]) expect(slugs).toContain(kept);
+  });
+
+  it("marks exactly the 'other' and cc-by-nc rows restricted, each with a pending licence review", () => {
+    const restricted = REAL.models.filter((m) => m.restrictedLicence).map((m) => m.slug).sort();
+    expect(restricted).toEqual(["command", "falcon", "kimi", "minimax", "nemotron"]);
+    for (const row of REAL.models) {
+      expect(row.licenceReview, row.slug).toBe(row.restrictedLicence ? "pending" : "not_required");
+      expect(row.flagshipBasis, row.slug).not.toBe("");
+    }
+    const basis = REAL.basis as Record<string, string>;
+    expect(basis["restricted_licence"]).toMatch(/reviewed before activation/);
+    expect(basis["flagship_choice"]).toMatch(/newest seeded generation/);
+  });
+
+  it("no scoring or ranking code reads the Hub metrics (benchmark leaves feed no score)", () => {
+    for (const file of [
+      "lib/services/ranking-generation.service.ts",
+      "lib/scoring-profiles.ts",
+      "lib/scoring-kind-routing.ts",
+    ]) {
+      expect(readFileSync(path.join(ROOT, file), "utf8"), file).not.toMatch(
+        /toolMetricsHistory|tool_metrics_history|huggingface|benchmark:/i
+      );
     }
   });
 
@@ -77,6 +112,10 @@ describe("#184 validateOpenWeightRow", () => {
     ["negative price", { priceInPerMtok: -1 }],
     ["bad date", { releaseDate: "2026/01/01" }],
     ["empty licence", { licence: "" }],
+    ["'other' licence not marked restricted", { hubLicence: "other", restrictedLicence: false, licenceReview: "not_required" }],
+    ["restricted without pending review", { hubLicence: "other", restrictedLicence: true, licenceReview: "done" }],
+    ["permissive licence marked restricted", { hubLicence: "mit", restrictedLicence: true, licenceReview: "pending" }],
+    ["no flagship basis", { flagshipBasis: "" }],
   ])("refuses %s", (_name, patch) => {
     expect(validateOpenWeightRow({ ...ok, ...patch })).not.toBeNull();
   });
@@ -123,6 +162,17 @@ describe("#184 load-open-weight-models", () => {
       issue: 184,
       sources: { hub: "x" },
     });
+  });
+
+  it("--apply stores the restricted-licence and review-pending markers in tools.data", async () => {
+    const { log } = lines();
+    const restricted = { hubLicence: "other", restrictedLicence: true, licenceReview: "pending", licence: "other" };
+    expect(await loadOpenWeightModels(db, seedOf(restricted), true, log)).toBe(0);
+    const row = (await pg.query<{ data: { openWeightSeed: Record<string, unknown> }; status: string }>(
+      `SELECT data, status FROM public."tools" WHERE slug = 'seed-model-0'`
+    )).rows[0]!;
+    expect(row.status).toBe("inactive");
+    expect(row.data.openWeightSeed).toMatchObject({ restrictedLicence: true, licenceReview: "pending", hubLicence: "other" });
   });
 
   it("fills NULL columns of an existing model row and never overwrites a set one", async () => {
