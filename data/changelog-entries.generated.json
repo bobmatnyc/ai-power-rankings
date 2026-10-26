@@ -88,14 +88,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-b988d34c96ad",
+    "id": "unreleased-8959699f6f48",
     "version": "Unreleased",
-    "date": "2026-10-26T14:44:01.000Z",
+    "date": "2026-10-26T15:13:57.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "models",
     "title": "open-weight model seed and metrics collector (#184, folds in the model part of #95)",
-    "description": "open-weight model seed and metrics collector (#184, folds in the model part of #95). `docs/refresh/open-weight-models.json` lists 25 open-weight models with licence, size, release date, source and terms; `scripts/load-open-weight-models.ts` loads it into `tools` (dry run by default; `--apply` is one transaction; new rows are created `inactive`; existing model rows get only their NULL columns filled). `lib/metrics-collectors/huggingface.ts` reads each model's Hugging Face Hub record (licence, size, 30-day downloads, likes, community benchmark results with their own source and an `unverified` flag), and `scripts/collect-open-weight-metrics.ts` writes it to `tool_metrics_history` under the `huggingface` key plus one `metrics_collection_runs` row (dry run by default). A Hub 404 counts `not_found`; 401/403/429/5xx, a network error or a malformed body counts `failed`; neither writes a row, and an empty model set fails the run. The collector is not registered in `/api/cron/collect-metrics`, `vercel.json` or the check workflow. Tests: `tests/unit/metrics-huggingface-184.test.ts`, `tests/unit/metrics-open-weight-run-184.test.ts`, `tests/unit/open-weight-seed-184.test.ts` (#184)",
+    "description": "open-weight model seed and metrics collector (#184, folds in the model part of #95). `docs/refresh/open-weight-models.json` lists 19 open-weight model families, each with one flagship Hugging Face repo, licence, size, release date, source and terms; the five rows whose Hub licence is `other` or cc-by-nc carry a restricted-licence marker and a pending licence review; `scripts/load-open-weight-models.ts` loads it into `tools` (dry run by default; `--apply` is one transaction; new rows are created `inactive`; existing model rows get only their NULL columns filled). `lib/metrics-collectors/huggingface.ts` reads each model's Hugging Face Hub record (licence, size, 30-day downloads, likes, community benchmark results with their own source and an `unverified` flag), and `scripts/collect-open-weight-metrics.ts` writes it to `tool_metrics_history` under the `huggingface` key plus one `metrics_collection_runs` row (dry run by default). A Hub 404 counts `not_found`; 401/403/429/5xx, a network error or a malformed body counts `failed`; neither writes a row, and an empty model set fails the run. The collector is not registered in `/api/cron/collect-metrics`, `vercel.json` or the check workflow. Tests: `tests/unit/metrics-huggingface-184.test.ts`, `tests/unit/metrics-open-weight-run-184.test.ts`, `tests/unit/open-weight-seed-184.test.ts` (#184)",
     "changeType": "feature"
   },
   {
