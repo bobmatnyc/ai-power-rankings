@@ -110,10 +110,21 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-b40bedcf66ce",
+    "version": "Unreleased",
+    "date": "2026-10-26T00:32:08.415Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "tools",
+    "title": "a tool write that matches no row now fails instead of reporting success",
+    "description": "a tool write that matches no row now fails instead of reporting success. `ToolsRepository.deleteById` and `updateScoring` matched `data->>'id'`, so a row with no `data.id` was never deleted or scored, and `deleteById` still returned true. Both now find the row through `findById` and write it by its UUID `id`; `deleteById` returns false and `updateScoring` returns null when no row is written. `findById` and `findByIds` no longer compare a non-UUID id to the uuid column, which made Postgres throw and the admin routes answer 500; a non-UUID id matches only a legacy `data.id`, else the lookup is not found. In `/api/admin/tools`, `refresh-display` and `update-company` answer 404 when the update writes no row, `DELETE ?id=` answers 404 instead of 500 when the delete removes no row, the `delete` action answers 404 when it deleted nothing, `cleanup-auto` lists a delete that removed no row under `errors`, and `quick-fix-display` and `update-missing-company` count only updates that wrote a row and list the rest in `failedTools`. Tests: `tests/unit/tool-repo-writes-290.test.ts` (#290)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-7fd656d6f671",
     "version": "Unreleased",
-    "date": "2026-10-25T23:52:06.290Z",
-    "dateSource": "build",
+    "date": "2026-10-26T00:01:35.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "rankings",
     "title": "GET /api/rankings takes a required request: Request",

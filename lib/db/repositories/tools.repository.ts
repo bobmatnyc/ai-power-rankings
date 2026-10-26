@@ -27,6 +27,10 @@ interface ToolData {
   [key: string]: unknown; // Additional fields preserved from original data structure
 }
 
+// #290: the `tools.id` column is a uuid; Postgres rejects any other string compared to it.
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const isUuid = (value: string): boolean => UUID_RE.test(value);
+
 export class ToolsRepository extends BaseRepository<ToolData> {
   constructor() {
     super();
@@ -83,7 +87,11 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     try {
       // Try to find by database UUID first
-      const results = await db.select().from(tools).where(inArray(tools.id, ids));
+      // #290: only UUIDs may reach the uuid column; the rest go to the legacy lookup.
+      const uuidIds = ids.filter(isUuid);
+      const results = uuidIds.length
+        ? await db.select().from(tools).where(inArray(tools.id, uuidIds))
+        : [];
 
       // For any IDs not found by UUID, try finding by data.id
       const foundIds = new Set(results.map((r) => r.id));
@@ -239,6 +247,9 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
   /**
    * Update tool scoring data
+   *
+   * #290: returns null when no row matches `id`, so the caller can tell a write that
+   * affected no row from a success.
    */
   async updateScoring(
     id: string,
@@ -251,6 +262,11 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     const db = getDb();
     if (!db) throw new Error("Database not connected");
 
+    // #290: match the row by its UUID, as `updateInDb` does; `data->>'id'` matched
+    // nothing for a row with no `data.id`, so that row was never scored.
+    const existing = await this.findByIdFromDb(id);
+    if (!existing?.db_id) return null;
+
     const updateData: Partial<Tool> = {
       baselineScore: scoringData.baseline_score,
       deltaScore: scoringData.delta_score,
@@ -262,7 +278,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     const results = await db
       .update(tools)
       .set(updateData)
-      .where(sql`${tools.data}->>'id' = ${id}`)
+      .where(eq(tools.id, existing.db_id))
       .returning();
 
     const firstResult = results[0];
@@ -345,7 +361,11 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     if (!db) throw new Error("Database not connected");
 
     // Try to find by database UUID first
-    let results = await db.select().from(tools).where(eq(tools.id, id)).limit(1);
+    // #290: a non-UUID id is never compared to the uuid column (Postgres rejects it
+    // and the caller answered 500); it can only match a legacy `data.id` below.
+    let results: Tool[] = isUuid(id)
+      ? await db.select().from(tools).where(eq(tools.id, id)).limit(1)
+      : [];
 
     // Fallback to finding by data.id for legacy compatibility
     if (results.length === 0) {
@@ -432,9 +452,14 @@ export class ToolsRepository extends BaseRepository<ToolData> {
     const db = getDb();
     if (!db) throw new Error("Database not connected");
 
-    await db.delete(tools).where(sql`${tools.data}->>'id' = ${id}`);
+    // #290: delete the row the lookup found, by its UUID. `data->>'id'` matched nothing
+    // for a row with no `data.id`, and the method answered true regardless.
+    const existing = await this.findByIdFromDb(id);
+    if (!existing?.db_id) return false;
 
-    return true; // Drizzle doesn't return affected rows for Neon
+    const deleted = await db.delete(tools).where(eq(tools.id, existing.db_id)).returning();
+
+    return deleted.length > 0; // #290: false when no row was deleted
   }
 
   private async countInDb(): Promise<number> {

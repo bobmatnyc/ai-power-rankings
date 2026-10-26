@@ -220,12 +220,16 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        return NextResponse.json({
-          message: `Successfully deleted ${deletedTools.length} tools`,
-          deletedTools,
-          errors,
-          totalRequested: toolIds.length,
-        });
+        // #290: nothing deleted is not a success; the ids matched no row.
+        return NextResponse.json(
+          {
+            message: `Successfully deleted ${deletedTools.length} tools`,
+            deletedTools,
+            errors,
+            totalRequested: toolIds.length,
+          },
+          { status: deletedTools.length === 0 ? 404 : 200 }
+        );
       }
 
       case "refresh-display": {
@@ -249,7 +253,10 @@ export async function POST(request: NextRequest) {
           updated_at: new Date().toISOString(),
         };
 
-        await toolsRepo.update(toolId, updatedTool);
+        // #290: a write that matched no row is a 404, not a success.
+        if (!(await toolsRepo.update(toolId, updatedTool))) {
+          return NextResponse.json({ error: `Tool ${toolId} not found` }, { status: 404 });
+        }
 
         return NextResponse.json({
           success: true,
@@ -280,6 +287,9 @@ export async function POST(request: NextRequest) {
                 name: tool.name,
               });
               loggers.api.info(`Deleted auto-generated tool: ${tool.name}`);
+            } else {
+              // #290: a delete that removed no row is reported, not dropped.
+              errors.push(`Failed to delete ${tool.name}: no row deleted`);
             }
           } catch (error) {
             errors.push(`Failed to delete ${tool.name}: ${error}`);
@@ -319,7 +329,10 @@ export async function POST(request: NextRequest) {
           updated_at: new Date().toISOString(),
         };
 
-        await toolsRepo.update(toolId, updatedTool);
+        // #290: a write that matched no row is a 404, not a success.
+        if (!(await toolsRepo.update(toolId, updatedTool))) {
+          return NextResponse.json({ error: `Tool ${toolId} not found` }, { status: 404 });
+        }
 
         return NextResponse.json({
           success: true,
@@ -393,7 +406,8 @@ export async function DELETE(request: NextRequest) {
         },
       });
     } else {
-      return NextResponse.json({ error: "Failed to delete tool" }, { status: 500 });
+      // #290: the row was found, then the delete matched none (removed since): not found.
+      return NextResponse.json({ error: `Tool ${toolId} not found` }, { status: 404 });
     }
   } catch (error) {
     loggers.api.error("Error in admin/tools DELETE", { error, userId });
@@ -424,6 +438,7 @@ export async function PUT(request: NextRequest) {
         // Quick fix for tool display issues (replaces quick-fix-tool-display)
         const tools = await toolsRepo.findAll();
         const fixedTools = [];
+        const failedTools: Array<{ id: string; name: string }> = [];
 
         for (const tool of tools) {
           const extendedTool = tool as ExtendedTool;
@@ -433,7 +448,11 @@ export async function PUT(request: NextRequest) {
               display_name: tool.name,
               updated_at: new Date().toISOString(),
             };
-            await toolsRepo.update(tool.id, updatedTool);
+            // #290: count a fix only when the update wrote a row.
+            if (!(await toolsRepo.update(tool.id, updatedTool))) {
+              failedTools.push({ id: tool.id, name: tool.name });
+              continue;
+            }
             fixedTools.push({
               id: tool.id,
               name: tool.name,
@@ -442,17 +461,22 @@ export async function PUT(request: NextRequest) {
           }
         }
 
-        return NextResponse.json({
-          success: true,
-          message: `Fixed display names for ${fixedTools.length} tools`,
-          fixedTools,
-        });
+        return NextResponse.json(
+          {
+            success: failedTools.length === 0,
+            message: `Fixed display names for ${fixedTools.length} tools`,
+            fixedTools,
+            failedTools,
+          },
+          { status: failedTools.length > 0 && fixedTools.length === 0 ? 404 : 200 }
+        );
       }
 
       case "update-missing-company": {
         // Update missing company data (replaces update-missing-company-data)
         const tools = await toolsRepo.findAll();
         const updatedTools = [];
+        const failedTools: Array<{ id: string; name: string }> = [];
 
         for (const tool of tools) {
           const extendedTool = tool as ExtendedTool;
@@ -472,7 +496,11 @@ export async function PUT(request: NextRequest) {
               updated_at: new Date().toISOString(),
             };
 
-            await toolsRepo.update(tool.id, updatedTool);
+            // #290: count an update only when it wrote a row.
+            if (!(await toolsRepo.update(tool.id, updatedTool))) {
+              failedTools.push({ id: tool.id, name: tool.name });
+              continue;
+            }
             updatedTools.push({
               id: tool.id,
               name: tool.name,
@@ -481,11 +509,15 @@ export async function PUT(request: NextRequest) {
           }
         }
 
-        return NextResponse.json({
-          success: true,
-          message: `Updated company data for ${updatedTools.length} tools`,
-          updatedTools,
-        });
+        return NextResponse.json(
+          {
+            success: failedTools.length === 0,
+            message: `Updated company data for ${updatedTools.length} tools`,
+            updatedTools,
+            failedTools,
+          },
+          { status: failedTools.length > 0 && updatedTools.length === 0 ? 404 : 200 }
+        );
       }
 
       default:
