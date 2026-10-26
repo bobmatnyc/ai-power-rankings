@@ -15,6 +15,8 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/api-auth";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
+// #95: typed admin metrics with write-time validation.
+import { applyAdminMetrics, validateAdminMetrics } from "@/lib/admin-metrics-validation";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -31,6 +33,8 @@ const toolEditSchema = z
     category: z.string().trim().min(1).max(100),
     status: z.enum(EDITABLE_STATUSES),
     description: z.string().trim().max(5000),
+    // #95: the typed metrics object is checked by validateAdminMetrics, not zod.
+    metrics: z.record(z.string(), z.unknown()),
   })
   .partial()
   .refine((v) => Object.keys(v).length > 0, { message: "No editable field given" });
@@ -78,27 +82,46 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     );
   }
 
+  // #95: validate every metric before any read or write; one bad field rejects the request.
+  const { description, metrics: metricsInput, ...columns } = parsed.data;
+  let metricEntries: ReturnType<typeof validateAdminMetrics> | null = null;
+  if (metricsInput !== undefined) {
+    metricEntries = validateAdminMetrics(metricsInput);
+    if (!metricEntries.ok) {
+      return NextResponse.json(
+        { error: "Invalid tool metrics", issues: metricEntries.errors },
+        { status: 400 }
+      );
+    }
+  }
+
   try {
     const repo = new ToolsRepository();
     const existing = await repo.findBySlug(slug);
     if (!existing) return notFound(slug);
 
-    const { description, ...columns } = parsed.data;
     const updates: Record<string, unknown> = { ...columns };
-    if (description !== undefined) {
+    if (description !== undefined || metricEntries) {
       // The manager reads info.product.description first, then info.description.
-      const info = (existing.info ?? {}) as Record<string, unknown>;
-      const product = info["product"] as Record<string, unknown> | undefined;
-      updates["info"] = {
-        ...info,
-        description,
-        ...(product && { product: { ...product, description } }),
-      };
+      let info = (existing.info ?? {}) as Record<string, unknown>;
+      if (description !== undefined) {
+        const product = info["product"] as Record<string, unknown> | undefined;
+        info = {
+          ...info,
+          description,
+          ...(product && { product: { ...product, description } }),
+        };
+      }
+      // #95: deep-merge into info.metrics; repo.update merges only shallowly.
+      if (metricEntries?.ok) info = applyAdminMetrics(info, metricEntries.entries);
+      updates["info"] = info;
     }
 
     const tool = await repo.update(rowKey(existing), updates);
     if (!tool) return writeFailed();
-    return NextResponse.json({ tool });
+    // #95: magnitude warnings are returned, not blocking.
+    const warnings = metricEntries?.ok ? metricEntries.warnings : [];
+    return NextResponse.json({ tool, ...(warnings.length > 0 && { warnings }) });
   } catch (error) {
     loggers.api.error("Error in admin/tools/[slug] PUT", { error, userId: authResult.userId });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
