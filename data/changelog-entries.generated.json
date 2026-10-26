@@ -112,8 +112,8 @@
   {
     "id": "unreleased-4e8de32a0efb",
     "version": "Unreleased",
-    "date": "2026-10-26T00:37:47.031Z",
-    "dateSource": "build",
+    "date": "2026-10-26T00:42:11.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "tools",
     "title": "a tool write that matches no row now fails instead of reporting success",
@@ -999,6 +999,17 @@
     "title": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside…",
     "description": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside SWE-bench (best scaffold+model row per tool via a hand-curated allowlist, tunable `TB_BLEND_WEIGHT` default 0.4, no factor-weight change); wired matched `terminal_bench` leaves into `data/historical-metrics/2026-06.json` with full provenance and a curated source capture at `data/historical-metrics/sources/terminal-bench-2.1.json`",
     "changeType": "feature"
+  },
+  {
+    "id": "unreleased-a7962f4a17c3",
+    "version": "Unreleased",
+    "date": "2026-10-26T01:01:31.392Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "ci",
+    "title": "npm run gate:local also runs npm run build:next (next build alone, so no tracked file is regenerated) and reports it as…",
+    "description": "`npm run gate:local` also runs `npm run build:next` (`next build` alone, so no tracked file is regenerated) and reports it as its own `next build` PASS/FAIL line. `tsc --noEmit` does not check Next's route-export types, so a handler such as `GET(request?: Request)` passed the gate and failed only on Vercel. A failed build exits 1 and posts `local-gate=failure`. Tests: `tests/unit/local-gate.test.ts` (#293)",
+    "changeType": "improvement"
   },
   {
     "id": "unreleased-976dc6306487",

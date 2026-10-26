@@ -86,6 +86,9 @@ exit "\${TSC_EXIT:-0}"
 `;
 const NPM_STUB = `#!/bin/sh
 echo "npm $*" >> "$STUB_LOG"
+case "$*" in
+  *build:next*) exit "\${BUILD_EXIT:-0}" ;;
+esac
 exit "\${VITEST_EXIT:-0}"
 `;
 
@@ -172,6 +175,7 @@ describe("local-gate CLI", { timeout: 30_000 }, () => {
     expect(r.code).toBe(0);
     expect(r.calls).toContain("npx tsc --noEmit");
     expect(r.calls).toContain("npm run test:unit");
+    expect(r.calls).toContain("npm run build:next");
     expect(r.posts).toHaveLength(1);
     expect(r.posts[0]).toContain(`repos/acme/widgets/statuses/${sha}`);
     expect(r.posts[0]).toContain("state=success");
@@ -186,6 +190,15 @@ describe("local-gate CLI", { timeout: 30_000 }, () => {
     expect(r.posts).toHaveLength(1);
     expect(r.posts[0]).toContain("state=failure");
     expect(r.posts[0]).toContain("description=failed: tsc --noEmit");
+  });
+
+  it("exits 1 and posts failure when next build fails (#293)", () => {
+    const r = gate([], { BUILD_EXIT: "1" });
+    expect(r.code).toBe(1);
+    expect(r.out).toContain("FAIL  next build");
+    expect(r.posts).toHaveLength(1);
+    expect(r.posts[0]).toContain("state=failure");
+    expect(r.posts[0]).toContain("description=failed: next build");
   });
 
   it("exits non-zero and never prints 'posted' when the post fails", () => {

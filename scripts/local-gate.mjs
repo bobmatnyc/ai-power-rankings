@@ -6,8 +6,8 @@
  *   for `v*` tags and manual dispatch. PR and push checks run here, on the developer's
  *   host, and post one informational `local-gate` commit status so a PR still shows
  *   whether its head passed. Nothing makes that status required.
- * What: Runs `npx tsc --noEmit` and `npm run test:unit` (both always run, so the report
- *   shows both results). By default it then posts ONE status for HEAD via
+ * What: Runs `npx tsc --noEmit`, `npm run test:unit` and `npm run build:next` (all always
+ *   run, so the report shows every result). By default it then posts ONE status for HEAD via
  *   `gh api repos/{owner}/{repo}/statuses/<sha>`. Before running anything it refuses
  *   (exit 2) when the tree is dirty, `gh` is missing or unauthenticated, owner/repo
  *   cannot be resolved, or GitHub does not know the HEAD commit (not pushed). It
@@ -33,6 +33,10 @@ const MAX_DESCRIPTION = 140;
 export const CHECKS = [
   { name: "tsc --noEmit", cmd: "npx", args: ["tsc", "--noEmit"] },
   { name: "vitest", cmd: "npm", args: ["run", "test:unit"] },
+  // #293: `tsc --noEmit` does not check Next's route-export types (e.g. `GET(request?: Request)`),
+  // so only `next build` catches them before Vercel does. `build:next` is `next build` alone;
+  // `npm run build` would also rewrite the tracked changelog and category generator outputs.
+  { name: "next build", cmd: "npm", args: ["run", "build:next"] },
 ];
 
 /**
