@@ -8,6 +8,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { lintLogos } from "../../lib/logos/lint";
+import { validateManifest } from "../../lib/logos/manifest";
 
 const roots: string[] = [];
 const BYTES = "fixture bytes, not a real mark";
@@ -86,6 +87,18 @@ describe("lintLogos", () => {
     mkdirSync(path.join(root, "data/logos/reference"), { recursive: true });
     writeFileSync(path.join(root, "data/logos/reference/made-up-vendor.svg"), BYTES);
     expect(lintLogos(root)).toEqual([]);
+  });
+
+  // #303: a `..`, `./` or leading `/` passes a bare prefix check yet resolves outside the allowed dir.
+  it.each([
+    ["reference-only", "data/logos/reference/../../../public/brand/v.svg"],
+    ["permitted", "public/logos/../tool-icons/v.svg"],
+    ["permitted", "public/logos/./v.svg"],
+    ["permitted", "/public/logos/v.svg"],
+  ])("rejects a non-normalised %s file path (%s)", (status, file) => {
+    const logos = [entry({ status, file })];
+    expect(validateManifest({ version: 1, logos }).join("\n")).toMatch(/not a normalised repo-relative path/);
+    expect(lintLogos(fixture(logos, {})).join("\n")).toMatch(/not a normalised repo-relative path/);
   });
 
   it("fails when the manifest is missing or not JSON", () => {

@@ -53,7 +53,7 @@ export type LogoManifest = z.infer<typeof logoManifestSchema>;
  * Checks the manifest's shape and its file rules; returns one message per problem.
  *
  * Postcondition: an empty array means every entry is well formed, a `monogram` entry has no
- * file and no hash, any other entry has both, a `permitted` file is under `public/logos/`, a
+ * file and no hash, any other entry has both, every file is a normalised repo-relative path (no `..`, `./` or leading `/`), a `permitted` file is under `public/logos/`, a
  * `reference-only` file is under `data/logos/reference/` (never `public/`), and no path repeats.
  */
 export function validateManifest(raw: unknown): string[] {
@@ -74,6 +74,12 @@ export function validateManifest(raw: unknown): string[] {
     if (entry.file !== null) {
       // #303: everything in public/ is served, so a mark we may not display stays out of it.
       const dir = entry.status === "permitted" ? LOGOS_DIR : REFERENCE_DIR;
+      // #303: a `..`, `./`, `//` or leading `/` passes the prefix check yet resolves elsewhere.
+      // Segment test equals `path.posix.normalize(file) !== file`; no `node:path`, since the
+      // client bundle imports this module (`permittedLogoUrl`).
+      if (entry.file.split("/").some((seg) => seg === "" || seg === "." || seg === "..")) {
+        errors.push(`${at}: file ${entry.file} is not a normalised repo-relative path`);
+      }
       if (!entry.file.startsWith(`${dir}/`)) errors.push(`${at}: ${entry.status} file must be under ${dir}/`);
       if (seen.has(entry.file)) errors.push(`${at}: file ${entry.file} is listed twice`);
       seen.add(entry.file);
