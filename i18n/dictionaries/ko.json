@@ -204,7 +204,8 @@
   "rankings": {
     "asOf": "{date} 기준 순위",
     "title": "AI 파워 랭킹",
-    "subtitle": "알고리즘 v7.0을 사용한 AI 코딩 도구의 종합적인 랭킹",
+    "subtitle": "알고리즘 {version}을 사용한 AI 코딩 도구의 종합적인 랭킹",
+    "subtitleNoVersion": "AI 코딩 도구의 종합적인 랭킹",
     "stats": {
       "totalTools": "총 툴",
       "categories": "카테고리",

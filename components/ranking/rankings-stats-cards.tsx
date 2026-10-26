@@ -6,13 +6,11 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 /**
  * The four stat cards above the rankings grid (moved out of `rankings-grid.tsx`, #186).
  *
- * `statsLoaded` is true once the list's rows are read, so an empty list shows 0
- * tools instead of the placeholder count.
+ * #305: the counts are the list's own rows (an empty list shows 0), never a placeholder.
  */
 export function RankingsStatsCards({
   dict,
   loading,
-  statsLoaded,
   totalTools,
   categoriesCount,
   avgScore,
@@ -20,7 +18,6 @@ export function RankingsStatsCards({
 }: {
   dict: Dictionary;
   loading: boolean;
-  statsLoaded: boolean;
   totalTools: number;
   categoriesCount: number;
   avgScore: number;
@@ -44,10 +41,8 @@ export function RankingsStatsCards({
           <div className="text-2xl font-bold">
             {loading ? (
               <div className="animate-pulse bg-ds-surface-skeleton h-8 w-12 rounded" />
-            ) : statsLoaded || totalTools > 0 ? (
-              totalTools
             ) : (
-              "42"
+              totalTools
             )}
           </div>
         </CardContent>
@@ -62,10 +57,8 @@ export function RankingsStatsCards({
           <div className="text-2xl font-bold">
             {loading ? (
               <div className="animate-pulse bg-ds-surface-skeleton h-8 w-8 rounded" />
-            ) : categoriesCount > 0 ? (
-              categoriesCount
             ) : (
-              "8"
+              categoriesCount
             )}
           </div>
         </CardContent>
@@ -83,7 +76,7 @@ export function RankingsStatsCards({
             ) : avgScore > 0 ? (
               avgScore.toFixed(1)
             ) : (
-              "72.5"
+              "-"
             )}
           </div>
         </CardContent>
@@ -98,7 +91,7 @@ export function RankingsStatsCards({
           <div className="text-2xl font-bold">
             {loading ? (
               <div className="animate-pulse bg-ds-surface-skeleton h-8 w-16 rounded" />
-            ) : lastUpdateDate && !lastUpdateDate.includes("2025") ? (
+            ) : lastUpdateDate ? (
               lastUpdateDate
             ) : (
               dict.rankings.stats.thisWeek || "This Week"

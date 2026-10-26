@@ -204,7 +204,8 @@
   "rankings": {
     "asOf": "Classifica al {date}",
     "title": "Classifiche AI Power",
-    "subtitle": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.6 - Scoring validato dal mercato",
+    "subtitle": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo {version} - Scoring validato dal mercato",
+    "subtitleNoVersion": "Classifiche complete di strumenti di codifica AI - Scoring validato dal mercato",
     "stats": {
       "totalTools": "Strumenti Totali",
       "categories": "Categorie",

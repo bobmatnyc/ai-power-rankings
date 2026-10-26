@@ -410,7 +410,8 @@
   "rankings": {
     "asOf": "{date} 時点のランキング",
     "title": "AI パワーランキング",
-    "subtitle": "アルゴリズム v7.6を使用したAIコーディングツールの包括的ランキング",
+    "subtitle": "アルゴリズム {version}を使用したAIコーディングツールの包括的ランキング",
+    "subtitleNoVersion": "AIコーディングツールの包括的ランキング",
     "stats": {
       "totalTools": "総ツール数",
       "categories": "カテゴリー",
