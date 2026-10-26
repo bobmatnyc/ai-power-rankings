@@ -102,9 +102,8 @@ export class ToolsRepository extends BaseRepository<ToolData> {
         const legacyResults = await db
           .select()
           .from(tools)
-          .where(
-            sql`${tools.data}->>'id' IN (${sql.raw(missingIds.map((id) => `'${id}'`).join(","))})`
-          );
+          // #290: ids are bound parameters; splicing them into SQL text allowed injection.
+          .where(inArray(sql`${tools.data}->>'id'`, missingIds));
         results.push(...legacyResults);
       }
 
