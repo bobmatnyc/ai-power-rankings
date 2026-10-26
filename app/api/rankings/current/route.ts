@@ -41,10 +41,11 @@ function deriveCompleteScores(partialScores: any, overallScore: number) {
  *   `data.list_meta`. Cached in memory per list.
  * Test: `tests/unit/rankings-current-trending-185.test.ts`.
  */
-export async function GET(request?: Request) {
+// #186: Next.js route exports require a non-optional Request
+export async function GET(request: Request) {
   const startTime = Date.now();
   // #185: one list's board, D51 default; never the combined board.
-  const parsed = parseListQuery(request ? new URL(request.url).searchParams : null);
+  const parsed = parseListQuery(new URL(request.url).searchParams);
   if (!parsed.ok) {
     return NextResponse.json(
       { success: false, error: "Unknown list", message: parsed.error, lists: [...RANKING_LISTS] },
