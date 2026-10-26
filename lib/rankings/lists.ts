@@ -15,7 +15,7 @@
  *   - `rankingListPath()` / `listFromSlug()`: `/rankings` is the harness board (D51);
  *     the other lists live under `/rankings/<slug>`.
  *   `COMBINED_LIST` names the legacy one-board rows kept for rollback and export (D55).
- * Test: `tests/unit/ranking-lists-186.test.ts`
+ * Test: `tests/unit/ranking-lists-186.test.ts`, `tests/unit/models-list-noindex.test.tsx`
  */
 
 import { calculateTier } from "@/lib/ranking-utils";
@@ -95,6 +95,22 @@ export function isListIndexable(entryCount: number): boolean {
   return entryCount >= INDEX_MIN_ENTRIES;
 }
 
+/**
+ * Lists that stay noindex whatever their entry count: the models list has no model
+ * metrics yet, so its order is not a ranking of quality.
+ */
+export const NOINDEX_LISTS: readonly RankingList[] = ["model"];
+
+/** True when `list` page may be indexed: the D53 size rule, and the list is not in `NOINDEX_LISTS`. */
+export function isRankingListIndexable(list: RankingList, entryCount: number): boolean {
+  return !NOINDEX_LISTS.includes(list) && isListIndexable(entryCount);
+}
+
+/** True when the list page says its order is provisional because model metrics are not collected yet. */
+export function listHasMetricsPendingNote(list: RankingList): boolean {
+  return list === "model";
+}
+
 /** D53: the tier scheme for a list of `entryCount` entries. */
 export function listTierScheme(entryCount: number): TierScheme {
   return isListIndexable(entryCount) ? "standard" : "thirds";
@@ -136,7 +152,7 @@ export function rankingListMeta(list: RankingList, entryCount: number): RankingL
     slug: LIST_SLUGS[list],
     path: rankingListPath(list),
     entry_count: entryCount,
-    indexable: isListIndexable(entryCount),
+    indexable: isRankingListIndexable(list, entryCount),
     tier_scheme: listTierScheme(entryCount),
     provisional_note: listHasProvisionalNote(list),
   };

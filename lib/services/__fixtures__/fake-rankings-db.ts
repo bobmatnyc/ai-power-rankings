@@ -14,7 +14,7 @@
  *   `tests/unit/admin-rankings-build-93.test.ts`.
  */
 
-import { getTableName, type SQL } from "drizzle-orm";
+import { getTableName, type SQL, sql } from "drizzle-orm";
 import { PgDialect } from "drizzle-orm/pg-core";
 
 const dialect = new PgDialect();
@@ -101,11 +101,28 @@ export function createFakeRankingsDb(seed: { rankings?: FakeRankingRow[]; tools?
   };
 
   // A query result that can be awaited directly or narrowed by limit/orderBy.
+  // `orderBy` sorts by the rendered `"table"."column" [asc|desc]` terms it is given.
   const result = (rows: Array<Record<string, unknown>>) => {
     const copy = rows.map((row) => ({ ...row }));
     return Object.assign(Promise.resolve(copy), {
       limit: async (n: number) => copy.slice(0, n),
-      orderBy: async () => copy,
+      orderBy: async (...terms: unknown[]) => {
+        const keys = terms.map((term) => {
+          const text = dialect.sqlToQuery(sql`${term as never}`).sql;
+          const match = /^"[a-z_]+"\."([a-z_]+)" ?(asc|desc)?$/.exec(text.trim());
+          if (!match) throw new Error(`fake-rankings-db: unsupported order by ${text}`);
+          return { field: COLUMN_TO_FIELD[match[1]!] ?? match[1]!, sign: match[2] === "desc" ? -1 : 1 };
+        });
+        return [...copy].sort((a, b) => {
+          for (const { field, sign } of keys) {
+            const x = a[field] as string | number;
+            const y = b[field] as string | number;
+            if (x < y) return -sign;
+            if (x > y) return sign;
+          }
+          return 0;
+        });
+      },
     });
   };
 

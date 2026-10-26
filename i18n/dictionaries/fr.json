@@ -304,6 +304,7 @@
       },
       "provisionalNote": "Provisoire : cette liste est notée avec les pondérations des harnais de code jusqu'à ce que son propre profil de notation soit décidé.",
       "smallListNote": "Cette liste compte moins de {min} entrées, ses niveaux sont donc S, A et B par tiers.",
+      "modelsMetricsPendingNote": "Provisoire : les métriques des modèles ne sont pas encore collectées, cet ordre n'est donc pas un classement de qualité.",
       "empty": "Aucun outil n'est encore classé dans cette liste."
     }
   },

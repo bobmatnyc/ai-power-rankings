@@ -31,12 +31,13 @@ export interface CurrentListBoard {
  * keeps only the tools `listOfTool()` puts in this list (`source: "combined"`).
  * Takes the snapshot's rankings array (an array, or one under `rankings` or
  * `data`), joins each entry to its tool by id then slug, drops entries whose tool
- * is missing (one warning each) or belongs to another list (or none), sorts by
- * stored rank and renumbers 1..n with D53 tiers. A combined row's movement is a
- * global move, so its previous rank is renumbered within the list too. Returns
+ * is missing (one warning each) or belongs to another list (or none), drops a
+ * combined board's rows whose tool is not `active` now, sorts by stored rank
+ * and renumbers 1..n with D53 tiers. A combined row's movement is a global move, so its previous rank is renumbered within the list too. Returns
  * null when neither row exists. Throws when a database read throws.
  * Test: `tests/unit/home-live-rankings-192.test.tsx`,
- *   `tests/unit/current-rankings-per-list-186.test.ts`.
+ *   `tests/unit/rankings-per-list-read-186.test.ts`,
+ *   `tests/unit/models-list-inactive-rows.test.ts`.
  */
 export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LIST): Promise<CurrentListBoard | null> {
   const listRow = await rankingsRepository.getCurrentRankings(list);
@@ -72,11 +73,13 @@ export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LI
 
 /**
  * #186: whether a joined row belongs on `list`'s board. A combined row needs the tool's
- * list to be `list`. A list row was written for this list; it drops only a tool whose
+ * list to be `list` and the tool to be `active` now: the stored board can still hold a
+ * tool that was retired (for example `redirect`) after the board was published, and the
+ * stored data is left as written; this read drops it. A list row was written for this list; it drops only a tool whose
  * kind is known and now maps elsewhere (a row read without a kind is kept as written).
  */
 function inList(entry: FormattedRanking, list: RankingList, source: ListBoardSource): boolean {
-  if (source === "combined") return entry.toolList === list;
+  if (source === "combined") return entry.toolList === list && entry.status === "active";
   return entry.kind === undefined || entry.toolList === list;
 }
 
@@ -106,7 +109,13 @@ export function rankWithinList(rows: CurrentRankingRow[], source: ListBoardSourc
 
 export type CurrentRankingRow = NonNullable<Awaited<ReturnType<typeof formatRanking>>>["row"];
 
-type FormattedRanking = { row: CurrentRankingRow; kind: unknown; toolList: RankingList | null };
+type FormattedRanking = {
+  row: CurrentRankingRow;
+  kind: unknown;
+  toolList: RankingList | null;
+  /** The tool's current `tools.status`. */
+  status: string;
+};
 
 /**
  * One snapshot entry joined to its tool: the `/api/rankings` row shape plus the tool's
@@ -198,5 +207,5 @@ async function formatRanking(ranking: any, toolsRepo: ToolsRepository) {
     },
     tier: ranking["tier"] || "standard",
   };
-  return { row, kind, toolList };
+  return { row, kind, toolList, status: String(tool.status ?? "") };
 }

@@ -245,10 +245,10 @@ describe("GET /api/rankings (#186)", () => {
     expect(body.list).toBe("model");
   });
 
-  it("D53: list_meta reports 9 models as noindex and 10 as indexed", async () => {
+  it("D53: list_meta reports 9 models by thirds and 10 with the normal tiers; the models list is noindex at both sizes", async () => {
     expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 9, indexable: false, tier_scheme: "thirds" });
     current.rows = { combined: combinedRow([...ALL, EXTRA_MODEL]) };
-    expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 10, indexable: true, tier_scheme: "standard" });
+    expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 10, indexable: false, tier_scheme: "standard" });
   });
 
   it("D54: only the productivity response carries the provisional-note flag", async () => {

@@ -304,6 +304,7 @@
       },
       "provisionalNote": "Provisional: esta lista se puntúa con los pesos de las herramientas de programación hasta que se decida su propio perfil de puntuación.",
       "smallListNote": "Esta lista tiene menos de {min} entradas, así que sus niveles son S, A y B por tercios.",
+      "modelsMetricsPendingNote": "Provisional: aún no se recopilan métricas de los modelos, así que este orden no es una clasificación de calidad.",
       "empty": "Todavía no hay herramientas clasificadas en esta lista."
     }
   },

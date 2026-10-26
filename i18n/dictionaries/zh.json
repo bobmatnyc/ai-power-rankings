@@ -639,6 +639,7 @@
       },
       "provisionalNote": "暂定：在确定其专属评分方案之前，此列表使用编程工具的权重评分。",
       "smallListNote": "此列表少于 {min} 项，因此其等级按三等分为 S、A 和 B。",
+      "modelsMetricsPendingNote": "临时：尚未收集模型指标，因此此顺序不代表质量排名。",
       "empty": "此列表中尚无已排名的工具。"
     }
   },

@@ -136,7 +136,7 @@ describe("list paths (#186)", () => {
   });
 
   it("rankingListMeta reports the threshold result for its count", () => {
-    expect(rankingListMeta("model", 9)).toMatchObject({ list: "model", entry_count: 9, indexable: false, tier_scheme: "thirds" });
-    expect(rankingListMeta("model", 10)).toMatchObject({ entry_count: 10, indexable: true, tier_scheme: "standard" });
+    expect(rankingListMeta("productivity", 9)).toMatchObject({ list: "productivity", entry_count: 9, indexable: false, tier_scheme: "thirds" });
+    expect(rankingListMeta("productivity", 10)).toMatchObject({ entry_count: 10, indexable: true, tier_scheme: "standard" });
   });
 });
