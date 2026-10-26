@@ -78,6 +78,16 @@ describe("#290 findById", () => {
     const found = await repo.findByIds([NOT_A_UUID, cursorId]);
     expect(found.map((t) => t.slug)).toEqual(["cursor"]);
   });
+
+  it("findByIds binds ids: a quote-bearing id matches nothing and does not throw", async () => {
+    const found = await repo.findByIds([`x') OR ('1'='1`, cursorId]);
+    expect(found.map((t) => t.slug)).toEqual(["cursor"]);
+  });
+
+  it("findByIds still resolves a legacy data.id", async () => {
+    const found = await repo.findByIds(["tool-legacy", cursorId]);
+    expect(found.map((t) => t.slug).sort()).toEqual(["cursor", "legacy"]);
+  });
 });
 
 describe("#290 deleteById", () => {
