@@ -62,6 +62,29 @@ export class ToolsRepository extends BaseRepository<ToolData> {
   }
 
   /**
+   * The `tools.status` COLUMN for each row id, keyed by the row UUID (#301).
+   *
+   * Why: `findById()` / `findBySlug()` spread the JSONB `data` over the mapped row, so a
+   *   stale `data.status` ("active" on a row 0019 retired to "redirect") hides the column.
+   *   The per-list reader must filter on the column.
+   * What: one query selecting only `id` and `status` for the given row UUIDs (non-UUID
+   *   values are skipped). A row that does not exist is absent from the map. Read-only;
+   *   throws when there is no database or the read fails.
+   * Test: `tests/unit/models-list-column-status-301.test.ts`.
+   */
+  async findColumnStatuses(dbIds: string[]): Promise<Map<string, string>> {
+    const db = getDb();
+    if (!db) throw new Error("Database not connected");
+    const uuids = [...new Set(dbIds.filter(isUuid))];
+    if (uuids.length === 0) return new Map();
+    const rows = await db
+      .select({ id: tools.id, status: tools.status })
+      .from(tools)
+      .where(inArray(tools.id, uuids));
+    return new Map(rows.map((row) => [row.id, row.status]));
+  }
+
+  /**
    * Find tool by ID
    */
   async findById(id: string): Promise<ToolData | null> {

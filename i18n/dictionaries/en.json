@@ -304,6 +304,7 @@
       },
       "provisionalNote": "Provisional: this list is scored with the coding-harness weights until its own scoring profile is decided.",
       "smallListNote": "This list has fewer than {min} entries, so its tiers are S, A and B by thirds.",
+      "modelsMetricsPendingNote": "Provisional: model metrics are not collected yet, so this order is not a ranking of quality.",
       "empty": "No tools are ranked in this list yet."
     }
   },

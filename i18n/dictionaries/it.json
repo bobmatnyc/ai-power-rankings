@@ -304,6 +304,7 @@
       },
       "provisionalNote": "Provvisorio: questa lista è valutata con i pesi degli harness di programmazione finché non sarà deciso il suo profilo di punteggio.",
       "smallListNote": "Questa lista ha meno di {min} voci, quindi i suoi livelli sono S, A e B per terzi.",
+      "modelsMetricsPendingNote": "Provvisorio: le metriche dei modelli non sono ancora raccolte, quindi questo ordine non è una classifica di qualità.",
       "empty": "Nessuno strumento è ancora classificato in questa lista."
     }
   },

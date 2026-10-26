@@ -304,6 +304,7 @@
       },
       "provisionalNote": "Privremeno: ovaj se popis ocjenjuje težinama alata za kodiranje dok se ne odluči njegov vlastiti profil ocjenjivanja.",
       "smallListNote": "Ovaj popis ima manje od {min} unosa pa su njegove razine S, A i B po trećinama.",
+      "modelsMetricsPendingNote": "Privremeno: metrike modela još se ne prikupljaju, pa ovaj redoslijed nije rang-lista kvalitete.",
       "empty": "Na ovom popisu još nema rangiranih alata."
     }
   },

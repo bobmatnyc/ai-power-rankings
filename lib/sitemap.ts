@@ -18,7 +18,7 @@ import { newsRepository } from "@/lib/db/repositories/news";
 import { toolsRepository } from "@/lib/db/repositories/tools.repository";
 import {
   DEFAULT_RANKING_LIST,
-  isListIndexable,
+  isRankingListIndexable,
   listOfTool,
   RANKING_LISTS,
   type RankingList,
@@ -126,7 +126,7 @@ export async function buildSitemapEntries(
     }
   }
 
-  // 3b. #186: list pages. A list below 10 entries is noindex (D53), so it is not listed.
+  // 3b. #186: list pages. A list below 10 entries is noindex (D53), and so is the models list, so neither is listed.
   const listSizes = new Map<RankingList, number>();
   for (const tool of tools) {
     if (tool.status !== "active") continue;
@@ -134,7 +134,7 @@ export async function buildSitemapEntries(
     if (list) listSizes.set(list, (listSizes.get(list) ?? 0) + 1);
   }
   for (const list of RANKING_LISTS) {
-    if (list === DEFAULT_RANKING_LIST || !isListIndexable(listSizes.get(list) ?? 0)) continue;
+    if (list === DEFAULT_RANKING_LIST || !isRankingListIndexable(list, listSizes.get(list) ?? 0)) continue;
     for (const locale of locales) {
       routes.push({
         url: `${baseUrl}/${locale}${rankingListPath(list)}`,

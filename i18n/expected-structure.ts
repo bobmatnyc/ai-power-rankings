@@ -218,6 +218,7 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
       productivity: { title: "", description: "" },
       provisionalNote: "",
       smallListNote: "",
+      modelsMetricsPendingNote: "",
       empty: "",
     },
     algorithm: {
