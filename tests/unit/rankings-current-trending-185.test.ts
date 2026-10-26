@@ -117,8 +117,8 @@ describe("GET /api/rankings/current (#185 H1)", () => {
     noCombinedRead();
   });
 
-  it("GET with no request at all is the default list too", async () => {
-    const body = await (await currentGET()).json();
+  it("GET with a bare request URL is the default list too", async () => {
+    const body = await (await currentGET(new Request("http://localhost/api/rankings/current"))).json();
     expect(body.data.list).toBe("harness");
   });
 
