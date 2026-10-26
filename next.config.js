@@ -32,7 +32,6 @@ const nextConfig = {
     localPatterns: [
       {
         pathname: '/**',
-        // Allow query strings for API routes like /api/favicon
       },
     ],
   },

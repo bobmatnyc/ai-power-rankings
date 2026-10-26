@@ -245,7 +245,8 @@ export function ToolDetailClient({ slug, lang, dict, profile }: ToolDetailClient
           <div className="flex items-start gap-4">
             <ToolIcon
               name={tool.name}
-              domain={websiteUrl}
+              slug={tool.slug || slug}
+              logo={tool.logo_url}
               size={64}
               className="flex-shrink-0 mt-1"
             />

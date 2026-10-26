@@ -155,7 +155,7 @@ export function DashboardToolDetail({ slug, lang, dict }: DashboardToolDetailPro
           <div className="flex items-start gap-4">
             <ToolIcon
               name={toolData.name}
-              domain={links["website"] || toolData.website_url || info["website"]}
+              slug={slug}
               size={80}
               className="flex-shrink-0"
             />

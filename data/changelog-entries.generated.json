@@ -112,8 +112,8 @@
   {
     "id": "unreleased-6e5c4686c9e7",
     "version": "Unreleased",
-    "date": "2026-10-26T19:42:52.263Z",
-    "dateSource": "build",
+    "date": "2026-10-26T19:57:14.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "rankings",
     "title": "the models list is no longer topped by a retired tool, ties rank in slug order, and the list is noindex",
@@ -658,6 +658,17 @@
     "title": "the daily cron called runDailyDiscovery() with no arguments, so the Tavily days lookback was undefined and omitted from…",
     "description": "the daily cron called `runDailyDiscovery()` with no arguments, so the Tavily `days` lookback was `undefined` and omitted from the request — discovery was relevance-ranked with no date bound at all. It now defaults to the freshness window; an explicit `--days` still wins and widens the gate in step",
     "changeType": "fix"
+  },
+  {
+    "id": "unreleased-d89a9ad7b905",
+    "version": "Unreleased",
+    "date": "2026-10-26T20:14:44.365Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "logos",
+    "title": "vendor-logo infrastructure (L1), with no vendor marks added",
+    "description": "vendor-logo infrastructure (L1), with no vendor marks added. `public/logos/` holds vendor marks only when `data/logos/manifest.json` records the vendor, file, source and terms URLs, terms note, fetch date, SHA-256 and a status of `permitted`, `reference-only` or `monogram`; `data/logos/tool-vendor.json` maps 25 tool slugs on the harness, model and productivity boards to a vendor and display name (tools whose vendor the repo data does not state are left out). `npm run lint:logos` fails on a file with no entry, a missing file, a hash mismatch, an empty provenance field, or a `monogram` entry that ships a file; the same check runs in the unit suite, so `gate:local` catches it. `ToolIcon` now draws a `permitted` vendor mark, else the tool's stored local logo path, else a monogram (initials of the vendor or tool name, a colour derived from the slug, an `aria-label`). It no longer fetches a favicon or any remote image, and `/api/favicon` is removed. A ranking card shows the stored logo instead of the website URL (the website was passed first and could hide it); no caller passes a website URL as an image source. The legacy `public/tool-icons` PNGs are outside the lint until L2 (D82). Tests: `tests/unit/logo-lint.test.ts`, `tests/unit/vendor-map.test.ts`, `tests/unit/tool-icon-logos.test.tsx`",
+    "changeType": "feature"
   },
   {
     "id": "unreleased-2cfc870cbb99",

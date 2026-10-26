@@ -336,7 +336,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                         {/* Tool Icon */}
                         <ToolIcon
                           name={item.tool_name}
-                          domain={item.tool_website}
+                          slug={item.tool_slug}
                           size={40}
                           className="flex-shrink-0"
                           context="news"
@@ -380,7 +380,7 @@ export default function NewsContent({ lang, dict }: NewsContentProps): React.JSX
                             <Badge variant="secondary" className="text-xs">
                               <ToolIcon
                                 name={item.tool_name}
-                                domain={item.tool_website}
+                                slug={item.tool_slug}
                                 size={12}
                                 className="mr-1"
                                 context="news"

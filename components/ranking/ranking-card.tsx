@@ -26,7 +26,7 @@ interface RankingData {
     category: string;
     status: string;
     website_url?: string;
-    logo?: string;  // Local PNG path (preferred over favicon API)
+    logo?: string;  // Stored local logo path (legacy; see D82)
     description?: string | RichTextBlock[]; // Can be string or RichText array
   };
   scores: {
@@ -95,7 +95,8 @@ export function RankingCard({
             <div className="flex items-center space-x-3 min-w-0">
               <ToolIcon
                 name={ranking.tool.name}
-                domain={ranking.tool.website_url || ranking.tool.logo}
+                slug={toolSlug}
+                logo={ranking.tool.logo}
                 size={48}
                 className="flex-shrink-0"
               />
