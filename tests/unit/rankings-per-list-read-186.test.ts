@@ -38,7 +38,10 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
   ToolsRepository: class {
     async findById(id: string) {
       const t = TOOLS[id];
-      return t ? { ...t, category: "other", status: "active", info: {} } : null;
+      return t ? { ...t, db_id: id, category: "other", status: "active", info: {} } : null;
+    }
+    async findColumnStatuses(ids: string[]) {
+      return new Map(ids.filter((id) => TOOLS[id]).map((id) => [id, "active"] as [string, string]));
     }
     async findBySlug() {
       return null;

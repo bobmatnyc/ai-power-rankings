@@ -32,12 +32,13 @@ export interface CurrentListBoard {
  * Takes the snapshot's rankings array (an array, or one under `rankings` or
  * `data`), joins each entry to its tool by id then slug, drops entries whose tool
  * is missing (one warning each) or belongs to another list (or none), drops a
- * combined board's rows whose tool is not `active` now, sorts by stored rank
+ * combined board's rows whose tool's `tools.status` column is not `active` now, sorts by stored rank
  * and renumbers 1..n with D53 tiers. A combined row's movement is a global move, so its previous rank is renumbered within the list too. Returns
  * null when neither row exists. Throws when a database read throws.
  * Test: `tests/unit/home-live-rankings-192.test.tsx`,
  *   `tests/unit/rankings-per-list-read-186.test.ts`,
- *   `tests/unit/models-list-inactive-rows.test.ts`.
+ *   `tests/unit/models-list-inactive-rows.test.ts`,
+ *   `tests/unit/models-list-column-status-301.test.ts`.
  */
 export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LIST): Promise<CurrentListBoard | null> {
   const listRow = await rankingsRepository.getCurrentRankings(list);
@@ -63,7 +64,15 @@ export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LI
   const formatted = await Promise.all(rankings.map((ranking: any) => formatRanking(ranking, toolsRepo)));
 
   // Filter out null values (tools that weren't found), then the tools of other lists.
-  const members = formatted.filter((r): r is FormattedRanking => r !== null && inList(r, list, source));
+  const joined = formatted.filter((r): r is FormattedRanking => r !== null);
+  // #301: a combined board keeps a tool only while its `tools.status` COLUMN is `active`.
+  // The joined tool's `status` can be a stale JSONB copy, so the column is read on its own;
+  // a failed read rejects here (fails closed) and a row with no column status is dropped.
+  const columnStatus =
+    source === "combined"
+      ? await toolsRepo.findColumnStatuses(joined.flatMap((r) => (r.dbId ? [r.dbId] : [])))
+      : new Map<string, string>();
+  const members = joined.filter((r) => inList(r, list, source, r.dbId ? columnStatus.get(r.dbId) : undefined));
 
   // Sort by rank to ensure proper ordering
   members.sort((a, b) => (a.row.rank || 999) - (b.row.rank || 999));
@@ -73,13 +82,18 @@ export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LI
 
 /**
  * #186: whether a joined row belongs on `list`'s board. A combined row needs the tool's
- * list to be `list` and the tool to be `active` now: the stored board can still hold a
+ * list to be `list` and the tool's `tools.status` column to be `active` now: the stored board can still hold a
  * tool that was retired (for example `redirect`) after the board was published, and the
  * stored data is left as written; this read drops it. A list row was written for this list; it drops only a tool whose
  * kind is known and now maps elsewhere (a row read without a kind is kept as written).
  */
-function inList(entry: FormattedRanking, list: RankingList, source: ListBoardSource): boolean {
-  if (source === "combined") return entry.toolList === list && entry.status === "active";
+function inList(
+  entry: FormattedRanking,
+  list: RankingList,
+  source: ListBoardSource,
+  columnStatus: string | undefined
+): boolean {
+  if (source === "combined") return entry.toolList === list && columnStatus === "active";
   return entry.kind === undefined || entry.toolList === list;
 }
 
@@ -113,8 +127,8 @@ type FormattedRanking = {
   row: CurrentRankingRow;
   kind: unknown;
   toolList: RankingList | null;
-  /** The tool's current `tools.status`. */
-  status: string;
+  /** The tool's row UUID (`db_id`), the key for the `tools.status` column lookup (#301). */
+  dbId: string | undefined;
 };
 
 /**
@@ -207,5 +221,5 @@ async function formatRanking(ranking: any, toolsRepo: ToolsRepository) {
     },
     tier: ranking["tier"] || "standard",
   };
-  return { row, kind, toolList, status: String(tool.status ?? "") };
+  return { row, kind, toolList, dbId: toolAsAny?.["db_id"] as string | undefined };
 }

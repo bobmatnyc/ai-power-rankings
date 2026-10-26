@@ -9,7 +9,9 @@ import { describe, expect, it, vi } from "vitest";
  * What: seeds the in-memory Drizzle stand-in with identical-data tools in a scrambled
  *   order, reads them through the real `createDbPersistence().loadActiveTools()`, and
  *   ranks them with `computeRankings()`. Ties must come out in slug order, and a
- *   higher-scoring tool must still rank first.
+ *   higher-scoring tool must still rank first. Postgres ORDER BY uses the database
+ *   collation; the fake sorts by code point, so this proves the sort exists, not the
+ *   collation order.
  * Test: `npx vitest run tests/unit/ranking-tie-order-slug.test.ts`. No network.
  */
 
