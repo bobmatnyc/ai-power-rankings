@@ -79,6 +79,15 @@ describe("lintLogos", () => {
     expect(lintLogos(fixture([none], {}))).toEqual([]);
   });
 
+  it("rejects a reference-only file under public/, and accepts one outside it", () => {
+    const inPublic = entry({ status: "reference-only" });
+    expect(lintLogos(fixture([inPublic])).join("\n")).toMatch(/reference-only file must be under data\/logos\/reference\//);
+    const root = fixture([entry({ status: "reference-only", file: "data/logos/reference/made-up-vendor.svg" })], {});
+    mkdirSync(path.join(root, "data/logos/reference"), { recursive: true });
+    writeFileSync(path.join(root, "data/logos/reference/made-up-vendor.svg"), BYTES);
+    expect(lintLogos(root)).toEqual([]);
+  });
+
   it("fails when the manifest is missing or not JSON", () => {
     const root = fixture([]);
     writeFileSync(path.join(root, "data/logos/manifest.json"), "{ not json");

@@ -19,12 +19,15 @@ export type LogoStatus = (typeof LOGO_STATUSES)[number];
 /** Directory, relative to the repo root, that holds vendor marks and nothing else. */
 export const LOGOS_DIR = "public/logos";
 
+/** Where a `reference-only` file lives. Outside `public/`, so a mark we may not show is never served. */
+export const REFERENCE_DIR = "data/logos/reference";
+
 const nonEmpty = z.string().trim().min(1);
 const kebab = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "must be a kebab-case slug");
 
 export const logoEntrySchema = z.object({
   vendor: kebab,
-  /** Repo-relative path under `public/logos/`; null only for a `monogram` entry. */
+  /** Repo-relative path: `public/logos/` for `permitted`, `data/logos/reference/` for `reference-only`; null only for `monogram`. */
   file: nonEmpty.nullable(),
   source_url: nonEmpty,
   terms_url: nonEmpty,
@@ -50,7 +53,8 @@ export type LogoManifest = z.infer<typeof logoManifestSchema>;
  * Checks the manifest's shape and its file rules; returns one message per problem.
  *
  * Postcondition: an empty array means every entry is well formed, a `monogram` entry has no
- * file and no hash, any other entry has both, and no file path repeats.
+ * file and no hash, any other entry has both, a `permitted` file is under `public/logos/`, a
+ * `reference-only` file is under `data/logos/reference/` (never `public/`), and no path repeats.
  */
 export function validateManifest(raw: unknown): string[] {
   const parsed = logoManifestSchema.safeParse(raw);
@@ -68,7 +72,9 @@ export function validateManifest(raw: unknown): string[] {
     if (entry.file === null) errors.push(`${at}: file is required for status ${entry.status}`);
     if (entry.sha256 === null) errors.push(`${at}: sha256 is required for status ${entry.status}`);
     if (entry.file !== null) {
-      if (!entry.file.startsWith(`${LOGOS_DIR}/`)) errors.push(`${at}: file must be under ${LOGOS_DIR}/`);
+      // #303: everything in public/ is served, so a mark we may not display stays out of it.
+      const dir = entry.status === "permitted" ? LOGOS_DIR : REFERENCE_DIR;
+      if (!entry.file.startsWith(`${dir}/`)) errors.push(`${at}: ${entry.status} file must be under ${dir}/`);
       if (seen.has(entry.file)) errors.push(`${at}: file ${entry.file} is listed twice`);
       seen.add(entry.file);
     }
@@ -80,4 +86,9 @@ export function validateManifest(raw: unknown): string[] {
 export function permittedLogoUrl(manifest: LogoManifest, vendorSlug: string): string | null {
   const entry = manifest.logos.find((e) => e.vendor === vendorSlug && e.status === "permitted" && e.file);
   return entry?.file ? entry.file.replace(/^public/, "") : null;
+}
+
+/** True when the manifest records the vendor at all, whatever the status. */
+export function hasManifestEntry(manifest: LogoManifest, vendorSlug: string): boolean {
+  return manifest.logos.some((e) => e.vendor === vendorSlug);
 }

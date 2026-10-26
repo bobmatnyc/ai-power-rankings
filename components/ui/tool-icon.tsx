@@ -4,7 +4,7 @@ import { Newspaper } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import logoManifestJson from "@/data/logos/manifest.json";
-import { logoManifestSchema, permittedLogoUrl } from "@/lib/logos/manifest";
+import { hasManifestEntry, logoManifestSchema, permittedLogoUrl } from "@/lib/logos/manifest";
 import { vendorForTool } from "@/lib/logos/vendor-map";
 import { cn } from "@/lib/utils";
 
@@ -12,11 +12,12 @@ import { cn } from "@/lib/utils";
  * Why: a tool needs a thumbnail, but a vendor mark may be shown only where its terms allow
  *   it, and a runtime favicon or logo fetch is hotlinking.
  * What: renders, in order, (a) the vendor's `permitted` mark from `public/logos/`, (b) the
- *   tool's stored local logo path (a path starting with `/`; legacy, kept until L2), and
+ *   tool's stored local logo path (a path starting with `/`; legacy, kept until L2; skipped
+ *   when the manifest records the vendor with a non-`permitted` status), and
  *   (c) a monogram of the vendor name, else the tool name, on a colour derived from the slug.
  *   No code path requests a remote image; a website URL is never an image source.
  *   // See D82: the legacy `public/tool-icons` PNGs in (b) are re-sourced or removed in L2.
- * Test: `tests/unit/tool-icon-logos.test.tsx`
+ * Test: `tests/unit/tool-icon-logos.test.tsx`, `tests/unit/tool-icon-manifest.test.tsx`
  */
 
 interface ToolIconProps {
@@ -70,9 +71,12 @@ export function ToolIcon({ name, slug, logo, size = 48, className, context = "de
   const [imageError, setImageError] = useState(false);
   const vendor = vendorForTool(slug);
 
-  const src = imageError
-    ? null
-    : ((vendor ? permittedLogoUrl(manifest, vendor.vendor) : null) ?? (logo?.startsWith("/") ? logo : null));
+  // D82/#303: a vendor the manifest records without a permitted file (monogram or reference-only)
+  // always gets the monogram; the legacy `logo` prop is for vendors the manifest does not cover.
+  const permitted = vendor ? permittedLogoUrl(manifest, vendor.vendor) : null;
+  const covered = vendor ? hasManifestEntry(manifest, vendor.vendor) : false;
+  const legacy = !covered && logo?.startsWith("/") ? logo : null;
+  const src = imageError ? null : (permitted ?? legacy);
 
   if (src) {
     return (

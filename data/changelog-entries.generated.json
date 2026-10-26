@@ -660,14 +660,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-d89a9ad7b905",
+    "id": "unreleased-034b167e66dc",
     "version": "Unreleased",
-    "date": "2026-10-26T20:14:44.365Z",
+    "date": "2026-10-26T20:24:50.033Z",
     "dateSource": "build",
     "section": "Added",
     "scope": "logos",
     "title": "vendor-logo infrastructure (L1), with no vendor marks added",
-    "description": "vendor-logo infrastructure (L1), with no vendor marks added. `public/logos/` holds vendor marks only when `data/logos/manifest.json` records the vendor, file, source and terms URLs, terms note, fetch date, SHA-256 and a status of `permitted`, `reference-only` or `monogram`; `data/logos/tool-vendor.json` maps 25 tool slugs on the harness, model and productivity boards to a vendor and display name (tools whose vendor the repo data does not state are left out). `npm run lint:logos` fails on a file with no entry, a missing file, a hash mismatch, an empty provenance field, or a `monogram` entry that ships a file; the same check runs in the unit suite, so `gate:local` catches it. `ToolIcon` now draws a `permitted` vendor mark, else the tool's stored local logo path, else a monogram (initials of the vendor or tool name, a colour derived from the slug, an `aria-label`). It no longer fetches a favicon or any remote image, and `/api/favicon` is removed. A ranking card shows the stored logo instead of the website URL (the website was passed first and could hide it); no caller passes a website URL as an image source. The legacy `public/tool-icons` PNGs are outside the lint until L2 (D82). Tests: `tests/unit/logo-lint.test.ts`, `tests/unit/vendor-map.test.ts`, `tests/unit/tool-icon-logos.test.tsx`",
+    "description": "vendor-logo infrastructure (L1), with no vendor marks added. `public/logos/` holds vendor marks only when `data/logos/manifest.json` records the vendor, file, source and terms URLs, terms note, fetch date, SHA-256 and a status of `permitted`, `reference-only` or `monogram`; `data/logos/tool-vendor.json` maps 25 tool slugs on the harness, model and productivity boards to a vendor and display name (tools whose vendor the repo data does not state are left out). `npm run lint:logos` fails on a file with no entry, a missing file, a hash mismatch, an empty provenance field, a `monogram` entry that ships a file, or a `reference-only` file under `public/` (those live in `data/logos/reference/`, which is not served); the same check runs in the unit suite, so `gate:local` catches it. `ToolIcon` now draws a `permitted` vendor mark, else the tool's stored local logo path (skipped when the manifest records the vendor as `monogram` or `reference-only`, which always get the monogram), else a monogram (initials of the vendor or tool name, a colour derived from the slug, an `aria-label`). It no longer fetches a favicon or any remote image, and `/api/favicon` is removed. A ranking card shows the stored logo instead of the website URL (the website was passed first and could hide it); no caller passes a website URL as an image source. The legacy `public/tool-icons` PNGs are outside the lint until L2 (D82). Tests: `tests/unit/logo-lint.test.ts`, `tests/unit/vendor-map.test.ts`, `tests/unit/tool-icon-logos.test.tsx`",
     "changeType": "feature"
   },
   {
