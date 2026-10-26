@@ -57,7 +57,12 @@ function writeFailed() {
 }
 
 /**
- * PUT /api/admin/tools/[slug] — edit name, category, status or description.
+ * PUT /api/admin/tools/[slug] — edit name, category, status, description or metrics.
+ *
+ * #95: `metrics` takes `{ monthly_arr, users, valuation, swe_bench: { verified } }`,
+ * each `{ value, source, as_of }`. Values are stored as bare numbers in
+ * `data.metrics.<field>`; provenance in `data.metrics_provenance.<field>`.
+ * Any invalid field answers 400 and nothing is written.
  *
  * Answers 400 for an unreadable or invalid body, 404 for an unknown slug, and
  * `{ tool }` (the updated repository row) on success.
@@ -101,20 +106,19 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     if (!existing) return notFound(slug);
 
     const updates: Record<string, unknown> = { ...columns };
-    if (description !== undefined || metricEntries) {
+    if (description !== undefined) {
       // The manager reads info.product.description first, then info.description.
-      let info = (existing.info ?? {}) as Record<string, unknown>;
-      if (description !== undefined) {
-        const product = info["product"] as Record<string, unknown> | undefined;
-        info = {
-          ...info,
-          description,
-          ...(product && { product: { ...product, description } }),
-        };
-      }
-      // #95: deep-merge into info.metrics; repo.update merges only shallowly.
-      if (metricEntries?.ok) info = applyAdminMetrics(info, metricEntries.entries);
-      updates["info"] = info;
+      const info = (existing.info ?? {}) as Record<string, unknown>;
+      const product = info["product"] as Record<string, unknown> | undefined;
+      updates["info"] = {
+        ...info,
+        description,
+        ...(product && { product: { ...product, description } }),
+      };
+    }
+    // #95: metrics go to data.metrics (the engine's authoritative path), never data.info.
+    if (metricEntries?.ok) {
+      Object.assign(updates, applyAdminMetrics(existing as Record<string, unknown>, metricEntries.entries));
     }
 
     const tool = await repo.update(rowKey(existing), updates);
