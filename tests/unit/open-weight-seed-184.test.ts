@@ -70,15 +70,16 @@ describe("#184 committed seed file", () => {
     for (const kept of ["glm", "kimi", "deepseek", "devstral-small-2"]) expect(slugs).toContain(kept);
   });
 
-  it("marks exactly the 'other' and cc-by-nc rows restricted, each with a pending licence review", () => {
+  it("marks exactly the 'other' and cc-by-nc rows restricted, each is pending review, except kimi (reviewed)", () => {
     const restricted = REAL.models.filter((m) => m.restrictedLicence).map((m) => m.slug).sort();
     expect(restricted).toEqual(["command", "falcon", "kimi", "minimax", "nemotron"]);
     for (const row of REAL.models) {
-      expect(row.licenceReview, row.slug).toBe(row.restrictedLicence ? "pending" : "not_required");
+      const expected = !row.restrictedLicence ? "not_required" : row.slug === "kimi" ? "reviewed" : "pending";
+      expect(row.licenceReview, row.slug).toBe(expected);
       expect(row.flagshipBasis, row.slug).not.toBe("");
     }
     const basis = REAL.basis as Record<string, string>;
-    expect(basis["restricted_licence"]).toMatch(/reviewed before activation/);
+    expect(basis["restricted_licence"]).toMatch(/review happens before activation/);
     expect(basis["flagship_choice"]).toMatch(/newest seeded generation/);
   });
 
@@ -87,6 +88,9 @@ describe("#184 committed seed file", () => {
       "lib/services/ranking-generation.service.ts",
       "lib/scoring-profiles.ts",
       "lib/scoring-kind-routing.ts",
+      "lib/ranking-algorithm-v76.ts",
+      "lib/ranking-info-paths.ts",
+      "lib/ranking-metric-curves.ts",
     ]) {
       expect(readFileSync(path.join(ROOT, file), "utf8"), file).not.toMatch(
         /toolMetricsHistory|tool_metrics_history|huggingface|benchmark:/i
@@ -113,7 +117,8 @@ describe("#184 validateOpenWeightRow", () => {
     ["bad date", { releaseDate: "2026/01/01" }],
     ["empty licence", { licence: "" }],
     ["'other' licence not marked restricted", { hubLicence: "other", restrictedLicence: false, licenceReview: "not_required" }],
-    ["restricted without pending review", { hubLicence: "other", restrictedLicence: true, licenceReview: "done" }],
+    ["restricted with an unknown review state", { hubLicence: "other", restrictedLicence: true, licenceReview: "done" }],
+    ["unrestricted row marked reviewed", { hubLicence: "mit", restrictedLicence: false, licenceReview: "reviewed" }],
     ["permissive licence marked restricted", { hubLicence: "mit", restrictedLicence: true, licenceReview: "pending" }],
     ["no flagship basis", { flagshipBasis: "" }],
   ])("refuses %s", (_name, patch) => {

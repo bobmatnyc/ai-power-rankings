@@ -116,8 +116,10 @@ export function validateOpenWeightRow(row: OpenWeightSeedRow): string | null {
   if (row.restrictedLicence !== isRestrictedLicence(row.hubLicence)) {
     return "restricted_licence must be true exactly when the Hub licence is 'other' or cc-by-nc-*";
   }
-  if (row.licenceReview !== (row.restrictedLicence ? "pending" : "not_required")) {
-    return "licence_review must be 'pending' for a restricted row, else 'not_required'";
+  // #184: a restricted row is 'pending' until its licence text is reviewed, then 'reviewed'.
+  const reviewStates = row.restrictedLicence ? ["pending", "reviewed"] : ["not_required"];
+  if (!reviewStates.includes(row.licenceReview)) {
+    return "licence_review must be 'pending' or 'reviewed' for a restricted row, else 'not_required'";
   }
   if (!HTTPS.test(row.licenceUrl) || !HTTPS.test(row.sourceUrl)) return "licence_url and source_url must be https URLs";
   if (!Number.isFinite(row.parametersB) || row.parametersB <= 0) return "parameters_b must be a positive number";
