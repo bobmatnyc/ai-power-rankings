@@ -10,9 +10,8 @@
  * What: `validateAdminMetrics` checks every field of one request and returns
  * either all errors (nothing may be written) or the validated entries plus any
  * magnitude warnings. `applyAdminMetrics` is the ONLY place that decides where
- * a value lives: `info.metrics.<field>` stays a bare number so existing readers
- * (`parseNumeric` in ranking-algorithm-v76) keep working, and provenance goes to
- * the sibling `info.metrics_provenance.<field> = { source, as_of }`.
+ * a value lives: `data.metrics.<field>` as a bare number (authoritative for the
+ * v7.6 engine) and provenance in `data.metrics_provenance.<field> = { source, as_of }`.
  * Test: `tests/unit/admin-metrics-validation-95.test.ts`.
  */
 
@@ -179,31 +178,42 @@ export function validateAdminMetrics(input: unknown, now: Date = new Date()): Me
   return errors.length > 0 ? { ok: false, errors } : { ok: true, entries, warnings };
 }
 
+/** The nested `swe_bench` the engine would fall back to when `data.metrics` has none. */
+function legacySweBench(data: Record<string, unknown>): Record<string, unknown> {
+  const info = isRecord(data["info"]) ? data["info"] : {};
+  const inner = isRecord(info["info"]) ? info["info"] : info;
+  const m = isRecord(inner["metrics"]) ? inner["metrics"] : {};
+  return isRecord(m["swe_bench"]) ? m["swe_bench"] : {};
+}
+
 /**
- * Merge validated metrics into a tool's `info` blob and return the new `info`.
- * Sibling keys of `info`, `info.metrics` and `info.metrics.swe_bench` survive.
+ * Map validated metrics onto the tool's `data` blob and return the PATCH to
+ * merge (`{ metrics, metrics_provenance }`); no other `data` key is touched and
+ * `data.info` is never created or altered.
  *
- * Storage shape (settled in #95): the value is a bare number at
- * `info.metrics.<field>`, because v7.6 readers parse it as a number; provenance
- * is `info.metrics_provenance.<field>`. Change the shape here and nowhere else.
+ * Storage shape (#95): values are bare numbers at `data.metrics.<field>`, the
+ * path the v7.6 engine treats as authoritative (`canonicalizeMetricPaths`: the
+ * top-level key wins over legacy `data.info.metrics`). Provenance is
+ * `data.metrics_provenance.<field> = { source, as_of }`. Not reused:
+ * `business_metrics_provenance` has no writer or reader on main. Because that
+ * merge is shallow per key, a written `swe_bench` starts from the effective
+ * one so `lite`/`full` siblings are not shadowed. Change the shape here only.
  */
 export function applyAdminMetrics(
-  info: Record<string, unknown>,
+  data: Record<string, unknown>,
   entries: readonly ValidatedMetric[]
-): Record<string, unknown> {
+): { metrics: Record<string, unknown>; metrics_provenance: Record<string, unknown> } {
   const metrics: Record<string, unknown> = {
-    ...(isRecord(info["metrics"]) ? info["metrics"] : {}),
+    ...(isRecord(data["metrics"]) ? data["metrics"] : {}),
   };
   const prov: Record<string, unknown> = {
-    ...(isRecord(info["metrics_provenance"]) ? info["metrics_provenance"] : {}),
+    ...(isRecord(data["metrics_provenance"]) ? data["metrics_provenance"] : {}),
   };
   for (const e of entries) {
     const leaf = { source: e.source, as_of: e.as_of };
     if (e.field === "swe_bench.verified") {
-      metrics["swe_bench"] = {
-        ...(isRecord(metrics["swe_bench"]) ? metrics["swe_bench"] : {}),
-        verified: e.value,
-      };
+      const current = isRecord(metrics["swe_bench"]) ? metrics["swe_bench"] : legacySweBench(data);
+      metrics["swe_bench"] = { ...current, verified: e.value };
       prov["swe_bench"] = {
         ...(isRecord(prov["swe_bench"]) ? prov["swe_bench"] : {}),
         verified: leaf,
@@ -213,5 +223,5 @@ export function applyAdminMetrics(
       prov[e.field] = leaf;
     }
   }
-  return { ...info, metrics, metrics_provenance: prov };
+  return { metrics, metrics_provenance: prov };
 }

@@ -5,7 +5,8 @@
  *   An invalid value must never be stored as 0, null or a default, and a request
  *   with one bad field must write none of its fields.
  * What: pure-module cases for `validateAdminMetrics` / `applyAdminMetrics`, then
- *   the admin PUT route on PGlite with the real ToolsRepository (only
+ *   the admin PUT route on PGlite with the real ToolsRepository, then the real
+ *   RankingEngineV76 scoring the stored row (only
  *   `requireAdmin` and `getDb` replaced). Rows are read back from the database.
  * Test: `npx vitest run tests/unit/admin-metrics-validation-95.test.ts`.
  */
@@ -15,6 +16,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { applyAdminMetrics, validateAdminMetrics } from "../../lib/admin-metrics-validation";
 import { parseNumeric } from "../../lib/parse-numeric";
+import {
+  canonicalizeMetricPaths,
+  RankingEngineV76,
+  type ToolMetricsV76,
+} from "../../lib/ranking-algorithm-v76";
 import { linkedDb } from "./fixtures/tool-links-183-fixture";
 
 const { requireAdmin, getDb, holder } = vi.hoisted(() => {
@@ -105,44 +111,39 @@ describe("#95 validateAdminMetrics", () => {
 });
 
 describe("#95 applyAdminMetrics", () => {
-  it("keeps the value a bare number, keeps siblings, and writes provenance beside it", () => {
+  it("returns a data.metrics patch of bare numbers with sibling provenance, keeping siblings", () => {
     const r = validateAdminMetrics({ monthly_arr: leaf(5_000_000), swe_bench: { verified: leaf(70) } }, NOW);
     if (!r.ok) throw new Error("expected valid");
-    const info = applyAdminMetrics(
+    const patch = applyAdminMetrics(
       {
         keep: 1,
-        metrics: { funding: "$1B", swe_bench: { lite: 30 } },
+        info: { metrics: { monthly_arr: 1, swe_bench: { lite: 30 } } },
+        metrics: { funding: "$1B" },
         metrics_provenance: { funding: { source: "s", as_of: "2026-01-01" } },
       },
       r.entries
     );
-    expect(info).toEqual({
-      keep: 1,
-      metrics: { funding: "$1B", monthly_arr: 5_000_000, swe_bench: { lite: 30, verified: 70 } },
-      metrics_provenance: {
-        funding: { source: "s", as_of: "2026-01-01" },
-        monthly_arr: { source: "https://example.com/report", as_of: "2026-10-01" },
-        swe_bench: { verified: { source: "https://example.com/report", as_of: "2026-10-01" } },
-      },
+    expect(Object.keys(patch).sort()).toEqual(["metrics", "metrics_provenance"]);
+    expect(patch.metrics).toEqual({
+      funding: "$1B",
+      monthly_arr: 5_000_000,
+      // Started from the effective (legacy nested) swe_bench so `lite` is not shadowed.
+      swe_bench: { lite: 30, verified: 70 },
+    });
+    expect(patch.metrics_provenance).toEqual({
+      funding: { source: "s", as_of: "2026-01-01" },
+      monthly_arr: { source: "https://example.com/report", as_of: "2026-10-01" },
+      swe_bench: { verified: { source: "https://example.com/report", as_of: "2026-10-01" } },
     });
   });
 });
 
 describe("#95 PUT /api/admin/tools/[slug] metrics", () => {
   let pg: PGlite;
+  const SLUG = "test-tool";
   beforeEach(async () => {
     let db: unknown;
-    ({ pg, db } = await linkedDb([{ slug: "claude-code", name: "Claude Code", kind: "harness" }]));
-    await pg.query(`UPDATE public."tools" SET data = $1 WHERE slug = 'claude-code'`, [
-      JSON.stringify({
-        id: "tool-claude-code",
-        status: "active",
-        info: {
-          description: "old",
-          metrics: { funding: "$1B", valuation: "$10.2B (Sep 2025)", swe_bench: { lite: 30 } },
-        },
-      }),
-    ]);
+    ({ pg, db } = await linkedDb([{ slug: SLUG, name: "Test Tool", kind: "harness" }]));
     holder.db = db;
     requireAdmin.mockReset();
     requireAdmin.mockResolvedValue({ userId: "u", user: {}, error: null });
@@ -152,57 +153,117 @@ describe("#95 PUT /api/admin/tools/[slug] metrics", () => {
     await pg.close();
   });
 
+  const seed = (data: Record<string, unknown>) =>
+    pg.query(`UPDATE public."tools" SET data = $1 WHERE slug = $2`, [JSON.stringify(data), SLUG]);
   const put = (body: unknown) =>
     PUT(
-      new NextRequest("http://localhost/api/admin/tools/claude-code", {
+      new NextRequest(`http://localhost/api/admin/tools/${SLUG}`, {
         method: "PUT",
         body: JSON.stringify(body),
       }),
-      { params: Promise.resolve({ slug: "claude-code" }) }
+      { params: Promise.resolve({ slug: SLUG }) }
     );
-  const info = async () =>
-    (
-      await pg.query<{ data: { info: Record<string, any> } }>(
-        `SELECT data FROM public."tools" WHERE slug = 'claude-code'`
-      )
-    ).rows[0]?.data.info as Record<string, any>;
+  const data = async () =>
+    (await pg.query<{ data: Record<string, any> }>(`SELECT data FROM public."tools" WHERE slug = $1`, [SLUG]))
+      .rows[0]?.data as Record<string, any>;
 
-  it("writes typed metrics, keeps sibling keys, and v7.6's numeric parse still yields the number", async () => {
-    const res = await put({
-      metrics: { monthly_arr: leaf(400_000_000), swe_bench: { verified: leaf(80.9) } },
+  /** The engine input exactly as computeRankings() builds it from a stored `data` blob. */
+  const engineInput = (d: Record<string, any>) =>
+    ({
+      tool_id: "id-test-tool",
+      name: "test-tool",
+      slug: "test-tool",
+      category: "code-editor",
+      status: "active",
+      info: d,
+      metrics: d["metrics"] ?? {},
+    }) as unknown as ToolMetricsV76;
+  const score = (d: Record<string, any>) =>
+    new RankingEngineV76().calculateToolScore(engineInput(d), NOW).overallScore;
+
+  it("the engine scores the NEW valuation when data.metrics and a stale data.info.metrics both hold one", async () => {
+    await seed({
+      id: "tool-test",
+      status: "active",
+      info: { description: "d", metrics: { valuation: 1_000_000, users: 50_000 } },
+      metrics: { valuation: 1_000_000_000, funding: "$1B", npm: { downloads_last_month: 1 } },
     });
+    const before = score(await data());
+    const res = await put({ metrics: { valuation: leaf(20_000_000_000) } });
     expect(res.status).toBe(200);
-    const stored = await info();
-    expect(stored["description"]).toBe("old");
-    expect(stored["metrics"]).toEqual({
+
+    const after = await data();
+    expect(after["metrics"]).toEqual({
+      valuation: 20_000_000_000,
       funding: "$1B",
-      valuation: "$10.2B (Sep 2025)",
-      monthly_arr: 400_000_000,
-      swe_bench: { lite: 30, verified: 80.9 },
+      npm: { downloads_last_month: 1 },
     });
-    expect(stored["metrics_provenance"]["monthly_arr"]).toEqual({
+    expect(after["metrics_provenance"]["valuation"]).toEqual({
       source: "https://example.com/report",
       as_of: "2026-10-01",
     });
-    // The reader path in ranking-algorithm-v76 coerces info.metrics.monthly_arr with parseNumeric.
-    expect(parseNumeric(stored["metrics"]["monthly_arr"])).toBe(400_000_000);
-    expect(parseNumeric(stored["metrics"]["swe_bench"]["verified"])).toBe(80.9);
+    // The stale legacy copy is left alone: data.metrics wins in canonicalizeMetricPaths.
+    expect(after["info"]).toEqual({ description: "d", metrics: { valuation: 1_000_000, users: 50_000 } });
+
+    const reference = {
+      ...after,
+      metrics: { ...after["metrics"] },
+      info: { description: "d", metrics: { users: 50_000 } },
+    };
+    expect(score(after)).toBe(score(reference));
+    expect(score(after)).not.toBe(before);
+  });
+
+  it("a flat tool (no data.info) gets data.metrics and no data.info is created", async () => {
+    await seed({ id: "tool-test", status: "active", metrics: { valuation: 1_000_000_000 } });
+    const before = score(await data());
+    const res = await put({ metrics: { valuation: leaf(20_000_000_000) } });
+    expect(res.status).toBe(200);
+    const after = await data();
+    expect("info" in after).toBe(false);
+    expect(after["metrics"]["valuation"]).toBe(20_000_000_000);
+    expect(score(after)).not.toBe(before);
+  });
+
+  it("a tool whose metrics live only under data.info.metrics keeps data.info unchanged and gains data.metrics", async () => {
+    const info = { description: "d", metrics: { valuation: 1_000_000, users: 50_000 } };
+    await seed({ id: "tool-test", status: "active", info });
+    const res = await put({ metrics: { valuation: leaf(20_000_000_000) } });
+    expect(res.status).toBe(200);
+    const after = await data();
+    expect(after["info"]).toEqual(info);
+    expect(after["metrics"]).toEqual({ valuation: 20_000_000_000 });
+    // Reader path: the canonical merge keeps nested-only `users` and takes the new valuation.
+    expect(canonicalizeMetricPaths(after["metrics"], after["info"]["metrics"])).toEqual({
+      valuation: 20_000_000_000,
+      users: 50_000,
+    });
+    expect(parseNumeric(after["metrics"]["valuation"])).toBe(20_000_000_000);
+  });
+
+  it("writes swe_bench.verified into data.metrics without shadowing a nested lite score", async () => {
+    await seed({ id: "tool-test", status: "active", info: { metrics: { swe_bench: { lite: 30 } } } });
+    const res = await put({ metrics: { swe_bench: { verified: leaf(80.9) } } });
+    expect(res.status).toBe(200);
+    expect((await data())["metrics"]["swe_bench"]).toEqual({ lite: 30, verified: 80.9 });
   });
 
   it("returns magnitude warnings and still writes the value", async () => {
+    await seed({ id: "tool-test", status: "active" });
     const res = await put({ metrics: { users: leaf(9) } });
     expect(res.status).toBe(200);
     const body = (await res.json()) as { warnings: { field: string }[] };
     expect(body.warnings).toMatchObject([{ field: "users" }]);
-    expect((await info())["metrics"]["users"]).toBe(9);
+    expect((await data())["metrics"]["users"]).toBe(9);
   });
 
   it("combines a description edit and metrics in one write", async () => {
+    await seed({ id: "tool-test", status: "active", info: { description: "old" } });
     const res = await put({ description: "new", metrics: { users: leaf(250_000) } });
     expect(res.status).toBe(200);
-    const stored = await info();
-    expect(stored["description"]).toBe("new");
-    expect(stored["metrics"]["users"]).toBe(250_000);
+    const after = await data();
+    expect(after["info"]["description"]).toBe("new");
+    expect(after["metrics"]["users"]).toBe(250_000);
   });
 
   it.each([
@@ -212,31 +273,34 @@ describe("#95 PUT /api/admin/tools/[slug] metrics", () => {
     ["a future as_of", { users: leaf(5000, { as_of: "2999-01-01" }) }],
     ["an unknown metric", { employees: leaf(5) }],
   ])("answers 400 for %s and writes nothing", async (_l, metrics) => {
-    const before = await info();
+    await seed({ id: "tool-test", status: "active", metrics: { valuation: 5 } });
+    const before = await data();
     const res = await put({ metrics });
     expect(res.status).toBe(400);
-    expect(await info()).toEqual(before);
+    expect(await data()).toEqual(before);
   });
 
   it("writes no field when one of several is invalid, and not the description either", async () => {
-    const before = await info();
+    await seed({ id: "tool-test", status: "active", info: { description: "old" } });
+    const before = await data();
     const res = await put({
       description: "new",
       metrics: { monthly_arr: leaf(5_000_000), users: leaf("many") },
     });
     expect(res.status).toBe(400);
-    expect(await info()).toEqual(before);
+    expect(await data()).toEqual(before);
   });
 
   it("refuses an unauthenticated caller before any read or write", async () => {
+    await seed({ id: "tool-test", status: "active" });
     requireAdmin.mockResolvedValue({
       error: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
     });
-    const before = await info();
+    const before = await data();
     getDb.mockClear();
     const res = await put({ metrics: { users: leaf(5000) } });
     expect(res.status).toBe(401);
     expect(getDb).not.toHaveBeenCalled();
-    expect(await info()).toEqual(before);
+    expect(await data()).toEqual(before);
   });
 });
