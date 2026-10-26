@@ -60,7 +60,7 @@ export function GradientFills({ mode }: { mode: Mode }) {
             {ICON_SWATCHES.map((swatch) => (
               <div key={swatch.hue} data-swatch={`icon-${swatch.hue}`} className="min-w-0 space-y-1">
                 {swatch.glyph === "news" ? (
-                  <ToolIcon name={swatch.sampleName} context="news" size={ICON_SIZE} />
+                  <ToolIcon name="" context="news" size={ICON_SIZE} />
                 ) : (
                   <ToolIcon name={swatch.sampleName} size={ICON_SIZE} />
                 )}

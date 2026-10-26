@@ -1,0 +1,105 @@
+{
+  "version": 1,
+  "tools": {
+    "aider": {
+      "vendor": "paul-gauthier",
+      "vendor_name": "Paul Gauthier"
+    },
+    "amazon-q-developer": {
+      "vendor": "amazon-web-services",
+      "vendor_name": "Amazon Web Services"
+    },
+    "anything-max": {
+      "vendor": "anything",
+      "vendor_name": "Anything"
+    },
+    "clacky-ai": {
+      "vendor": "clackyai",
+      "vendor_name": "ClackyAI"
+    },
+    "claude-code": {
+      "vendor": "anthropic",
+      "vendor_name": "Anthropic"
+    },
+    "cursor": {
+      "vendor": "anysphere",
+      "vendor_name": "Anysphere"
+    },
+    "devin": {
+      "vendor": "cognition-labs",
+      "vendor_name": "Cognition Labs"
+    },
+    "dfinity-caffeine": {
+      "vendor": "dfinity-foundation",
+      "vendor_name": "DFINITY Foundation"
+    },
+    "epic": {
+      "vendor": "reload",
+      "vendor_name": "Reload"
+    },
+    "flint": {
+      "vendor": "flint",
+      "vendor_name": "Flint"
+    },
+    "gemini-code-assist": {
+      "vendor": "google-cloud",
+      "vendor_name": "Google Cloud"
+    },
+    "github-copilot": {
+      "vendor": "github",
+      "vendor_name": "GitHub"
+    },
+    "gitlab-duo": {
+      "vendor": "gitlab",
+      "vendor_name": "GitLab"
+    },
+    "google-gemini-cli": {
+      "vendor": "google",
+      "vendor_name": "Google"
+    },
+    "goose": {
+      "vendor": "block",
+      "vendor_name": "Block"
+    },
+    "graphite": {
+      "vendor": "graphite",
+      "vendor_name": "Graphite"
+    },
+    "greptile": {
+      "vendor": "greptile",
+      "vendor_name": "Greptile"
+    },
+    "jetbrains-ai": {
+      "vendor": "jetbrains",
+      "vendor_name": "JetBrains"
+    },
+    "junie": {
+      "vendor": "jetbrains",
+      "vendor_name": "JetBrains"
+    },
+    "qwen-code": {
+      "vendor": "alibaba-cloud",
+      "vendor_name": "Alibaba Cloud"
+    },
+    "replit-agent": {
+      "vendor": "replit",
+      "vendor_name": "Replit"
+    },
+    "sourcegraph-cody": {
+      "vendor": "sourcegraph",
+      "vendor_name": "Sourcegraph"
+    },
+    "tabnine": {
+      "vendor": "tabnine",
+      "vendor_name": "Tabnine"
+    },
+    "v0-vercel": {
+      "vendor": "vercel",
+      "vendor_name": "Vercel"
+    },
+    "windsurf": {
+      "vendor": "codeium",
+      "vendor_name": "Codeium"
+    }
+  }
+}

@@ -8,6 +8,7 @@
     "build:next": "next build",
     "start": "next start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:logos": "tsx scripts/lint-logos.ts",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "generate-categories": "npx tsx scripts/generate-static-categories.ts",
     "generate-changelog": "npx tsx scripts/generate-changelog-data.ts",

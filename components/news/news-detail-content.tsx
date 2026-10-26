@@ -487,7 +487,7 @@ export default function NewsDetailContent({
             {tool && (
               <ToolIcon
                 name={tool.name}
-                domain={tool.info?.website}
+                slug={tool.slug}
                 size={64}
                 className="flex-shrink-0"
                 context="news"
@@ -528,7 +528,7 @@ export default function NewsDetailContent({
                 <Badge variant="outline" className="flex items-center gap-1">
                   <ToolIcon
                     name={tool.name}
-                    domain={tool.info?.website}
+                    slug={tool.slug}
                     size={16}
                     className="flex-shrink-0"
                     context="news"
@@ -550,7 +550,7 @@ export default function NewsDetailContent({
                     >
                       <ToolIcon
                         name={mention.name}
-                        domain={mention.website}
+                        slug={mention.slug}
                         size={12}
                         className="flex-shrink-0"
                         context="news"

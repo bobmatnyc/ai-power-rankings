@@ -183,7 +183,7 @@ export function ToolsContent({ tools, loading, lang, dict }: ToolsContentProps) 
                   <div className="flex items-center gap-3">
                     <ToolIcon
                       name={tool.name}
-                      domain={tool.website_url || tool.website || tool.info?.links?.website}
+                      slug={tool.slug}
                       size={48}
                       className="flex-shrink-0"
                     />

@@ -40,8 +40,8 @@ interface RankingData {
     name: string;
     category: string;
     status: string;
-    website_url?: string;  // Used by ToolIcon for favicons
-    logo?: string;         // Local PNG path (preferred over favicon API)
+    website_url?: string;  // A link target only; never an image source
+    logo?: string;         // Stored local logo path (legacy; see D82)
     description?: string;  // Used by RankingCard
     slug?: string;         // Tool slug for routing
   };
