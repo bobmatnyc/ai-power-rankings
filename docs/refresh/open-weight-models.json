@@ -19,7 +19,7 @@
     "active_parameters_b": "Stated on the model card or in the reviewed tool-kind sheet; null when neither states it.",
     "release_date": "Hub repository creation date; not necessarily the public announcement date.",
     "price": "Open weights have no list price. A hosted price depends on the provider; left null until the owner picks a provider.",
-    "restricted_licence": "A row is restricted_licence = true when the Hub licence tag is 'other' or cc-by-nc-*. Those rows are kept and carry licence_review = pending. Their licence texts are reviewed before activation, not by this seed.",
+    "restricted_licence": "A row is restricted_licence = true when the Hub licence tag is 'other' or cc-by-nc-*. Those rows are kept and carry licence_review = pending until their licence text is reviewed (then reviewed). The review happens before activation, not in this seed.",
     "benchmarks": "Community Hub eval results are recorded as unverified history leaves only. No scoring code reads them.",
     "activation": "Rows load inactive. Activation follows the scheduled wire-in and one clean run."
   },
@@ -86,7 +86,7 @@
       "licence": "modified-mit",
       "hub_licence": "other",
       "restricted_licence": true,
-      "licence_review": "pending",
+      "licence_review": "reviewed",
       "licence_url": "https://huggingface.co/moonshotai/Kimi-K2.5",
       "parameters_b": 1026.9,
       "active_parameters_b": 32,
