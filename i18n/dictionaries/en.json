@@ -204,7 +204,8 @@
   "rankings": {
     "asOf": "Rankings as of {date}",
     "title": "AI Power Ranking",
-    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm v7.6 - Market-validated scoring",
+    "subtitle": "Comprehensive rankings of AI coding tools using Algorithm {version} - Market-validated scoring",
+    "subtitleNoVersion": "Comprehensive rankings of AI coding tools - Market-validated scoring",
     "stats": {
       "totalTools": "Total Tools",
       "categories": "Categories",

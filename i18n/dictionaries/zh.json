@@ -459,7 +459,8 @@
   "rankings": {
     "asOf": "截至 {date} 的排名",
     "title": "AI 实力排行榜",
-    "subtitle": "使用算法v7.6的AI编码工具综合排名",
+    "subtitle": "使用算法{version}的AI编码工具综合排名",
+    "subtitleNoVersion": "AI编码工具综合排名",
     "stats": {
       "totalTools": "工具总数",
       "categories": "分类",

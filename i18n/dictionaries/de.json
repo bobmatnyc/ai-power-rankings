@@ -198,7 +198,8 @@
   "rankings": {
     "asOf": "Rankings vom {date}",
     "title": "KI Power Rankings",
-    "subtitle": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.6",
+    "subtitle": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus {version}",
+    "subtitleNoVersion": "Umfassende Rankings von KI-Coding-Tools",
     "stats": {
       "totalTools": "Tools gesamt",
       "categories": "Kategorien",

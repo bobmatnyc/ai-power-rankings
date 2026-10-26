@@ -204,7 +204,8 @@
   "rankings": {
     "asOf": "Рейтинг станом на {date}",
     "title": "AI Power Rankings",
-    "subtitle": "Комплексні рейтинги AI інструментів кодування з алгоритмом v7.6",
+    "subtitle": "Комплексні рейтинги AI інструментів кодування з алгоритмом {version}",
+    "subtitleNoVersion": "Комплексні рейтинги AI інструментів кодування",
     "stats": {
       "totalTools": "Всього тулів",
       "categories": "Категорії",
