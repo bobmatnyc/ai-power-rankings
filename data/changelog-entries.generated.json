@@ -176,6 +176,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-1a607fffeb7a",
+    "version": "Unreleased",
+    "date": "2026-10-26T00:42:52.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "rankings",
+    "title": "GET /api/rankings/current takes a required request: Request, as Next.js route exports require, and reads the list from…",
+    "description": "`GET /api/rankings/current` takes a required `request: Request`, as Next.js route exports require, and reads the list from its URL; the earlier optional `request?` is gone. `GET /api/rankings` and the trending route already did. The unit test that called the handler with no argument now passes a bare `Request`. Tests: `tests/unit/rankings-current-trending-185.test.ts` (#186)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-7fd656d6f671",
     "version": "Unreleased",
     "date": "2026-10-26T00:01:35.000Z",
@@ -761,7 +772,7 @@
   {
     "id": "unreleased-56b05757b2ea",
     "version": "Unreleased",
-    "date": "2026-10-25T21:00:18.000Z",
+    "date": "2026-10-26T00:42:41.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
@@ -827,8 +838,8 @@
   {
     "id": "unreleased-d505ec1bca28",
     "version": "Unreleased",
-    "date": "2026-10-25T21:00:24.484Z",
-    "dateSource": "build",
+    "date": "2026-10-26T00:42:41.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
     "title": "scripts/measure-v8-board.ts maps each published v7.10 tool id through tools redirects before it compares the board",
