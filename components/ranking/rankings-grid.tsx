@@ -16,8 +16,13 @@ import {
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { trackEvent } from "@/lib/analytics/track";
-import { formatUtcDate } from "@/lib/format-utc-date";
 import { loggers } from "@/lib/logger-client";
+import {
+  formatAlgorithmVersion,
+  formatHeaderDate,
+  rankingsAsOf,
+  rankingsSubtitle,
+} from "@/lib/rankings/header";
 import {
   DEFAULT_RANKING_LIST,
   listTierScheme,
@@ -75,6 +80,8 @@ interface RankingsGridProps {
   initialRankings?: RankingData[];
   /** #186: the list this grid shows; default the coding-harness list (D51). */
   list?: RankingList;
+  /** #305: the published ranking's `algorithm.version` and `published_at`, from the server. */
+  header?: { version?: string | null; publishedAt?: string | null };
 }
 
 /** #186: `/api/rankings` for a list; the default list keeps the unqualified URL (D51). */
@@ -90,21 +97,17 @@ function RankingsGridContent({
   dict,
   initialRankings = [],
   list = DEFAULT_RANKING_LIST,
+  header,
 }: RankingsGridProps): React.JSX.Element {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [rankings, setRankings] = useState<RankingData[]>(initialRankings);
   const [loading, setLoading] = useState(initialRankings.length === 0);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [lastUpdateDate, setLastUpdateDate] = useState<string>("");
-  // Honest "Rankings as of <date>" marker sourced from the current snapshot's
-  // published_at, so a frozen snapshot is never presented as fresh silently.
-  const [publishedDate, setPublishedDate] = useState<string>("");
-  const [totalTools, setTotalTools] = useState<number>(0);
-  const [categoriesCount, setCategoriesCount] = useState<number>(0);
-  const [avgScore, setAvgScore] = useState<number>(0);
-  // #186: once the list's rows are read, show its real counts (a list may be empty).
-  const [statsLoaded, setStatsLoaded] = useState(initialRankings.length > 0);
+  // #305: the header's version and "as of" date come from the published ranking, in the
+  // server HTML (props) or, for a client-side load, the same response as the rows.
+  const [version, setVersion] = useState<string | null>(header?.version ?? null);
+  const [publishedAt, setPublishedAt] = useState<string | null>(header?.publishedAt ?? null);
   // #186: sort and filter links stay on this list's page.
   const listPath = `/${lang}${rankingListPath(list)}`;
 
@@ -114,66 +117,6 @@ function RankingsGridContent({
   const sortParam = searchParams.get("sort") || "rank";
   // #233: the search term is client state only; it never enters the URL.
   const [searchTerm, setSearchTerm] = useState("");
-
-  const fetchToolsStatistics = useCallback(async (): Promise<void> => {
-    try {
-      const response = await fetch("/api/tools");
-      if (response.ok) {
-        const data = await response.json();
-        const tools = data.tools || [];
-
-        // Calculate total tools
-        setTotalTools(tools.length);
-
-        // Calculate categories count
-        const uniqueCategories = new Set(tools.map((t: any) => t.category).filter(Boolean));
-        setCategoriesCount(uniqueCategories.size);
-
-        // Calculate average baseline score if available
-        const scoresArray = tools
-          .map((t: any) => t.baseline_score || t.score)
-          .filter((s: any) => typeof s === 'number' && s > 0);
-
-        if (scoresArray.length > 0) {
-          const avgScoreValue = scoresArray.reduce((acc: number, score: number) => acc + score, 0) / scoresArray.length;
-          setAvgScore(avgScoreValue);
-        }
-      }
-    } catch (error) {
-      console.warn("Could not fetch tools statistics:", error);
-    }
-  }, []);
-
-  const fetchAlgorithmDate = useCallback(async (): Promise<void> => {
-    try {
-      const response = await fetch(rankingsApiPath(list, { metadata: "true" }));
-      if (response.ok) {
-        const data = await response.json();
-        if (data.algorithm?.date) {
-          const date = new Date(data.algorithm.date);
-          // #239: UTC, so the stored date names the same day in every browser zone.
-          const formattedDate = formatUtcDate(date, lang, {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          });
-          setLastUpdateDate(formattedDate);
-        }
-        if (data.published_at) {
-          // #239: UTC, so the stored date names the same day in every browser zone.
-          setPublishedDate(
-            formatUtcDate(data.published_at, lang, {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })
-          );
-        }
-      }
-    } catch {
-      // Silently fail, will use fallback
-    }
-  }, [lang, list]);
 
   const fetchRankings = useCallback(async (): Promise<void> => {
     try {
@@ -195,52 +138,9 @@ function RankingsGridContent({
         setRankings([]);
       } else {
         setRankings(data.rankings);
-        setTotalTools(data.rankings.length);
-        setStatsLoaded(true);
-
-        // Calculate stats from rankings if available
-        if (data.rankings && data.rankings.length > 0) {
-          setTotalTools(data.rankings.length);
-
-          const uniqueCategories = new Set(data.rankings.map((r: RankingData) => r.tool.category).filter(Boolean));
-          setCategoriesCount(uniqueCategories.size);
-
-          const avgScoreValue = data.rankings.reduce((acc: number, r: RankingData) => acc + (r.scores?.overall || 0), 0) / data.rankings.length;
-          setAvgScore(avgScoreValue);
-        }
-
-        // Set the "Rankings as of" marker from the snapshot's published_at
-        if (data.published_at) {
-          // #239: UTC, so the stored date names the same day in every browser zone.
-          setPublishedDate(
-            formatUtcDate(data.published_at, lang, {
-              month: "long",
-              day: "numeric",
-              year: "numeric",
-            })
-          );
-        }
-
-        // Set last update date from algorithm date
-        if (data.algorithm?.date) {
-          const date = new Date(data.algorithm.date);
-          // #239: UTC, so the stored date names the same day in every browser zone.
-          const formattedDate = formatUtcDate(date, lang, {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          });
-          setLastUpdateDate(formattedDate);
-        } else {
-          // Fallback to current date if no algorithm date
-          const today = new Date();
-          const formattedDate = today.toLocaleDateString(lang, {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          });
-          setLastUpdateDate(formattedDate);
-        }
+        // #305: the header text comes from the same response as the rows.
+        setVersion(data.algorithm?.version ?? null);
+        setPublishedAt(data.published_at ?? null);
       }
 
       setLoading(false);
@@ -249,36 +149,17 @@ function RankingsGridContent({
       setRankings([]); // Ensure rankings is always an array
       setLoading(false);
     }
-  }, [lang, list]);
+  }, [list]);
 
   useEffect(() => {
     // Only fetch if no initial rankings provided
     if (initialRankings.length === 0) {
       fetchRankings();
-      // Also fetch tools statistics as a fallback
-      fetchToolsStatistics();
     } else {
       setLoading(false);
-      // For SSR, calculate stats from initial rankings
-      if (initialRankings.length > 0) {
-        setTotalTools(initialRankings.length);
-
-        const uniqueCategories = new Set(initialRankings.map((r) => r.tool.category).filter(Boolean));
-        setCategoriesCount(uniqueCategories.size);
-
-        const avgScoreValue = initialRankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / initialRankings.length;
-        setAvgScore(avgScoreValue);
-      }
-      // For SSR, we need to fetch the algorithm date separately
-      fetchAlgorithmDate();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    initialRankings.length, // For SSR, we need to fetch the algorithm date separately
-    fetchAlgorithmDate,
-    fetchRankings,
-    fetchToolsStatistics,
-  ]);
+    // #305: with server rows, the server's count, version and date stand; no effect replaces them.
+  }, [initialRankings.length, fetchRankings]);
 
   // Apply filters
   const filteredRankings = rankings.filter((r) => {
@@ -306,6 +187,20 @@ function RankingsGridContent({
     }
   });
 
+  // #305: the stats count the board's rows, so they hold from the first render; an empty list is 0.
+  const totalTools = rankings.length;
+  const categoriesCount = new Set(rankings.map((r) => r.tool.category).filter(Boolean)).size;
+  const avgScore = totalTools
+    ? rankings.reduce((acc, r) => acc + (r.scores?.overall || 0), 0) / totalTools
+    : 0;
+  const headerText = {
+    subtitle: dict.rankings.subtitle,
+    subtitleNoVersion: dict.rankings.subtitleNoVersion,
+    asOf: dict.rankings.asOf,
+  };
+  // #239: UTC, so the stored date names the same day in every browser zone.
+  const asOfLine = rankingsAsOf(headerText, formatHeaderDate(publishedAt, lang, "long"));
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -319,23 +214,18 @@ function RankingsGridContent({
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">{dict.common.appName}</h1>
-        <p className="text-muted-foreground text-lg">{dict.rankings.subtitle}</p>
-        {publishedDate && (
-          <p className="text-sm text-muted-foreground mt-2">
-            {dict.rankings.asOf.replace("{date}", publishedDate)}
-          </p>
-        )}
+        <p className="text-muted-foreground text-lg">{rankingsSubtitle(headerText, formatAlgorithmVersion(version))}</p>
+        {asOfLine && <p className="text-sm text-muted-foreground mt-2">{asOfLine}</p>}
       </div>
 
       {/* Stats Cards - Optimized for T-031 & T-040 CLS fix */}
       <RankingsStatsCards
         dict={dict}
         loading={loading}
-        statsLoaded={statsLoaded}
         totalTools={totalTools}
         categoriesCount={categoriesCount}
         avgScore={avgScore}
-        lastUpdateDate={lastUpdateDate}
+        lastUpdateDate={formatHeaderDate(publishedAt, lang, "short") ?? ""}
       />
 
       {/* Tier Legend */}
@@ -498,6 +388,7 @@ export default function RankingsGrid({
   dict,
   initialRankings,
   list,
+  header,
 }: RankingsGridProps): React.JSX.Element {
   return (
     <Suspense
@@ -507,7 +398,7 @@ export default function RankingsGrid({
         </div>
       }
     >
-      <RankingsGridContent lang={lang} dict={dict} initialRankings={initialRankings} list={list} />
+      <RankingsGridContent lang={lang} dict={dict} initialRankings={initialRankings} list={list} header={header} />
     </Suspense>
   );
 }

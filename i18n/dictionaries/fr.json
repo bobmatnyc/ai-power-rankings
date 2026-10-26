@@ -204,7 +204,8 @@
   "rankings": {
     "asOf": "Classement au {date}",
     "title": "Classement IA Power",
-    "subtitle": "Classements complets des outils de codage IA utilisant l'Algorithme v7.6 - Scoring validé par le marché",
+    "subtitle": "Classements complets des outils de codage IA utilisant l'Algorithme {version} - Scoring validé par le marché",
+    "subtitleNoVersion": "Classements complets des outils de codage IA - Scoring validé par le marché",
     "stats": {
       "totalTools": "Total outils",
       "categories": "Catégories",

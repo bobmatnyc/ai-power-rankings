@@ -204,7 +204,8 @@
   "rankings": {
     "asOf": "Poredak od {date}",
     "title": "AI Power Rankings",
-    "subtitle": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.6",
+    "subtitle": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom {version}",
+    "subtitleNoVersion": "Sveobuhvatna rangiranja AI alata za kodiranje",
     "stats": {
       "totalTools": "Ukupno alata",
       "categories": "Kategorije",

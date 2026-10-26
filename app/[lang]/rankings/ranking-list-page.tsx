@@ -48,7 +48,11 @@ import { siteOrigin } from "@/lib/site-origin";
 interface ListBoardResponse {
   rankings: Array<{ tool?: { name?: string }; name?: string; updated_at?: string }>;
   meta: RankingListMeta | null;
+  /** #305: the published ranking's `algorithm.version` and `published_at`. */
+  header: { version: string | null; publishedAt: string | null };
 }
+
+const NO_HEADER = { version: null, publishedAt: null };
 
 /** #186: `/api/rankings` for a list on this deployment; the default list keeps the bare URL. */
 function rankingsApiUrl(list: RankingList, devTimestamp?: number): string {
@@ -67,12 +71,16 @@ async function fetchListBoard(list: RankingList, purpose: "metadata" | "page"): 
       next: { revalidate: isDev ? 0 : 300 },
       ...(purpose === "page" ? { cache: isDev ? ("no-store" as const) : ("default" as const) } : {}),
     });
-    if (!response.ok) return { rankings: [], meta: null };
+    if (!response.ok) return { rankings: [], meta: null, header: NO_HEADER };
     const data = await response.json();
-    return { rankings: data.rankings || [], meta: data.list_meta ?? null };
+    return {
+      rankings: data.rankings || [],
+      meta: data.list_meta ?? null,
+      header: { version: data.algorithm?.version ?? null, publishedAt: data.published_at ?? null },
+    };
   } catch (error) {
     loggers.ranking.error("Failed to fetch rankings on server", { error, list });
-    return { rankings: [], meta: null };
+    return { rankings: [], meta: null, header: NO_HEADER };
   }
 }
 
@@ -161,7 +169,7 @@ export async function rankingListMetadata(lang: string, list: RankingList): Prom
 /** One list's ranking page body (#186). */
 export async function RankingListPage({ lang, list }: { lang: string; list: RankingList }): Promise<React.JSX.Element> {
   const dict = await getDictionary(lang as Locale);
-  const { rankings: initialRankings, meta } = await fetchListBoard(list, "page");
+  const { rankings: initialRankings, meta, header } = await fetchListBoard(list, "page");
   const listText = dict.rankings.lists;
   const locale = canonicalLocale(lang);
 
@@ -244,6 +252,7 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
             dict={dict}
             initialRankings={initialRankings as Parameters<typeof RankingsGrid>[0]["initialRankings"]}
             list={list}
+            header={header}
           />
         </Suspense>
 

@@ -204,7 +204,8 @@
   "rankings": {
     "asOf": "Clasificación al {date}",
     "title": "AI Power Ranking",
-    "subtitle": "Clasificaciones exhaustivas de herramientas de codificación IA usando Algorithm v7.6",
+    "subtitle": "Clasificaciones exhaustivas de herramientas de codificación IA usando Algorithm {version}",
+    "subtitleNoVersion": "Clasificaciones exhaustivas de herramientas de codificación IA",
     "stats": {
       "totalTools": "Total herramientas",
       "categories": "Categorías",
