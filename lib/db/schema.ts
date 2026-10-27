@@ -259,6 +259,32 @@ export const monthlySummaries = pgTable(
 );
 
 /**
+ * Weekly Digests table
+ * #181: one LLM-generated digest per closed ISO week, keyed `YYYY-Www`.
+ * Kept apart from `monthly_summaries`: a `W` key would sort after every `YYYY-MM`
+ * period and be read as the latest monthly report.
+ */
+export const weeklyDigests = pgTable(
+  "weekly_digests",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    week: text("week").notNull(), // Format: YYYY-Www (ISO-8601 week)
+    windowStart: timestamp("window_start", { withTimezone: true }).notNull(), // Monday 00:00 UTC
+    windowEnd: timestamp("window_end", { withTimezone: true }).notNull(), // Sunday 23:59:59.999 UTC
+    content: text("content").notNull(), // markdown: code-built title, model body, code-built sources
+    dataHash: text("data_hash").notNull(), // SHA-256 of the week's input ids
+    metadata: jsonb("metadata").default("{}"), // tier, article_count, model, token counts, ids
+    generatedAt: timestamp("generated_at", { withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    weekIdx: uniqueIndex("weekly_digests_week_idx").on(table.week),
+    generatedAtIdx: index("weekly_digests_generated_at_idx").on(table.generatedAt),
+  })
+);
+
+/**
  * State of AI Summaries table
  * Stores LLM-generated monthly "State of AI" editorial summaries
  */
@@ -501,6 +527,8 @@ export type Migration = typeof migrations.$inferSelect;
 export type NewMigration = typeof migrations.$inferInsert;
 export type MonthlySummary = typeof monthlySummaries.$inferSelect;
 export type NewMonthlySummary = typeof monthlySummaries.$inferInsert;
+export type WeeklyDigest = typeof weeklyDigests.$inferSelect;
+export type NewWeeklyDigest = typeof weeklyDigests.$inferInsert;
 export type StateOfAiSummary = typeof stateOfAiSummaries.$inferSelect;
 export type NewStateOfAiSummary = typeof stateOfAiSummaries.$inferInsert;
 export type AutomatedIngestionRun = typeof automatedIngestionRuns.$inferSelect;
