@@ -198,6 +198,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-09c049e0313f",
+    "version": "Unreleased",
+    "date": "2026-10-27T12:43:33.666Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "data",
+    "title": "correct harness adoption inputs with sourced figures (#313, #312)",
+    "description": "correct harness adoption inputs with sourced figures (#313, #312). Migration `0024_correct_harness_inputs.sql`, generated from `docs/refresh/harness-inputs-2026-10.json` by `scripts/build-harness-inputs-migration.ts`, applied by hand: one DO block that writes a figure only when the stored value is the one the file expects (any other value raises and writes nothing), with provenance in `data.business_metrics_provenance.fields`. Claude Code gets its Anthropic run-rate, repository stars and the real `@anthropic-ai/claude-code` npm and VS Code figures, and loses the unrelated PyPI placeholder. Cursor's VS Code count came from an unrelated multi-cursor extension and is removed; its run-rate and repository stars are sourced. Copilot's npm, VS Code, stars and paid-subscriber figures are refreshed and its unsourced run-rate estimate is removed. Parent-company funding and valuation no longer count for Claude Code, Claude Artifacts, ChatGPT Canvas, OpenAI Codex CLI, Bolt.new, v0 and Snyk Code. `news_mentions` for the harness tools becomes the site's own news corpus over the last 12 months, recomputed from the articles table at apply time with the same tool tagging `/api/news` uses; a group can be left out at generation time (`--exclude-groups`). Weights and the company-name bonus are unchanged. Tests: `tests/unit/harness-inputs-sheet-313.test.ts`, `tests/unit/harness-inputs-0024-313.test.ts`, `tests/unit/harness-inputs-news-parity-313.test.ts`",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-6e5c4686c9e7",
     "version": "Unreleased",
     "date": "2026-10-26T19:57:14.000Z",
