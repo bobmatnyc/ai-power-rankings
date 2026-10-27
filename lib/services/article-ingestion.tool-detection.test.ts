@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ToolMapper } from "./article-ingestion.service";
+import { ToolMapper as ServiceToolMapper } from "./tool-mapper.service";
 
 describe("ToolMapper - Tool Detection and Normalization", () => {
   describe("Exact alias mappings", () => {
@@ -229,7 +230,10 @@ describe("ToolMapper - Tool Detection and Normalization", () => {
         { input: "Codex", expected: "OpenAI Codex CLI" },
 
         // Anthropic tools
-        { input: "Claude Artifacts", expected: "Claude Artifacts" },
+        // #314: Claude Artifacts is now Claude.AI; the old name and the domain form both map to it.
+        { input: "Claude.AI", expected: "Claude.AI" },
+        { input: "claude.ai", expected: "Claude.AI" },
+        { input: "Claude Artifacts", expected: "Claude.AI" },
 
         // Microsoft/GitHub tools
         { input: "Microsoft IntelliCode", expected: "Microsoft IntelliCode" },
@@ -267,5 +271,12 @@ describe("ToolMapper - Tool Detection and Normalization", () => {
         expect(ToolMapper.normalizeTool(input)).toBe(expected);
       });
     });
+  });
+});
+
+// #314: the second ToolMapper (tool-mapper.service) carries the same Claude.AI aliases.
+describe("tool-mapper.service ToolMapper - Claude.AI aliases (#314)", () => {
+  it.each(["Claude.AI", "claude.ai", "Claude Artifacts", "claude artifacts"])("maps %s to Claude.AI", (input) => {
+    expect(ServiceToolMapper.normalizeTool(input)).toBe("Claude.AI");
   });
 });
