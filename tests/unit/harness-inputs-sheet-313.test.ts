@@ -38,11 +38,26 @@ describe("#313 the source file", () => {
   it("parses, validates and holds the De4 counts", () => {
     expect(FILE.errors).toEqual([]);
     expect(validateHarnessInputs(FILE.rows, KIND_SLUGS)).toEqual([]);
-    expect(FILE.rows).toHaveLength(61);
-    expect(new Set(FILE.rows.map((r) => r.slug)).size).toBe(30);
-    expect(countByGroup(FILE.rows)).toEqual({ sourced: 13, a: 1, b: 0, c: 27, d: 20 });
+    expect(FILE.rows).toHaveLength(100);
+    expect(new Set(FILE.rows.map((r) => r.slug)).size).toBe(66);
+    expect(countByGroup(FILE.rows)).toEqual({ sourced: 13, a: 1, b: 0, c: 66, d: 20 });
     const ops = FILE.rows.reduce<Record<string, number>>((acc, r) => ({ ...acc, [r.op]: (acc[r.op] ?? 0) + 1 }), {});
-    expect(ops).toEqual({ set: 36, replace: 1, delete: 24 });
+    expect(ops).toEqual({ set: 75, replace: 1, delete: 24 });
+  });
+
+  it("rows 4, 19 and 20 carry the package or extension identity they assume", () => {
+    expect(FILE.rows.filter((r) => r.identity).map((r) => [r.id, r.identity])).toEqual([
+      [4, { path: ["metrics", "vscode", "extension_id"], value: "anthropic.claude-code" }],
+      [19, { path: ["metrics", "npm", "package_name"], value: "@github/copilot" }],
+      [20, { path: ["metrics", "vscode", "extension_id"], value: "GitHub.copilot" }],
+    ]);
+  });
+
+  it("(c) has one row per active harness tool of the production snapshot, each expecting no count but the eight stored ones", () => {
+    const c = FILE.rows.filter((r) => r.group === "c");
+    expect(c).toHaveLength(66);
+    expect(c.filter((r) => r.expected_old_absent).length).toBe(58);
+    expect(c.filter((r) => r.path[0] === "info").map((r) => r.slug).sort()).toEqual(["aider", "claude-code", "cursor", "gemini-code-assist", "github-copilot", "kiro", "tabnine", "windsurf"]);
   });
 
   it("(d) names exactly the seven parent-level tools and leaves the three borderline ones their figures", () => {
@@ -70,6 +85,8 @@ describe("#313 the validator refuses", () => {
     ["a row with no expected-old guard", 1, (r) => delete r.expected_old_absent, /expected_old/],
     ["an unknown key such as a score", 1, (r) => ((r as unknown as Record<string, unknown>)["score"] = 80), /unknown key/],
     ["a Cursor npm row (b)", 13, (r) => ((r.path = ["metrics", "npm"]), (r.field = "npm")), /@cursor\/sdk/],
+    ["an identity outside the row's own field", 4, (r) => (r.identity = { path: ["metrics", "npm", "package_name"], value: "x" }), /identity must be/],
+    ["an identity with an empty value", 4, (r) => (r.identity = { path: ["metrics", "vscode", "extension_id"], value: "" }), /identity must be/],
     ["a group d row on a tool outside the seven", 7, (r) => (r.slug = "devin"), /seven parent-level/],
   ])("%s", (_name, id, mutate, expected) => {
     const r = row(id);
@@ -92,7 +109,7 @@ describe("#313 the generated migration", () => {
     const tuples = (sql: string) => [...sql.matchAll(/^ {4}\((\d+), '(\w+)', /gm)].map((m) => [Number(m[1]), m[2]] as const);
     const full = tuples(COMMITTED);
     const without = tuples(buildHarnessInputsSql(FILE.rows, { excludeGroups: [group] }));
-    expect(full).toHaveLength(61);
+    expect(full).toHaveLength(100);
     expect(without.map(([id]) => id)).toEqual(full.filter(([, g]) => g !== group).map(([id]) => id));
     expect(without.some(([, g]) => g === group)).toBe(false);
     expect(buildHarnessInputsSql(FILE.rows, { excludeGroups: ["c"] })).not.toContain("t313_term");

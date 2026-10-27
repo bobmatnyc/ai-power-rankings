@@ -48,6 +48,8 @@ function setPath(target: Record<string, unknown>, keys: readonly string[], value
 export function oldData(slug: string, name: string): Record<string, unknown> {
   const data: Record<string, unknown> = { name };
   for (const row of ROWS.filter((r) => r.slug === slug && !r.expected_old_absent)) setPath(data, row.path, structuredClone(row.expected_old));
+  // The package or extension a row assumes (its identity guard).
+  for (const row of ROWS.filter((r) => r.slug === slug && r.identity)) setPath(data, row.identity!.path, row.identity!.value);
   // The stored provenance of a removed parent-level value (D-series pass), and one that stays.
   const fields: Record<string, unknown> = {};
   for (const row of ROWS.filter((r) => r.slug === slug && r.group === "d")) fields[row.field] = { value: row.expected_old, source: "stored", as_of: "2026-05-28" };
@@ -60,6 +62,10 @@ export async function seedOldState(db: PGlite): Promise<void> {
   for (const slug of [...new Set(ROWS.map((r) => r.slug))]) {
     const { rows } = await db.query<{ name: string }>(`SELECT name FROM public."tools" WHERE slug = $1`, [slug]);
     await db.query(`UPDATE public."tools" SET data = $2::jsonb WHERE slug = $1`, [slug, JSON.stringify(oldData(slug, rows[0]!.name))]);
+  }
+  // Production keeps three harness rows as redirects; the audit seed lists them as active.
+  for (const [slug, to] of [["clawdbot", "openclaw"], ["moltbot", "openclaw"], ["cowork-ai", "cowork"]] as const) {
+    await db.query(`UPDATE public."tools" SET status = 'redirect', data = data || $2::jsonb WHERE slug = $1`, [slug, JSON.stringify({ redirect_to: to })]);
   }
   for (const slug of KEPT_TOOLS) {
     await db.query(`UPDATE public."tools" SET data = data || $2::jsonb WHERE slug = $1`, [
