@@ -279,4 +279,29 @@ describe("#325 ledger writes fail open", () => {
     },
     LEDGER_WRITE_TIMEOUT_MS + 5_000
   );
+
+  it(
+    "a slow ledger write does not count against the per-attempt provider timeout",
+    async () => {
+      // #325 critic: a 1000 ms reply plus a hung write used to exceed timeoutMs 2500,
+      // so the attempt timed out, a second billed call went out, and generate threw.
+      mocks.ledgerMode.value = "hang";
+      const fetchStub = vi.fn(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1_000));
+        return new Response(JSON.stringify(lowQualityCompletion()), { status: 200 });
+      });
+      vi.stubGlobal("fetch", fetchStub);
+
+      const result = await new OpenRouterService().generate(
+        { model: MODEL, messages: [{ role: "user", content: "q" }] },
+        { operation: "generate", maxAttempts: 2, timeoutMs: 2_500 }
+      );
+
+      expect(result.content).toContain("qualityScore");
+      expect(result.metadata.attempts).toBe(1);
+      expect(fetchStub).toHaveBeenCalledTimes(1);
+      expect(ledgerWarnings()).toHaveLength(1);
+    },
+    15_000
+  );
 });
