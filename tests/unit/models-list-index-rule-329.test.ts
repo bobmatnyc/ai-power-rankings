@@ -58,11 +58,11 @@ const tb = (value: unknown, source?: string) => ({
 
 describe("hasCodingMetric (D63 Q1: TB 4.0 from Vals only)", () => {
   it.each<[string, unknown, boolean]>([
-    ["a Vals TB 4.0 figure with provenance", tb(65.15, VALS), true],
-    ["a Vals TB 4.0 figure naming its snapshot in a fragment", tb("31.82", `${VALS}#v4-1-flash-1017`), true],
-    ["a vendor-reported TB figure", tb(66.4, "https://www.anthropic.com/claude-opus-5-5"), false],
-    ["the TB 2.1 leaderboard", tb(83.8, "https://www.tbench.ai/leaderboard/terminal-bench/2.1"), false],
-    ["a TB figure without provenance", tb(65.15), false],
+    ["a Vals TB 4.0 figure with provenance", tb(50, VALS), true],
+    ["a Vals TB 4.0 figure naming its snapshot in a fragment", tb("40", `${VALS}#snapshot`), true],
+    ["a vendor-reported TB figure", tb(50, "https://vendor.example/model-card"), false],
+    ["the TB 2.1 leaderboard", tb(50, "https://www.tbench.ai/leaderboard/terminal-bench/2.1"), false],
+    ["a TB figure without provenance", tb(50), false],
     ["a zero TB figure", tb(0, VALS), false],
     [
       "SWE-bench Verified with an https source",
@@ -117,7 +117,7 @@ function seed(boardKind: "combined" | "model", metricActive: number) {
   for (let i = 0; i < metricActive; i++) add(`m${i}`, "active", tb(40 + i, VALS));
   add("inactive-with-metric", "inactive", tb(60, VALS));
   add("active-no-metric", "active", {});
-  add("active-vendor-figure", "active", tb(70, "https://x.ai/news/grok-4-7"));
+  add("active-vendor-figure", "active", tb(50, "https://vendor.example/news"));
   const ids = Object.keys(TOOLS);
   const stamp = new Date("2026-10-01T00:00:00Z");
   current.rows = {
