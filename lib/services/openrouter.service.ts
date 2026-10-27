@@ -136,11 +136,27 @@ export class OpenRouterService {
     } = {}
   ): Promise<{ content: string; metadata: GenerationMetadata }> {
     const startTime = Date.now();
+    const operation = options.operation ?? 'generate';
+
+    // #325: attempts only collect their response bodies; the ledger rows are written after
+    // the retry loop, outside every per-attempt timeout, so a slow write cannot time out
+    // an attempt or cause another billed call. A body that arrives after the loop ended
+    // (an attempt that had already timed out) is recorded without being awaited.
+    const usageBodies: unknown[] = [];
+    let usageFlushed = false;
+    const onBody = (body: unknown): void => {
+      if (usageFlushed) {
+        void recordOpenRouterUsage({ operation, model: config.model, body });
+      } else {
+        usageBodies.push(body);
+      }
+    };
 
     // Execute with retry logic
-    const result: RetryResult<{ content: string; response: OpenRouterResponse }> =
-      await retryWithBackoff(
-        () => this.executeRequest(config, options.operation ?? 'generate'),
+    let result: RetryResult<{ content: string; response: OpenRouterResponse }>;
+    try {
+      result = await retryWithBackoff(
+        () => this.executeRequest(config, onBody),
         {
           maxAttempts: options.maxAttempts || 3,
           initialDelayMs: 1000,
@@ -165,8 +181,16 @@ export class OpenRouterService {
           },
         }
       );
+    } finally {
+      usageFlushed = true;
+    }
 
     const durationMs = Date.now() - startTime;
+
+    // #325: one row per attempt that returned a body. Never throws.
+    await Promise.all(
+      usageBodies.map((body) => recordOpenRouterUsage({ operation, model: config.model, body }))
+    );
 
     // Build metadata
     const metadata: GenerationMetadata = {
@@ -225,7 +249,7 @@ export class OpenRouterService {
    */
   private async executeRequest(
     config: OpenRouterRequestConfig,
-    operation: OpenRouterOperation
+    onBody: (body: unknown) => void
   ): Promise<{ content: string; response: OpenRouterResponse }> {
     const requestBody = {
       model: config.model,
@@ -287,8 +311,8 @@ export class OpenRouterService {
     }
 
     // #325: every attempt that returned a completion body is billed, so each one gets a
-    // ledger row, including one rejected below as invalid or truncated. Never throws.
-    await recordOpenRouterUsage({ operation, model: config.model, body: responseData });
+    // ledger row, including one rejected below as invalid or truncated. generate() writes it.
+    onBody(responseData);
 
     // Validate response structure
     const validation = validateOpenRouterResponse(responseData);
