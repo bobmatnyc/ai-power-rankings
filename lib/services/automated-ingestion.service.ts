@@ -82,6 +82,21 @@ export type { IngestionRunType } from "@/lib/db/schema";
  */
 export const FRESHNESS_WINDOW_DAYS = 14;
 
+/**
+ * Minimum word-level Jaccard overlap (normalized titles) for two titles to count
+ * as the same story in the semantic duplicate filter.
+ *
+ * Why: the "key entity" bonus let one shared word (claude, copilot, github, ...)
+ * push unrelated titles over the 0.35 threshold; on 2026-10-27 that dropped 13 of
+ * 18 distinct candidates. Derivation: the highest word overlap between distinct
+ * 10-27 stories is 0.44; the lowest among true duplicates (rephrased headline) is
+ * 0.57, and the 10-23 Flint match scored 0.92 combined, which needs word overlap
+ * of at least 0.8 (0.4 * j + 0.6 * entity <= 0.92 with entity <= 1).
+ *
+ * Test: automated-ingestion.semantic-dedup.test.ts.
+ */
+export const SEMANTIC_DUPLICATE_MIN_WORD_OVERLAP = 0.5;
+
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 /**
@@ -1712,6 +1727,7 @@ export class AutomatedIngestionService {
 
   /**
    * Calculate weighted similarity between two titles
+   * Returns 0 when word overlap is below SEMANTIC_DUPLICATE_MIN_WORD_OVERLAP.
    * Uses both standard Jaccard and key feature matching
    * Returns a value between 0 and 1, where 1 means identical
    */
@@ -1730,6 +1746,12 @@ export class AutomatedIngestionService {
     const intersection = new Set([...words1].filter(w => words2.has(w)));
     const union = new Set([...words1, ...words2]);
     const jaccardSimilarity = union.size > 0 ? intersection.size / union.size : 0;
+
+    // Entity overlap alone must never make two titles duplicates: "Claude Code X"
+    // and "Claude Code Y" are different stories. Require real title-word overlap.
+    if (jaccardSimilarity < SEMANTIC_DUPLICATE_MIN_WORD_OVERLAP) {
+      return 0;
+    }
 
     // Extract key features (companies, products, topics)
     const features1 = this.extractKeyFeatures(title1);
@@ -1764,7 +1786,7 @@ export class AutomatedIngestionService {
   ): Promise<SearchResult[]> {
     const similarityThreshold = 0.35; // 35% weighted similarity triggers duplicate detection
     // Note: Uses weighted algorithm (40% word overlap + 60% key feature overlap)
-    // A 35% threshold catches articles with matching key entities (apple+xcode+agent)
+    // Titles must also clear SEMANTIC_DUPLICATE_MIN_WORD_OVERLAP; entities alone never match.
     const uniqueArticles: SearchResult[] = [];
     const seenTitles: string[] = [];
 
