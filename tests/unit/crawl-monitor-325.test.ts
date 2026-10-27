@@ -20,6 +20,10 @@ const clerk = vi.hoisted(() => ({ auth: vi.fn(), currentUser: vi.fn() }));
 const dbState = vi.hoisted(() => ({
   rows: {} as Record<string, unknown[]>,
   getDb: vi.fn(),
+  /** Limits passed to `.limit()`, keyed by table name. */
+  limits: {} as Record<string, number[]>,
+  /** When set, every query rejects with it. */
+  failWith: null as Error | null,
 }));
 const redirect = vi.hoisted(() =>
   vi.fn((url: string) => {
@@ -53,13 +57,17 @@ function fakeDb() {
   return {
     select: () => ({
       from: (table: Table) => {
-        const rows = dbState.rows[getTableName(table)] ?? [];
+        const name = getTableName(table);
+        const rows = dbState.rows[name] ?? [];
         const chain = {
           where: () => chain,
           orderBy: () => chain,
-          limit: () => chain,
+          limit: (n: number) => {
+            (dbState.limits[name] ??= []).push(n);
+            return chain;
+          },
           then: (resolve: (v: unknown[]) => unknown, reject?: (e: unknown) => unknown) =>
-            Promise.resolve(rows).then(resolve, reject),
+            (dbState.failWith ? Promise.reject(dbState.failWith) : Promise.resolve(rows)).then(resolve, reject),
         };
         return chain;
       },
@@ -158,6 +166,8 @@ beforeEach(() => {
   for (const [name, value] of Object.entries(SECRET_VALUES)) vi.stubEnv(name, value);
   vi.stubEnv("BRAVE_SEARCH_API_KEY", "");
   dbState.getDb.mockImplementation(() => fakeDb());
+  dbState.limits = {};
+  dbState.failWith = null;
   stageRows();
 });
 
@@ -338,7 +348,74 @@ describe("estimated-spend aggregation", () => {
   });
 });
 
+describe("crawl monitor error branches", () => {
+  const runsReq = (query: string) => runsRoute.GET(new NextRequest(`http://localhost/api/admin/crawl-monitor/runs${query}`));
+
+  it.each(ROUTES)("%s returns 500 with a fixed message and no driver text when the query throws", async (_n, call) => {
+    signIn(ADMIN);
+    dbState.failWith = new Error('connect ECONNREFUSED db.example.test:5432 relation "x" driver detail');
+    const res = await call();
+    expect(res.status).toBe(500);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+    const text = JSON.stringify(await res.json());
+    expect(text).toMatch(/"error":"Failed to load crawl (overview|runs)"/);
+    expect(text).not.toMatch(/example\.test|ECONNREFUSED|5432|driver/);
+  });
+
+  it.each(ROUTES)("%s returns 503 with no-store when getDb() is null", async (_n, call) => {
+    signIn(ADMIN);
+    dbState.getDb.mockImplementation(() => null);
+    const res = await call();
+    expect(res.status).toBe(503);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+  });
+
+  it.each([
+    ["?limit=1000", 100],
+    ["?limit=0", 1],
+    ["?limit=abc", 20],
+    ["", 20],
+  ])("runs%s reaches the query as limit %d", async (query, expected) => {
+    signIn(ADMIN);
+    expect((await runsReq(query)).status).toBe(200);
+    expect(dbState.limits["automated_ingestion_runs"]).toEqual([expected]);
+  });
+
+  it.each(["?runType=DROP%20TABLE", "?status=deleted"])("runs%s returns 400 with no-store and no DB read", async (query) => {
+    signIn(ADMIN);
+    const res = await runsReq(query);
+    expect(res.status).toBe(400);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+    expect(dbState.getDb).not.toHaveBeenCalled();
+  });
+});
+
 describe("sanitising helpers", () => {
+  // #325 fix round: the critic's probe strings, plus the raw inputs that produced them.
+  it.each([
+    ["owner bob.smith@[host] hit quota", ["bob", "smith"]],
+    ["owner bob.smith@mail.example.test hit quota", ["bob", "smith", "example"]],
+    ["Failed to ingest [host]/2030/03/cursor-raises-series-c: 500", ["2030", "cursor", "series"]],
+    ["Failed to ingest news.example.test/2030/03/cursor-raises-series-c: 500", ["2030", "cursor", "series", "example"]],
+    ["Key tvly-dev-AbC/dEf+GhIjKlMnOpQrStUv rejected", ["tvly", "AbC", "dEf", "GhIj", "StUv"]],
+    ["Incorrect API key: sk-or-v1-****abcd", ["sk-", "v1", "abcd", "****"]],
+    ["auth header Bearer syntheticBearerValue0000 refused", ["syntheticBearer", "0000"]],
+    ["used pk_test_c3ludGhldGlj and sk_live_c3ludGhldGlj and jina_c3ludGhldGlj", ["c3lud", "pk_", "sk_", "jina_"]],
+    ["blob QUJDREVGR0hJSktMTU5PUA+/= here", ["QUJD", "+/="]],
+  ])("sanitizeErrorText(%j) leaks none of its sensitive parts", (input, leaks) => {
+    const out = sanitizeErrorText(input);
+    for (const part of leaks) expect(out, out).not.toContain(part);
+  });
+
+  it("sanitizeErrorText keeps ordinary error words readable", () => {
+    expect(sanitizeErrorText("Tavily API error: 402 Payment Required; rate limit exceeded, retry later")).toBe(
+      "Tavily API error: 402 Payment Required; rate limit exceeded, retry later"
+    );
+    expect(sanitizeErrorText("Extraction failed: non-retryable-provider-error after timeout")).toBe(
+      "Extraction failed: non-retryable-provider-error after timeout"
+    );
+    expect(sanitizeErrorText("Failed to ingest [host]/a/b: 500")).toBe("Failed to ingest [host] 500");
+  });
   it("sanitizeErrorText removes URLs, hosts, endpoint ids and token-like strings", () => {
     const out = sanitizeErrorText(
       "connect to ep-synthetic-name-123 at db.region.example.test failed; see https://x.example.test/p?k=1 key sk_abcdefghijklmnopqrstuvwxyz"

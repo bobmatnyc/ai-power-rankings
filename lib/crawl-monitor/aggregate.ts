@@ -197,20 +197,32 @@ export function summaryJobStatus(job: string, source: string, generatedAt: Times
 }
 
 /**
- * Why: error_log holds provider and site text, which can
- *   name hosts, URLs, endpoint ids or key-like tokens; this page must show none.
- * What: Replaces URLs, dotted host names, Neon-style endpoint ids and long
- *   token-like runs with placeholders, collapses whitespace, caps the length.
+ * Why: error_log holds provider and site text, which can name hosts, URLs,
+ *   emails, endpoint ids or keys; this page must show none.
+ * What: Replaces, in order, bearer and provider-prefixed keys (with everything
+ *   after the prefix), URLs, whole email addresses, Neon-style endpoint ids,
+ *   scheme-less hosts with their port and path, and 20+ character runs of key
+ *   characters (letters, digits, / + = _ -) other than plain lowercase
+ *   hyphenated words. Then collapses whitespace and caps the length.
  * Test: `sanitizeErrorText` cases in tests/unit/crawl-monitor-325.test.ts.
  */
 export function sanitizeErrorText(value: unknown): string {
   const text = typeof value === "string" ? value : JSON.stringify(value) ?? "";
   const cleaned = text
+    // #325: a bearer credential, and a known provider key prefix with everything after it
+    // (masked or not: "sk-or-v1-****abcd" still leaks a prefix and the last characters).
+    .replace(/\bBearer\s+\S+/gi, "Bearer [key]")
+    .replace(/\b(?:sk-or-|sk-|tvly-|jina_|(?:pk|sk|rk)_(?:live|test)_)\S*/gi, "[key]")
     .replace(/\b[a-z][a-z0-9+.-]*:\/\/\S+/gi, "[url]")
+    // #325: the whole address, local part included.
+    .replace(/[^\s@]+@[^\s@]+/g, "[email]")
     .replace(/\bep-[a-z0-9-]+/gi, "[id]")
-    .replace(/\b[a-z0-9-]+(?:\.[a-z0-9-]+){2,}\b/gi, "[host]")
-    .replace(/\b[a-z0-9-]+\.(?:com|net|org|io|dev|ai|tech|app|co)\b/gi, "[host]")
-    .replace(/[A-Za-z0-9_-]{24,}/g, "[redacted]")
+    // #325: a scheme-less host takes its port and path with it.
+    .replace(/\b[a-z0-9-]+(?:\.[a-z0-9-]+){2,}\b(?:(?::\d+)?[/?#]\S*|:\d+)?/gi, "[host]")
+    .replace(/\b[a-z0-9-]+\.(?:com|net|org|io|dev|ai|tech|app|co)\b(?:(?::\d+)?[/?#]\S*|:\d+)?/gi, "[host]")
+    .replace(/\[(?:host|url)\][/?#]\S*/g, (m) => m.slice(0, m.indexOf("]") + 1))
+    // #325: a 20+ character run of key characters, unless it is a plain lowercase hyphenated phrase.
+    .replace(/[A-Za-z0-9/+=_-]{20,}/g, (run) => (/^[a-z-]+$/.test(run) ? run : "[redacted]"))
     .replace(/\s+/g, " ")
     .trim();
   return cleaned.length > ERROR_EXCERPT_CHARS ? `${cleaned.slice(0, ERROR_EXCERPT_CHARS - 1)}…` : cleaned;
