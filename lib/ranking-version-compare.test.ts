@@ -72,7 +72,7 @@ describe("formatComparisonTable", () => {
     const text = formatComparisonTable(buildComparisonTable(TOOLS, DATE));
     const lines = text.split("\n");
     expect(lines[0]).toBe(
-      "| Tool | Old rank (v7.9) | New rank (v7.10) | Delta | Old score | New score | Score delta |"
+      "| Tool | Old rank (v7.9) | New rank (v7.11) | Delta | Old score | New score | Score delta |"
     );
     expect(lines.filter((l) => l.startsWith("| ") && !l.startsWith("| Tool"))).toHaveLength(TOOLS.length);
     expect(lines.at(-1)).toMatch(new RegExp(`^${TOOLS.length} tools, \\d+ change rank\\.$`));

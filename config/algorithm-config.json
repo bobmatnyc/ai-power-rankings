@@ -1,5 +1,5 @@
 {
-  "version": "7.10",
+  "version": "7.11",
   "name": "Market-Validated Scoring",
   "releaseDate": "unreleased",
   "description": "Market-validated scoring that combines real-world adoption metrics with technical capabilities for objective evaluations",
@@ -110,6 +110,14 @@
   },
 
   "changelog": {
+    "v7.11": {
+      "date": "unreleased",
+      "focus": "No company-name bonus",
+      "changes": [
+        "A tool's company or parent-company name adds no score; the big-name vendor bonus in company backing is removed (De4, #313)",
+        "Factor weights, curves and every other factor are unchanged"
+      ]
+    },
     "v7.10": {
       "date": "unreleased",
       "focus": "Technical and business data for double-nested tools",

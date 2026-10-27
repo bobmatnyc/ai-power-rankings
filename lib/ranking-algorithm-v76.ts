@@ -42,11 +42,16 @@ import {
  * v7.10 also counts `language_support` / `llm_providers` by list item, not by
  * string length, and never throws on a malformed technical leaf (#101).
  *
+ * Bumped v7.10 → v7.11 (De4): the company-name bonus is removed from
+ * calculateCompanyBacking, so a tool's company or parent-company name adds no
+ * score. Weights, curves and every other factor are unchanged.
+ *
  * NOTE: existing v76 content slugs (e.g. `algorithm-v76-november-2025-rankings`)
  * are historical references and intentionally keep their v7.6 naming.
  */
 // #101: technical/business info-path fold changes scores, so the version moves.
-export const ALGORITHM_VERSION = "v7.10";
+// De4: removing the company-name bonus changes scores, so it moves again (v7.11).
+export const ALGORITHM_VERSION = "v7.11";
 
 /**
  * Blend weight for Terminal-Bench when BOTH benchmarks are present on a tool.
