@@ -52,6 +52,10 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
 vi.mock("../../lib/services/whats-new-summary.service", () => ({
   listPeriods: vi.fn(async () => []),
 }));
+// #181: the sitemap also reads stored weekly digests.
+vi.mock("../../lib/services/weekly-digest.repository", () => ({
+  listDigestWeeks: vi.fn(async () => []),
+}));
 
 import DesignPage, { metadata } from "../../app/design/page";
 import { designPreviewEnabled } from "../../app/design/preview-gate";
