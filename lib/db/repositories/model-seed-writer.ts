@@ -53,7 +53,8 @@ export type ModelSeedPlan =
   | { slug: string; seedFile: string; outcome: "unchanged" }
   | { slug: string; seedFile: string; outcome: "refused"; reason: string };
 
-export const MODEL_SEED_SELECT_SQL = `SELECT slug, kind, open_weight, hf_repo, licence,
+// #329: status and data.redirect_to are read only to refuse a redirect alias; never written.
+export const MODEL_SEED_SELECT_SQL = `SELECT slug, kind, status, data->>'redirect_to' AS redirect_to, open_weight, hf_repo, licence,
   parameters_b::text AS parameters_b, active_parameters_b::text AS active_parameters_b,
   release_date::text AS release_date, data->'modelSeed' AS model_seed
 FROM tools WHERE slug = ANY($1::text[])`;
@@ -61,7 +62,8 @@ FROM tools WHERE slug = ANY($1::text[])`;
 // #329: an upsert keyed on slug. The insert hard-codes status 'inactive'; the update clause sets
 // only seed-owned columns (COALESCE keeps a column the seed does not state) and replaces only the
 // top-level data.modelSeed key, so data.metrics and status are never written on an existing row.
-// The WHERE refuses a non-model row or one whose open_weight disagrees; it then returns no row.
+// The WHERE refuses a non-model row, a redirect alias (#329) or one whose open_weight disagrees;
+// it then returns no row and the caller rolls back.
 export const MODEL_SEED_UPSERT_SQL = `INSERT INTO tools
   (slug, name, category, status, kind, open_weight, hf_repo, licence, parameters_b, active_parameters_b, release_date, data)
 VALUES ($1, $2, 'other', 'inactive', 'model', $3, $4, $5, $6::numeric, $7::numeric, $8::date, $9::jsonb)
@@ -74,12 +76,15 @@ ON CONFLICT (slug) DO UPDATE SET
   release_date = COALESCE(EXCLUDED.release_date, tools.release_date),
   data = tools.data || jsonb_build_object('modelSeed', EXCLUDED.data->'modelSeed'),
   updated_at = now()
-WHERE tools.kind = 'model' AND (tools.open_weight IS NULL OR tools.open_weight = EXCLUDED.open_weight)
+WHERE tools.kind = 'model' AND tools.status <> 'redirect'
+  AND (tools.open_weight IS NULL OR tools.open_weight = EXCLUDED.open_weight)
 RETURNING slug`;
 
 interface ExistingRow {
   slug: string;
   kind: string;
+  status: string;
+  redirect_to: string | null;
   open_weight: boolean | null;
   hf_repo: string | null;
   licence: string | null;
@@ -158,7 +163,8 @@ function upsertParams(entry: ModelSeedEntry, values: Record<SeedColumn, ColumnVa
 /**
  * Why: the dry run is the review step, so it must show every column a write would change.
  * What: one SELECT for all seed slugs, then a pure per-row plan. Refuses a slug held by a row
- *   whose kind is not `model` and a row whose stored `open_weight` disagrees with the seed.
+ *   whose kind is not `model`, a `status = 'redirect'` alias (naming its `data.redirect_to`), and
+ *   a row whose stored `open_weight` disagrees with the seed.
  *   Writes nothing.
  * Test: `tests/unit/load-model-seeds-329.test.ts`
  */
@@ -177,6 +183,10 @@ export async function planModelSeedRows(db: ModelSeedQueryable, entries: readonl
       return { ...base, outcome: "insert", changes, params };
     }
     if (existing.kind !== "model") return { ...base, outcome: "refused", reason: `slug is held by a ${existing.kind} row, not a model` };
+    // #329: a redirect alias is hidden; seed facts belong on the row it redirects to.
+    if (existing.status === "redirect") {
+      return { ...base, outcome: "refused", reason: `slug is a redirect alias (data.redirect_to: ${existing.redirect_to ?? "(none)"})` };
+    }
     if (existing.open_weight !== null && existing.open_weight !== entry.row.openWeight) {
       return { ...base, outcome: "refused", reason: `stored open_weight is ${existing.open_weight}; the seed says ${entry.row.openWeight}` };
     }

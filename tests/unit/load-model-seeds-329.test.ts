@@ -57,6 +57,8 @@ function boundary(existing: Record<string, unknown>[], upsertRows: (params: unkn
 function existingRow(overrides: Record<string, unknown>): Record<string, unknown> {
   return {
     kind: "model",
+    status: "active",
+    redirect_to: null,
     open_weight: null,
     hf_repo: null,
     licence: null,
@@ -178,6 +180,12 @@ describe("#329 loadModelSeeds", () => {
   it.each([
     ["a slug held by a harness row", existingRow({ slug: "glm", kind: "harness" }), /held by a harness row/],
     ["a stored open_weight that disagrees", existingRow({ slug: "glm", open_weight: false }), /stored open_weight is false/],
+    // #329: a hidden redirect alias must never receive seed facts.
+    [
+      "a redirect alias",
+      existingRow({ slug: "glm", status: "redirect", redirect_to: "glm-family" }),
+      /redirect alias \(data\.redirect_to: glm-family\)/,
+    ],
   ])("refuses %s and writes nothing on apply", async (_name, row, reason) => {
     const { db, calls, transactions } = boundary([row]);
     const lines: string[] = [];
@@ -185,6 +193,10 @@ describe("#329 loadModelSeeds", () => {
     expect(lines.some((l) => l.startsWith("REFUSED: glm") && reason.test(l))).toBe(true);
     expect(transactions()).toBe(0);
     expect(calls.filter((c) => c.sql === MODEL_SEED_UPSERT_SQL)).toHaveLength(0);
+  });
+
+  it("the upsert's guard excludes redirect rows, so a row turned into an alias after planning matches nothing", () => {
+    expect(MODEL_SEED_UPSERT_SQL).toMatch(/\nWHERE tools\.kind = 'model' AND tools\.status <> 'redirect'\n/);
   });
 
   it("rolls back and exits 1 when a guarded upsert matches no row", async () => {
