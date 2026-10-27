@@ -151,9 +151,10 @@ export function DesktopSiteNav({ className }: { className?: string }) {
 
   return (
     <nav aria-label={dict.sidebar.navigation} className={cn("hidden xl:block", className)}>
-      <ul className="flex items-center gap-1">
+      {/* #323: reset the globals.css list margins/padding, which pushed the links above the header's centre line */}
+      <ul className="m-0 flex items-center gap-1 p-0">
         {menus.map((menu) => (
-          <li key={menu.id}>
+          <li key={menu.id} className="m-0">
             {menu.children ? (
               <RankingsMenu menu={menu} pathname={pathname} inSection={section === menu.id} />
             ) : (

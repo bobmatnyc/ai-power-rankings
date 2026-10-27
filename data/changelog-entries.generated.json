@@ -88,6 +88,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-1fde6933d7dc",
+    "version": "Unreleased",
+    "date": "2026-10-27T21:54:14.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "ui",
+    "title": "the home page top-3 cards line up",
+    "description": "the home page top-3 cards line up. The three cards have equal height, the #1 card keeps a ring highlight without being scaled, and its \"#1 Ranked\" badge has a visible background. Logo, title and rank pill sit at the same height on every card, descriptions take three lines, and the Score / SWE-bench row sits at the card bottom with an em dash for a missing SWE-bench value. The header nav links share the header's centre line with the \"Last updated\" pill and the right-side controls. Tests: `tests/unit/hero-card-323.test.tsx` (#323)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-6e5c4686c9e7",
     "version": "Unreleased",
     "date": "2026-10-26T19:57:14.000Z",

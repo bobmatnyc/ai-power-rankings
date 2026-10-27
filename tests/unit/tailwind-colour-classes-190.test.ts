@@ -48,7 +48,6 @@ const KNOWN_DEAD: Record<string, string> = {
   "bg-sidebar": "components/ui/sidebar.tsx: no --sidebar colour tokens",
   "border-sidebar-border": "components/ui/sidebar.tsx: no --sidebar colour tokens",
   "text-sidebar-foreground": "components/ui/sidebar.tsx: no --sidebar colour tokens",
-  "bg-gradient-primary": "components/ranking/hero-card.tsx: globals.css defines .gradient-primary; gradients are #190 PR C2",
 };
 
 function walk(dir: string, out: string[] = []): string[] {
