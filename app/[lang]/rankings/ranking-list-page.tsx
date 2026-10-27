@@ -15,7 +15,6 @@ import {
   INDEX_MIN_ENTRIES,
   listHasMetricsPendingNote,
   listHasProvisionalNote,
-  NOINDEX_LISTS,
   type RankingList,
   type RankingListMeta,
   RANKING_LISTS,
@@ -34,7 +33,8 @@ import { siteOrigin } from "@/lib/site-origin";
  * What: `rankingListMetadata()` builds the title, description, Open Graph image and
  *   the localized canonical and hreflang for the list's canonical path
  *   (`rankingListPath()`), and adds `robots: noindex` when `/api/rankings` reports the
- *   list not indexable: below 10 entries (D53), or the models list at any size. An unknown entry count (a non-OK or thrown read,
+ *   list not indexable: below 10 entries (D53), or the models list with fewer than 10 active
+ *   rows carrying metrics (#329, D63; it then also shows the metrics-pending note). An unknown entry count (a non-OK or thrown read,
  *   or a response without `list_meta`) is noindex as well, on every list including
  *   `/rankings`: a thin list must never render indexable. `RankingListPage`
  *   renders the list navigation, the D54 provisional note for productivity, the
@@ -53,6 +53,12 @@ interface ListBoardResponse {
 }
 
 const NO_HEADER = { version: null, publishedAt: null };
+
+/** #329: the API's count of active rows with metrics; 0 (fail closed) when absent or malformed. */
+function metricRowsOf(meta: RankingListMeta | null): number {
+  const n = meta?.metric_row_count;
+  return typeof n === "number" && Number.isInteger(n) && n >= 0 ? n : 0;
+}
 
 /** #186: `/api/rankings` for a list on this deployment; the default list keeps the bare URL. */
 function rankingsApiUrl(list: RankingList, devTimestamp?: number): string {
@@ -161,8 +167,11 @@ export async function rankingListMetadata(lang: string, list: RankingList): Prom
     alternates,
     // #186: D53 — a list below 10 entries is noindex. An unknown count (failed or
     // thrown read, or no list_meta) is noindex too: fail closed, for every list.
-    // The models list is noindex at any size (NOINDEX_LISTS), whatever the API says.
-    ...(meta?.indexable === true && !NOINDEX_LISTS.includes(list) ? {} : { robots: { index: false, follow: true } }),
+    // #329: D63 — a metric-gated list (models) is indexed only when the API also reports 10+
+    // active rows with metrics; a missing count fails closed, whatever `indexable` says.
+    ...(meta?.indexable === true && !listHasMetricsPendingNote(list, metricRowsOf(meta))
+      ? {}
+      : { robots: { index: false, follow: true } }),
   };
 }
 
@@ -228,8 +237,8 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
           </p>
         )}
         {/* #186: D53 — a short list's tiers are S/A/B by thirds. */}
-        {/* The models list has no model metrics yet; it is noindex whatever its size. */}
-        {listHasMetricsPendingNote(list) && (
+        {/* #329: D63 — the models list keeps the note until 10+ active rows carry metrics; an unknown count keeps it. */}
+        {listHasMetricsPendingNote(list, metricRowsOf(meta)) && (
           <p role="note" data-note="metrics-pending" className="mb-4 rounded-md border px-4 py-3 text-sm">
             {listText.modelsMetricsPendingNote}
           </p>

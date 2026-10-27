@@ -18,6 +18,7 @@ import { newsRepository } from "@/lib/db/repositories/news";
 import { toolsRepository } from "@/lib/db/repositories/tools.repository";
 import {
   DEFAULT_RANKING_LIST,
+  hasCodingMetric,
   isRankingListIndexable,
   listOfTool,
   RANKING_LISTS,
@@ -126,15 +127,18 @@ export async function buildSitemapEntries(
     }
   }
 
-  // 3b. #186: list pages. A list below 10 entries is noindex (D53), and so is the models list, so neither is listed.
+  // 3b. #186: list pages. A list below 10 entries is noindex (D53), and so is the models list
+  // below 10 active rows with metrics (#329, D63), so neither is listed.
   const listSizes = new Map<RankingList, number>();
+  const metricRows = new Map<RankingList, number>();
   for (const tool of tools) {
     if (tool.status !== "active") continue;
     const list = listOfTool(tool["kind"], tool["modality"]);
     if (list) listSizes.set(list, (listSizes.get(list) ?? 0) + 1);
+    if (list && hasCodingMetric(tool)) metricRows.set(list, (metricRows.get(list) ?? 0) + 1);
   }
   for (const list of RANKING_LISTS) {
-    if (list === DEFAULT_RANKING_LIST || !isRankingListIndexable(list, listSizes.get(list) ?? 0)) continue;
+    if (list === DEFAULT_RANKING_LIST || !isRankingListIndexable(list, listSizes.get(list) ?? 0, metricRows.get(list) ?? 0)) continue;
     for (const locale of locales) {
       routes.push({
         url: `${baseUrl}/${locale}${rankingListPath(list)}`,
