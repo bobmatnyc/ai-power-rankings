@@ -194,7 +194,8 @@ export class WhatsNewAggregationService {
             scoreUpdatedAt: tools.scoreUpdatedAt,
           })
           .from(tools)
-          .where(gte(tools.createdAt, startDate))
+          // #314: active tools only; inactive seeded rows (0018, 0022) must not reach the public summary or its hash.
+          .where(and(eq(tools.status, "active"), gte(tools.createdAt, startDate)))
           .orderBy(desc(tools.createdAt))
           .limit(20),
 
