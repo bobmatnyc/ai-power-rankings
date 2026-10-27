@@ -312,6 +312,54 @@ describe("AutomatedIngestionService - candidate outcomes (#132)", () => {
   });
 });
 
+describe("AutomatedIngestionService - quality reject record (#179)", () => {
+  it("records title, both scores and the untruncated reason for a quality reject", async () => {
+    resetDbFixture();
+    const service = new AutomatedIngestionService();
+    const ingestArticle = vi.fn();
+    injectServices(
+      service,
+      [
+        searchResult(
+          "Vendor teases an unreleased coding agent",
+          "https://example.com/rejected",
+          daysAgo(1),
+          "window"
+        ),
+      ],
+      ingestArticle
+    );
+    const longReason = "Rejected because the piece is speculative. ".repeat(10);
+    expect(longReason.length).toBeGreaterThan(120);
+    (
+      service as unknown as { _articleQualityService: { batchAssess: ReturnType<typeof vi.fn> } }
+    )._articleQualityService.batchAssess = vi.fn().mockResolvedValue([
+      {
+        qualityScore: 4,
+        relevanceScore: 3,
+        credibilityScore: 5,
+        reasoning: longReason,
+        suggestedCategories: [],
+        shouldIngest: false,
+        estimatedCost: 0,
+      },
+    ]);
+
+    await service.runDailyDiscovery({ maxArticles: 5 });
+
+    const persisted = simulatedRow.candidateOutcomes as CandidateOutcome[];
+    expect(persisted).toHaveLength(1);
+    expect(persisted[0]).toMatchObject({
+      outcome: "quality_rejected",
+      title: "Vendor teases an unreleased coding agent",
+      averageScore: 4,
+      relevanceScore: 3,
+      reason: longReason,
+    });
+    expect(ingestArticle).not.toHaveBeenCalled();
+  });
+});
+
 describe("AutomatedIngestionService.updateRun - #132 error arms", () => {
   let service: AutomatedIngestionService;
 
