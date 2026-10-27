@@ -75,7 +75,8 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
       if (isApiPath(pathname)) {
         return NextResponse.json(
           { error: "Unauthorized", message: "Authentication required", code: "AUTH_REQUIRED" },
-          { status: 401 }
+          // #325: this refusal runs before any route's no-store wrapper, so it sets its own.
+          { status: 401, headers: { "Cache-Control": "no-store" } }
         );
       }
       if (isDevelopment) {

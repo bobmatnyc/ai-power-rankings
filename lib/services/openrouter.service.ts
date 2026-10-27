@@ -13,6 +13,11 @@ import {
   type OpenRouterResponse,
 } from '@/lib/validation/llm-response-validator';
 import { LlmTruncatedResponseError, readCompletion } from '@/lib/services/llm-completion';
+import {
+  OPENROUTER_USAGE_REQUEST,
+  recordOpenRouterUsage,
+  type OpenRouterOperation,
+} from '@/lib/services/provider-usage';
 
 /**
  * OpenRouter API message structure
@@ -126,6 +131,8 @@ export class OpenRouterService {
       maxAttempts?: number;
       timeoutMs?: number;
       onRetry?: (attempt: number, error: Error) => void;
+      /** #325: names the call site on its ledger rows. */
+      operation?: OpenRouterOperation;
     } = {}
   ): Promise<{ content: string; metadata: GenerationMetadata }> {
     const startTime = Date.now();
@@ -133,7 +140,7 @@ export class OpenRouterService {
     // Execute with retry logic
     const result: RetryResult<{ content: string; response: OpenRouterResponse }> =
       await retryWithBackoff(
-        () => this.executeRequest(config),
+        () => this.executeRequest(config, options.operation ?? 'generate'),
         {
           maxAttempts: options.maxAttempts || 3,
           initialDelayMs: 1000,
@@ -217,7 +224,8 @@ export class OpenRouterService {
    * @returns Content and raw response
    */
   private async executeRequest(
-    config: OpenRouterRequestConfig
+    config: OpenRouterRequestConfig,
+    operation: OpenRouterOperation
   ): Promise<{ content: string; response: OpenRouterResponse }> {
     const requestBody = {
       model: config.model,
@@ -227,6 +235,7 @@ export class OpenRouterService {
       top_p: config.top_p,
       frequency_penalty: config.frequency_penalty,
       presence_penalty: config.presence_penalty,
+      ...OPENROUTER_USAGE_REQUEST, // #325: ask for usage.cost
     };
 
     const headers = {
@@ -276,6 +285,10 @@ export class OpenRouterService {
         error
       );
     }
+
+    // #325: every attempt that returned a completion body is billed, so each one gets a
+    // ledger row, including one rejected below as invalid or truncated. Never throws.
+    await recordOpenRouterUsage({ operation, model: config.model, body: responseData });
 
     // Validate response structure
     const validation = validateOpenRouterResponse(responseData);
