@@ -12,7 +12,7 @@
  *  3. Flat tool: score pinned to the v7.9 value.
  *  4. Nested tool with empty/absent groups: score pinned to the v7.9 value.
  *  5. Input is not mutated.
- *  6. Version is v7.10 everywhere it is stamped.
+ *  6. Version is v7.11 everywhere it is stamped (v7.10 introduced the fold; De4 bumped it).
  *  7. An object-valued nested `info.company` is not folded and does not throw.
  *
  * DB-free: builds engine inputs the way `computeRankings()` does.
@@ -251,13 +251,13 @@ describe("malformed technical/business leaves (#101)", () => {
   });
 });
 
-describe("v7.10 version stamp (#101)", () => {
-  it("AC6: engine, score and persisted version all read v7.10", () => {
-    expect(ALGORITHM_VERSION).toBe("v7.10");
-    expect(RankingEngineV76.getAlgorithmInfo().version).toBe("v7.10");
+describe("version stamp (#101, De4)", () => {
+  it("AC6: engine, score and persisted version all read v7.11", () => {
+    expect(ALGORITHM_VERSION).toBe("v7.11");
+    expect(RankingEngineV76.getAlgorithmInfo().version).toBe("v7.11");
     const score = engine.calculateToolScore(nestedTool("nested"), FIXED_DATE);
-    expect(score.algorithm_version).toBe("v7.10");
+    expect(score.algorithm_version).toBe("v7.11");
     // Stored without the "v"; a string, so "7.10" never collapses to 7.1.
-    expect(RANKING_ALGORITHM_VERSION).toBe("7.10");
+    expect(RANKING_ALGORITHM_VERSION).toBe("7.11");
   });
 });

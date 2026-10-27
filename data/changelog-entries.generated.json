@@ -946,6 +946,17 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-59a7b9e521e9",
+    "version": "Unreleased",
+    "date": "2026-10-27T13:26:55.179Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "ranking",
+    "title": "ranking algorithm v7.11",
+    "description": "ranking algorithm v7.11. A tool's company name no longer adds to its score. The ranking engine gave a bonus to tools whose company field named a short list of large vendors; the bonus is removed and the company name is not a score input. A tool still earns the data-completeness points for having any company on file. Weights, curves and other factors are unchanged. Tests: `lib/ranking-algorithm-v76.company-name.test.ts` (#313)",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-bd4b0816a25e",
     "version": "Unreleased",
     "date": "2026-10-26T14:23:56.000Z",
