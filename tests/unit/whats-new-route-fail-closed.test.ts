@@ -44,7 +44,8 @@ vi.mock("../../lib/db/connection", async () => {
 
 vi.mock("../../lib/db/repositories/tools.repository", () => ({
   ToolsRepository: class {
-    findAll = findAll;
+    // #314: the route reads active tools through findByStatus; the stub serves the same fixture.
+    findByStatus = findAll;
   },
 }));
 
