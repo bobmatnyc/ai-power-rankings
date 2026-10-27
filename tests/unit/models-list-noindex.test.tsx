@@ -182,28 +182,6 @@ describe("sitemap", () => {
     expect(paths.filter((p) => p.endsWith("/rankings/productivity-tools"))).toHaveLength(locales.length);
   });
 
-  // #329: D63 — only active models with a sourced metric count; 9 is out, 10 is in.
-  it.each([
-    [9, false],
-    [10, true],
-  ])("with %i active models carrying a Vals TB 4.0 metric, lists /rankings/models: %s", async (n, listed) => {
-    const { MODEL_TERMINAL_BENCH_SOURCE } = await import("../../lib/rankings/lists");
-    const metric = { metrics: { terminal_bench: 50 }, metrics_provenance: { terminal_bench: { source: MODEL_TERMINAL_BENCH_SOURCE } } };
-    const tool = (i: number, status: string, extra: Record<string, unknown>) => ({
-      id: `m${status}${i}`,
-      slug: `m-${status}-${i}`,
-      status,
-      kind: "model",
-      updated_at: "2026-01-02",
-      ...extra,
-    });
-    findAll.mockResolvedValue([
-      ...Array.from({ length: n }, (_, i) => tool(i, "active", metric)),
-      ...Array.from({ length: 3 }, (_, i) => tool(i, "inactive", metric)),
-      ...Array.from({ length: 3 }, (_, i) => tool(100 + i, "active", {})),
-    ]);
-    const { buildSitemapEntries } = await import("../../lib/sitemap");
-    const paths = (await buildSitemapEntries("https://example.test")).map((e) => new URL(e.url).pathname);
-    expect(paths.filter((p) => p.endsWith("/rankings/models"))).toHaveLength(listed ? locales.length : 0);
-  });
+  // #329: the 9/10 metric-row boundary for the sitemap is in sitemap-models-count-329.test.ts,
+  // which reads the board and the tools.status column as the page does.
 });

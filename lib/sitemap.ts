@@ -18,13 +18,15 @@ import { newsRepository } from "@/lib/db/repositories/news";
 import { toolsRepository } from "@/lib/db/repositories/tools.repository";
 import {
   DEFAULT_RANKING_LIST,
-  hasCodingMetric,
+  isMetricGatedList,
   isRankingListIndexable,
   listOfTool,
   RANKING_LISTS,
   type RankingList,
   rankingListPath,
 } from "@/lib/rankings/lists";
+import { loggers } from "@/lib/logger";
+import { loadCurrentRankings } from "@/lib/rankings/current-rankings";
 import { listPeriods } from "@/lib/services/whats-new-summary.service";
 import { isNoindexToolSlug, isTableRedirectSource } from "@/lib/seo/url-table";
 
@@ -69,8 +71,10 @@ const staticPages = [
  * each stored monthly report once under `/en/whats-new/<period>` (#54). #191:
  * table 308 sources and noindex tools are left out. #186: each non-default list page
  * (`/rankings/<slug>`) in every locale when the list has at least 10 active tools
- * (D53); `/rankings` is the harness list's canonical, so `/rankings/coding-harnesses`
- * is never listed. All URLs start with `baseUrl`. Rejects when any database read rejects.
+ * (D53); the models list also needs 10 active board rows with metrics, counted by
+ * `loadCurrentRankings` as the page does (#329, D63); `/rankings` is the harness list's canonical, so `/rankings/coding-harnesses`
+ * is never listed. All URLs start with `baseUrl`. Rejects when any database read rejects,
+ * except the models board read, whose failure only leaves `/rankings/models` out (#329).
  * Test: `tests/unit/sitemap-route.test.ts`, `tests/unit/seo-canonical-origin.test.ts`.
  */
 export async function buildSitemapEntries(
@@ -130,12 +134,26 @@ export async function buildSitemapEntries(
   // 3b. #186: list pages. A list below 10 entries is noindex (D53), and so is the models list
   // below 10 active rows with metrics (#329, D63), so neither is listed.
   const listSizes = new Map<RankingList, number>();
-  const metricRows = new Map<RankingList, number>();
   for (const tool of tools) {
     if (tool.status !== "active") continue;
     const list = listOfTool(tool["kind"], tool["modality"]);
     if (list) listSizes.set(list, (listSizes.get(list) ?? 0) + 1);
-    if (list && hasCodingMetric(tool)) metricRows.set(list, (metricRows.get(list) ?? 0) + 1);
+  }
+  // #329: a metric-gated list (models) takes its entry and metric-row counts from the board the
+  // page and /api/rankings read (`loadCurrentRankings`: board rows, the tools.status column, the
+  // Vals metric rule), never from findAll()'s status, which a stale data.status can override.
+  // A failed board read leaves only that list page out (count 0), as the page itself goes
+  // noindex on an unknown count; the rest of the sitemap is unaffected.
+  const metricRows = new Map<RankingList, number>();
+  for (const list of RANKING_LISTS.filter(isMetricGatedList)) {
+    let board: Awaited<ReturnType<typeof loadCurrentRankings>> = null;
+    try {
+      board = await loadCurrentRankings(list);
+    } catch {
+      loggers.api.warn("Sitemap: list board read failed; list page left out", { list });
+    }
+    listSizes.set(list, board?.rankings.length ?? 0);
+    metricRows.set(list, board?.metricRowCount ?? 0);
   }
   for (const list of RANKING_LISTS) {
     if (list === DEFAULT_RANKING_LIST || !isRankingListIndexable(list, listSizes.get(list) ?? 0, metricRows.get(list) ?? 0)) continue;
