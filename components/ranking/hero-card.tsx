@@ -57,53 +57,58 @@ export function HeroCard({ ranking, index, lang = "en" }: HeroCardProps) {
           </div>
         )}
 
-        <CardHeader className="pb-3">
-          {/* #323: fixed-height row (logo height) with a one-line title, so logo/title/pill line up across cards */}
-          <div className="flex h-16 items-center gap-3">
+        {/* #326: px-4 in the md-xl three-column layout gives the title and metrics 16px more width */}
+        <CardHeader className="pb-3 md:px-4 xl:px-6">
+          {/* #326: logo row (fixed logo height) carries the rank pill and trend at its right; they wrap
+              under each other when the card is narrow, so both stay inside the card at every width */}
+          <div className="flex h-16 items-start justify-between gap-3">
             <div className="flex-shrink-0">
               <ToolIcon name={ranking.tool.name} slug={ranking.tool.slug} logo={ranking.tool.logo} size={64} />
             </div>
-            <div className="min-w-0 flex-1">
-              <CardTitle className="truncate text-xl font-bold group-hover:text-primary transition-colors">
-                {ranking.tool.name}
-              </CardTitle>
-              {/* #323: rank pill shares the category line, so the title gets the full width; m-0 drops the globals.css p margin */}
-              <div className="flex items-center justify-between gap-2">
-                <p className="m-0 min-w-0 truncate text-sm text-muted-foreground">
-                  {ranking.tool.category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-                </p>
-                <div className="flex flex-shrink-0 items-center gap-2">
-                  <Badge variant="secondary" className="bg-primary/10 text-primary">
-                    #{ranking.rank}
-                  </Badge>
-                  <RankingChange
-                    previousRank={ranking.previousRank}
-                    currentRank={ranking.rank}
-                    changeReason={ranking.changeReason}
-                    size="sm"
-                  />
-                </div>
-              </div>
+            <div className="flex min-w-0 flex-wrap items-center justify-end gap-x-2 gap-y-1">
+              <Badge variant="secondary" className="bg-primary/10 text-primary">
+                #{ranking.rank}
+              </Badge>
+              <RankingChange
+                previousRank={ranking.previousRank}
+                currentRank={ranking.rank}
+                changeReason={ranking.changeReason}
+                size="sm"
+              />
             </div>
           </div>
+          {/* #326: full-width title in a fixed two-line slot (2 x 1.25em): names wrap instead of truncating to one
+              letter, and all cards keep equal rows. md/lg sizes fit ~30 characters in the narrow three-column layout.
+              leading-[1.25] follows the font size because tailwind-merge drops CardTitle's leading-tight. */}
+          <CardTitle
+            title={ranking.tool.name}
+            className="line-clamp-2 h-[2.5em] break-words text-xl font-bold leading-[1.25] group-hover:text-primary transition-colors md:text-xs lg:text-sm xl:text-xl"
+          >
+            {ranking.tool.name}
+          </CardTitle>
+          {/* #326: category steps down with the title in the md band; m-0 drops the globals.css p margin */}
+          <p className="m-0 truncate text-sm text-muted-foreground md:text-xs lg:text-sm">
+            {ranking.tool.category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+          </p>
         </CardHeader>
 
-        <CardContent className="flex flex-1 flex-col gap-4">
+        <CardContent className="flex flex-1 flex-col gap-4 md:px-4 xl:px-6">
           {/* #323: always three lines tall (text-sm leading-5), so short and long descriptions take the same space */}
           <p className="m-0 line-clamp-3 min-h-[3.75rem] text-sm leading-5 text-muted-foreground">
             {ranking.tool.description ? extractTextFromRichText(ranking.tool.description) : ""}
           </p>
 
           {/* #323: pinned to the card bottom; SWE-bench keeps its column with an em dash when missing */}
-          <div className="mt-auto grid grid-cols-2 gap-4 text-sm">
+          {/* #326: md-xl labels drop to text-xs and never wrap, so "SWE-bench" stays on one line */}
+          <div className="mt-auto grid grid-cols-2 gap-4 text-sm md:text-xs xl:text-sm">
             <div>
-              <span className="text-muted-foreground">Score</span>
+              <span className="whitespace-nowrap text-muted-foreground">Score</span>
               <div className="font-semibold text-lg text-primary">
                 {ranking.scores?.overall?.toFixed(1) || "—"}
               </div>
             </div>
             <div>
-              <span className="text-muted-foreground">SWE-bench</span>
+              <span className="whitespace-nowrap text-muted-foreground">SWE-bench</span>
               <div className="font-semibold text-lg text-accent">
                 {sweBench ? `${sweBench.toFixed(1)}%` : "—"}
               </div>
