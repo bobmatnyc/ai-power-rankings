@@ -39,32 +39,40 @@ interface HeroCardProps {
 }
 
 export function HeroCard({ ranking, index, lang = "en" }: HeroCardProps) {
+  const sweBench = ranking.metrics?.swe_bench_score;
   return (
     <Link href={`/${lang}/tools/${ranking.tool.slug || ranking.tool.id}`} className="block h-full">
+      {/* #323: equal-height column card; #1 keeps a ring highlight but no scale, so heights and offsets match */}
       <Card
-        className={`relative group hover:shadow-xl transition-all duration-300 border-border/50 cursor-pointer ${
-          index === 0 ? "md:scale-105 border-primary/30 shadow-lg" : "hover:border-primary/20"
+        className={`relative group flex h-full flex-col hover:shadow-xl transition-all duration-300 cursor-pointer ${
+          index === 0 ? "border-primary/40 ring-1 ring-primary/30" : "border-border/50 hover:border-primary/20"
         }`}
       >
         {index === 0 && (
-          <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-            <Badge className="bg-gradient-primary border-0 shadow-lg text-primary-foreground">
+          // #323: the old gradient utility emitted no CSS (white text on the card edge); `.gradient-primary` is the globals.css class
+          <div className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap">
+            <Badge className="gradient-primary border-0 shadow-md text-primary-foreground">
               🏆 #1 Ranked
             </Badge>
           </div>
         )}
 
         <CardHeader className="pb-3">
-          <div className="flex items-center space-x-3">
+          {/* #323: fixed-height row (logo height) with a one-line title, so logo/title/pill line up across cards */}
+          <div className="flex h-16 items-center gap-3">
             <div className="flex-shrink-0">
               <ToolIcon name={ranking.tool.name} slug={ranking.tool.slug} logo={ranking.tool.logo} size={64} />
             </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-xl font-bold group-hover:text-primary transition-colors">
-                  {ranking.tool.name}
-                </CardTitle>
-                <div className="flex items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <CardTitle className="truncate text-xl font-bold group-hover:text-primary transition-colors">
+                {ranking.tool.name}
+              </CardTitle>
+              {/* #323: rank pill shares the category line, so the title gets the full width; m-0 drops the globals.css p margin */}
+              <div className="flex items-center justify-between gap-2">
+                <p className="m-0 min-w-0 truncate text-sm text-muted-foreground">
+                  {ranking.tool.category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
+                </p>
+                <div className="flex flex-shrink-0 items-center gap-2">
                   <Badge variant="secondary" className="bg-primary/10 text-primary">
                     #{ranking.rank}
                   </Badge>
@@ -76,36 +84,29 @@ export function HeroCard({ ranking, index, lang = "en" }: HeroCardProps) {
                   />
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground">
-                {ranking.tool.category.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}
-              </p>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent>
-          <div className="space-y-4">
-            {ranking.tool.description && (
-              <p className="text-sm text-muted-foreground line-clamp-3">
-                {extractTextFromRichText(ranking.tool.description)}
-              </p>
-            )}
+        <CardContent className="flex flex-1 flex-col gap-4">
+          {/* #323: always three lines tall (text-sm leading-5), so short and long descriptions take the same space */}
+          <p className="m-0 line-clamp-3 min-h-[3.75rem] text-sm leading-5 text-muted-foreground">
+            {ranking.tool.description ? extractTextFromRichText(ranking.tool.description) : ""}
+          </p>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-muted-foreground">Score</span>
-                <div className="font-semibold text-lg text-primary">
-                  {ranking.scores?.overall?.toFixed(1) || "-"}
-                </div>
+          {/* #323: pinned to the card bottom; SWE-bench keeps its column with an em dash when missing */}
+          <div className="mt-auto grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="text-muted-foreground">Score</span>
+              <div className="font-semibold text-lg text-primary">
+                {ranking.scores?.overall?.toFixed(1) || "—"}
               </div>
-              {ranking.metrics?.swe_bench_score && (
-                <div>
-                  <span className="text-muted-foreground">SWE-bench</span>
-                  <div className="font-semibold text-lg text-accent">
-                    {ranking.metrics.swe_bench_score.toFixed(1)}%
-                  </div>
-                </div>
-              )}
+            </div>
+            <div>
+              <span className="text-muted-foreground">SWE-bench</span>
+              <div className="font-semibold text-lg text-accent">
+                {sweBench ? `${sweBench.toFixed(1)}%` : "—"}
+              </div>
             </div>
           </div>
         </CardContent>
