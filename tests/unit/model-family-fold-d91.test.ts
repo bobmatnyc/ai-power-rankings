@@ -24,6 +24,8 @@ const { holder } = vi.hoisted(() => ({ holder: { db: null as unknown } }));
 vi.mock("../../lib/db/connection", () => ({ getDb: () => holder.db }));
 vi.mock("../../lib/db/repositories/news", () => ({ newsRepository: { getPublishedSlugs: async () => [] } }));
 vi.mock("../../lib/services/whats-new-summary.service", () => ({ listPeriods: async () => [] }));
+// #181: the sitemap also reads stored weekly digests.
+vi.mock("../../lib/services/weekly-digest.repository", () => ({ listDigestWeeks: async () => [] }));
 
 import { readFileSync } from "node:fs";
 import path from "node:path";
