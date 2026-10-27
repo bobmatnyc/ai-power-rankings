@@ -23,6 +23,8 @@ vi.mock("../../lib/db/repositories/news", () => ({
 vi.mock("../../lib/db/repositories/tools.repository", () => ({
   ToolsRepository: class {
     findAll = tools;
+    // #314: the route reads active tools through the status filter, as the repository does.
+    findByStatus = async (status: string) => ((await tools()) as Array<{ status?: string }>).filter((t) => t.status === status);
   },
 }));
 
@@ -138,5 +140,22 @@ describe("GET /api/whats-new platform items (#231)", () => {
     expect(data._degraded).toBe(true);
     expect(data._sources.platform.status).toBe("unavailable");
     expect(response.headers.get("Cache-Control")).toBe("no-store");
+  });
+
+  // #314: inactive rows (migrations 0018, 0022) have updated_at = now() and must not reach the feed.
+  it("leaves an inactive tool updated inside the window out of the tools branch", async () => {
+    vi.doMock("../../lib/data/changelog-entries", () => ({ CHANGELOG_ENTRIES: [entry(1, 24)] }));
+    news.mockResolvedValue([]);
+    tools.mockResolvedValue([
+      { id: "t1", name: "Live Tool", slug: "live-tool", category: "other", status: "active", updated_at: ago(2), info: {} },
+      { id: "t2", name: "Seeded Tool", slug: "seeded-tool", category: "productivity", status: "inactive", updated_at: ago(1), info: {} },
+    ]);
+    const { GET } = await import("../../app/api/whats-new/route");
+    const data = await (await GET(request())).json();
+
+    expect(data._sources.tools).toEqual({ status: "ok", count: 1 });
+    const names = data.feed.map((i: { title?: string; name?: string }) => i.title ?? i.name ?? "");
+    expect(names.some((n: string) => n.includes("Live Tool"))).toBe(true);
+    expect(JSON.stringify(data.feed)).not.toContain("Seeded Tool");
   });
 });
