@@ -11,6 +11,7 @@
  */
 
 import { EXCLUDED_MODEL_MODALITIES } from "../../rankings/lists";
+import { parseClosedModelSeed } from "./closed-model-seed.repository";
 
 /** The facts a seed row may state. Anything else, metrics included, is refused. */
 export const MODEL_SEED_FACT_KEYS = [
@@ -225,4 +226,48 @@ export function parseModelSeed(jsonText: string): ModelSeed {
   });
   assertUniqueSlugs(models);
   return { checkedAt, sources: doc["sources"] ?? null, basis: doc["basis"] ?? null, models };
+}
+
+/**
+ * Why: the closed-model seed (#308) keeps its own file format, but a loader must hold its rows to
+ *   the same rules as every other model seed row (#329).
+ * What: runs `parseClosedModelSeed` (every #308 rule), then maps each row to the model seed
+ *   shape and checks it with `parseModelSeedRow`. The row's `source_url` sources its
+ *   `current_version` (the name), `api_model_id` and `release_date`. Throws on any #308 rule, any
+ *   model seed rule (a missing or image/video `modality`, a promotional description) and a
+ *   non-null price, which has no sourced fact to stand on. Pure.
+ * Test: `tests/unit/model-seed-329.test.ts`
+ */
+export function closedSeedToModelSeed(jsonText: string): ModelSeed {
+  const seed = parseClosedModelSeed(jsonText);
+  const raw = rec(JSON.parse(jsonText), "seed")["models"] as unknown[];
+  const models = seed.models.map((row, i) => {
+    const what = `closed models[${i}] (${row.slug})`;
+    if (row.priceInPerMtok !== null || row.priceOutPerMtok !== null) {
+      throw new Error(`${what}: a price needs a sourced fact; the closed seed carries none`);
+    }
+    const fact = (value: string) => ({ value, source_url: row.sourceUrl });
+    return parseModelSeedRow(
+      {
+        slug: row.slug,
+        name: row.name,
+        vendor: row.vendor,
+        company: row.company,
+        kind: row.kind,
+        modality: rec(raw[i], what)["modality"],
+        status: row.status,
+        open_weight: row.openWeight,
+        source_url: row.sourceUrl,
+        description: row.description,
+        facts: {
+          current_version: fact(row.name),
+          api_model_id: fact(row.apiModelId),
+          release_date: fact(row.releaseDate),
+        },
+      },
+      what,
+      seed.checkedAt
+    );
+  });
+  return { checkedAt: seed.checkedAt, sources: seed.sources, basis: seed.basis, models };
 }

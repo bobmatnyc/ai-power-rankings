@@ -10,10 +10,11 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { parseModelSeed } from "../../lib/db/repositories/model-seed.repository";
+import { assertUniqueSlugs, closedSeedToModelSeed, parseModelSeed } from "../../lib/db/repositories/model-seed.repository";
 
 const ROOT = path.resolve(__dirname, "../..");
 const SEED_TEXT = readFileSync(path.join(ROOT, "docs/refresh/open-weight-models-refresh.json"), "utf8");
+const CLOSED_TEXT = readFileSync(path.join(ROOT, "docs/refresh/closed-models.json"), "utf8");
 
 type Row = Record<string, unknown> & { facts: Record<string, Record<string, unknown>> };
 type Doc = { checked_at: string; models: Row[] } & Record<string, unknown>;
@@ -84,5 +85,40 @@ describe("#329 parseModelSeed throws", () => {
         delete first(d)["licence_review"];
       })
     ).toThrow(/closed row has no hf_repo/);
+  });
+});
+
+describe("#329 closed seed under the model seed rules", () => {
+  function closedWith(edit: (doc: Doc) => void) {
+    const doc = JSON.parse(CLOSED_TEXT) as Doc;
+    edit(doc);
+    return closedSeedToModelSeed(JSON.stringify(doc));
+  }
+
+  it("passes every closed row: kind model, inactive, closed, text, neutral, every fact sourced", () => {
+    const closed = closedSeedToModelSeed(CLOSED_TEXT);
+    expect(closed.models).toHaveLength(8);
+    for (const row of closed.models) {
+      expect(row.openWeight, row.slug).toBe(false);
+      expect(row.modality, row.slug).toBe("text");
+      expect(row.description, row.slug).toMatch(/^Closed model tier from \w+\. Current version: /);
+      for (const key of ["current_version", "api_model_id", "release_date"] as const) {
+        expect(row.facts[key]?.sourceUrl, `${row.slug} ${key}`).toBe(row.sourceUrl);
+      }
+    }
+  });
+
+  it("shares no slug with the open-weight refresh seed", () => {
+    expect(() => assertUniqueSlugs([...closedSeedToModelSeed(CLOSED_TEXT).models, ...parseModelSeed(SEED_TEXT).models])).not.toThrow();
+  });
+
+  it.each<[string, RegExp, (d: Doc) => unknown]>([
+    ["a missing modality", /modality is required/, (d) => delete d.models[0]!["modality"]],
+    ["a video model (D52)", /D52/, (d) => (d.models[0]!["modality"] = "video")],
+    ["vendor marketing copy", /neutral/, (d) => (d.models[0]!["description"] = "Our most capable model for agentic coding.")],
+    ["a price with no sourced fact", /price needs a sourced fact/, (d) => (d.models[0]!["price_in_per_mtok"] = 1)],
+    ["the muse-wonder slug", /excluded tier/, (d) => (d.models[0]!["slug"] = "muse-wonder")],
+  ])("throws on %s", (_name, message, edit) => {
+    expect(() => closedWith(edit)).toThrow(message);
   });
 });
