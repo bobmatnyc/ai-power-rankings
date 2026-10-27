@@ -52,11 +52,27 @@ async function apply(ctx: Ctx, only: string, force = false) {
   );
 }
 
+/** The wrong values production holds on openclaw (spec section 6); the fixture row has only a name. */
+const OPENCLAW_LIVE = {
+  name: "OpenClaw",
+  info: {
+    website: "https://openclaw.dev",
+    description: "",
+    business: { pricing_model: "subscription", free_tier: false, license_type: "proprietary" },
+  },
+};
+
 let ctx: Ctx;
+
+async function setOpenclawData(data: unknown) {
+  await ctx.db.query(`UPDATE public."tools" SET data = $1::jsonb WHERE slug = 'openclaw'`, [JSON.stringify(data)]);
+}
+
 beforeEach(async () => {
   const db = await chainDb(F17);
   ctx = { db, mdb: pgliteMigrationDb(db) };
   expect((await apply(ctx, F17)).exitCode).toBe(0);
+  await setOpenclawData(OPENCLAW_LIVE);
 }, 120_000);
 afterEach(async () => {
   await ctx.db.close();
@@ -141,7 +157,7 @@ describe("#314 migration 0023 converts the three existing rows", () => {
     expect(data.info.website).toBe("https://claude.ai");
   });
 
-  it("changes only the kind of openclaw, and the kind and subcategory of perplexity", async () => {
+  it("changes openclaw's kind (and data), and perplexity's kind, subcategory and category only", async () => {
     const [claw, pplx] = (await rows(["openclaw", "perplexity"])).map((r) => r.row);
     expect(claw!["kind"]).toBe("harness");
     expect(pplx!["kind"]).toBe("other");
@@ -150,10 +166,55 @@ describe("#314 migration 0023 converts the three existing rows", () => {
     const strip = (r: Record<string, unknown>, keys: string[]) =>
       Object.fromEntries(Object.entries(r).filter(([k]) => !keys.includes(k)));
     expect(claw2!["kind"]).toBe("productivity");
-    expect(strip(claw2!, ["kind", "updated_at"])).toEqual(strip(claw!, ["kind", "updated_at"]));
+    // #314: openclaw's data is corrected in its own test below; every other column stays.
+    expect(strip(claw2!, ["kind", "data", "updated_at"])).toEqual(strip(claw!, ["kind", "data", "updated_at"]));
     expect(pplx2!["kind"]).toBe("productivity");
     expect(pplx2!["subcategory"]).toBe("ai_assistant");
-    expect(strip(pplx2!, ["kind", "subcategory", "updated_at"])).toEqual(strip(pplx!, ["kind", "subcategory", "updated_at"]));
+    expect(pplx2!["category"]).toBe("productivity");
+    expect(strip(pplx2!, ["kind", "subcategory", "category", "updated_at"])).toEqual(
+      strip(pplx!, ["kind", "subcategory", "category", "updated_at"])
+    );
+  });
+
+  // #314: the Architect's ruling corrects openclaw's website, pricing and licence, cited to sources.
+  it("corrects openclaw's website, pricing and licence, records sources and leaves the description alone", async () => {
+    const before = (await rows(["openclaw"]))[0]!.row;
+    expect((await apply(ctx, F23)).exitCode).toBe(0);
+    const after = (await rows(["openclaw"]))[0]!.row;
+    const data = after["data"] as {
+      info: { website: string; description: string; business: Record<string, unknown> };
+      info_provenance: Record<string, { source: string; as_of: string }>;
+    };
+    expect(data.info.website).toBe("https://openclaw.ai");
+    expect(data.info.business).toEqual({ pricing_model: "free", free_tier: true, license_type: "MIT" });
+    expect(data.info.description).toBe("");
+    expect(data.info_provenance["website"]!.source).toBe("https://openclaw.ai/");
+    expect(data.info_provenance["pricing_model"]!.source).toBe("https://openclaw.ai/");
+    expect(data.info_provenance["license_type"]!.source).toBe("https://github.com/openclaw/openclaw/blob/main/LICENSE");
+    expect(after["name"]).toBe(before["name"]);
+    expect(after["category"]).toBe(before["category"]);
+  });
+
+  it("corrects a license_type stored on data.info as well, and accepts a row already at the targets", async () => {
+    await setOpenclawData({
+      info: { website: "https://openclaw.ai", license_type: "proprietary", business: { pricing_model: "free", free_tier: true } },
+    });
+    expect((await apply(ctx, F23)).exitCode).toBe(0);
+    const info = ((await rows(["openclaw"]))[0]!.row["data"] as { info: Record<string, unknown> }).info;
+    expect(info["license_type"]).toBe("MIT");
+  });
+
+  it.each([
+    ["an unexpected website", { website: "https://example.test", business: { pricing_model: "subscription", free_tier: false, license_type: "proprietary" } }],
+    ["an unexpected pricing_model", { website: "https://openclaw.dev", business: { pricing_model: "usage", free_tier: false, license_type: "proprietary" } }],
+    ["a missing free_tier", { website: "https://openclaw.dev", business: { pricing_model: "subscription", license_type: "proprietary" } }],
+    ["an unexpected licence", { website: "https://openclaw.dev", business: { pricing_model: "subscription", free_tier: false, license_type: "gpl" } }],
+    ["no licence field", { website: "https://openclaw.dev", business: { pricing_model: "subscription", free_tier: false } }],
+  ])("raises, writing nothing, on %s", async (_n, info) => {
+    await setOpenclawData({ info });
+    const before = await rows();
+    expect((await apply(ctx, F23)).exitCode).not.toBe(0);
+    expect(await rows()).toEqual(before);
   });
 
   it("leaves chatgpt-canvas, claude-desktop-extensions and cowork exactly as they were", async () => {
