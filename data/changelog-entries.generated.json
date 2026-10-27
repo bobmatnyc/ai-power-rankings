@@ -88,6 +88,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-aeccf9bee8fa",
+    "version": "Unreleased",
+    "date": "2026-10-27T22:21:35.850Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "ui",
+    "title": "the home page top-3 card titles are readable in the narrow three-column layout (about 900 px)",
+    "description": "the home page top-3 card titles are readable in the narrow three-column layout (about 900 px). The title has its own full-width row in a fixed two-line slot, so names wrap instead of being cut to one letter, and a name that needs more than two lines ends in an ellipsis with the full name in a tooltip. The rank pill and trend arrow sit on the logo row and stay inside the card, and the \"SWE-bench\" label no longer wraps. Cards keep equal heights and aligned rows. Tests: `tests/unit/hero-card-323.test.tsx` (#326)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-1fde6933d7dc",
     "version": "Unreleased",
     "date": "2026-10-27T21:54:14.000Z",

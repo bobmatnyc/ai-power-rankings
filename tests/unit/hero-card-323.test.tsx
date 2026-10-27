@@ -8,6 +8,8 @@
  * columns are present (em dash for the missing value), the metrics row is pinned to the
  * card bottom, the description keeps its three-line slot, and the #1 card carries no
  * scale transform and a styled badge.
+ * #326: the title wraps into a fixed two-line slot (line-clamp-2, not `truncate`) and carries
+ * the full name as a title attribute; the rank pill and trend sit on the logo row.
  * Test: `npx vitest run tests/unit/hero-card-323.test.tsx`. No network.
  */
 import { cleanup, render } from "@testing-library/react";
@@ -68,5 +70,24 @@ describe("HeroCard metrics row (#323)", () => {
     expect(card.className).not.toMatch(/scale-/);
     expect(card.className).toContain("h-full");
     expect(getByText(/#1 Ranked/).className).toContain("gradient-primary");
+  });
+});
+
+describe("HeroCard title (#326)", () => {
+  const name = "Augmented Example Coding Agent";
+  const long = { ...row(), tool: { ...row().tool, name } };
+
+  it("wraps the title into a two-line slot instead of truncating it to one line", () => {
+    const { container } = render(<HeroCard ranking={long} index={1} />);
+    const title = container.querySelector("div.tracking-tight") as HTMLElement;
+    expect(title.textContent).toBe(name);
+    expect(title.className).toContain("line-clamp-2");
+    expect(title.className).toContain("h-[2.5em]");
+    expect(title.className).not.toMatch(/\btruncate\b/);
+  });
+
+  it("exposes the full name as the title attribute", () => {
+    const { container } = render(<HeroCard ranking={long} index={1} />);
+    expect(container.querySelector("div.tracking-tight")?.getAttribute("title")).toBe(name);
   });
 });
