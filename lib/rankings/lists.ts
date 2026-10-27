@@ -13,7 +13,7 @@
  *     normal tiers; a shorter one is noindex and its tiers are S/A/B by thirds (D53).
  *   - `listHasProvisionalNote()`: only productivity carries the public note (D54).
  *   - `isRankingListIndexable()` / `listHasMetricsPendingNote()`: the models list is indexed
- *     only with 10 or more active rows carrying a coding metric (`hasCodingMetric`); below
+ *     only with 10 or more active rows carrying a Vals TB 4.0 figure (`hasCodingMetric`, D86); below
  *     that it is noindex with the metrics-pending note (#329, D63 amends D80).
  *   - `rankingListPath()` / `listFromSlug()`: `/rankings` is the harness board (D51);
  *     the other lists live under `/rankings/<slug>`.
@@ -102,7 +102,8 @@ export function isListIndexable(entryCount: number): boolean {
 /**
  * #329 (D63, amends D80): lists whose order means nothing until their rows carry coding
  * metrics. Such a list is indexed only when at least `METRIC_INDEX_MIN_ROWS` of its active
- * rows carry one (`hasCodingMetric`); below that it stays noindex with the provisional note.
+ * rows carry a Vals TB 4.0 figure (`hasCodingMetric`, D86); below that it stays noindex with
+ * the provisional note.
  */
 export const METRIC_GATED_LISTS: readonly RankingList[] = ["model"];
 
@@ -136,12 +137,12 @@ function provenanceSource(data: Record<string, unknown>, key: string): string | 
 /**
  * Why: D63 lifts the models list's noindex only when its rows are ranked by real coding
  *   evidence, so "has metrics" needs one definition every reader shares (#329).
- * What: true when the tool data (`tools.data`, canonical top-level paths) holds a positive
+ * What: true only when the tool data (`tools.data`, canonical top-level paths) holds a positive
  *   `metrics.terminal_bench` whose `metrics_provenance.terminal_bench.source` is the Vals
- *   TB 4.0 page (`MODEL_TERMINAL_BENCH_SOURCE`, D63 Q1), or a positive
- *   `metrics.swe_bench.verified` with an https `metrics_provenance.swe_bench.source`. A metric
- *   without provenance, a vendor-reported TB figure, or a nested `info.metrics` copy does not count.
- *   Status is not read here; callers count active rows only.
+ *   TB 4.0 page (`MODEL_TERMINAL_BENCH_SOURCE`; D63 Q1, D86). A SWE-bench Verified figure, from
+ *   any source, does not count (D86), nor does a TB figure without provenance, a vendor or TB 2.1
+ *   figure, or a nested `info.metrics` copy. This is the index-threshold count only; scoring
+ *   still reads `swe_bench` as before. Status is not read here; callers count active rows only.
  * Test: `tests/unit/models-list-index-rule-329.test.ts`
  */
 export function hasCodingMetric(toolData: unknown): boolean {
@@ -149,14 +150,13 @@ export function hasCodingMetric(toolData: unknown): boolean {
   const data = toolData as Record<string, unknown>;
   const metrics = data["metrics"];
   if (typeof metrics !== "object" || metrics === null) return false;
-  const m = metrics as Record<string, unknown>;
+  // #329 D86: count Vals TB 4.0 only; swe_bench never counts toward the index threshold.
   const tbSource = provenanceSource(data, "terminal_bench");
-  if (positiveNumber(m["terminal_bench"]) && tbSource !== null && tbSource.split("#")[0] === MODEL_TERMINAL_BENCH_SOURCE) {
-    return true;
-  }
-  const swe = m["swe_bench"];
-  const verified = typeof swe === "object" && swe !== null ? (swe as Record<string, unknown>)["verified"] : undefined;
-  return positiveNumber(verified) && provenanceSource(data, "swe_bench") !== null;
+  return (
+    positiveNumber((metrics as Record<string, unknown>)["terminal_bench"]) &&
+    tbSource !== null &&
+    tbSource.split("#")[0] === MODEL_TERMINAL_BENCH_SOURCE
+  );
 }
 
 /**

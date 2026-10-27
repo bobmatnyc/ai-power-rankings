@@ -6,8 +6,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *
  * Why: the owner accepted plan recommendation Q3. A list ordered by metric-less rows is not a
  *   ranking of quality, so the rule must count only active rows with sourced coding metrics.
- * What: checks `hasCodingMetric` (TB 4.0 from Vals only, D63 Q1; SWE-bench Verified with a
- *   source), the pure index and note rules on both sides of the boundary (9 and 10), D53 thirds
+ * What: checks `hasCodingMetric` (TB 4.0 from Vals only, D63 Q1 and D86; a SWE-bench Verified
+ *   figure never counts), the pure index and note rules on both sides of the boundary (9 and 10), D53 thirds
  *   tiers below 10 entries, and `loadCurrentRankings()` / `GET /api/rankings?list=model` over a
  *   mocked repository boundary: inactive rows and rows without metrics do not count.
  * Test: `npx vitest run tests/unit/models-list-index-rule-329.test.ts`. No network, no database.
@@ -64,12 +64,23 @@ describe("hasCodingMetric (D63 Q1: TB 4.0 from Vals only)", () => {
     ["the TB 2.1 leaderboard", tb(50, "https://www.tbench.ai/leaderboard/terminal-bench/2.1"), false],
     ["a TB figure without provenance", tb(50), false],
     ["a zero TB figure", tb(0, VALS), false],
+    // #329 D86: only Vals TB 4.0 counts; SWE-bench Verified never does, whatever its source.
     [
-      "SWE-bench Verified with an https source",
-      { metrics: { swe_bench: { verified: 68 } }, metrics_provenance: { swe_bench: { source: "https://huggingface.co/x/y" } } },
+      "only SWE-bench Verified from an independent source",
+      { metrics: { swe_bench: { verified: 50 } }, metrics_provenance: { swe_bench: { source: "https://leaderboard.example/swe-bench" } } },
+      false,
+    ],
+    [
+      "only SWE-bench Verified from a vendor source",
+      { metrics: { swe_bench: { verified: 50 } }, metrics_provenance: { swe_bench: { source: "https://vendor.example/model-card" } } },
+      false,
+    ],
+    ["SWE-bench Verified without provenance", { metrics: { swe_bench: { verified: 50 } } }, false],
+    [
+      "a Vals TB 4.0 figure alongside SWE-bench Verified",
+      { metrics: { terminal_bench: 50, swe_bench: { verified: 50 } }, metrics_provenance: { terminal_bench: { source: VALS } } },
       true,
     ],
-    ["SWE-bench Verified without provenance", { metrics: { swe_bench: { verified: 68 } } }, false],
     ["only a nested info.metrics copy", { info: { metrics: { terminal_bench: 65 } }, metrics_provenance: { terminal_bench: { source: VALS } } }, false],
     ["no metrics", { metrics: {} }, false],
   ])("%s -> %s", (_name, data, expected) => {

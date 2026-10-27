@@ -66,6 +66,16 @@ function seed(genuine: number, withRedirectAlias: boolean, withNoise = false) {
   if (withNoise) {
     for (let i = 0; i < 3; i++) TOOLS[`in${i}`] = { id: `in${i}`, slug: `in-${i}`, name: `I${i}`, kind: "model", column: "inactive", ...metric };
     for (let i = 0; i < 3; i++) TOOLS[`nm${i}`] = { id: `nm${i}`, slug: `nm-${i}`, name: `N${i}`, kind: "model", column: "active" };
+    // #329 D86: an active row with only a sourced SWE-bench Verified figure does not count.
+    TOOLS["swe"] = {
+      id: "swe",
+      slug: "swe-only",
+      name: "S",
+      kind: "model",
+      column: "active",
+      metrics: { swe_bench: { verified: 50 } },
+      metrics_provenance: { swe_bench: { source: "https://leaderboard.example/swe-bench" } },
+    };
   }
   const stamp = new Date("2026-10-01T00:00:00Z");
   current.rows = {
