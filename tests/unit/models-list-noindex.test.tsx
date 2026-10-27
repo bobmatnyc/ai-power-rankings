@@ -4,16 +4,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { locales } from "../../i18n/config";
 
 /**
- * The models list is noindex at any size and says its order is provisional.
+ * The models list is noindex and says its order is provisional until 10 or more active rows
+ * carry coding metrics (#329: D63 amends D80, which kept it noindex at any size).
  *
- * Why: no model metrics are collected yet, so every model scores the same floor and the
- *   order is not a ranking of quality. Search engines must not index it, and a reader
- *   must be told.
- * What: stubs `/api/rankings` (always claiming the list is indexable, so the page must
- *   enforce the rule itself), calls the real models-page `generateMetadata` and page
- *   component, and checks `robots`, the rendered note in every locale against its
- *   dictionary, `rankingListMeta()`, and the sitemap. The harness and productivity pages
- *   keep the D53 rule (10 or more entries are indexed).
+ * Why: a models list ordered without metrics is not a ranking of quality. Search engines
+ *   must not index it, and a reader must be told.
+ * What: stubs `/api/rankings` (claiming the list indexable at 10 or more entries, so the page
+ *   must enforce the metric rule itself), calls the real models-page `generateMetadata` and
+ *   page component, and checks `robots`, the rendered note in every locale against its
+ *   dictionary, `rankingListMeta()`, and the sitemap, on both sides of the 10-row metric
+ *   boundary. The harness and productivity pages keep the D53 rule (10 or more entries are indexed).
  * Test: `npx vitest run tests/unit/models-list-noindex.test.tsx`. No network.
  */
 
@@ -38,16 +38,25 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
 });
 
 const counts: Record<string, number> = {};
+// #329: the API's count of active rows with metrics per list; absent means the API sent none.
+const metricRows: Record<string, number | undefined> = {};
 const fetchStub = async (input: string | URL | Request) => {
   const url = new URL(String(input instanceof Request ? input.url : input));
   const list = url.searchParams.get("list") ?? "harness";
   const n = counts[list] ?? 0;
   const rankings = Array.from({ length: n }, (_, i) => ({ rank: i + 1, tool: { id: `t${i}`, name: `Tool ${i}` } }));
   // Always claims indexable at 10 or more, so the models rule must come from the page.
+  const m = metricRows[list];
   return Response.json({
     rankings,
     list,
-    list_meta: { list, entry_count: n, indexable: n >= 10, tier_scheme: n >= 10 ? "standard" : "thirds" },
+    list_meta: {
+      list,
+      entry_count: n,
+      indexable: n >= 10,
+      tier_scheme: n >= 10 ? "standard" : "thirds",
+      ...(m === undefined ? {} : { metric_row_count: m }),
+    },
   });
 };
 
@@ -62,6 +71,7 @@ beforeEach(() => {
   vi.stubEnv("VERCEL_ENV", "production");
   vi.stubGlobal("fetch", fetchStub);
   Object.assign(counts, { harness: 40, model: 12, productivity: 10 });
+  for (const key of Object.keys(metricRows)) delete metricRows[key];
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "warn").mockImplementation(() => {});
 });
@@ -96,8 +106,24 @@ async function metricsNotes(slug: string, lang: string) {
 }
 
 describe("models list robots", () => {
-  it.each([0, 9, 12, 50])("is noindex with %i entries even when the API reports it indexable", async (n) => {
+  it.each([0, 9, 12, 50])("is noindex with %i entries when the API reports no metric-row count", async (n) => {
     counts["model"] = n;
+    expect(await robotsOf("models")).toEqual(NOINDEX);
+  });
+
+  // #329: D63 — the boundary is 10 active rows with metrics.
+  it("is noindex with the note at 9 metric rows, indexed without the note at 10", async () => {
+    metricRows["model"] = 9;
+    expect(await robotsOf("models")).toEqual(NOINDEX);
+    expect(await metricsNotes("models", "en")).toHaveLength(1);
+    metricRows["model"] = 10;
+    expect(await robotsOf("models")).toBeUndefined();
+    expect(await metricsNotes("models", "en")).toHaveLength(0);
+  });
+
+  it("stays noindex under 10 entries (D53) even with 10 metric rows reported", async () => {
+    counts["model"] = 9;
+    metricRows["model"] = 10;
     expect(await robotsOf("models")).toEqual(NOINDEX);
   });
 
@@ -109,9 +135,11 @@ describe("models list robots", () => {
     expect(((await mod.generateMetadata(params({ lang: "en" }))) as { robots?: unknown }).robots).toBeUndefined();
   });
 
-  it("rankingListMeta reports the models list not indexable at any size, others by the D53 rule", async () => {
+  it("rankingListMeta reports the models list not indexable without 10 metric rows, others by the D53 rule", async () => {
     const { rankingListMeta } = await import("../../lib/rankings/lists");
     expect(rankingListMeta("model", 50).indexable).toBe(false);
+    expect(rankingListMeta("model", 50, 9).indexable).toBe(false);
+    expect(rankingListMeta("model", 50, 10).indexable).toBe(true);
     expect(rankingListMeta("harness", 10).indexable).toBe(true);
     expect(rankingListMeta("harness", 9).indexable).toBe(false);
     expect(rankingListMeta("productivity", 10).indexable).toBe(true);
@@ -153,4 +181,7 @@ describe("sitemap", () => {
     expect(paths.some((p) => p.endsWith("/rankings/models"))).toBe(false);
     expect(paths.filter((p) => p.endsWith("/rankings/productivity-tools"))).toHaveLength(locales.length);
   });
+
+  // #329: the 9/10 metric-row boundary for the sitemap is in sitemap-models-count-329.test.ts,
+  // which reads the board and the tools.status column as the page does.
 });

@@ -38,7 +38,8 @@ const SLUG = /^[a-z0-9][a-z0-9-]*$/;
 const DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 const HTTPS = /^https:\/\/\S+$/;
 // #308: lite and nano tiers and the restricted-access Mythos model are out of scope for the seed.
-const EXCLUDED_TIER = /lite|nano|mythos/i;
+// #329: Muse Wonder is excluded until the owner rules on its source.
+const EXCLUDED_TIER = /lite|nano|mythos|muse[\s_-]*wonder/i;
 
 function rec(value: unknown, what: string): Record<string, unknown> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) throw new Error(`${what} is not an object`);
@@ -73,7 +74,7 @@ function parseRow(entry: unknown, i: number, checkedAt: string): ClosedModelSeed
   const name = text(e, "name", what);
   if (!SLUG.test(slug)) throw new Error(`${what}: slug must match ${SLUG}`);
   if (EXCLUDED_TIER.test(slug) || EXCLUDED_TIER.test(name)) {
-    throw new Error(`${what}: slug or name is in an excluded tier (lite, nano or mythos)`);
+    throw new Error(`${what}: slug or name is in an excluded tier (lite, nano, mythos or muse wonder)`);
   }
   const sourceUrl = text(e, "source_url", what);
   if (!HTTPS.test(sourceUrl)) throw new Error(`${what}: source_url must be an https URL`);
@@ -109,7 +110,7 @@ function parseRow(entry: unknown, i: number, checkedAt: string): ClosedModelSeed
  *   the rule on: text that is not JSON; no `models` array or an empty one; a missing or invalid
  *   `checked_at`; and, per row, a missing required text field (slug, name, vendor, company,
  *   release_date, source_url, api_model_id, description, proof), a slug failing
- *   `^[a-z0-9][a-z0-9-]*$`, a name or slug matching `/lite|nano|mythos/i`, a non-https
+ *   `^[a-z0-9][a-z0-9-]*$`, a name or slug matching `/lite|nano|mythos|muse[\s_-]*wonder/i`, a non-https
  *   `source_url`, a `release_date` that is not a real calendar day or is after `checked_at`,
  *   `kind` other than "model", `status` other than "inactive", `open_weight` other than false,
  *   a price that is neither null nor a non-negative number, and a duplicate slug. Unknown fields

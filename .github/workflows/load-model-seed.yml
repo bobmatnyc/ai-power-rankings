@@ -1,0 +1,184 @@
+name: Load model seed (#329)
+
+# #329: dispatch-only apply workflow for the reviewed model seeds, in the D96 pattern of
+# merge-duplicate-tools.yml.
+#
+# Why: the model seed rows (docs/refresh/closed-models.json and
+# docs/refresh/open-weight-models-refresh.json) reach production only through
+# scripts/load-model-seeds.ts, and only the DATABASE_URL repository secret reaches production.
+#
+# What: a manual dispatch over scripts/load-model-seeds.ts. Every run starts with the
+# script's dry run, which prints the per-row diff and exits 1 when a row is refused. A
+# dispatch with the default inputs stops there and writes nothing. Writing needs
+# `dry_run: false` AND `confirm: load-model-seed`; the write step then runs one transaction,
+# only after the dry run succeeded. The loader never activates a row and never changes an
+# existing row's status or metrics. The job runs only when dispatched from main, so no other
+# ref reaches the secret-bearing steps. Any non-zero exit fails the job.
+# The job summary carries the mode, each step's outcome and the script's totals line only
+# (D19): no host, database fingerprint, role name, rank or score. The script redacts anything
+# URL-shaped from its errors, and the `using ... database sha256:` line it prints is dropped
+# before the output reaches the log. This repository is public.
+#
+# Recovery (D98): before the write dispatch, the owner creates a named Neon branch of
+# production in the Neon console (name pattern: pre-model-seed-YYYYMMDD) and records its name
+# and UTC time. The write dispatch never runs before that branch exists. Rollback is a
+# restore from that branch.
+# Known gap (D99): the dry run uses the same writer DATABASE_URL repository secret, by name.
+# Details: docs/deployment/apply-migrations-workflow.md
+#
+# Test: tests/unit/load-model-seed-workflow-329.test.ts.
+
+on:
+  workflow_dispatch:
+    inputs:
+      seed:
+        description: 'Which seed to load: all, closed or open-weight.'
+        type: choice
+        options:
+          - all
+          - closed
+          - open-weight
+        default: all
+        required: false
+      dry_run:
+        description: 'Dry run only: print the per-row diff, write nothing. Leave true for the first run.'
+        type: boolean
+        default: true
+        required: false
+      confirm:
+        description: 'Write only: type load-model-seed (with dry_run false). Ignored on a dry run.'
+        type: string
+        default: ''
+        required: false
+
+# Read-only: this workflow writes to the database, never to the repository or its issues.
+permissions:
+  contents: read
+
+# One load at a time; a queued run waits and never cancels a running write.
+concurrency:
+  group: load-model-seed-329
+  cancel-in-progress: false
+
+jobs:
+  load-model-seed:
+    name: Model seed load
+    # Only a dispatch from main runs; a branch's edited copy of this file never gets the secret.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Inputs reach the shell only through `env:`. Only dry_run exactly "false" with the
+      # typed confirmation selects the write; dry_run false with any other confirm fails the
+      # job rather than quietly running as a dry run. An unknown seed fails the job.
+      - name: Select mode
+        id: mode
+        env:
+          SEED: ${{ inputs.seed }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          set -uo pipefail
+          case "$SEED" in
+            all|closed|open-weight) echo "seed=$SEED" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::seed must be all, closed or open-weight; nothing was run"; exit 1 ;;
+          esac
+          if [ "$DRY_RUN" != "false" ]; then
+            echo "mode=dry-run" >> "$GITHUB_OUTPUT"
+            echo "Mode: dry run (writes nothing)"
+            exit 0
+          fi
+          if [ "$CONFIRM" != "load-model-seed" ]; then
+            echo "::error::dry_run is false but confirm is not load-model-seed; nothing was run"
+            exit 1
+          fi
+          echo "mode=apply" >> "$GITHUB_OUTPUT"
+          echo "Mode: write"
+
+      # Always runs, so a write is preceded by a fresh plan; exit 1 on a refused row stops the
+      # job before the write.
+      - name: Dry run (writes nothing)
+        id: dryrun
+        env:
+          SEED: ${{ steps.mode.outputs.seed }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: production
+        run: |
+          set -uo pipefail
+          status=0
+          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --dry-run > "$RUNNER_TEMP/seed-dry-run.raw" 2>&1 || status=$?
+          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/seed-dry-run.raw" > "$RUNNER_TEMP/seed-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
+          rm -f "$RUNNER_TEMP/seed-dry-run.raw"
+          cat "$RUNNER_TEMP/seed-dry-run.txt"
+          grep -E '^totals: ' "$RUNNER_TEMP/seed-dry-run.txt" > "$RUNNER_TEMP/seed-counts-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
+          exit "$status"
+
+      # One transaction, run only after the dry run succeeded. A re-run is a no-op.
+      - name: Write seed rows
+        id: write
+        if: ${{ success() && steps.mode.outputs.mode == 'apply' && steps.dryrun.outcome == 'success' }}
+        env:
+          SEED: ${{ steps.mode.outputs.seed }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: production
+        run: |
+          set -uo pipefail
+          status=0
+          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --apply > "$RUNNER_TEMP/seed-write.raw" 2>&1 || status=$?
+          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/seed-write.raw" > "$RUNNER_TEMP/seed-write.txt" || [ "$?" -eq 1 ] || exit 2
+          rm -f "$RUNNER_TEMP/seed-write.raw"
+          cat "$RUNNER_TEMP/seed-write.txt"
+          grep -E '^(totals: |apply: committed)' "$RUNNER_TEMP/seed-write.txt" > "$RUNNER_TEMP/seed-counts-write.txt" || [ "$?" -eq 1 ] || exit 2
+          exit "$status"
+
+      # Counts only (D19). Runs on failure too, so a failed run still records its mode and
+      # outcomes; it never changes the job result.
+      - name: Job summary
+        id: summary
+        if: ${{ always() }}
+        env:
+          MODE: ${{ steps.mode.outputs.mode }}
+          SEED: ${{ steps.mode.outputs.seed }}
+          DRY_RUN_OUTCOME: ${{ steps.dryrun.outcome }}
+          WRITE_OUTCOME: ${{ steps.write.outcome }}
+        run: |
+          set -uo pipefail
+          case "${MODE:-}" in
+            apply) mode_label='write' ;;
+            dry-run) mode_label='dry run (nothing written)' ;;
+            *) mode_label='refused (inputs failed validation, nothing run)' ;;
+          esac
+          {
+            echo '## Model seed load'
+            echo ''
+            echo "- Seed: ${SEED:-not selected}"
+            echo "- Mode: ${mode_label}"
+            echo "- Dry run: ${DRY_RUN_OUTCOME:-not run}"
+            echo "- Write: ${WRITE_OUTCOME:-not run}"
+            echo ''
+            echo '### Counts'
+            echo ''
+            echo '```'
+            for part in dry-run write; do
+              if [ -s "$RUNNER_TEMP/seed-counts-${part}.txt" ]; then
+                sed "s/^/${part}: /" "$RUNNER_TEMP/seed-counts-${part}.txt"
+              fi
+            done
+            echo '```'
+            if [ "${MODE:-}" = 'dry-run' ]; then
+              echo ''
+              echo "Dry run only. To write, re-dispatch with \`dry_run: false\` and \`confirm: load-model-seed\`."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

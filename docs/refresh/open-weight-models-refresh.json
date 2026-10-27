@@ -1,0 +1,117 @@
+{
+  "checked_at": "2026-10-27",
+  "sources": {
+    "model_cards": {
+      "url": "https://huggingface.co/<hf_repo>",
+      "use": "flagship repo id, current version name, licence tag, parameter counts and repository date",
+      "terms": "Public Hugging Face model cards, read as published on checked_at. A licence tag that is not an OSI licence id names a custom licence whose text is not reviewed here."
+    }
+  },
+  "basis": {
+    "rows": "Every row is a model family in the D91 sense: the slug carries no version, and one current flagship Hugging Face repo stands for the family.",
+    "relation": "This file refreshes family rows of the open-weight seed in PR #298 (docs/refresh/open-weight-models.json, not merged) to the generations the vendors ship now. It does not fork that seed: a row here carries only the refreshed facts, and #298 rows not listed here are unchanged. When #298 merges, its rows can be folded into this format.",
+    "facts": "Every stated fact sits under facts with its own source_url. A fact the reviewed sources do not state is left out, never estimated.",
+    "licence_review": "not_required only when the licence tag is an OSI licence id; pending when the tag names a custom licence or no licence is stated. The review happens before activation, not in this seed.",
+    "status": "Rows are inactive. A loader never activates a row and never changes an existing row's status or metrics.",
+    "scope": "This file is a reviewed seed only. Nothing here is read by ranking or scoring code, and it carries no metrics."
+  },
+  "models": [
+    {
+      "slug": "deepseek",
+      "name": "DeepSeek",
+      "vendor": "DeepSeek",
+      "company": "DeepSeek",
+      "kind": "model",
+      "modality": "text",
+      "status": "inactive",
+      "open_weight": true,
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "description": "Open-weight model family from DeepSeek. Current flagship release: DeepSeek-V4.1-Flash.",
+      "licence_review": "not_required",
+      "facts": {
+        "current_version": { "value": "DeepSeek-V4.1-Flash", "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash" },
+        "hf_repo": { "value": "deepseek-ai/DeepSeek-V4.1-Flash", "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash" },
+        "licence": { "value": "mit", "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash" },
+        "parameters_b": { "value": 552, "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash" }
+      }
+    },
+    {
+      "slug": "glm",
+      "name": "GLM",
+      "vendor": "Z.ai",
+      "company": "Z.ai",
+      "kind": "model",
+      "modality": "text",
+      "status": "inactive",
+      "open_weight": true,
+      "source_url": "https://huggingface.co/zai-org/glm-5.3",
+      "description": "Open-weight model family from Z.ai. Current flagship release: GLM-5.3.",
+      "licence_review": "pending",
+      "facts": {
+        "current_version": { "value": "GLM-5.3", "source_url": "https://huggingface.co/zai-org/glm-5.3" },
+        "hf_repo": { "value": "zai-org/glm-5.3", "source_url": "https://huggingface.co/zai-org/glm-5.3" },
+        "licence": { "value": "glm-5.3", "source_url": "https://huggingface.co/zai-org/glm-5.3" },
+        "parameters_b": { "value": 753, "source_url": "https://huggingface.co/zai-org/glm-5.3" }
+      }
+    },
+    {
+      "slug": "kimi",
+      "name": "Kimi",
+      "vendor": "Moonshot AI",
+      "company": "Moonshot AI",
+      "kind": "model",
+      "modality": "text",
+      "status": "inactive",
+      "open_weight": true,
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "description": "Open-weight model family from Moonshot AI. Current flagship release with published weights: Kimi-K3.",
+      "licence_review": "pending",
+      "facts": {
+        "current_version": { "value": "Kimi-K3", "source_url": "https://huggingface.co/moonshotai/Kimi-K3" },
+        "hf_repo": { "value": "moonshotai/Kimi-K3", "source_url": "https://huggingface.co/moonshotai/Kimi-K3" },
+        "release_date": { "value": "2026-09-02", "source_url": "https://huggingface.co/moonshotai/Kimi-K3" }
+      }
+    },
+    {
+      "slug": "qwen",
+      "name": "Qwen",
+      "vendor": "Alibaba (Qwen)",
+      "company": "Alibaba",
+      "kind": "model",
+      "modality": "text",
+      "status": "inactive",
+      "open_weight": true,
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B",
+      "description": "Open-weight model family from Alibaba's Qwen team. Current flagship release: Qwen3.8-Max.",
+      "licence_review": "pending",
+      "facts": {
+        "current_version": { "value": "Qwen3.8-Max", "source_url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B" },
+        "hf_repo": { "value": "Qwen/Qwen3.8-2.4T-A95B", "source_url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B" },
+        "licence": { "value": "qwen3.8-max", "source_url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B" },
+        "parameters_b": { "value": 2400, "source_url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B" },
+        "active_parameters_b": { "value": 95, "source_url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B" }
+      }
+    },
+    {
+      "slug": "minimax",
+      "name": "MiniMax",
+      "vendor": "MiniMax",
+      "company": "MiniMax",
+      "kind": "model",
+      "modality": "text",
+      "status": "inactive",
+      "open_weight": true,
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+      "description": "Open-weight model family from MiniMax. Current flagship release: MiniMax-M3.1-Flash.",
+      "licence_review": "pending",
+      "facts": {
+        "current_version": { "value": "MiniMax-M3.1-Flash", "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash" },
+        "hf_repo": { "value": "MiniMaxAI/MiniMax-M3.1-Flash", "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash" },
+        "licence": { "value": "minimax-community", "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash" },
+        "parameters_b": { "value": 428, "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash" },
+        "active_parameters_b": { "value": 23, "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash" },
+        "release_date": { "value": "2026-10-23", "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash" }
+      }
+    }
+  ]
+}

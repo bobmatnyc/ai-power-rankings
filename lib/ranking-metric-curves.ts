@@ -152,6 +152,14 @@ export function scoreUsersContribution(users: number): number {
  * best-in-class earns near-full credit while a small headroom (85→100) is
  * reserved for future gains. The algorithm owner can retune this single constant
  * to make the curve stricter (raise it) or more generous (lower it).
+ *
+ * #329 (D63 Q1): a MODEL's `terminal_bench` is Terminal-Bench 4.0 from the Vals
+ * leaderboard only (`MODEL_TERMINAL_BENCH_SOURCE` in lib/rankings/lists.ts, recorded
+ * in `data.metrics_provenance.terminal_bench`), never a vendor or TB 2.1 figure.
+ * TB 4.0 scores sit well below the anchor, so every TB 4.0 value maps below 100
+ * here: ordered and never clamped. The value stays 85 because harness
+ * rows still hold TB 2.1 figures on the same key; retuning it would rescore the
+ * harness board, which D63 does not decide.
  */
 export const TERMINAL_BENCH_ANCHOR = 85;
 

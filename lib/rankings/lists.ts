@@ -12,10 +12,14 @@
  *   - `listTier()` / `isListIndexable()`: a list of 10 or more entries is indexed with the
  *     normal tiers; a shorter one is noindex and its tiers are S/A/B by thirds (D53).
  *   - `listHasProvisionalNote()`: only productivity carries the public note (D54).
+ *   - `isRankingListIndexable()` / `listHasMetricsPendingNote()`: the models list is indexed
+ *     only with 10 or more active rows carrying a Vals TB 4.0 figure (`hasCodingMetric`, D86); below
+ *     that it is noindex with the metrics-pending note (#329, D63 amends D80).
  *   - `rankingListPath()` / `listFromSlug()`: `/rankings` is the harness board (D51);
  *     the other lists live under `/rankings/<slug>`.
  *   `COMBINED_LIST` names the legacy one-board rows kept for rollback and export (D55).
- * Test: `tests/unit/ranking-lists-186.test.ts`, `tests/unit/models-list-noindex.test.tsx`
+ * Test: `tests/unit/ranking-lists-186.test.ts`, `tests/unit/models-list-noindex.test.tsx`,
+ *   `tests/unit/models-list-index-rule-329.test.ts`
  */
 
 import { calculateTier } from "@/lib/ranking-utils";
@@ -96,19 +100,80 @@ export function isListIndexable(entryCount: number): boolean {
 }
 
 /**
- * Lists that stay noindex whatever their entry count: the models list has no model
- * metrics yet, so its order is not a ranking of quality.
+ * #329 (D63, amends D80): lists whose order means nothing until their rows carry coding
+ * metrics. Such a list is indexed only when at least `METRIC_INDEX_MIN_ROWS` of its active
+ * rows carry a Vals TB 4.0 figure (`hasCodingMetric`, D86); below that it stays noindex with
+ * the provisional note.
  */
-export const NOINDEX_LISTS: readonly RankingList[] = ["model"];
+export const METRIC_GATED_LISTS: readonly RankingList[] = ["model"];
 
-/** True when `list` page may be indexed: the D53 size rule, and the list is not in `NOINDEX_LISTS`. */
-export function isRankingListIndexable(list: RankingList, entryCount: number): boolean {
-  return !NOINDEX_LISTS.includes(list) && isListIndexable(entryCount);
+/** #329 (D63): active rows with metrics a metric-gated list needs before it is indexed. */
+export const METRIC_INDEX_MIN_ROWS = 10;
+
+/**
+ * #329 (D63, Q1): the only accepted source of a model's `terminal_bench`: the Vals
+ * Terminal-Bench 4.0 leaderboard (one harness for every model). A fragment may name the snapshot.
+ */
+export const MODEL_TERMINAL_BENCH_SOURCE = "https://www.vals.ai/benchmarks/terminal-bench-4";
+
+export function isMetricGatedList(list: RankingList): boolean {
+  return METRIC_GATED_LISTS.includes(list);
 }
 
-/** True when the list page says its order is provisional because model metrics are not collected yet. */
-export function listHasMetricsPendingNote(list: RankingList): boolean {
-  return list === "model";
+function positiveNumber(value: unknown): boolean {
+  const n = typeof value === "string" ? Number(value) : value;
+  return typeof n === "number" && Number.isFinite(n) && n > 0;
+}
+
+function provenanceSource(data: Record<string, unknown>, key: string): string | null {
+  const all = data["metrics_provenance"];
+  if (typeof all !== "object" || all === null) return null;
+  const entry = (all as Record<string, unknown>)[key];
+  if (typeof entry !== "object" || entry === null) return null;
+  const source = (entry as Record<string, unknown>)["source"];
+  return typeof source === "string" && /^https:\/\/\S+$/.test(source) ? source : null;
+}
+
+/**
+ * Why: D63 lifts the models list's noindex only when its rows are ranked by real coding
+ *   evidence, so "has metrics" needs one definition every reader shares (#329).
+ * What: true only when the tool data (`tools.data`, canonical top-level paths) holds a positive
+ *   `metrics.terminal_bench` whose `metrics_provenance.terminal_bench.source` is the Vals
+ *   TB 4.0 page (`MODEL_TERMINAL_BENCH_SOURCE`; D63 Q1, D86). A SWE-bench Verified figure, from
+ *   any source, does not count (D86), nor does a TB figure without provenance, a vendor or TB 2.1
+ *   figure, or a nested `info.metrics` copy. This is the index-threshold count only; scoring
+ *   still reads `swe_bench` as before. Status is not read here; callers count active rows only.
+ * Test: `tests/unit/models-list-index-rule-329.test.ts`
+ */
+export function hasCodingMetric(toolData: unknown): boolean {
+  if (typeof toolData !== "object" || toolData === null) return false;
+  const data = toolData as Record<string, unknown>;
+  const metrics = data["metrics"];
+  if (typeof metrics !== "object" || metrics === null) return false;
+  // #329 D86: count Vals TB 4.0 only; swe_bench never counts toward the index threshold.
+  const tbSource = provenanceSource(data, "terminal_bench");
+  return (
+    positiveNumber((metrics as Record<string, unknown>)["terminal_bench"]) &&
+    tbSource !== null &&
+    tbSource.split("#")[0] === MODEL_TERMINAL_BENCH_SOURCE
+  );
+}
+
+/**
+ * True when `list` page may be indexed: the D53 size rule and, for a metric-gated list
+ * (#329, D63), at least `METRIC_INDEX_MIN_ROWS` active rows with metrics.
+ */
+export function isRankingListIndexable(list: RankingList, entryCount: number, metricRowCount = 0): boolean {
+  if (isMetricGatedList(list) && metricRowCount < METRIC_INDEX_MIN_ROWS) return false;
+  return isListIndexable(entryCount);
+}
+
+/**
+ * True when the list page says its order is provisional because model metrics are not
+ * collected yet: a metric-gated list below `METRIC_INDEX_MIN_ROWS` active rows with metrics (#329).
+ */
+export function listHasMetricsPendingNote(list: RankingList, metricRowCount = 0): boolean {
+  return isMetricGatedList(list) && metricRowCount < METRIC_INDEX_MIN_ROWS;
 }
 
 /** D53: the tier scheme for a list of `entryCount` entries. */
@@ -144,16 +209,22 @@ export interface RankingListMeta {
   indexable: boolean;
   tier_scheme: TierScheme;
   provisional_note: boolean;
+  /** #329: active rows on the board that carry a coding metric (`hasCodingMetric`). */
+  metric_row_count: number;
+  /** #329: the page shows the metrics-pending note (a metric-gated list below the D63 threshold). */
+  metrics_pending_note: boolean;
 }
 
-export function rankingListMeta(list: RankingList, entryCount: number): RankingListMeta {
+export function rankingListMeta(list: RankingList, entryCount: number, metricRowCount = 0): RankingListMeta {
   return {
     list,
     slug: LIST_SLUGS[list],
     path: rankingListPath(list),
     entry_count: entryCount,
-    indexable: isRankingListIndexable(list, entryCount),
+    indexable: isRankingListIndexable(list, entryCount, metricRowCount),
     tier_scheme: listTierScheme(entryCount),
     provisional_note: listHasProvisionalNote(list),
+    metric_row_count: metricRowCount,
+    metrics_pending_note: listHasMetricsPendingNote(list, metricRowCount),
   };
 }
