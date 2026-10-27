@@ -2,6 +2,7 @@ import { FileText } from 'lucide-react';
 import type { Metadata } from 'next';
 import { SummaryView } from '@/components/whats-new/summary-view';
 import { WeeklyDigestList } from '@/components/whats-new/weekly-digest-view';
+import { loggers } from '@/lib/logger';
 import { listDigests } from '@/lib/services/weekly-digest.repository';
 import { getLatestStoredSummary } from '@/lib/services/whats-new-summary.service';
 import { reportPath, whatsNewPageMetadata } from './page-metadata';
@@ -55,7 +56,18 @@ export default async function WhatsNewPage({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  const [summary, digests] = await Promise.all([getLatestStoredSummary(), listDigests(WEEKLY_LIST_SIZE)]);
+  // #181: the weekly list is optional; a failed read logs and shows no list, while a
+  // failed monthly read still throws to the error boundary.
+  const [summary, digests] = await Promise.all([
+    getLatestStoredSummary(),
+    listDigests(WEEKLY_LIST_SIZE).catch((error: unknown) => {
+      loggers.api.error('/whats-new: weekly digest list read failed', {
+        lang,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return [];
+    }),
+  ]);
   const weeklyList = <WeeklyDigestList lang={lang} weeks={digests.map((d) => d.week)} />;
 
   if (!summary) {
