@@ -3,7 +3,7 @@
  *
  * Why: the digest is keyed `YYYY-Www` and reads one closed Monday to Sunday UTC
  * week, so a retry reads the same articles and a stored week is found again.
- * What: `isoWeekKey` names the ISO-8601 week of an instant; `previousIsoWeek`
+ * What: `weekRangeLabel` words a window for titles; `digestRange` and `digestBody` serve the pages and the feed. `isoWeekKey` names the ISO-8601 week of an instant; `previousIsoWeek`
  * is the last full week before it; `windowForWeek` turns a stored key back into
  * its window and returns null for a key that is not a real ISO week.
  * Test: `tests/unit/weekly-digest-window-181.test.ts`.
@@ -63,4 +63,30 @@ export function windowForWeek(week: string): IsoWeekWindow | null {
   const window = windowStartingAt(new Date(week1Monday.getTime() + (number - 1) * 7 * DAY_MS));
   // A key that rolls into the next year (W53 of a 52-week year) does not round-trip.
   return window.week === week ? window : null;
+}
+
+const SHORT_DATE: Intl.DateTimeFormatOptions = { month: "short", day: "numeric", timeZone: "UTC" };
+const LONG_DATE: Intl.DateTimeFormatOptions = { ...SHORT_DATE, year: "numeric" };
+
+/** "Oct 19 to Oct 25, 2026"; both years when the week spans 1 January. */
+export function weekRangeLabel(window: IsoWeekWindow): string {
+  const sameYear = window.start.getUTCFullYear() === window.end.getUTCFullYear();
+  const from = window.start.toLocaleDateString("en-US", sameYear ? SHORT_DATE : LONG_DATE);
+  return `${from} to ${window.end.toLocaleDateString("en-US", LONG_DATE)}`;
+}
+
+/** "Oct 19 to Oct 25, 2026" for "2026-W43", or the key itself for a malformed one. */
+export function digestRange(week: string): string {
+  const window = windowForWeek(week);
+  return window ? weekRangeLabel(window) : week;
+}
+
+/**
+ * The digest markdown without its first `# ` line.
+ *
+ * #181: the stored text opens with a code-built title. The page shows that title
+ * as its own heading, so the body drops the line to keep one h1.
+ */
+export function digestBody(content: string): string {
+  return content.replace(/^\s*#[ \t][^\n]*\n+/, "");
 }

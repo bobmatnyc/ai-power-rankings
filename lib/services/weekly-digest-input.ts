@@ -18,7 +18,7 @@ import { createHash } from "node:crypto";
 import { toMetaDescription, validateSummary } from "@/lib/article-summary";
 import type { ChangelogEntry } from "@/lib/data/changelog-generator";
 import { DIGEST_WORDS, type DigestTier } from "@/lib/weekly-digest-validate";
-import type { IsoWeekWindow } from "@/lib/weekly-digest-window";
+import { type IsoWeekWindow, weekRangeLabel } from "@/lib/weekly-digest-window";
 
 /** One article as the digest reads it. */
 export interface DigestArticle {
@@ -116,16 +116,6 @@ export function calculateDigestHash(input: {
     changeIds: sorted(input.changeIds),
   });
   return createHash("sha256").update(text).digest("hex");
-}
-
-const SHORT_DATE: Intl.DateTimeFormatOptions = { month: "short", day: "numeric", timeZone: "UTC" };
-const LONG_DATE: Intl.DateTimeFormatOptions = { ...SHORT_DATE, year: "numeric" };
-
-/** "Oct 19 to Oct 25, 2026"; both years when the week spans 1 January. */
-export function weekRangeLabel(window: IsoWeekWindow): string {
-  const sameYear = window.start.getUTCFullYear() === window.end.getUTCFullYear();
-  const from = window.start.toLocaleDateString("en-US", sameYear ? SHORT_DATE : LONG_DATE);
-  return `${from} to ${window.end.toLocaleDateString("en-US", LONG_DATE)}`;
 }
 
 /** Escapes the brackets that would end a markdown link text early. */
