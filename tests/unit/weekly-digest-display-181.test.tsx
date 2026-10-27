@@ -123,9 +123,23 @@ describe("/whats-new weekly list (#181)", () => {
     expect(await renderIndex()).not.toContain("Weekly digests");
   });
 
-  it("fails the page rather than hiding a failed digest read", async () => {
+  it("keeps the monthly report and drops only the list when the digest read fails", async () => {
+    const { loggers } = await import("../../lib/logger");
+    const logged = vi.spyOn(loggers.api, "error").mockImplementation(() => undefined);
     repo.listDigests.mockRejectedValue(new Error("connection reset"));
-    await expect(renderIndex()).rejects.toThrow("connection reset");
+    const html = await renderIndex();
+    expect(html).toContain("September 2026");
+    expect(html).not.toContain("Weekly digests");
+    expect(logged).toHaveBeenCalledWith(
+      expect.stringContaining("weekly digest list"),
+      expect.objectContaining({ error: "connection reset" }),
+    );
+    logged.mockRestore();
+  });
+
+  it("still fails the page when the monthly read fails", async () => {
+    monthly.getLatestStoredSummary.mockRejectedValue(new Error("monthly down"));
+    await expect(renderIndex()).rejects.toThrow("monthly down");
   });
 });
 
