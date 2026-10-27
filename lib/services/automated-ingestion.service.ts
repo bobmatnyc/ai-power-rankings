@@ -37,6 +37,7 @@ import { jinaReaderService } from "./jina-reader.service";
 import { tavilyExtractService } from "./tavily-extract.service";
 import { isDomainBlocked, addBlockedDomain } from "./blocked-domains.config";
 import { ProviderBillingFailures } from "./provider-billing-errors";
+import { runWithUsageRun } from "./provider-usage"; // #325
 // #172: one counts-only summary line per run.
 import {
   classifyAssessments,
@@ -719,7 +720,11 @@ export class AutomatedIngestionService {
 
     try {
       const result = await Promise.race([
-        this.executeDailyDiscovery(options, startTime, runIdRef, runCounts),
+        // #325: ledger rows written during the run link to its run row.
+        runWithUsageRun(
+          () => runIdRef.current,
+          () => this.executeDailyDiscovery(options, startTime, runIdRef, runCounts)
+        ),
         new Promise<IngestionResult>((_, reject) =>
           setTimeout(
             () =>
