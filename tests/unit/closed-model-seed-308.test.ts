@@ -95,6 +95,9 @@ describe("#308 parseClosedModelSeed throws", () => {
     ["a nano name", (d: Doc) => (first(d)["name"] = "GPT Nano 1")],
     ["a mythos name", (d: Doc) => (first(d)["name"] = "Claude Mythos 5.1")],
     ["a mythos slug", (d: Doc) => (first(d)["slug"] = "claude-mythos")],
+    // #329: Muse Wonder stays out until the owner rules on its source.
+    ["the muse-wonder slug", (d: Doc) => (first(d)["slug"] = "muse-wonder")],
+    ["a Muse Wonder name", (d: Doc) => (first(d)["name"] = "Muse Wonder Full")],
     ["a missing api_model_id", (d: Doc) => delete first(d)["api_model_id"]],
     ["a missing proof note", (d: Doc) => delete first(d)["proof"]],
     ["a negative price", (d: Doc) => (first(d)["price_in_per_mtok"] = -1)],

@@ -123,7 +123,8 @@ export async function GET(request: Request): Promise<NextResponse> {
         rankings: validRankings,
         // #186: D51 names the list; list_meta carries the D53 and D54 rules for it.
         list,
-        list_meta: rankingListMeta(list, validRankings.length),
+        // #329: D63 — the models list is indexed only with 10+ active rows carrying metrics.
+        list_meta: rankingListMeta(list, validRankings.length, current.metricRowCount),
         list_source: current.source,
         // published_at reflects when the current snapshot was actually published,
         // so the public UI can surface an honest "Rankings as of <date>" marker

@@ -200,6 +200,20 @@ describe("scoreTerminalBenchContribution — linear curve against the 85% anchor
     expect(scoreTerminalBenchContribution(Number.POSITIVE_INFINITY)).toBe(0);
   });
 
+  // #329 (D63 Q1): model figures are Terminal-Bench 4.0 from Vals, whose scores sit far
+  // below TB 2.1. Synthetic values across that range (no model's figure): each maps
+  // linearly, unclamped and in order, with headroom to spare.
+  it("maps Terminal-Bench 4.0-range values without clamping and keeps their order", () => {
+    const tb4 = [80, 70, 60, 45, 30, 15, 5];
+    const scores = tb4.map(scoreTerminalBenchContribution);
+    for (const [i, score] of scores.entries()) {
+      expect(score).toBeCloseTo((tb4[i]! / TERMINAL_BENCH_ANCHOR) * 100, 10);
+      expect(score).toBeLessThan(100);
+      if (i > 0) expect(score).toBeLessThan(scores[i - 1]!);
+    }
+    expect(scoreTerminalBenchContribution(70)).toBeCloseTo(82.35, 2);
+  });
+
   it("is monotonically non-decreasing and bounded across the range", () => {
     let previous = -1;
     for (let acc = 0; acc <= 120; acc += 0.5) {

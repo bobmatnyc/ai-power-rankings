@@ -4,6 +4,8 @@ import { loggers } from "@/lib/logger";
 import {
   COMBINED_LIST,
   DEFAULT_RANKING_LIST,
+  hasCodingMetric,
+  isMetricGatedList,
   listOfTool,
   listTier,
   type RankingList,
@@ -17,6 +19,8 @@ export interface CurrentListBoard {
   source: ListBoardSource;
   snapshot: RankingData;
   rankings: CurrentRankingRow[];
+  /** #329: active board rows with a coding metric (`hasCodingMetric`); 0 for a list that is not metric-gated. */
+  metricRowCount: number;
 }
 
 /**
@@ -33,7 +37,9 @@ export interface CurrentListBoard {
  * `data`), joins each entry to its tool by id then slug, drops entries whose tool
  * is missing (one warning each) or belongs to another list (or none), drops a
  * combined board's rows whose tool's `tools.status` column is not `active` now, sorts by stored rank
- * and renumbers 1..n with D53 tiers. A combined row's movement is a global move, so its previous rank is renumbered within the list too. Returns
+ * and renumbers 1..n with D53 tiers. A combined row's movement is a global move, so its previous rank is renumbered within the list too.
+ * #329: for a metric-gated list (models) `metricRowCount` counts the board rows whose `tools.status`
+ * column is `active` and whose tool carries a coding metric (`hasCodingMetric`), for the D63 index rule. Returns
  * null when neither row exists. Throws when a database read throws.
  * Test: `tests/unit/home-live-rankings-192.test.tsx`,
  *   `tests/unit/rankings-per-list-read-186.test.ts`,
@@ -68,16 +74,25 @@ export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LI
   // #301: a combined board keeps a tool only while its `tools.status` COLUMN is `active`.
   // The joined tool's `status` can be a stale JSONB copy, so the column is read on its own;
   // a failed read rejects here (fails closed) and a row with no column status is dropped.
+  // #329: a metric-gated list (models) also needs the column status of a list row, because only
+  // ACTIVE rows with a coding metric count toward the D63 index threshold.
   const columnStatus =
-    source === "combined"
+    source === "combined" || isMetricGatedList(list)
       ? await toolsRepo.findColumnStatuses(joined.flatMap((r) => (r.dbId ? [r.dbId] : [])))
       : new Map<string, string>();
-  const members = joined.filter((r) => inList(r, list, source, r.dbId ? columnStatus.get(r.dbId) : undefined));
+  const statusOf = (r: FormattedRanking) => (r.dbId ? columnStatus.get(r.dbId) : undefined);
+  const members = joined.filter((r) => inList(r, list, source, statusOf(r)));
 
   // Sort by rank to ensure proper ordering
   members.sort((a, b) => (a.row.rank || 999) - (b.row.rank || 999));
 
-  return { list, source, snapshot, rankings: rankWithinList(members.map((m) => m.row), source) };
+  const metricRowCount = isMetricGatedList(list) ? countMetricRows(members.map((m) => ({ status: statusOf(m), codingMetric: m.codingMetric }))) : 0;
+  return { list, source, snapshot, rankings: rankWithinList(members.map((m) => m.row), source), metricRowCount };
+}
+
+/** #329 PURE: rows that count toward the D63 index threshold: `tools.status` column active AND a coding metric. */
+export function countMetricRows(rows: ReadonlyArray<{ status: string | undefined; codingMetric: boolean }>): number {
+  return rows.filter((r) => r.status === "active" && r.codingMetric).length;
 }
 
 /**
@@ -129,6 +144,8 @@ type FormattedRanking = {
   toolList: RankingList | null;
   /** The tool's row UUID (`db_id`), the key for the `tools.status` column lookup (#301). */
   dbId: string | undefined;
+  /** #329: the joined tool carries a coding metric with provenance (`hasCodingMetric`). */
+  codingMetric: boolean;
 };
 
 /**
@@ -221,5 +238,6 @@ async function formatRanking(ranking: any, toolsRepo: ToolsRepository) {
     },
     tier: ranking["tier"] || "standard",
   };
-  return { row, kind, toolList, dbId: toolAsAny?.["db_id"] as string | undefined };
+  // #329: the tool data's canonical metrics and provenance decide whether the row counts for D63.
+  return { row, kind, toolList, dbId: toolAsAny?.["db_id"] as string | undefined, codingMetric: hasCodingMetric(tool) };
 }
