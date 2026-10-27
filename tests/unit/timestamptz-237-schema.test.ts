@@ -37,6 +37,8 @@ const SCHEMA_TIMESTAMP_COLUMNS: Readonly<Record<string, readonly string[]>> = {
   tool_links: ["created_at", "updated_at"],
   // #325: 0029 creates provider_usage_events.created_at as timestamptz.
   provider_usage_events: ["created_at"],
+  // #181: 0030 creates weekly_digests with timestamptz columns.
+  weekly_digests: ["window_start", "window_end", "generated_at", "created_at", "updated_at"],
 };
 
 const TABLES: PgTable[] = [...Object.values(schema), ...Object.values(articleSchema)]
@@ -67,10 +69,10 @@ describe("#237 schema and migration 0015 parity", () => {
     expect(naive).toEqual([]);
   });
 
-  it("the schema's timestamp columns are exactly the 45 listed: 0015's 42, tool_links' 2 (#183), provider_usage_events' 1 (#325)", () => {
+  it("the schema's timestamp columns are exactly the 50 listed: 0015's 42, tool_links' 2 (#183), provider_usage_events' 1 (#325) and weekly_digests' 5 (#181)", () => {
     expect(schemaTimestampColumns()).toEqual(SCHEMA_TIMESTAMP_COLUMNS);
-    expect(Object.values(SCHEMA_TIMESTAMP_COLUMNS).flat()).toHaveLength(45);
-    expect(Object.keys(SCHEMA_TIMESTAMP_COLUMNS)).toHaveLength(16);
+    expect(Object.values(SCHEMA_TIMESTAMP_COLUMNS).flat()).toHaveLength(50);
+    expect(Object.keys(SCHEMA_TIMESTAMP_COLUMNS)).toHaveLength(17);
     expect(Object.values(TIMESTAMPTZ_COLUMNS).flat()).toHaveLength(42);
     expect(Object.keys(TIMESTAMPTZ_COLUMNS)).toHaveLength(14);
   });
