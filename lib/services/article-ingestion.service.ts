@@ -558,7 +558,9 @@ export class AIAnalyzer {
    * #180: a summary that fails `validateSummary` is regenerated once after
    * `SUMMARY_RETRY_BACKOFF_MS`; a second failure throws `SummaryRejectedError`
    * (not wrapped, so the caller can mark the candidate rather than the run).
-   * Transport and parse errors are not retried here.
+   * Transport and parse errors are not retried here. A caller that never uses
+   * the summary (admin recalculation) passes `{ validateSummary: false }`: no
+   * check, no retry, no throw.
    */
   async analyzeContent(
     content: string,
@@ -567,9 +569,11 @@ export class AIAnalyzer {
       fileName?: string;
       author?: string;
       links?: Array<{ href: string; text: string }>;
-    }
+    },
+    options: { validateSummary?: boolean } = {}
   ): Promise<AIAnalysisResult & { model: string }> {
     let result = await this.requestAnalysis(content, metadata);
+    if (options.validateSummary === false) return result;
     let failures = validateSummary(result.summary);
     if (failures.length === 0) return result;
 
