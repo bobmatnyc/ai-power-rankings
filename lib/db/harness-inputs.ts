@@ -2,7 +2,7 @@
  * Harness input corrections: the reviewed source file, its parser and its validator (#313, #312).
  *
  * Why: the De4 ruling (2026-10-27) corrects the adoption inputs of the harness board with
- *   sourced figures and removes parent-company figures. Those are 61 data changes, so they are
+ *   sourced figures and removes parent-company figures. Those are many data changes, so they are
  *   reviewed as a file and applied as one migration (0024). The file names every change; a row
  *   with no source, a row on a tool that is not in the kind sheet, or a row that reaches the
  *   company-name bonus or a weight must be refused before any SQL is written.
@@ -72,6 +72,8 @@ export interface HarnessInputRow {
   as_of?: string;
   /** Required on a delete. */
   reason?: string;
+  /** The package or extension id the row assumes: the row applies only while `path` holds `value`. */
+  identity?: { path: string[]; value: string };
 }
 
 const ROW_KEYS = new Set([
@@ -88,6 +90,7 @@ const ROW_KEYS = new Set([
   "source_url",
   "as_of",
   "reason",
+  "identity",
 ]);
 
 export interface HarnessInputFile {
@@ -136,7 +139,8 @@ function isHttpsUrl(value: unknown): boolean {
  * What: per row, the shape (known keys only, a group, an op, a path under `metrics` or
  *   `info.metrics`, a field from `HARNESS_INPUT_FIELDS` that the path names); a `source_url`
  *   (https) and `as_of` (a real date) on every row except a delete, which carries a `reason`;
- *   one expected-old guard (a value or "absent"); `new` or `compute` on a write, neither on a
+ *   one expected-old guard (a value or "absent"); an optional `identity` (package or extension id) inside the same field;
+ *   `new` or `compute` on a write, neither on a
  *   delete; the slug must be in `kindSlugs` (the kind sheet). Across rows: unique ids, no
  *   repeated slug and path, and no tool with a delete and a write on the same field. Group
  *   contracts: (a) is Copilot's `monthly_arr` delete only; (b) has no row, and no row writes
@@ -177,6 +181,13 @@ export function validateHarnessInputs(rows: readonly HarnessInputRow[], kindSlug
     const hasOld = "expected_old" in row;
     if (hasOld === (row.expected_old_absent === true)) err("exactly one of expected_old and expected_old_absent is required");
     if (row.op === "delete" && row.expected_old_absent) err("a delete needs an expected_old value");
+
+    if (row.identity !== undefined) {
+      const id = row.identity;
+      const idOk = Array.isArray(id.path) && id.path.every((s) => typeof s === "string" && /^[a-z0-9_]+$/.test(s)) && typeof id.value === "string" && id.value !== "";
+      // The identity sits in the same input field's object as the written value.
+      if (!idOk || !pathOk || id.path.length <= prefix + 1 || id.path[prefix] !== row.field) err("identity must be a path inside the row's own input field and a non-empty string value");
+    }
 
     if (row.op === "delete") {
       if (typeof row.reason !== "string" || row.reason.trim() === "") err("a delete needs a reason");

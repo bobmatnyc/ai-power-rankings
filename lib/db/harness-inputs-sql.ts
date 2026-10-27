@@ -13,7 +13,9 @@
  *   the D-series data pass wrote it (CHANGELOG, "provenance recorded in
  *   `data.business_metrics_provenance`"). Nothing in origin/main reads `data.metrics_provenance`
  *   (#299 is unmerged), so writing it would add a block no reader uses. A removed value loses
- *   its entry. Ends with a post-check of every row and a count notice. The generator never
+ *   its entry. A row with an `identity` also needs the stored package or extension id to match;
+ *   a write below info.metrics raises while data.metrics holds the same key (the engine reads the
+ *   top-level key first). `updated_at` is never touched. Ends with a post-check of every row and a count notice. The generator never
  *   connects to a database.
  * Test: `tests/unit/harness-inputs-sheet-313.test.ts`, `tests/unit/harness-inputs-0024-313.test.ts`.
  */
@@ -33,7 +35,8 @@ function rowTuple(r: HarnessInputRow): string {
   return (
     `(${r.id}, ${text(r.group)}, ${text(r.slug)}, ${path}, ${text(r.op)}, ${text(r.field)}, ` +
     `${r.expected_old_absent ? "true" : "false"}, ${jsonb(r.expected_old)}, ${jsonb(r.new)}, ${text(r.compute)}, ` +
-    `${text(r.source_url)}, ${text(r.as_of)}, ${text(r.reason)})`
+    `${text(r.source_url)}, ${text(r.as_of)}, ${text(r.reason)}, ` +
+    `${r.identity ? `ARRAY[${r.identity.path.map((s) => text(s)).join(", ")}]::text[]` : "NULL::text[]"}, ${jsonb(r.identity?.value)})`
   );
 }
 
@@ -49,6 +52,15 @@ const ROW_LOOP = `
     cur := d #> r.path;
     changed := false;
     prov := d #> ARRAY['business_metrics_provenance', 'fields', r.field];
+    -- #313: a row about a package or extension applies only to the one it was sourced for.
+    IF r.ident_path IS NOT NULL AND (d #> r.ident_path) IS DISTINCT FROM r.ident THEN
+      RAISE EXCEPTION '#313 0024: % identity at % holds % (expected %); refusing to touch %', r.slug, r.ident_path, d #> r.ident_path, r.ident, r.path;
+    END IF;
+    -- #313: the engine reads data.metrics.<key> before data.info.metrics.<key>, so a write below info.metrics
+    -- is invisible while the top-level key exists.
+    IF r.op <> 'delete' AND r.path[1] = 'info' AND jsonb_typeof(d -> 'metrics') = 'object' AND (d -> 'metrics') ? r.field THEN
+      RAISE EXCEPTION '#313 0024: % write to info.metrics.% is shadowed by data.metrics.% (holds %); refusing to write', r.slug, r.field, r.field, d -> 'metrics' -> r.field;
+    END IF;
     IF r.compute IS NOT NULL THEN
       SELECT COALESCE(t.data -> 'slug', to_jsonb(t.slug)) #>> '{}' INTO eff_slug FROM public."tools" AS t WHERE t.slug = r.slug;
       IF eff_slug IS DISTINCT FROM r.slug THEN
@@ -115,7 +127,8 @@ const ROW_LOOP = `
     END IF;
 
     IF changed THEN
-      UPDATE public."tools" SET data = d, updated_at = now() WHERE slug = r.slug;
+      -- updated_at stays: a data correction is not a public update (/api/whats-new reads it).
+      UPDATE public."tools" SET data = d WHERE slug = r.slug;
       applied := applied + 1;
     ELSE
       already := already + 1;
@@ -198,7 +211,7 @@ BEGIN
   CREATE TEMP TABLE t313_rows ON COMMIT DROP AS
   SELECT * FROM (VALUES
 ${kept.map((r) => `    ${rowTuple(r)}`).join(",\n")}
-  ) AS v(seq, grp, slug, path, op, field, exp_absent, expected, newv, compute, source, as_of, reason);
+  ) AS v(seq, grp, slug, path, op, field, exp_absent, expected, newv, compute, source, as_of, reason, ident_path, ident);
 ${hasNews ? NEWS_BODY : ""}${ROW_LOOP}${hasNews ? NEWS_DRIFT : ""}${postCheck(kept.length)}END
 $k313$;
 `;
