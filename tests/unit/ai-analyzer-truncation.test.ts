@@ -41,7 +41,8 @@ const TRUNCATED_RESPONSE = {
 
 const ANALYSIS = {
   title: "Anthropic Makes Code Review for Claude Code Generally Available",
-  summary: "Anthropic has made code review for Claude Code generally available.",
+  // #180: an 80-120 word single paragraph ending a sentence, so the summary validator passes it.
+  summary: `Anthropic has made code review for Claude Code generally available. ${Array.from({ length: 80 }, (_, i) => `detail${i}`).join(" ")}.`,
   rewritten_content: "Anthropic has made code review for Claude Code generally available.",
   source: "example.com",
   published_date: "2026-10-20",

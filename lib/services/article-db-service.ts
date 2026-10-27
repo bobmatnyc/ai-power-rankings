@@ -40,6 +40,9 @@ import {
   RankingsCalculator,
 } from "./article-ingestion.service";
 
+// #180: recalculation never reads the summary, so it must not be rejected or retried.
+const RECALCULATE_ANALYSIS_OPTIONS = { validateSummary: false };
+
 export class ArticleDatabaseService {
   private articlesRepo: ArticlesRepository;
   private db: ReturnType<typeof getDb>;
@@ -521,7 +524,7 @@ export class ArticleDatabaseService {
         url: article.sourceUrl || undefined,
         fileName: article.fileName || undefined,
         author: article.author || undefined,
-      });
+      }, RECALCULATE_ANALYSIS_OPTIONS);
 
       // Get all tools and current rankings
       const allTools = await this.getAllTools();
@@ -651,7 +654,7 @@ export class ArticleDatabaseService {
           url: article.sourceUrl || undefined,
           fileName: article.fileName || undefined,
           author: article.author || undefined,
-        });
+        }, RECALCULATE_ANALYSIS_OPTIONS);
 
         // Cache the analysis for potential apply operation
         this.recalculationCache.set(articleId, {
