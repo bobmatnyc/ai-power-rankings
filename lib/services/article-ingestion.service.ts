@@ -15,6 +15,7 @@ import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 // actually shown — see the call site in AIAnalyzer.analyzeContent.
 import { sanitizeRelatedLinksBlock } from "@/lib/article-content-links";
 import { extractJsonObject, readCompletion } from "@/lib/services/llm-completion";
+import { OPENROUTER_USAGE_REQUEST, recordOpenRouterUsage } from "@/lib/services/provider-usage"; // #325
 // #179: the one-paragraph summary rule every prompt site below interpolates.
 import {
   countWords,
@@ -760,6 +761,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
             ],
             temperature: 0.2, // Lower temperature for more consistent, focused analysis
             max_tokens: ANALYSIS_MAX_TOKENS, // #172: 4000 truncated sonnet-5.5 replies; see the constant
+            ...OPENROUTER_USAGE_REQUEST, // #325: ask for usage.cost
           }),
           signal: AbortSignal.timeout(120_000),
         });
@@ -800,6 +802,9 @@ Return ONLY the JSON object above with actual data. No additional text or explan
         );
         throw new Error("Invalid JSON response from OpenRouter API");
       }
+
+      // #325: one ledger row per billed completion (a #180 retry is its own call). Never throws.
+      await recordOpenRouterUsage({ operation: "article_analysis", model: modelName, body: data });
 
       // #172: log finish_reason/length/model and fail a max_tokens cut-off as truncation,
       // not as malformed JSON.
