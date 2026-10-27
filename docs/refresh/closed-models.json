@@ -1,0 +1,164 @@
+{
+  "checked_at": "2026-10-26",
+  "sources": {
+    "anthropic": {
+      "url": "https://www.anthropic.com/news",
+      "use": "launch announcements and API model ids for the Claude models",
+      "terms": "Public vendor pages, read as published on checked_at."
+    },
+    "anthropic_release_notes": {
+      "url": "https://platform.claude.com/docs/en/release-notes/overview",
+      "use": "dated launch entries; the day of a release when the announcement page gives only a month",
+      "terms": "Public vendor documentation, read as published on checked_at."
+    },
+    "openai": {
+      "url": "https://developers.openai.com/api/docs/changelog",
+      "use": "dated release entries and API model ids for the GPT models",
+      "terms": "Public vendor documentation, read as published on checked_at."
+    },
+    "google": {
+      "url": "https://ai.google.dev/gemini-api/docs/changelog",
+      "use": "dated release entries and API model ids for the Gemini models",
+      "terms": "Public vendor documentation, read as published on checked_at."
+    }
+  },
+  "basis": {
+    "rows": "Every row is a model line in the D91 sense: one tier of one vendor, at its current version. The slug carries no version number. Older versions of a tier are not seeded separately.",
+    "tiers": "Tiers such as Haiku, Fable, Astra, Luna, Sol, Terra, Argon and Flash are separate lines, not successive versions. Lite and nano tiers and models in restricted access are excluded.",
+    "release_date": "The date the vendor page names for the release of the current version. Each row's proof note quotes it.",
+    "price": "Left null for every row. Vendor price tables are banded or were not confirmed on checked_at; a price is added by a later reviewed change.",
+    "status": "Rows are inactive. Activation is a separate owner decision after the rows are loaded.",
+    "open_weight": "false for every row; these are closed models.",
+    "scope": "This file is a reviewed seed only. Nothing here is read by ranking or scoring code."
+  },
+  "models": [
+    {
+      "slug": "claude-haiku",
+      "name": "Claude Haiku 5.5",
+      "vendor": "Anthropic",
+      "company": "Anthropic",
+      "release_date": "2026-10-07",
+      "source_url": "https://www.anthropic.com/news/claude-haiku-5-5",
+      "api_model_id": "claude-haiku-5-5",
+      "description": "The cheapest, fastest, and most capable small model Anthropic has released.",
+      "proof": "Release notes, October 7, 2026: \"We've launched Claude Haiku 5.5 (claude-haiku-5-5), our most capable model tuned for high-volume and latency-sensitive work.\" Announcement: \"Claude Haiku 5.5 is available now on all platforms, including Amazon Web Services, Google Cloud, and Microsoft Azure.\"",
+      "kind": "model",
+      "status": "inactive",
+      "open_weight": false,
+      "price_in_per_mtok": null,
+      "price_out_per_mtok": null
+    },
+    {
+      "slug": "claude-fable",
+      "name": "Claude Fable 5.1",
+      "vendor": "Anthropic",
+      "company": "Anthropic",
+      "release_date": "2026-09-01",
+      "source_url": "https://platform.claude.com/docs/en/release-notes/overview",
+      "api_model_id": "claude-fable-5-1",
+      "description": "The successor to Claude Fable 5 for long-running agentic coding, knowledge work, and research.",
+      "proof": "Claude Platform release notes, \"September 1, 2026\": \"We've launched Claude Fable 5.1 (claude-fable-5-1), the successor to Claude Fable 5 for long-running agentic coding, knowledge work, and research...\" The announcement page (https://www.anthropic.com/claude-fable-and-mythos-5-1) gives only \"September 2026\" and states: \"Fable 5.1 is generally available\".",
+      "kind": "model",
+      "status": "inactive",
+      "open_weight": false,
+      "price_in_per_mtok": null,
+      "price_out_per_mtok": null
+    },
+    {
+      "slug": "gpt-astra",
+      "name": "GPT-6 Astra",
+      "vendor": "OpenAI",
+      "company": "OpenAI",
+      "release_date": "2026-09-03",
+      "source_url": "https://developers.openai.com/api/docs/changelog",
+      "api_model_id": "gpt-6-astra",
+      "description": "Our most capable model for the most demanding work.",
+      "proof": "Changelog, Sep 3: \"Released GPT-6 Astra, our most capable model, built for the hardest end-to-end work.\"",
+      "kind": "model",
+      "status": "inactive",
+      "open_weight": false,
+      "price_in_per_mtok": null,
+      "price_out_per_mtok": null
+    },
+    {
+      "slug": "gpt-luna",
+      "name": "GPT-6 Luna",
+      "vendor": "OpenAI",
+      "company": "OpenAI",
+      "release_date": "2026-09-22",
+      "source_url": "https://developers.openai.com/api/docs/changelog",
+      "api_model_id": "gpt-6-luna",
+      "description": "Our most efficient model for focused, high-volume tasks.",
+      "proof": "Changelog, Sep 22: \"Released GPT-6 Sol (gpt-6-sol) and GPT-6 Luna (gpt-6-luna).\"",
+      "kind": "model",
+      "status": "inactive",
+      "open_weight": false,
+      "price_in_per_mtok": null,
+      "price_out_per_mtok": null
+    },
+    {
+      "slug": "gpt-sol",
+      "name": "GPT-6.1 Sol",
+      "vendor": "OpenAI",
+      "company": "OpenAI",
+      "release_date": "2026-09-29",
+      "source_url": "https://developers.openai.com/api/docs/changelog",
+      "api_model_id": "gpt-6.1-sol",
+      "description": "Near-Astra performance for complex work at a lower cost.",
+      "proof": "Changelog, Sep 29: \"Released GPT-6.1 Sol (gpt-6.1-sol) for complex coding and professional work at a lower cost than GPT-6 Astra.\" The Sol tier's first release was GPT-6 Sol on 2026-09-22; this row is the current 6.1 version.",
+      "kind": "model",
+      "status": "inactive",
+      "open_weight": false,
+      "price_in_per_mtok": null,
+      "price_out_per_mtok": null
+    },
+    {
+      "slug": "gpt-terra",
+      "name": "GPT-6.1 Terra",
+      "vendor": "OpenAI",
+      "company": "OpenAI",
+      "release_date": "2026-10-26",
+      "source_url": "https://developers.openai.com/api/docs/changelog",
+      "api_model_id": "gpt-6.1-terra",
+      "description": "A fast, efficient model for visual reasoning, precise computer use, and clear, natural writing.",
+      "proof": "Changelog, Oct 26: \"Released GPT-6.1 Terra, a fast, efficient model for visual reasoning, precise computer use, and clear, natural writing.\"",
+      "kind": "model",
+      "status": "inactive",
+      "open_weight": false,
+      "price_in_per_mtok": null,
+      "price_out_per_mtok": null
+    },
+    {
+      "slug": "gemini-argon",
+      "name": "Gemini 4 Argon",
+      "vendor": "Google",
+      "company": "Google",
+      "release_date": "2026-10-13",
+      "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+      "api_model_id": "gemini-4-argon",
+      "description": "Our most capable model built for complex coding, agentic, math, and science tasks.",
+      "proof": "Gemini API changelog, October 13, 2026: \"Gemini 4 Argon (gemini-4-argon) generally available (GA)\"",
+      "kind": "model",
+      "status": "inactive",
+      "open_weight": false,
+      "price_in_per_mtok": null,
+      "price_out_per_mtok": null
+    },
+    {
+      "slug": "gemini-flash",
+      "name": "Gemini 3.8 Flash",
+      "vendor": "Google",
+      "company": "Google",
+      "release_date": "2026-09-02",
+      "source_url": "https://ai.google.dev/gemini-api/docs/changelog",
+      "api_model_id": "gemini-3.8-flash",
+      "description": "Our most intelligent Flash model, engineered for long-horizon software engineering.",
+      "proof": "Gemini API changelog, September 2, 2026: \"Gemini 3.8 Flash generally available (GA)\"",
+      "kind": "model",
+      "status": "inactive",
+      "open_weight": false,
+      "price_in_per_mtok": null,
+      "price_out_per_mtok": null
+    }
+  ]
+}
