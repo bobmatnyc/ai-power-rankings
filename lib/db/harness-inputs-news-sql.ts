@@ -266,6 +266,6 @@ export const NEWS_DRIFT = `
              AND NOT EXISTS (SELECT 1 FROM t313_rows AS tr WHERE tr.slug = t.slug AND tr.compute IS NOT NULL)) AS z
    WHERE z.stored <> z.computed;
   IF drift IS NOT NULL THEN
-    RAISE NOTICE '#313 0024: harness tools outside the change list whose stored news_mentions differs from the corpus count (not written): %', drift;
+    RAISE EXCEPTION '#313 0024: harness tools outside the change list whose stored news_mentions differs from the corpus count (refusing to proceed): %', drift;
   END IF;
 `;

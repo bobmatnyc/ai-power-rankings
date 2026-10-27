@@ -235,6 +235,19 @@ describe("#313 0024 refuses an unexpected old value", () => {
     await db.close();
   }, 120_000);
 
+  it("drift on an active harness tool outside the change list raises, writes nothing, records nothing", async () => {
+    const db = await freshDb();
+    await db.exec(`UPDATE public."tools" SET data = data || '{"metrics": {"news_mentions": 999}}'::jsonb WHERE slug = 'unreviewed-new-tool'`);
+    const state = await toolsState(db);
+    const migrationDb = pgliteMigrationDb(db);
+    const result = await apply0024(db, migrationDb);
+    expect(result.exitCode, result.lines.join("\n")).toBe(1);
+    expect(result.lines.join("\n")).toMatch(/unreviewed-new-tool.*999/);
+    expect(await toolsState(db)).toEqual(state);
+    expect(await migrationDb.listAppliedFilenames()).toEqual([]);
+    await db.close();
+  }, 120_000);
+
   it("a missing slug raises before any write", async () => {
     const db = await freshDb();
     await db.exec(`DELETE FROM public."tools" WHERE slug = 'baz'`);
