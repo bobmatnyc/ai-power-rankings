@@ -1,0 +1,127 @@
+{
+  "checked_at": "2026-10-27",
+  "basis": {
+    "rows": "Each row is a productivity-board product: a consumer or workspace assistant or a general agent, not a coding harness. Sources are vendor-controlled pages (a vendor site or the vendor's own App Store listing), read on checked_at.",
+    "scores": "None. The rows carry no score, metric or rank. Metrics are entered by a later reviewed change.",
+    "status": "Rows are inactive. Activation is a separate step, after 2026-11-01."
+  },
+  "products": [
+    {
+      "slug": "chatgpt",
+      "name": "ChatGPT",
+      "vendor": "OpenAI",
+      "company": "OpenAI",
+      "website_url": "https://chatgpt.com",
+      "category": "productivity",
+      "subcategory": "ai_assistant",
+      "description": "OpenAI's assistant app for chat, research, files and agent tasks.",
+      "source_url": "https://apps.apple.com/us/app/chatgpt/id6448311069",
+      "kind": "productivity",
+      "status": "inactive"
+    },
+    {
+      "slug": "gemini-app",
+      "name": "Gemini",
+      "vendor": "Google",
+      "company": "Google",
+      "website_url": "https://gemini.google.com",
+      "category": "productivity",
+      "subcategory": "ai_assistant",
+      "description": "Google's Gemini assistant app on web, Android and iOS.",
+      "source_url": "https://gemini.google/overview/",
+      "kind": "productivity",
+      "status": "inactive"
+    },
+    {
+      "slug": "hermes-agent",
+      "name": "Hermes Agent",
+      "vendor": "Nous Research",
+      "company": "Nous Research",
+      "website_url": "https://hermes-agent.nousresearch.com",
+      "category": "productivity",
+      "subcategory": "autonomous_agent",
+      "description": "Open-source, MIT-licensed agent with persistent memory, scheduled tasks and subagents, reachable from CLI and chat apps.",
+      "source_url": "https://hermes-agent.nousresearch.com/",
+      "kind": "productivity",
+      "status": "inactive"
+    },
+    {
+      "slug": "microsoft-copilot",
+      "name": "Microsoft Copilot",
+      "vendor": "Microsoft",
+      "company": "Microsoft",
+      "website_url": "https://copilot.microsoft.com",
+      "category": "productivity",
+      "subcategory": "ai_assistant",
+      "description": "Microsoft's consumer Copilot assistant, bundled into Microsoft 365 Personal, Family and Premium.",
+      "source_url": "https://www.microsoft.com/en-us/microsoft-copilot/for-individuals",
+      "kind": "productivity",
+      "status": "inactive"
+    },
+    {
+      "slug": "manus",
+      "name": "Manus",
+      "vendor": "Manus AI",
+      "company": "Manus AI",
+      "website_url": "https://manus.im",
+      "category": "productivity",
+      "subcategory": "autonomous_agent",
+      "description": "General-purpose AI agent that builds slides, websites, games and designs from one prompt.",
+      "source_url": "https://manus.im/",
+      "kind": "productivity",
+      "status": "inactive"
+    },
+    {
+      "slug": "genspark",
+      "name": "Genspark",
+      "vendor": "Genspark Inc",
+      "company": "Genspark Inc",
+      "website_url": "https://www.genspark.ai",
+      "category": "productivity",
+      "subcategory": "autonomous_agent",
+      "description": "AI workspace whose Super Agent runs tasks in a cloud sandbox and makes slides, sheets and docs.",
+      "source_url": "https://www.genspark.ai/helpcenter/super-app",
+      "kind": "productivity",
+      "status": "inactive"
+    },
+    {
+      "slug": "mistral-vibe",
+      "name": "Mistral Vibe",
+      "vendor": "Mistral AI",
+      "company": "Mistral AI",
+      "website_url": "https://chat.mistral.ai",
+      "category": "productivity",
+      "subcategory": "ai_assistant",
+      "description": "Mistral's unified agent for work and coding (the former Le Chat), with long-running tasks and connectors.",
+      "source_url": "https://mistral.ai/news/vibe-agent/",
+      "kind": "productivity",
+      "status": "inactive"
+    },
+    {
+      "slug": "notion-ai",
+      "name": "Notion AI",
+      "vendor": "Notion Labs",
+      "company": "Notion Labs",
+      "website_url": "https://www.notion.com/product/ai",
+      "category": "productivity",
+      "subcategory": "workspace_assistant",
+      "description": "Notion's built-in AI teammate that works across pages, docs, tasks and databases.",
+      "source_url": "https://www.notion.com/product/ai",
+      "kind": "productivity",
+      "status": "inactive"
+    },
+    {
+      "slug": "grok-app",
+      "name": "Grok",
+      "vendor": "xAI",
+      "company": "xAI",
+      "website_url": "https://grok.com",
+      "category": "productivity",
+      "subcategory": "ai_assistant",
+      "description": "xAI's Grok assistant app (separate row from the grok model family).",
+      "source_url": "https://apps.apple.com/app/grok/id6670324846",
+      "kind": "productivity",
+      "status": "inactive"
+    }
+  ]
+}

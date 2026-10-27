@@ -20,7 +20,8 @@ const load = () => import("../../lib/news-tool-resolver");
 
 const TOOLS = [
   { id: "t-claude-code", slug: "claude-code", name: "Claude Code", kind: "harness", status: "active" },
-  { id: "t-claude-artifacts", slug: "claude-artifacts", name: "Claude Artifacts", kind: "harness", status: "active" },
+  // #314: the row keeps its slug; its name is Claude.AI after migration 0023.
+  { id: "t-claude-artifacts", slug: "claude-artifacts", name: "Claude.AI", kind: "productivity", status: "active" },
   { id: "t-cursor", slug: "cursor", name: "Cursor", kind: "harness", status: "active" },
   { id: "t-devin", slug: "devin", name: "Devin", kind: "harness", status: "active" },
   { id: "t-copilot", db_id: "uuid-copilot", slug: "github-copilot", name: "GitHub Copilot", kind: "harness", status: "active" },
@@ -171,5 +172,20 @@ describe("resolveArticleTools (#109)", () => {
       for (const slug of await resolve(input)) expect(catalogueSlugs.has(slug), slug).toBe(true);
     }
     expect(await resolve(inputs[0]!)).toEqual([]);
+  });
+
+  // #314: Claude Artifacts is renamed Claude.AI with its slug kept; both names and the slug resolve.
+  it("resolves Claude.AI, claude.ai and the old name Claude Artifacts to the claude-artifacts row (#314)", async () => {
+    for (const name of ["Claude.AI", "claude.ai", "Claude Artifacts", "claude artifacts", "claude-artifacts"]) {
+      expect(await resolve({ title: "x", toolMentions: [{ name }] }), name).toEqual(["claude-artifacts"]);
+    }
+    expect(await resolve({ title: "Claude.AI adds file creation", toolMentions: [] })).toEqual(["claude-artifacts"]);
+    expect(await resolve({ title: "Claude Artifacts gets sharing", toolMentions: [] })).toEqual(["claude-artifacts"]);
+  });
+
+  it("does not alias Claude Artifacts when the row is not in the catalogue (#314)", async () => {
+    const { buildToolCatalogue, resolveArticleTools } = await load();
+    const catalogue = buildToolCatalogue(TOOLS.filter((t) => t.slug !== "claude-artifacts"));
+    expect(resolveArticleTools({ title: "x", toolMentions: [{ name: "Claude Artifacts" }] }, catalogue)).toEqual([]);
   });
 });
