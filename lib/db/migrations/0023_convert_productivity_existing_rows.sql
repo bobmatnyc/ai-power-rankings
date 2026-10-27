@@ -2,8 +2,13 @@
 -- Created: 2026-10-27
 -- Description: #314 (ruling Dd1) — three rows that already exist move to kind 'productivity':
 --   claude-artifacts is renamed Claude.AI (slug and history kept; category, subcategory and
---   website change), openclaw changes kind only (harness to productivity), and perplexity changes
---   kind and subcategory (other/non_ai to productivity/ai_assistant). openclaw's two retired alias
+--   website change), openclaw changes kind (harness to productivity) and listing fields, and perplexity changes
+--   kind, subcategory and category (other/non_ai to productivity/ai_assistant/productivity).
+--   openclaw's listing fields are also corrected (website, pricing, licence), each guarded: a field
+--   is written only when it holds the known wrong value or already holds the target, else this
+--   file raises. Sources are recorded in data.info_provenance: https://openclaw.ai/ (free, no
+--   paid version, MIT) and https://github.com/openclaw/openclaw/blob/main/LICENSE (MIT).
+--   The description is left as it is. openclaw's two retired alias
 --   rows, clawdbot and moltbot, change kind only, because the kind sheet holds a retired row at its
 --   survivor's kind; they are redirect rows and sit on no board. Status, scores, metrics and
 --   every other column stay as they are. chatgpt-canvas, claude-desktop-extensions and cowork stay
@@ -19,6 +24,12 @@
 
 DO $p314b$
 DECLARE
+  info jsonb;
+  biz jsonb;
+  lic_paths text[] := ARRAY['{info,business,license_type}', '{info,license_type}'];
+  lic_path text;
+  lic_found boolean := false;
+  v text;
   clash text;
   state text;
   changed integer := 0;
@@ -61,6 +72,36 @@ BEGIN
     RAISE EXCEPTION '#314 0023: perplexity has kind %, expected other or productivity', state;
   END IF;
 
+  -- #314: guard — openclaw's listing fields hold the known wrong value or already the target.
+  SELECT data->'info' INTO info FROM public."tools" WHERE slug = 'openclaw';
+  biz := info->'business';
+  v := info->>'website';
+  IF v IS NULL OR v NOT IN ('https://openclaw.dev', 'https://openclaw.ai') THEN
+    RAISE EXCEPTION '#314 0023: openclaw data.info.website is %, expected https://openclaw.dev or https://openclaw.ai', v;
+  END IF;
+  v := biz->>'pricing_model';
+  IF v IS NULL OR v NOT IN ('subscription', 'free') THEN
+    RAISE EXCEPTION '#314 0023: openclaw business.pricing_model is %, expected subscription or free', v;
+  END IF;
+  v := biz->>'free_tier';
+  IF v IS NULL OR v NOT IN ('false', 'true') THEN
+    RAISE EXCEPTION '#314 0023: openclaw business.free_tier is %, expected false or true', v;
+  END IF;
+  -- The licence sits under info.business in the dashboard reader and under info in the API reader;
+  -- every path the row carries is checked and written, and at least one must exist.
+  FOREACH lic_path IN ARRAY lic_paths LOOP
+    v := (SELECT data #>> lic_path::text[] FROM public."tools" WHERE slug = 'openclaw');
+    IF v IS NOT NULL THEN
+      lic_found := true;
+      IF v NOT IN ('proprietary', 'MIT') THEN
+        RAISE EXCEPTION '#314 0023: openclaw % is %, expected proprietary or MIT', lic_path, v;
+      END IF;
+    END IF;
+  END LOOP;
+  IF NOT lic_found THEN
+    RAISE EXCEPTION '#314 0023: openclaw has no license_type under data.info or data.info.business';
+  END IF;
+
   -- #314: guard — a row that stops being a harness must not be the harness side of a link
   -- (tool_links.harness_tool_id rows must point at kind harness; see TOOL_LINK_KIND_VIOLATIONS_SQL).
   IF to_regclass('public.tool_links') IS NOT NULL THEN
@@ -95,12 +136,39 @@ BEGIN
   GET DIAGNOSTICS n = ROW_COUNT;
   changed := changed + n;
 
-  -- #314: openclaw changes kind only; its other fields are corrected in a separate change.
+  -- #314: openclaw's kind changes here; its listing fields are corrected above.
   UPDATE public."tools"
      SET kind = 'productivity', updated_at = now()
    WHERE slug = 'openclaw' AND kind IS DISTINCT FROM 'productivity';
   GET DIAGNOSTICS n = ROW_COUNT;
   changed := changed + n;
+
+  -- #314: openclaw's listing fields, cited to the vendor page and its LICENSE file. A re-run finds
+  -- every value at its target and writes nothing.
+  UPDATE public."tools"
+     SET data = jsonb_set(jsonb_set(jsonb_set(jsonb_set(data,
+           '{info,website}', '"https://openclaw.ai"'::jsonb),
+           '{info,business,pricing_model}', '"free"'::jsonb),
+           '{info,business,free_tier}', 'true'::jsonb),
+           '{info_provenance}', coalesce(data->'info_provenance', '{}'::jsonb) || jsonb_build_object(
+             'website', jsonb_build_object('source', 'https://openclaw.ai/', 'as_of', '2026-10-27'),
+             'pricing_model', jsonb_build_object('source', 'https://openclaw.ai/', 'as_of', '2026-10-27'),
+             'free_tier', jsonb_build_object('source', 'https://openclaw.ai/', 'as_of', '2026-10-27'),
+             'license_type', jsonb_build_object('source', 'https://github.com/openclaw/openclaw/blob/main/LICENSE', 'as_of', '2026-10-27'))),
+         updated_at = now()
+   WHERE slug = 'openclaw'
+     AND (data #>> '{info,website}' IS DISTINCT FROM 'https://openclaw.ai'
+          OR data #>> '{info,business,pricing_model}' IS DISTINCT FROM 'free'
+          OR data #>> '{info,business,free_tier}' IS DISTINCT FROM 'true');
+  GET DIAGNOSTICS n = ROW_COUNT;
+  changed := changed + n;
+  FOREACH lic_path IN ARRAY lic_paths LOOP
+    UPDATE public."tools"
+       SET data = jsonb_set(data, lic_path::text[], '"MIT"'::jsonb), updated_at = now()
+     WHERE slug = 'openclaw' AND data #>> lic_path::text[] IS NOT NULL AND data #>> lic_path::text[] <> 'MIT';
+    GET DIAGNOSTICS n = ROW_COUNT;
+    changed := changed + n;
+  END LOOP;
 
   -- #314: openclaw's retired aliases follow it; a missing alias row is not an error.
   UPDATE public."tools"
@@ -109,11 +177,12 @@ BEGIN
   GET DIAGNOSTICS n = ROW_COUNT;
   changed := changed + n;
 
-  -- #314: perplexity changes kind and subcategory; category, status and data stay.
+  -- #314: perplexity changes kind, subcategory and category; status and data stay.
   UPDATE public."tools"
-     SET kind = 'productivity', subcategory = 'ai_assistant', updated_at = now()
+     SET kind = 'productivity', subcategory = 'ai_assistant', category = 'productivity', updated_at = now()
    WHERE slug = 'perplexity'
-     AND (kind IS DISTINCT FROM 'productivity' OR subcategory IS DISTINCT FROM 'ai_assistant');
+     AND (kind IS DISTINCT FROM 'productivity' OR subcategory IS DISTINCT FROM 'ai_assistant'
+          OR category IS DISTINCT FROM 'productivity');
   GET DIAGNOSTICS n = ROW_COUNT;
   changed := changed + n;
 
