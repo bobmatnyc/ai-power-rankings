@@ -16,7 +16,13 @@ import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 import { sanitizeRelatedLinksBlock } from "@/lib/article-content-links";
 import { extractJsonObject, readCompletion } from "@/lib/services/llm-completion";
 // #179: the one-paragraph summary rule every prompt site below interpolates.
-import { countWords, SUMMARY_PROMPT_RULE } from "@/lib/article-summary";
+import {
+  countWords,
+  SUMMARY_PROMPT_RULE,
+  SUMMARY_RETRY_BACKOFF_MS,
+  SummaryRejectedError,
+  validateSummary,
+} from "@/lib/article-summary";
 import { jinaReaderService } from "./jina-reader.service";
 
 // Validation schemas
@@ -547,9 +553,39 @@ export class AIAnalyzer {
   }
 
   /**
-   * Analyze content with AI
+   * Analyze content with AI.
+   *
+   * #180: a summary that fails `validateSummary` is regenerated once after
+   * `SUMMARY_RETRY_BACKOFF_MS`; a second failure throws `SummaryRejectedError`
+   * (not wrapped, so the caller can mark the candidate rather than the run).
+   * Transport and parse errors are not retried here.
    */
   async analyzeContent(
+    content: string,
+    metadata?: {
+      url?: string;
+      fileName?: string;
+      author?: string;
+      links?: Array<{ href: string; text: string }>;
+    }
+  ): Promise<AIAnalysisResult & { model: string }> {
+    let result = await this.requestAnalysis(content, metadata);
+    let failures = validateSummary(result.summary);
+    if (failures.length === 0) return result;
+
+    console.warn("[AIAnalyzer] Summary rejected; retrying once", { failures });
+    await new Promise((resolve) => setTimeout(resolve, SUMMARY_RETRY_BACKOFF_MS));
+    result = await this.requestAnalysis(content, metadata);
+    failures = validateSummary(result.summary);
+    if (failures.length > 0) {
+      console.warn("[AIAnalyzer] Summary rejected after retry", { failures });
+      throw new SummaryRejectedError(failures);
+    }
+    return result;
+  }
+
+  /** One OpenRouter analysis call; #180 wraps it with summary validation and the retry. */
+  private async requestAnalysis(
     content: string,
     metadata?: {
       url?: string;
@@ -800,7 +836,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
       }
 
       let result = AIAnalysisSchema.parse(parsed);
-      // #179: measure only; a summary outside 80-120 words still ingests (rejection is #180).
+      // #179: log the word count; #180 validates and retries in analyzeContent.
       console.info("[AIAnalyzer] Summary word count", {
         words: countWords(result.summary),
         model: modelName,
