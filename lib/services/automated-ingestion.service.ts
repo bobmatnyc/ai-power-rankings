@@ -251,9 +251,21 @@ export interface CandidateOutcome {
   provisionalDate: string | null;
   outcome: CandidateOutcomeKind;
   reason?: string;
+  // #179: optional so rows written before these fields existed still parse.
+  /** Candidate title, when known at the point of recording (bounded). */
+  title?: string;
+  /** `quality_rejected` only: mean of quality, relevance and credibility, as the assessor computes it. */
+  averageScore?: number;
+  /** `quality_rejected` only: the assessor's relevance score (0-10). */
+  relevanceScore?: number;
   effectiveDate?: string;
   publishedDateSource?: PublishedDateSource;
 }
+
+/** #179: bound on a persisted candidate title. */
+export const OUTCOME_TITLE_MAX_CHARS = 300;
+/** #179: bound on a `quality_rejected` reason; far above any realistic LLM rationale. */
+export const OUTCOME_QUALITY_REASON_MAX_CHARS = 2000;
 
 /**
  * Cap on persisted outcome entries. A run discovers on the order of 20
@@ -904,10 +916,20 @@ export class AutomatedIngestionService {
       // date, and the sort key is the provisional date rather than the raw
       // provider one — see passesFreshnessGate() and sortByFreshness().
       const recordOutcome = (
-        item: { url: string; publishedDate: string | null | undefined; discoveredVia?: DiscoveredVia },
+        item: {
+          url: string;
+          publishedDate: string | null | undefined;
+          discoveredVia?: DiscoveredVia;
+          title?: string;
+        },
         outcome: CandidateOutcomeKind,
         reason?: string,
-        extra?: { effectiveDate?: string; publishedDateSource?: PublishedDateSource }
+        extra?: {
+          effectiveDate?: string;
+          publishedDateSource?: PublishedDateSource;
+          averageScore?: number;
+          relevanceScore?: number;
+        }
       ): void => {
         if (candidateOutcomes.length >= CANDIDATE_OUTCOME_LIMIT) return;
         const provisionalMs = provisionalPublishedDateMs(item, nowMs, freshnessWindowDays);
@@ -919,7 +941,16 @@ export class AutomatedIngestionService {
             ? null
             : new Date(provisionalMs).toISOString(),
           outcome,
-          ...(reason ? { reason: reason.substring(0, 120) } : {}),
+          // #179: a quality rejection's rationale is the whole point of the record.
+          ...(reason
+            ? {
+                reason: reason.substring(
+                  0,
+                  outcome === "quality_rejected" ? OUTCOME_QUALITY_REASON_MAX_CHARS : 120
+                ),
+              }
+            : {}),
+          ...(item.title ? { title: item.title.substring(0, OUTCOME_TITLE_MAX_CHARS) } : {}),
           ...extra,
         });
       };
@@ -1228,10 +1259,19 @@ export class AutomatedIngestionService {
             recordOutcome(assessed, "assessment_failed", assessmentError);
             return;
           }
+          // #179: keep the scores the verdict was made from (record-only).
+          const verdict = qualityResults[index];
           recordOutcome(
             assessed,
             "quality_rejected",
-            qualityResults[index]?.reasoning ?? "no quality assessment returned"
+            verdict?.reasoning ?? "no quality assessment returned",
+            verdict
+              ? {
+                  averageScore:
+                    (verdict.qualityScore + verdict.relevanceScore + verdict.credibilityScore) / 3,
+                  relevanceScore: verdict.relevanceScore,
+                }
+              : undefined
           );
         });
 
