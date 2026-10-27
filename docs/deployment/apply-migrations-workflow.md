@@ -91,9 +91,41 @@ rollback.
 **Known gap (D99).** The dry run and the backup use the same writer `DATABASE_URL`
 repository secret, by name. There is no read-only role.
 
+## Loading the model seeds (#329)
+
+The **Load model seed (#329)** workflow (`.github/workflows/load-model-seed.yml`) runs
+`scripts/load-model-seeds.ts` against production, in the same D96 pattern. Its only trigger
+is a manual dispatch from `main`.
+
+| Input | Default | Meaning |
+|---|---|---|
+| `seed` | `all` | `closed` (`docs/refresh/closed-models.json`), `open-weight` (`docs/refresh/open-weight-models-refresh.json`) or both. |
+| `dry_run` | `true` | Validate the seeds, print the per-row diff, write nothing. |
+| `confirm` | empty | Must be `load-model-seed` to write. Ignored on a dry run. |
+
+1. **Dry run.** Dispatch with the defaults. The job prints `insert`, `update` (with each
+   changed column), `unchanged` or `REFUSED` per row and a `totals:` line. A refused row (a
+   slug held by a non-model row, or a stored `open_weight` that disagrees) fails the job.
+2. **Write.** Once the dry run is reviewed and cleared, dispatch with `dry_run: false` and
+   `confirm: load-model-seed`. The job repeats the dry run, then writes every planned row in
+   one transaction. A re-run is a no-op.
+
+The write is an upsert keyed on slug. A new row is created `inactive`, kind `model`. On an
+existing model row it sets only the seed columns (`open_weight`, `hf_repo`, `licence`,
+`parameters_b`, `active_parameters_b`, `release_date`) and the `data.modelSeed` provenance
+key. It never changes `status`, `name`, a description or `data.metrics`, and never activates
+a row. Activation and metrics are a later, separate change.
+
+**Recovery (D98).** Before the write dispatch, the owner creates a named Neon branch of
+production (name pattern: `pre-model-seed-YYYYMMDD`) and records its name and UTC time.
+Rollback is a restore from that branch.
+
 ## Files
 
 - `scripts/apply-migrations.ts` — the runner, and `tests/unit/apply-migrations.test.ts`
 - `.github/workflows/apply-migration.yml` — the dispatchable workflow
 - `.github/workflows/merge-duplicate-tools.yml` — the D90 merge dispatch, and
   `tests/unit/merge-duplicate-tools-workflow-d96.test.ts`
+- `.github/workflows/load-model-seed.yml` — the model seed load dispatch (#329), with
+  `scripts/load-model-seeds.ts`, `tests/unit/load-model-seed-workflow-329.test.ts` and
+  `tests/unit/load-model-seeds-329.test.ts`
