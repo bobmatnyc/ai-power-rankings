@@ -11,6 +11,7 @@ import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 import { readCompletion } from "@/lib/services/llm-completion";
 import { loggers } from "@/lib/logger";
+import { OPENROUTER_USAGE_REQUEST, recordOpenRouterUsage } from "@/lib/services/provider-usage"; // #325
 import {
   WhatsNewAggregationService,
   type MonthlyDataSources,
@@ -421,6 +422,7 @@ Generate the summary now:`;
           ],
           temperature: 0.3,
           max_tokens: WHATS_NEW_MAX_TOKENS,
+          ...OPENROUTER_USAGE_REQUEST, // #325: ask for usage.cost
         }),
         signal,
       });
@@ -432,6 +434,8 @@ Generate the summary now:`;
       }
 
       const data = await response.json();
+      // #325: one ledger row per billed completion. Never throws.
+      await recordOpenRouterUsage({ operation: "whats_new_summary", model: modelName, body: data });
       // #172: a summary cut off at max_tokens must not overwrite a stored one; log
       // finish_reason/length/model either way.
       const { content } = readCompletion(data, {

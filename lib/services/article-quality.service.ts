@@ -139,6 +139,7 @@ export class ArticleQualityService {
         {
           maxAttempts: 2,
           timeoutMs: 15000,
+          operation: 'article_quality', // #325: ledger row label
         }
       );
 
