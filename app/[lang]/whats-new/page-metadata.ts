@@ -69,3 +69,40 @@ export function whatsNewReportMetadata(
     alternates,
   };
 }
+
+/** The locale-free path of a weekly digest's permalink (#181). */
+export function weeklyDigestPath(week: string): string {
+  return `/whats-new/weekly/${week}`;
+}
+
+/**
+ * Metadata for one weekly digest permalink, `/[lang]/whats-new/weekly/<week>`.
+ *
+ * Why: #181: each stored digest gets its own indexable URL. Its body is English
+ * in every locale, so it canonicalises to `/en` like the monthly reports (#156).
+ * What: Absolute title "Weekly digest: <range> | What's New | AI Power Rankings",
+ * the description given, the English-only canonical for `weeklyDigestPath(week)`,
+ * and an `article` `openGraph` whose `url` is that canonical and whose `locale` is `en`.
+ * Test: `tests/unit/weekly-digest-display-181.test.tsx`.
+ */
+export function whatsNewDigestMetadata(
+  lang: string,
+  week: string,
+  range: string,
+  description: string
+): Metadata {
+  const alternates = englishOnlyAlternates(lang, weeklyDigestPath(week));
+  const title = `Weekly digest: ${range} | ${WHATS_NEW_TITLE}`;
+  return {
+    title: { absolute: title },
+    description,
+    openGraph: {
+      title,
+      description,
+      url: alternates.canonical,
+      locale: ENGLISH_ONLY_OG_LOCALE,
+      type: "article",
+    },
+    alternates,
+  };
+}

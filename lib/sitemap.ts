@@ -27,6 +27,7 @@ import {
 } from "@/lib/rankings/lists";
 import { loggers } from "@/lib/logger";
 import { loadCurrentRankings } from "@/lib/rankings/current-rankings";
+import { listDigestWeeks } from "@/lib/services/weekly-digest.repository";
 import { listPeriods } from "@/lib/services/whats-new-summary.service";
 import { isNoindexToolSlug, isTableRedirectSource } from "@/lib/seo/url-table";
 
@@ -68,7 +69,8 @@ const staticPages = [
  * What: Static pages in every locale (English-only pages under `/en` only),
  * category pages under `/en`, each active tool in every locale, and each active
  * article once under `/en/news/<slug>` with `lastModified` set to its date, and
- * each stored monthly report once under `/en/whats-new/<period>` (#54). #191:
+ * each stored monthly report once under `/en/whats-new/<period>` (#54) and each
+ * stored weekly digest once under `/en/whats-new/weekly/<week>` (#181). #191:
  * table 308 sources and noindex tools are left out. #186: each non-default list page
  * (`/rankings/<slug>`) in every locale when the list has at least 10 active tools
  * (D53); the models list also needs 10 active board rows with metrics, counted by
@@ -110,10 +112,11 @@ export async function buildSitemapEntries(
 
   // #162: every read throws on failure; none is caught here, so a partial
   // list never reaches a cache. #54 adds the report periods to that rule.
-  const [tools, articles, reportPeriods] = await Promise.all([
+  const [tools, articles, reportPeriods, digestWeeks] = await Promise.all([
     toolsRepository.findAll(),
     newsRepository.getPublishedSlugs(),
     listPeriods(),
+    listDigestWeeks(), // #181
   ]);
 
   // 3. Active tool pages, one per locale
@@ -184,6 +187,16 @@ export async function buildSitemapEntries(
     routes.push({
       url: `${baseUrl}/${i18n.defaultLocale}/whats-new/${report.period}`,
       lastModified: report.updatedAt,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    });
+  }
+
+  // 6. #181: weekly digests, one permalink per stored week, /en only like the monthly reports.
+  for (const digest of digestWeeks) {
+    routes.push({
+      url: `${baseUrl}/${i18n.defaultLocale}/whats-new/weekly/${digest.week}`,
+      lastModified: digest.updatedAt,
       changeFrequency: "monthly",
       priority: 0.6,
     });

@@ -19,11 +19,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * no network.
  */
 
-const { getPublishedSlugs, findAll, listPeriods } = vi.hoisted(() => ({
+const { getPublishedSlugs, findAll, listPeriods, listDigestWeeks } = vi.hoisted(() => ({
   getPublishedSlugs: vi.fn(),
   findAll: vi.fn(),
   listPeriods: vi.fn(),
+  listDigestWeeks: vi.fn(),
 }));
+
+// #181: the sitemap's weekly-digest read.
+vi.mock("../../lib/services/weekly-digest.repository", () => ({ listDigestWeeks }));
 
 // #54: the sitemap's monthly-report read.
 vi.mock("../../lib/services/whats-new-summary.service", () => ({ listPeriods }));
@@ -86,6 +90,10 @@ describe("GET /sitemap.xml (#162)", () => {
       { period: "2026-08", updatedAt: new Date("2026-08-30T06:00:00.000Z") },
       { period: "2026-07", updatedAt: new Date("2026-08-02T06:00:00.000Z") },
     ]);
+    listDigestWeeks.mockResolvedValue([
+      { week: "2026-W43", updatedAt: new Date("2026-10-26T07:31:00.000Z") },
+      { week: "2026-W42", updatedAt: new Date("2026-10-19T07:31:00.000Z") },
+    ]);
   });
 
   afterEach(() => {
@@ -125,9 +133,18 @@ describe("GET /sitemap.xml (#162)", () => {
   it("lists each stored monthly report once, under /en/whats-new/<period> (#54)", async () => {
     const urls = listedUrls(await (await fetchSitemap()).text());
 
-    expect(urls.filter((u) => u.loc.includes("/whats-new"))).toEqual([
+    expect(urls.filter((u) => /\/whats-new\/\d{4}-\d{2}$/.test(u.loc))).toEqual([
       { loc: `${ORIGIN}/en/whats-new/2026-08`, lastmod: "2026-08-30T06:00:00.000Z" },
       { loc: `${ORIGIN}/en/whats-new/2026-07`, lastmod: "2026-08-02T06:00:00.000Z" },
+    ]);
+  });
+
+  it("lists each stored weekly digest once, under /en/whats-new/weekly/<week> (#181)", async () => {
+    const urls = listedUrls(await (await fetchSitemap()).text());
+
+    expect(urls.filter((u) => u.loc.includes("/whats-new/weekly/"))).toEqual([
+      { loc: `${ORIGIN}/en/whats-new/weekly/2026-W43`, lastmod: "2026-10-26T07:31:00.000Z" },
+      { loc: `${ORIGIN}/en/whats-new/weekly/2026-W42`, lastmod: "2026-10-19T07:31:00.000Z" },
     ]);
   });
 
@@ -142,6 +159,7 @@ describe("GET /sitemap.xml (#162)", () => {
     ["the news read", () => getPublishedSlugs.mockRejectedValue(new Error("connection reset"))],
     ["the tools read", () => findAll.mockRejectedValue(new Error("Database not connected"))],
     ["the report period read (#54)", () => listPeriods.mockRejectedValue(new Error("connection reset"))],
+    ["the weekly digest read (#181)", () => listDigestWeeks.mockRejectedValue(new Error("connection reset"))],
   ])("answers 503 no-store, not an article-less 200, when %s fails", async (_what, fail) => {
     fail();
 
