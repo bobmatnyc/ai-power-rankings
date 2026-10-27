@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Activity,
   AlertCircle,
   Database,
   History,
@@ -292,6 +293,19 @@ export default function UnifiedAdminDashboard() {
           >
             <Sparkles className="h-4 w-4" />
             <span>What&apos;s New</span>
+          </Button>
+          {/* #325: read-only crawl activity and estimated spend monitor */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              window.location.href = `/${lang}/admin/crawl-monitor`;
+            }}
+            className="flex items-center gap-2"
+            title="Crawl runs and estimated spend"
+          >
+            <Activity className="h-4 w-4" />
+            <span>Crawl Monitor</span>
           </Button>
           <Button
             variant="outline"
