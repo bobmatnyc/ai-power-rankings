@@ -118,6 +118,7 @@ import type { TavilySearchService } from "./tavily-search.service";
 import type { BraveSearchService } from "./brave-search.service";
 import type { ArticleQualityService } from "./article-quality.service";
 import type { ArticleIngestionService } from "./article-ingestion.service";
+import { SummaryRejectedError } from "../article-summary";
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -449,5 +450,60 @@ describe("AutomatedIngestionService.updateRun - #132 error arms", () => {
 
     expect(simulatedRow.status).toBe("completed");
     expect(simulatedRow.articlesIngested).toBe(2);
+  });
+});
+
+describe("AutomatedIngestionService - summary rejection (#180)", () => {
+  let service: AutomatedIngestionService;
+  let ingestArticle: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    resetDbFixture();
+    service = new AutomatedIngestionService();
+    ingestArticle = vi.fn();
+  });
+
+  const candidates = [
+    searchResult("Vendor ships a terminal agent", "https://example.com/bad", daysAgo(1), "window"),
+    searchResult("Editor adds inline review", "https://example.com/good", daysAgo(1), "window"),
+  ];
+
+  it("marks only the rejected candidate, keeps ingesting the rest, and does not fail the run", async () => {
+    ingestArticle.mockImplementation(async (input: { input: string }) => {
+      if (input.input.endsWith("/bad")) {
+        throw new SummaryRejectedError(["word_count_below_min (79<80)"]);
+      }
+      return { id: "article-1", rankingChangesApplied: 0 };
+    });
+    injectServices(service, candidates, ingestArticle);
+
+    const result = await service.runDailyDiscovery({ skipQualityCheck: true, maxArticles: 5 });
+
+    expect(ingestArticle).toHaveBeenCalledTimes(2);
+    expect(result.status).toBe("completed");
+    expect(result.errors).toEqual([]);
+    expect(result.articlesIngested).toBe(1);
+
+    const persisted = simulatedRow.candidateOutcomes as CandidateOutcome[];
+    const byUrl = new Map(persisted.map((entry) => [entry.url, entry]));
+    expect(byUrl.get("https://example.com/bad")).toMatchObject({
+      outcome: "summary_rejected",
+      title: "Vendor ships a terminal agent",
+      reason: "summary_rejected: word_count_below_min (79<80)",
+    });
+    expect(byUrl.get("https://example.com/good")?.outcome).toBe("ingested");
+  });
+
+  it("completes the run when every candidate's summary is rejected", async () => {
+    ingestArticle.mockRejectedValue(new SummaryRejectedError(["no_sentence_end"]));
+    injectServices(service, candidates, ingestArticle);
+
+    const result = await service.runDailyDiscovery({ skipQualityCheck: true, maxArticles: 5 });
+
+    expect(result.status).toBe("completed");
+    expect(result.errors).toEqual([]);
+    expect(result.articlesIngested).toBe(0);
+    const outcomes = (simulatedRow.candidateOutcomes as CandidateOutcome[]).map((o) => o.outcome);
+    expect(outcomes).toEqual(["summary_rejected", "summary_rejected"]);
   });
 });

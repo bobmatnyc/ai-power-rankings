@@ -990,6 +990,17 @@
     "changeType": "improvement"
   },
   {
+    "id": "unreleased-bc3a760513af",
+    "version": "Unreleased",
+    "date": "2026-10-27T13:54:08.883Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "news",
+    "title": "an ingested article summary is validated (#180)",
+    "description": "an ingested article summary is validated (#180). `validateSummary` in `lib/article-summary.ts` checks the 80-120 word range, a single paragraph with no line break or list marker, and a sentence end. `AIAnalyzer.analyzeContent` regenerates a failing summary once after a 2 s backoff; a second failure throws `SummaryRejectedError`, whose reason names each failed check, and the candidate is recorded as rejected instead of ingested. Transport and parse errors are not retried. Admin recalculation (`recalculateArticleRankings` and its progress variant) never reads the summary and passes `{ validateSummary: false }`, so it makes no retry call and does not fail on a summary. Tests: `tests/unit/article-summary-validator-180.test.ts`, `tests/unit/recalculate-skips-summary-validation-180.test.ts`, `lib/services/automated-ingestion.candidate-outcomes.test.ts`",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-e6d3c42ff208",
     "version": "Unreleased",
     "date": "2026-10-25T14:38:07.000Z",

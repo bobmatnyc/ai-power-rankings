@@ -4,7 +4,7 @@
  * Why: The analysis prompt asked for a 400-500 word summary and listed its parts as
  *   bullets, and the news page used the whole summary as its meta description.
  * What: Pins the prompt text at all four summary sites, the 6,500 token budget, the
- *   log-only word count (an off-length summary still ingests), and the ~160 character
+ *   logged word count, and the ~160 character
  *   word-boundary meta description, both in the helper and in the news page metadata.
  * Test: `npx vitest run tests/unit/article-summary-179.test.ts`. No network, no database.
  */
@@ -33,7 +33,8 @@ const LONG_SUMMARY =
   "reviews now run on each pull request and post findings inline, and that pricing follows usage.";
 
 function words(n: number): string {
-  return Array.from({ length: n }, (_, i) => `word${i}`).join(" ");
+  // #180: the last word ends a sentence, so an in-range summary passes the validator.
+  return `${Array.from({ length: n }, (_, i) => `word${i}`).join(" ")}.`;
 }
 
 function analysis(summary: string) {
@@ -124,28 +125,24 @@ describe("analysis prompt (#179)", () => {
   });
 });
 
-describe("summary word count (#179, log only)", () => {
+describe("summary word count (#179)", () => {
   it("counts whitespace-separated words", () => {
     expect(countWords("")).toBe(0);
     expect(countWords("  one\n two\tthree  ")).toBe(3);
   });
 
-  it.each([
-    ["too short", 12],
-    ["in range", 100],
-    ["too long", 400],
-  ])("logs the word count and still returns a %s summary", async (_label, n) => {
-    const summary = words(n);
+  // #180: an off-length summary is now rejected; see article-summary-validator-180.test.ts.
+  it("logs the word count of an in-range summary and returns it unchanged", async () => {
+    const summary = words(100);
     stubOpenRouter(summary);
     const info = vi.spyOn(console, "info").mockImplementation(() => {});
 
-    // Fails if a word-count gate is added: the analysis must not throw or alter the summary.
     const result = await new AIAnalyzer().analyzeContent("article body");
 
     expect(result.summary).toBe(summary);
     expect(info).toHaveBeenCalledWith(
       "[AIAnalyzer] Summary word count",
-      expect.objectContaining({ words: n })
+      expect.objectContaining({ words: 100 })
     );
   });
 });

@@ -13,6 +13,7 @@
 
 import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
+import { SummaryRejectedError } from "@/lib/article-summary"; // #180
 import {
   automatedIngestionRuns,
   articles,
@@ -247,6 +248,8 @@ export type CandidateOutcomeKind =
   // #167: the quality LLM call itself failed (e.g. out of credits) — not a rejection.
   | "assessment_failed"
   | "quality_rejected"
+  // #180: the generated summary failed validation twice; `reason` names the failed checks.
+  | "summary_rejected"
   | "ingest_failed"
   | "ingested";
 
@@ -1391,6 +1394,16 @@ export class AutomatedIngestionService {
           // Add ingestion cost estimate (~$0.003 per article for AI analysis)
           estimatedCostUsd += 0.003;
         } catch (error) {
+          // #180: a summary that failed validation twice marks this candidate only; it is
+          // not a run error, so it adds nothing to `errors` and the run still completes.
+          if (error instanceof SummaryRejectedError) {
+            loggers.api.warn("[AutomatedIngestion] Summary rejected", {
+              url: article.url,
+              reason: error.reason,
+            });
+            recordOutcome(article, "summary_rejected", error.reason);
+            continue;
+          }
           const errorMsg = `Failed to ingest ${article.url}: ${error instanceof Error ? error.message : "Unknown error"}`;
           loggers.api.error("[AutomatedIngestion] " + errorMsg);
           errors.push(errorMsg);
