@@ -407,6 +407,27 @@ describe("sanitising helpers", () => {
     for (const part of leaks) expect(out, out).not.toContain(part);
   });
 
+  // #325: writers store whole provider response bodies; the regex chain must not see them whole.
+  it.each([
+    ["200k characters, no whitespace and no '@'", "a".repeat(200_000)],
+    ["200k characters of minified JSON", '{"k":"v","n":1,"a":[1,2]},'.repeat(8_000).slice(0, 200_000)],
+  ])("sanitizeErrorText on %s finishes in under 100 ms", (_label, input) => {
+    expect(input).not.toMatch(/[\s@]/);
+    const started = performance.now();
+    const out = sanitizeErrorText(input);
+    const elapsed = performance.now() - started;
+    expect(elapsed).toBeLessThan(100);
+    expect(out.length).toBeLessThanOrEqual(200);
+  });
+
+  it("sanitizeErrorText drops a token cut at the input cap instead of leaking its head", () => {
+    // Whitespace collapses away, so the cut-edge fragment would be the whole output.
+    const out = sanitizeErrorText(`err${" ".repeat(787)}tok_${"Q".repeat(40)}`);
+    expect(out).toBe("err");
+    expect(out).not.toContain("tok_");
+    expect(out).not.toContain("Q");
+  });
+
   it("sanitizeErrorText keeps ordinary error words readable", () => {
     expect(sanitizeErrorText("Tavily API error: 402 Payment Required; rate limit exceeded, retry later")).toBe(
       "Tavily API error: 402 Payment Required; rate limit exceeded, retry later"

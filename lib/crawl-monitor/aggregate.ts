@@ -19,6 +19,8 @@ export const DAILY_STALE_AFTER_HOURS = 26;
 /** Errors shown per run; the full error_log stays on the ingestion page. */
 export const MAX_ERRORS_PER_RUN = 3;
 const ERROR_EXCERPT_CHARS = 200;
+/** Input read per error; above the excerpt so redaction can shorten text first. */
+const MAX_ERROR_INPUT_CHARS = 4 * ERROR_EXCERPT_CHARS;
 
 export type Timestamp = Date | string | null | undefined;
 
@@ -207,7 +209,14 @@ export function summaryJobStatus(job: string, source: string, generatedAt: Times
  * Test: `sanitizeErrorText` cases in tests/unit/crawl-monitor-325.test.ts.
  */
 export function sanitizeErrorText(value: unknown): string {
-  const text = typeof value === "string" ? value : JSON.stringify(value) ?? "";
+  const raw = typeof value === "string" ? value : JSON.stringify(value) ?? "";
+  // #325: cap before the regex chain. Writers store whole provider response bodies,
+  // and the email pattern is quadratic on long runs without whitespace. A cut that
+  // lands inside a token drops the partial run so no short key fragment survives.
+  const text =
+    raw.length > MAX_ERROR_INPUT_CHARS
+      ? raw.slice(0, MAX_ERROR_INPUT_CHARS).replace(/[A-Za-z0-9/+=_-]*$/, "")
+      : raw;
   const cleaned = text
     // #325: a bearer credential, and a known provider key prefix with everything after it
     // (masked or not: "sk-or-v1-****abcd" still leaks a prefix and the last characters).
