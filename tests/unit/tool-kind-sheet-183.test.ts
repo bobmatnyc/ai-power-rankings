@@ -8,7 +8,7 @@
  *   counts by kind, retired rows follow their survivor, open_weight only on models,
  *   app_builder only on the listed harnesses, subcategory pattern) has one failing row.
  *   Also: the CSV reader handles quoted commas, the real audit CSV yields 114 tools, the
- *   committed sheet passes the contract (65/19/29/5, six app builders) and a one-row
+ *   committed sheet passes the contract (61/19/29/9, six app builders) and a one-row
  *   drift from it is refused.
  * Test: `npx vitest run tests/unit/tool-kind-sheet-183.test.ts`. No database.
  */
@@ -143,11 +143,11 @@ function realSheetProblems(edit: (line: string) => string = (line) => line): str
 
 describe("#183 the real contract and audit", () => {
   // D91: 114 audit rows plus the four model family rows of migration 0018.
-  // #314: the contract is the state after migration 0028: three rows are productivity.
+  // #314: the contract is the state after migration 0028: six rows and three aliases are productivity.
   it("the 118-row contract adds up and names the six app builders (criterion 2, D2b, D91, #314)", () => {
     const total = Object.values(KIND_SHEET_CONTRACT.kindCounts).reduce((a, b) => a + b, 0);
     expect(total).toBe(KIND_SHEET_CONTRACT.rowCount);
-    expect(KIND_SHEET_CONTRACT.kindCounts).toEqual({ harness: 65, model: 19, other: 29, productivity: 5 });
+    expect(KIND_SHEET_CONTRACT.kindCounts).toEqual({ harness: 61, model: 19, other: 29, productivity: 9 });
     expect(KIND_SHEET_CONTRACT.addedSlugs).toEqual(["claude-opus", "claude-sonnet", "glm", "kimi"]);
     expect([...KIND_SHEET_CONTRACT.appBuilders].sort()).toEqual([
       "bolt-new",
@@ -159,23 +159,25 @@ describe("#183 the real contract and audit", () => {
     ]);
   });
 
-  // #314: claude-artifacts, openclaw and perplexity become productivity; the three Ambiguous
-  // harnesses named in the owner ruling stay harness.
-  it("holds claude-artifacts, openclaw, perplexity and openclaw's two retired aliases as productivity and keeps three harnesses (#314)", () => {
+  // #314: claude-artifacts, openclaw and perplexity become productivity, and so do the three
+  // Ambiguous harnesses of the Dd1 reclassification (D8c adds claude-desktop-extensions).
+  it("holds the six Dd1 rows and their three retired aliases as productivity and keeps no Dd1 harness (#314)", () => {
     const rows = new Map(parseKindSheet(REAL_SHEET).rows.map((r) => [r.slug, r]));
-    expect(KIND_SHEET_CONTRACT.convertedAfter0017.map((c) => c.slug).sort()).toEqual([
+    const converted = [
+      "chatgpt-canvas",
       "claude-artifacts",
+      "claude-desktop-extensions",
       "clawdbot",
+      "cowork",
+      "cowork-ai",
       "moltbot",
       "openclaw",
       "perplexity",
-    ]);
-    // clawdbot and moltbot are retired aliases of openclaw and follow its kind.
-    for (const slug of ["claude-artifacts", "openclaw", "perplexity", "clawdbot", "moltbot"]) {
-      expect(rows.get(slug)?.kind, slug).toBe("productivity");
-    }
-    for (const slug of ["chatgpt-canvas", "claude-desktop-extensions", "cowork"]) {
-      expect([slug, rows.get(slug)?.kind]).toEqual([slug, "harness"]);
+    ];
+    expect(KIND_SHEET_CONTRACT.convertedAfter0017.map((c) => c.slug).sort()).toEqual(converted);
+    // clawdbot and moltbot follow openclaw; cowork-ai follows cowork.
+    for (const slug of converted) {
+      expect([slug, rows.get(slug)?.kind]).toEqual([slug, "productivity"]);
     }
   });
 
@@ -187,6 +189,9 @@ describe("#183 the real contract and audit", () => {
     expect([rows.get("openclaw")?.kind, rows.get("openclaw")?.subcategory]).toEqual(["harness", "autonomous_agent"]);
     expect([rows.get("perplexity")?.kind, rows.get("perplexity")?.subcategory]).toEqual(["other", "non_ai"]);
     expect([rows.get("moltbot")?.kind, rows.get("clawdbot")?.kind]).toEqual(["harness", "harness"]);
+    expect([rows.get("chatgpt-canvas")?.kind, rows.get("chatgpt-canvas")?.subcategory]).toEqual(["harness", "autonomous_agent"]);
+    expect([rows.get("claude-desktop-extensions")?.kind, rows.get("claude-desktop-extensions")?.subcategory]).toEqual(["harness", "autonomous_agent"]);
+    expect([rows.get("cowork")?.kind, rows.get("cowork-ai")?.kind]).toEqual(["harness", "harness"]);
   });
 
   it("the committed sheet passes the real contract and the owner rulings (D3c, D38, A86)", () => {
@@ -206,7 +211,7 @@ describe("#183 the real contract and audit", () => {
   });
 
   it.each([
-    ["a harness moved to other", (l: string) => (l.startsWith("aider,") ? "aider,other,non_ai,,false,,normal," : l), /kind harness: 64 rows, expected 65/],
+    ["a harness moved to other", (l: string) => (l.startsWith("aider,") ? "aider,other,non_ai,,false,,normal," : l), /kind harness: 60 rows, expected 61/],
     ["flint without app_builder", (l: string) => (l.startsWith("flint,") ? "flint,harness,,,false,,normal," : l), /flint: app builder must be/],
     ["an eighth app builder", (l: string) => (l.startsWith("cursor,") ? "cursor,harness,app_builder,,false,,normal," : l), /cursor: app_builder outside the 6/],
     ["a dropped row", (l: string) => (l.startsWith("zed,") ? "" : l), /117 rows, expected 118/],

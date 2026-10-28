@@ -12,11 +12,11 @@ bolt-new,harness,app_builder,,false,,normal,
 builder-io-fusion,harness,,,false,,normal,
 bytedance-seedance-2-0,model,,false,true,seedance-2-0,normal,Retired duplicate; open_weight inherited from survivor seedance-2-0. Served as a BytePlus ModelArk API (model ID dreamina-seedance-2-0-260128). ByteDance-Seed HF org page shows no Seedance 2.0 repo (partial listing viewed). Video model.
 cerebras-code,harness,code_assistant,,false,,normal,
-chatgpt-canvas,harness,autonomous_agent,,false,,normal,Ambiguous (productivity by name). Kept harness per audit; subcategory from audit category autonomous_agent.
+chatgpt-canvas,productivity,autonomous_agent,,false,,normal,Ambiguous (productivity by name). Kept harness per audit; subcategory from audit category autonomous_agent. #314 (Dd1): productivity after migration 0028 (kind only).
 clacky-ai,harness,,,false,,normal,
 claude-artifacts,productivity,ai_assistant,,false,,normal,D2b: app builder ranked under harnesses. Ambiguous (productivity by name). #314: renamed Claude.AI with the slug kept; productivity after migration 0028.
 claude-code,harness,autonomous_agent,,false,,normal,"Harness with native models opus-4-6, sonnet-4-5 (D29)."
-claude-desktop-extensions,harness,autonomous_agent,,false,,normal,Ambiguous (productivity by name). Kept harness per audit.
+claude-desktop-extensions,productivity,autonomous_agent,,false,,normal,Ambiguous (productivity by name). Kept harness per audit. #314 (Dd1; D8c): productivity after migration 0028 (kind only).
 claude-opus,model,,false,false,,normal,"D91: family entity (migration 0018); opus-4-6 and opus-4-5 fold into it. open_weight from survivor opus-4-6: no weights offered."
 claude-sonnet,model,,false,false,,normal,"D91: family entity (migration 0018); sonnet-4-5 folds into it. open_weight from survivor sonnet-4-5: no weights offered."
 clawdbot,productivity,,,true,openclaw,normal,"Retired. Merge into openclaw confirmed 2026-10-24: earlier name of the same project (see openclaw row). B-series item openclaw-lineage-merge-and-description-fix (plan B-5): one data change: the merge of clawdbot and moltbot into openclaw, plus the description fix (project joined no acquirer; it moved to the OpenClaw Foundation). Plan record only. #314: kind follows the survivor openclaw."
@@ -25,8 +25,8 @@ code-review-bench,other,benchmark,,false,,normal,
 coder-ai-maturity-self-assessment,other,non_ai,,false,,low,Low confidence in audit.
 coderabbit,harness,code_review,,false,,normal,
 continue-dev,harness,open_source_framework,,false,,normal,
-cowork,harness,,,false,,normal,Ambiguous (productivity by name). Kept harness per audit; subcategory unset (category other).
-cowork-ai,harness,,,true,cowork,normal,
+cowork,productivity,,,false,,normal,Ambiguous (productivity by name). Kept harness per audit; subcategory unset (category other). #314 (Dd1): productivity after migration 0028 (kind only).
+cowork-ai,productivity,,,true,cowork,normal,#314: kind follows the survivor cowork.
 crossbeam,other,non_ai,,false,,normal,"Confidence: medium. CrossBeam, an AI building-permit plan-review app (California ADU permits), first place in Anthropic's Built with Opus 4.6 hackathon (claude.com blog). Built with Claude Code; it is not a coding tool. Repo is MIT. Catalog has no website: the match rests on the name and on the slug date (2026-03-05, after the hackathon coverage). Kind other/non_ai follows the perplexity and elevenlabs precedent (AI product, not a coding tool). Kind pending D3c."
 cursor,harness,code_editor,,false,,normal,"Harness that also sells models; no model profile exists, none invented."
 deepseek,model,,true,false,,normal,Entity covers DeepSeek family; retired R1 and V3.2 rows merge here. Model card: repo and weights under MIT. R1 card also MIT (https://huggingface.co/deepseek-ai/DeepSeek-R1).

@@ -1,6 +1,6 @@
--- Migration: Move three existing rows to the productivity board
+-- Migration: Move six existing rows to the productivity board
 -- Created: 2026-10-27
--- Description: #314 (ruling Dd1) — three rows that already exist move to kind 'productivity':
+-- Description: #314 (ruling Dd1) — six rows that already exist move to kind 'productivity':
 --   claude-artifacts is renamed Claude.AI (slug and history kept; category, subcategory and
 --   website change), openclaw changes kind (harness to productivity) and listing fields, and perplexity changes
 --   kind, subcategory and category (other/non_ai to productivity/ai_assistant/productivity).
@@ -11,10 +11,13 @@
 --   The description is left as it is. openclaw's two retired alias
 --   rows, clawdbot and moltbot, change kind only, because the kind sheet holds a retired row at its
 --   survivor's kind; they are redirect rows and sit on no board. Status, scores, metrics and
---   every other column stay as they are. chatgpt-canvas, claude-desktop-extensions and cowork stay
---   harnesses and are not touched.
---   APPLY WITH ACTIVATION, AFTER 2026-11-01, not with 0027: a kind change removes openclaw and
---   claude-artifacts from the harness board at the next publish.
+--   every other column stay as they are.
+--   chatgpt-canvas, claude-desktop-extensions and cowork (Dd1 reclassification; D8c for
+--   claude-desktop-extensions) change kind only, harness to productivity; their subcategory,
+--   category and status stay. cowork's retired alias cowork-ai follows cowork, as clawdbot and
+--   moltbot follow openclaw.
+--   APPLY WITH ACTIVATION, AFTER 2026-11-01, not with 0027: a kind change removes these rows
+--   from the harness board at the next publish.
 --   Perplexity's tool page stays noindex: its signed noindex row in the URL table is a separate
 --   ruling and this file does not touch it.
 --   One DO block: a guard failure raises and writes nothing. The UPDATEs skip rows already in the
@@ -71,6 +74,15 @@ BEGIN
   ELSIF state NOT IN ('other', 'productivity') THEN
     RAISE EXCEPTION '#314 0028: perplexity has kind %, expected other or productivity', state;
   END IF;
+  -- #314: guard — the three Dd1 harnesses exist and are harness or already productivity.
+  FOREACH v IN ARRAY ARRAY['chatgpt-canvas', 'claude-desktop-extensions', 'cowork'] LOOP
+    SELECT kind INTO state FROM public."tools" WHERE slug = v;
+    IF state IS NULL THEN
+      RAISE EXCEPTION '#314 0028: % has no tools row', v;
+    ELSIF state NOT IN ('harness', 'productivity') THEN
+      RAISE EXCEPTION '#314 0028: % has kind %, expected harness or productivity', v, state;
+    END IF;
+  END LOOP;
 
   -- #314: guard — openclaw's listing fields hold the known wrong value or already the target.
   SELECT data->'info' INTO info FROM public."tools" WHERE slug = 'openclaw';
@@ -107,7 +119,9 @@ BEGIN
   IF to_regclass('public.tool_links') IS NOT NULL THEN
     SELECT string_agg(t.slug, ', ' ORDER BY t.slug) INTO clash
       FROM public."tool_links" l JOIN public."tools" t ON t.id = l.harness_tool_id
-     WHERE t.slug IN ('claude-artifacts', 'openclaw', 'clawdbot', 'moltbot') AND t.kind = 'harness';
+     WHERE t.slug IN ('claude-artifacts', 'openclaw', 'clawdbot', 'moltbot',
+                      'chatgpt-canvas', 'claude-desktop-extensions', 'cowork', 'cowork-ai')
+       AND t.kind = 'harness';
     IF clash IS NOT NULL THEN
       RAISE EXCEPTION '#314 0028: tool_links still use these rows as a harness: %', clash;
     END IF;
@@ -186,12 +200,27 @@ BEGIN
   GET DIAGNOSTICS n = ROW_COUNT;
   changed := changed + n;
 
-  -- #314: post-check — all three rows are productivity and claude-artifacts is named Claude.AI.
+  -- #314 (Dd1, D8c): chatgpt-canvas, claude-desktop-extensions and cowork change kind only.
+  UPDATE public."tools"
+     SET kind = 'productivity', updated_at = now()
+   WHERE slug IN ('chatgpt-canvas', 'claude-desktop-extensions', 'cowork') AND kind IS DISTINCT FROM 'productivity';
+  GET DIAGNOSTICS n = ROW_COUNT;
+  changed := changed + n;
+
+  -- #314: cowork's retired alias follows it; a missing alias row is not an error.
+  UPDATE public."tools"
+     SET kind = 'productivity', updated_at = now()
+   WHERE slug = 'cowork-ai' AND kind = 'harness';
+  GET DIAGNOSTICS n = ROW_COUNT;
+  changed := changed + n;
+
+  -- #314: post-check — all six rows are productivity and claude-artifacts is named Claude.AI.
   SELECT count(*)::int INTO n
     FROM public."tools"
-   WHERE slug IN ('claude-artifacts', 'openclaw', 'perplexity') AND kind = 'productivity';
-  IF n <> 3 THEN
-    RAISE EXCEPTION '#314 0028: % of 3 rows are productivity after the update', n;
+   WHERE slug IN ('claude-artifacts', 'openclaw', 'perplexity', 'chatgpt-canvas', 'claude-desktop-extensions', 'cowork')
+     AND kind = 'productivity';
+  IF n <> 6 THEN
+    RAISE EXCEPTION '#314 0028: % of 6 rows are productivity after the update', n;
   END IF;
   IF NOT EXISTS (SELECT 1 FROM public."tools" WHERE slug = 'claude-artifacts' AND name = 'Claude.AI') THEN
     RAISE EXCEPTION '#314 0028: claude-artifacts is not named Claude.AI after the update';
