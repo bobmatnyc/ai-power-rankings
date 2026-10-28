@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -39,6 +39,8 @@ vi.mock("next/navigation", () => ({ permanentRedirect, redirect }));
 
 import rawRows from "../../data/url-table-191.json";
 import { locales } from "../../i18n/config";
+import { readModelLifecycle } from "../../scripts/load-model-seeds";
+import { MODEL_REDIRECT_REPOINTS } from "../../lib/db/repositories/model-redirect-repoint";
 import {
   URL_TABLE_ROWS,
   isPendingTarget,
@@ -96,8 +98,10 @@ describe("the committed map", () => {
   });
 
   it("ships every 308 row except those whose destination page is missing", () => {
-    expect(shipped).toHaveLength(151);
-    expect(held).toHaveLength(117);
+    // D6e: the 60 rows of the six D58 aliases are held until the release PR (151 - 60, 117 + 60).
+    expect(shipped).toHaveLength(91);
+    expect(held).toHaveLength(177);
+    expect(held.filter((row) => /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/.test(row.destination))).toHaveLength(60);
     // #198: the 20 /whats-new rows wait for /en/insights.
     expect(held.filter((row) => row.destination === "/en/insights")).toHaveLength(20);
     expect(shipped.length + held.length).toBe(redirectRows.length);
@@ -209,11 +213,12 @@ describe("noindex rows", () => {
 
   // D91: an inactive row (a family row before 0019) is noindex; active and redirect rows
   // keep the index they had, so a retired row stays indexed until its 308 ships.
+  // D58: a deprecated (archived) row is noindex, like an inactive one.
   it.each([
     ["claude-opus", "inactive", false],
     ["glm", "active", true],
     ["opus-4-6", "redirect", true],
-    ["legacy-tool", "deprecated", true],
+    ["legacy-tool", "deprecated", false],
   ])("a %s row with status %s is indexable: %s", async (slug, status, indexable) => {
     findToolBySlug.mockResolvedValue({ id: "1", slug, name: slug, category: "other", status, info: {} });
     const { generateToolMetadata } = await import("../../app/[lang]/tools/[slug]/metadata");
@@ -221,11 +226,46 @@ describe("noindex rows", () => {
   });
 });
 
+// D58: an archived model page stays served, out of the index like an inactive one, with no hreflang alternates.
+describe("deprecated tool pages (D58)", () => {
+  it("an archived model row gets the same robots as an inactive one and no alternates", async () => {
+    findToolBySlug.mockResolvedValue({ id: "1", slug: "grok-4-5", name: "Grok 4.5", category: "other", status: "deprecated", info: {} });
+    const { generateToolMetadata } = await import("../../app/[lang]/tools/[slug]/metadata");
+    const metadata = await generateToolMetadata("grok-4-5", "de");
+    findToolBySlug.mockResolvedValue({ id: "2", slug: "grok-4-5", name: "Grok 4.5", category: "other", status: "inactive", info: {} });
+    const inactive = await generateToolMetadata("grok-4-5", "de");
+    expect(metadata.robots).toMatchObject({ index: false });
+    expect(metadata.robots).toEqual(inactive.robots);
+    expect(metadata.alternates?.languages).toBeUndefined();
+  });
+});
+
+// D58: every model alias in the DB re-point list 308s to the same target in every locale, and
+// that target is the active lifecycle row of the alias's tier and major.
+describe("model alias re-point (D58)", () => {
+  const lifecycle = readModelLifecycle((file) => readFileSync(file, "utf8"));
+
+  it.each(MODEL_REDIRECT_REPOINTS.map((p) => [p.alias, p.to] as const))("%s 308s to %s in every locale", (alias, to) => {
+    const rows = redirectRows.filter((row) => row.source.replace(/^\/[a-z-]+/, "") === `/tools/${alias}`);
+    expect(rows.map((row) => row.source.split("/")[1]).sort()).toEqual([...locales].sort());
+    for (const row of rows) expect(row.destination).toBe(`/${row.source.split("/")[1]}/tools/${to}`);
+    expect(lifecycle.rows.find((r) => r.slug === to)?.targetStatus).toBe("active");
+  });
+
+  it("the URL table and the DB re-point list name the same target for every alias", () => {
+    const tableTarget = (alias: string) =>
+      redirectRows.find((row) => row.source === `/en/tools/${alias}`)?.destination.replace(/^\/en\/tools\//, "");
+    for (const pair of MODEL_REDIRECT_REPOINTS) expect(tableTarget(pair.alias), pair.alias).toBe(pair.to);
+  });
+});
+
 describe("sitemap", () => {
   it("drops noindex tools and shipped 308 sources, keeps the rest", async () => {
-    findAll.mockResolvedValue(
-      ["cline", "stripe", "ollama", "clawdbot", "opus-4-6"].map((slug) => ({ slug, status: "active" }))
-    );
+    findAll.mockResolvedValue([
+      ...["cline", "stripe", "ollama", "clawdbot", "glm-5-0"].map((slug) => ({ slug, status: "active" })),
+      // D6e: a held alias is not a shipped source; its redirect status keeps it out of the sitemap.
+      { slug: "opus-4-6", status: "redirect" },
+    ]);
     getPublishedSlugs.mockResolvedValue([]);
     listPeriods.mockResolvedValue([]);
     const { buildSitemapEntries } = await import("../../lib/sitemap");
@@ -238,6 +278,7 @@ describe("sitemap", () => {
       expect(paths.has(`/${locale}/tools/ollama`)).toBe(false);
       expect(paths.has(`/${locale}/tools/clawdbot`)).toBe(false);
       // #197: released, so the retired slug leaves the sitemap like any shipped source.
+      expect(paths.has(`/${locale}/tools/glm-5-0`)).toBe(false);
       expect(paths.has(`/${locale}/tools/opus-4-6`)).toBe(false);
     }
     for (const row of noindexRows) expect(paths.has(row.source)).toBe(false);

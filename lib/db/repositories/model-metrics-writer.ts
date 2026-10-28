@@ -4,6 +4,9 @@
  * Why: D63 (Q9) writes the first model metrics and activates the seeded model rows in one
  *   transaction. The write must merge two keys only, never touch a redirect row, and never
  *   change status unless activation is asked for and every target row ends with a valid metric.
+ *   D0c (owner, 2026-10-28): this figure gate (D86) governs only this loader's `--activate` and the
+ *   10-row index threshold. The lifecycle status step (`model-lifecycle.ts`, `--set-status`) may
+ *   activate a row without a figure.
  * What: `planModelMetrics` reads the target rows (one SELECT) and returns a per-row metric plan
  *   (`update`, `unchanged` or `refused`) and, when asked, a per-row activation plan.
  *   `applyModelMetricPlans` runs `MODEL_METRIC_UPDATE_SQL` per changed row and, when activating,
@@ -36,6 +39,7 @@ WHERE slug = $1 AND kind = 'model' AND status <> 'redirect'
   AND (data->'metrics_provenance' IS NULL OR jsonb_typeof(data->'metrics_provenance') = 'object')
 RETURNING slug`;
 
+// D0c: the lifecycle status step activates without this gate; this one stays for --activate.
 // #329 (D63 Q9): activation, run only with --apply --activate and after the metric updates in the
 // same transaction. Sets status only on the listed model rows that are inactive and now carry a
 // positive Vals TB 4.0 figure; a redirect row or another kind never matches.

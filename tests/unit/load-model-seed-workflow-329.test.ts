@@ -163,6 +163,11 @@ describe("load-model-seed workflow step scripts (#329)", () => {
     ["dry_run false with a wrong confirm", { SEED: "all", DRY_RUN: "false", CONFIRM: "yes" }, 1, ""],
     ["dry_run false with the typed confirm", { SEED: "closed", DRY_RUN: "false", CONFIRM: "load-model-seed" }, 0, "mode=apply"],
     ["an unknown seed", { SEED: "muse", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
+    // #329: the per-major seed and the lifecycle status step.
+    ["the majors seed", { SEED: "majors", DRY_RUN: "true", CONFIRM: "" }, 0, "mode=dry-run"],
+    ["set_status with seed all", { SEED: "all", SET_STATUS: "true", DRY_RUN: "true", CONFIRM: "" }, 0, "set_status=true"],
+    ["set_status with one seed", { SEED: "closed", SET_STATUS: "true", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
+    ["a malformed set_status", { SEED: "all", SET_STATUS: "yes", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
   ])("mode selection on %s", (_name, env, code, mode) => {
     const res = runStep("mode", env);
     expect(res.code).toBe(code);
@@ -180,5 +185,16 @@ describe("load-model-seed workflow step scripts (#329)", () => {
     expect(res.read("npx.log").trim()).toBe("tsx scripts/load-model-seeds.ts --seed open-weight --dry-run");
     expect(res.out).not.toContain("sha256");
     expect(res.read("seed-counts-dry-run.txt").trim()).toBe("totals: 5 row(s), 0 insert, 0 update, 4 unchanged, 1 refused");
+  });
+
+  it("the dry run with set_status passes --set-status and keeps the status counts", () => {
+    const res = runStep("dryrun", {
+      SEED: "all",
+      SET_STATUS: "true",
+      STUB_OUTPUT: "totals: 2 row(s), 2 insert, 0 update, 0 unchanged, 0 refused\nstatus: 2 row(s), 1 set active, 1 set deprecated, 0 unchanged, 0 refused",
+    });
+    expect(res.code).toBe(0);
+    expect(res.read("npx.log").trim()).toBe("tsx scripts/load-model-seeds.ts --seed all --dry-run --set-status");
+    expect(res.read("seed-counts-dry-run.txt")).toContain("status: 2 row(s), 1 set active, 1 set deprecated, 0 unchanged, 0 refused");
   });
 });
