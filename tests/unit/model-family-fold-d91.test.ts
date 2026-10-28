@@ -364,7 +364,10 @@ describe("D91 0019 folds the seven rows into the four families", () => {
   it("the generator, /api/tools and the sitemap list the four families instead of the seven", async () => {
     // After 0018 alone: the inactive families are off every list; the seven are on it.
     // #197: the seven are shipped 308 sources, so the sitemap drops them whatever their status.
-    expect(beforeSelections).toEqual({ generator: [...OLD].sort(), api: [...OLD].sort(), sitemap: [] });
+    // D6e: the five whose rows are held until the release PR are not shipped sources, so while
+    // still active (before the fold) they are listed; after the fold their redirect status drops them.
+    const held = ["kimi-2-5", "moonshot-kimi-2-5", "opus-4-5", "opus-4-6", "sonnet-4-5"];
+    expect(beforeSelections).toEqual({ generator: [...OLD].sort(), api: [...OLD].sort(), sitemap: held });
     expect(await selections(ctx.db)).toEqual({ generator: FAMILIES, api: FAMILIES, sitemap: FAMILIES });
   });
 
