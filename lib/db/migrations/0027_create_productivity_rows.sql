@@ -6,7 +6,8 @@
 --   generator, /api/tools, the sitemap and the What's New new-tools summary (all filter on
 --   status = 'active') do not list them, and the tool page marks them noindex. kind is named
 --   explicitly: the column default is 'harness'. No score, metric or rank is written; metrics are
---   a later reviewed step. company_id is NULL, as on the model rows of 0018. The three existing rows (claude-artifacts, openclaw, perplexity) change in
+--   a later reviewed step. company_id is NULL, as on the model rows of 0018. The six existing rows (claude-artifacts, openclaw,
+--   perplexity, chatgpt-canvas, claude-desktop-extensions, cowork) and their retired aliases change in
 --   0028, which is applied with activation, after 2026-11-01, not with this file.
 --   One DO block: the precondition guard and the post-count check raise and write nothing.
 --   Apply with .github/workflows/apply-migration.yml, migration_file

@@ -255,6 +255,20 @@ describe("#314 migration 0028 converts the six existing rows", () => {
     expect(await rows()).toEqual(before);
   });
 
+  // #314: an alias at a kind other than harness must not slip past the post-check (fail-open).
+  it.each(["cowork-ai", "clawdbot"])("raises, writing nothing, when the alias %s holds kind other", async (slug) => {
+    await ctx.db.query(`UPDATE public."tools" SET kind = 'other' WHERE slug = $1`, [slug]);
+    const before = await rows();
+    expect((await apply(ctx, F28)).exitCode).not.toBe(0);
+    expect(await rows()).toEqual(before);
+  });
+
+  it("succeeds when the alias cowork-ai has no row", async () => {
+    await ctx.db.query(`DELETE FROM public."tools" WHERE slug = 'cowork-ai'`);
+    expect((await apply(ctx, F28)).exitCode).toBe(0);
+    expect((await rows(["cowork"]))[0]!.row["kind"]).toBe("productivity");
+  });
+
   it("raises, writing nothing, when cowork is missing", async () => {
     await ctx.db.query(`DELETE FROM public."tools" WHERE slug = 'cowork'`);
     const before = await rows();
