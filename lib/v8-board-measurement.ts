@@ -104,18 +104,19 @@ export const D45_MAX_HARNESS_SHIFT = 2;
 /** A recomputed score further than this from the published one is a mismatch. */
 export const SCORE_TOLERANCE = 0.001;
 /**
- * #185: the D45 gate refuses a harness list shorter than this. It is the count
- * of non-retired harness rows in `docs/refresh/tool-kind-mapping.csv`: 61
- * harness rows minus 0 retired = 61 (66 until #314: migration 0028 moves
- * claude-artifacts, openclaw, chatgpt-canvas, claude-desktop-extensions and cowork, and the
- * retired aliases clawdbot, moltbot and cowork-ai, to productivity; Architect ruling 12:16Z). A shorter list
+ * #185: the D45 gate refuses a harness list shorter than this. It was the count
+ * of non-retired harness rows in `docs/refresh/tool-kind-mapping.csv`: 69 harness
+ * rows minus 3 retired = 66 (Architect ruling 12:16Z). #314: the sheet now holds the
+ * state after migration 0028 (61 non-retired harness rows), but the floor stays 64 until
+ * 0028 is applied (Architect ruling 17:40Z), so no harness row drops silently before then. A shorter list
  * means the board changed since that review, or the kinds are wrong, and must
  * be looked at before D45 can be cleared on it. Tools outside the sheet, which
  * keep the column default `harness`, are not counted: the floor is a minimum,
  * so they can only add to the list. Retiring or adding a harness tool means
  * updating the sheet and this floor together.
  */
-export const HARNESS_FLOOR = 61;
+// #314: lowers to 61 in the activation PR that applies migration 0028 (after 2026-11-01).
+export const HARNESS_FLOOR = 64;
 /** `tools.kind` values the D45 gate accepts (CHECK `tools_kind_check`). */
 export const KNOWN_KINDS: readonly string[] = TOOL_KINDS;
 
