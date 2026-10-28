@@ -35,7 +35,8 @@ const PRIOR_DATA = {
   metrics_provenance: { users: { source: "https://example.com/users", as_of: "2026-01-01" }, terminal_bench: { source: "https://example.com/old", as_of: "2025-01-01" } },
 };
 
-const KNOWN = new Set(["glm", "kimi", "qwen", "deepseek"]);
+// #329: glm..deepseek stand for seed slugs; claude-opus, claude-sonnet and grok are the allowlisted existing families.
+const KNOWN = new Set(["glm", "kimi", "qwen", "deepseek", "claude-opus", "claude-sonnet", "grok"]);
 
 async function freshDb(): Promise<PGlite> {
   const pg = new PGlite();
@@ -54,6 +55,9 @@ async function freshDb(): Promise<PGlite> {
   await insert("deepseek-v3-2", "model", "redirect", { redirect_to: "deepseek", previous_status: "active" });
   await insert("gemma", "model", "inactive", {});
   await insert("cursor", "harness", "active", {});
+  await insert("claude-opus", "model", "active", { info: { company: "Anthropic" }, metrics: { users: 9 } });
+  await insert("claude-sonnet", "model", "inactive", {});
+  await insert("grok", "model", "active", {});
   return pg;
 }
 
@@ -152,6 +156,38 @@ describe("model metrics write on PGlite (#329)", () => {
     const code = await loadModelMetrics(asDb(pg), seed, { apply: true, activationTargets: ["glm", "gemma"], hideValues: false }, (l) => log.push(l));
     expect(code).toBe(1);
     expect(log).toContain("REFUSED activation: gemma: row would carry no Vals Terminal-Bench 4.0 figure after the write");
+    expect(await rows(pg)).toEqual(before);
+  });
+
+  it("activation leaves already active existing families as they are and flips only the inactive ones", async () => {
+    const targets = ["glm", "claude-opus", "claude-sonnet", "grok"];
+    const seed = seedOf(targets);
+    const log: string[] = [];
+    expect(await loadModelMetrics(asDb(pg), seed, { apply: true, activationTargets: targets, hideValues: false }, (l) => log.push(l))).toBe(0);
+    expect(log).toContain("already active: claude-opus");
+    expect(log).toContain("already active: grok");
+    expect(log).toContain("will activate: claude-sonnet");
+    expect(log).toContain("apply: committed, 4 metric row(s) written, 2 row(s) activated");
+    const after = await rows(pg);
+    for (const slug of targets) {
+      expect(after[slug]!.status).toBe("active");
+      expect(hasCodingMetric(after[slug]!.data)).toBe(true);
+    }
+    expect(after["claude-opus"]!.data["info"]).toEqual({ company: "Anthropic" });
+    expect(after["claude-opus"]!.data["metrics"]).toEqual({ users: 9, terminal_bench: seed.rows[1]!.value });
+    expect(after["gemma"]!.status).toBe("inactive");
+  });
+
+  it("refuses activation when an already active existing family would carry no Vals figure", async () => {
+    const before = await rows(pg);
+    const log: string[] = [];
+    const code = await loadModelMetrics(asDb(pg), seedOf(["glm", "claude-opus"]), {
+      apply: true,
+      activationTargets: ["glm", "claude-opus", "grok"],
+      hideValues: false,
+    }, (l) => log.push(l));
+    expect(code).toBe(1);
+    expect(log).toContain("REFUSED activation: grok: row would carry no Vals Terminal-Bench 4.0 figure after the write");
     expect(await rows(pg)).toEqual(before);
   });
 

@@ -13,7 +13,8 @@ name: Load model metrics (#329)
 #   - Metrics write: `dry_run: false`, `activate: false`, `confirm: load-model-metrics`.
 #   - Metrics write plus activation: `dry_run: false`, `activate: true`,
 #     `confirm: activate-model-metrics`. The dry run then also checks the activation and fails
-#     unless every seeded model row would carry a Vals figure.
+#     unless every target model row (the seed rows plus claude-opus, claude-sonnet and grok)
+#     would carry a Vals figure. Only inactive rows are flipped; an active row stays.
 # The write step runs one transaction, only after the dry run succeeded, and only from main.
 # The script runs with --hide-values, so no figure reaches this public log. The summary carries
 # the mode, each step's outcome and the totals line only (D19): no host, role, rank or score.

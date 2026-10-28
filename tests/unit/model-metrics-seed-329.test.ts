@@ -13,28 +13,34 @@ import { spawnSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
 import {
   EXCLUDED_METRIC_SLUGS,
+  EXISTING_FAMILY_METRIC_SLUGS,
   MODEL_METRICS_DEFAULT_PATH,
   metricDataAfterWrite,
   parseModelMetricsSeed,
 } from "../../lib/db/repositories/model-metrics-seed.repository";
 import { hasCodingMetric, isRankingListIndexable, METRIC_INDEX_MIN_ROWS, MODEL_TERMINAL_BENCH_SOURCE } from "../../lib/rankings/lists";
 import { readModelMetrics } from "../../scripts/load-model-metrics";
-import { SEED_SLUGS, syntheticMetricRow, syntheticMetricsDoc } from "./fixtures/model-metrics-329-fixture";
+import { METRIC_SLUGS, SEED_SLUGS, syntheticMetricRow, syntheticMetricsDoc } from "./fixtures/model-metrics-329-fixture";
 
-const KNOWN = new Set(SEED_SLUGS);
+const KNOWN = new Set(METRIC_SLUGS);
 const parse = (doc: unknown) => parseModelMetricsSeed(JSON.stringify(doc), KNOWN);
 const oneRow = (overrides: Record<string, unknown>) => syntheticMetricsDoc(SEED_SLUGS, [syntheticMetricRow("glm", 0, overrides)]);
 
 describe("parseModelMetricsSeed (#329)", () => {
-  it("accepts a synthetic row for every seeded family", () => {
+  it("accepts a synthetic row for every seeded family and every allowlisted existing family", () => {
     const seed = parse(syntheticMetricsDoc());
-    expect(seed.rows.map((r) => r.slug)).toEqual(SEED_SLUGS);
+    expect(seed.rows.map((r) => r.slug)).toEqual(METRIC_SLUGS);
+    // #329: the existing family rows stay out of the seed files and are accepted only by the allowlist.
+    expect(EXISTING_FAMILY_METRIC_SLUGS).toEqual(["claude-opus", "claude-sonnet", "grok"]);
+    for (const slug of EXISTING_FAMILY_METRIC_SLUGS) expect(SEED_SLUGS).not.toContain(slug);
+    expect(() => parseModelMetricsSeed(JSON.stringify(oneRow({ slug: "grok" })), new Set(SEED_SLUGS))).toThrow(/unknown slug grok/);
     expect(seed.rows.every((r) => r.field === "terminal_bench" && r.source === MODEL_TERMINAL_BENCH_SOURCE)).toBe(true);
     expect(parse(oneRow({ version: "GLM snapshot 0101" })).rows[0]!.version).toBe("GLM snapshot 0101");
   });
 
   it.each([
-    ["an unknown slug", oneRow({ slug: "claude-opus" }), /unknown slug claude-opus/],
+    ["an unknown slug", oneRow({ slug: "gpt-oss" }), /unknown slug gpt-oss/],
+    ["a version-bearing slug of an existing family", oneRow({ slug: "claude-opus-5-5" }), /unknown slug claude-opus-5-5/],
     ["a vendor source", oneRow({ source: "https://www.anthropic.com/news" }), /source must be/],
     ["the Vals page with a fragment", oneRow({ source: `${MODEL_TERMINAL_BENCH_SOURCE}#snapshot` }), /source must be/],
     ["a TB 2.1 source", oneRow({ source: "https://www.tbench.ai/leaderboard/terminal-bench/2.1" }), /source must be/],
@@ -86,7 +92,7 @@ describe("the private metrics file (#329)", () => {
   it("refuses a metrics file that git tracks, and checks the real tracked state", () => {
     const text = JSON.stringify(syntheticMetricsDoc());
     expect(() => readModelMetrics("any.json", KNOWN, () => text, () => true)).toThrow(/tracked by git/);
-    expect(readModelMetrics("any.json", KNOWN, () => text, () => false).rows).toHaveLength(SEED_SLUGS.length);
+    expect(readModelMetrics("any.json", KNOWN, () => text, () => false).rows).toHaveLength(METRIC_SLUGS.length);
     // A committed file is tracked; the default private path never is.
     expect(() => readModelMetrics("package.json", KNOWN, () => text)).toThrow(/tracked by git/);
   });
@@ -99,10 +105,11 @@ describe("projected models-list metric count after activation (#329, D86)", () =
     return seed.rows.filter((row) => hasCodingMetric(metricDataAfterWrite(row))).length;
   }
 
-  it("reaches the index threshold when every seeded family carries a figure", () => {
-    const count = projectedCount(SEED_SLUGS.map((slug, i) => syntheticMetricRow(slug, i)));
+  it("reaches the index threshold when every seeded and allowlisted family carries a figure", () => {
+    const count = projectedCount(METRIC_SLUGS.map((slug, i) => syntheticMetricRow(slug, i)));
     expect(SEED_SLUGS).toHaveLength(13);
-    expect(count).toBe(13);
+    expect(METRIC_SLUGS).toHaveLength(16);
+    expect(count).toBe(16);
     expect(count).toBeGreaterThanOrEqual(METRIC_INDEX_MIN_ROWS);
     // Activated rows are on the board, so the board holds at least `count` entries.
     expect(isRankingListIndexable("model", count, count)).toBe(true);
