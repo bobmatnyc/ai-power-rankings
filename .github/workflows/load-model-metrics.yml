@@ -1,0 +1,211 @@
+name: Load model metrics (#329)
+
+# #329: dispatch-only apply workflow for the Vals Terminal-Bench 4.0 figures of the seeded model
+# rows, and their activation, in the D96 pattern of load-model-seed.yml.
+#
+# Why: D63 writes the first model metrics and (Q9) activates the seeded model rows in one
+# transaction. The figures are not published in this repository, so the file reaches the job
+# at run time from the MODEL_METRICS_JSON_B64 repository secret (the metrics JSON, base64).
+#
+# What: a manual dispatch over scripts/load-model-metrics.ts. The job decodes the secret to a
+# file under RUNNER_TEMP, never prints it, and deletes it at the end. Every run starts with the
+# script's dry run (exit 1 on a refused row). The default inputs stop there and write nothing.
+#   - Metrics write: `dry_run: false`, `activate: false`, `confirm: load-model-metrics`.
+#   - Metrics write plus activation: `dry_run: false`, `activate: true`,
+#     `confirm: activate-model-metrics`. The dry run then also checks the activation and fails
+#     unless every target model row (the seed rows plus claude-opus, claude-sonnet and grok)
+#     would carry a Vals figure. Only inactive rows are flipped; an active row stays.
+# The write step runs one transaction, only after the dry run succeeded, and only from main.
+# The script runs with --hide-values, so no figure reaches this public log. The summary carries
+# the mode, each step's outcome and the totals line only (D19): no host, role, rank or score.
+#
+# Gate (D63 Q10): never dispatch with `activate: true` before #318 has merged and the #317 audit
+# has confirmed that no parent-company figures sit on model rows. The metrics-only write may run
+# earlier; it changes no status.
+#
+# Recovery (D98): before any write dispatch, the owner creates a named Neon branch of production
+# (name pattern: pre-model-metrics-YYYYMMDD) and records its name and UTC time. Rollback is a
+# restore from that branch.
+# Details: docs/deployment/apply-migrations-workflow.md
+#
+# Test: tests/unit/load-model-metrics-workflow-329.test.ts.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run only: print the per-row diff, write nothing. Leave true for the first run.'
+        type: boolean
+        default: true
+        required: false
+      activate:
+        description: 'Also set the seeded model rows active (only after #318 merged and the #317 audit passed).'
+        type: boolean
+        default: false
+        required: false
+      confirm:
+        description: 'Write only: load-model-metrics, or activate-model-metrics with activate true. Ignored on a dry run.'
+        type: string
+        default: ''
+        required: false
+
+# Read-only: this workflow writes to the database, never to the repository or its issues.
+permissions:
+  contents: read
+
+# Shares the seed load's group: a metrics load never overlaps a seed load.
+concurrency:
+  group: load-model-seed-329
+  cancel-in-progress: false
+
+jobs:
+  load-model-metrics:
+    name: Model metrics load
+    # Only a dispatch from main runs; a branch's edited copy of this file never gets the secrets.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Inputs reach the shell only through `env:`. A write needs dry_run exactly "false" and the
+      # confirmation that matches `activate`; anything else with dry_run false fails the job.
+      - name: Select mode
+        id: mode
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          ACTIVATE: ${{ inputs.activate }}
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          set -uo pipefail
+          if [ "$ACTIVATE" = "true" ]; then echo "check_activation=true" >> "$GITHUB_OUTPUT"; else echo "check_activation=false" >> "$GITHUB_OUTPUT"; fi
+          if [ "$DRY_RUN" != "false" ]; then
+            echo "mode=dry-run" >> "$GITHUB_OUTPUT"
+            echo "Mode: dry run (writes nothing)"
+            exit 0
+          fi
+          if [ "$ACTIVATE" = "true" ]; then
+            if [ "$CONFIRM" != "activate-model-metrics" ]; then
+              echo "::error::activate is true but confirm is not activate-model-metrics; nothing was run"
+              exit 1
+            fi
+            echo "mode=apply-activate" >> "$GITHUB_OUTPUT"
+            echo "Mode: write metrics and activate"
+            exit 0
+          fi
+          if [ "$CONFIRM" != "load-model-metrics" ]; then
+            echo "::error::dry_run is false but confirm is not load-model-metrics; nothing was run"
+            exit 1
+          fi
+          echo "mode=apply" >> "$GITHUB_OUTPUT"
+          echo "Mode: write metrics"
+
+      # The secret reaches the shell only through `env:` and goes straight to a file; it is never
+      # printed. A missing or undecodable secret fails the job before anything runs.
+      - name: Stage metrics file
+        id: stage
+        env:
+          MODEL_METRICS_JSON_B64: ${{ secrets.MODEL_METRICS_JSON_B64 }}
+        run: |
+          set -uo pipefail
+          if [ -z "${MODEL_METRICS_JSON_B64:-}" ]; then
+            echo "::error::the MODEL_METRICS_JSON_B64 secret is not set; nothing was run"
+            exit 1
+          fi
+          umask 077
+          if ! printf '%s' "$MODEL_METRICS_JSON_B64" | base64 --decode > "$RUNNER_TEMP/model-metrics.json" 2>/dev/null; then
+            rm -f "$RUNNER_TEMP/model-metrics.json"
+            echo "::error::the MODEL_METRICS_JSON_B64 secret is not valid base64; nothing was run"
+            exit 1
+          fi
+          echo "path=$RUNNER_TEMP/model-metrics.json" >> "$GITHUB_OUTPUT"
+
+      # Always runs, so a write is preceded by a fresh plan; exit 1 on a refused row stops the job.
+      - name: Dry run (writes nothing)
+        id: dryrun
+        env:
+          METRICS_FILE: ${{ steps.stage.outputs.path }}
+          CHECK_ACTIVATION: ${{ steps.mode.outputs.check_activation }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: production
+        run: |
+          set -uo pipefail
+          args=(--metrics-file "$METRICS_FILE" --dry-run --hide-values)
+          if [ "$CHECK_ACTIVATION" = "true" ]; then args+=(--check-activation); fi
+          status=0
+          npx tsx scripts/load-model-metrics.ts "${args[@]}" > "$RUNNER_TEMP/metrics-dry-run.raw" 2>&1 || status=$?
+          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/metrics-dry-run.raw" > "$RUNNER_TEMP/metrics-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
+          rm -f "$RUNNER_TEMP/metrics-dry-run.raw"
+          cat "$RUNNER_TEMP/metrics-dry-run.txt"
+          grep -E '^totals: ' "$RUNNER_TEMP/metrics-dry-run.txt" > "$RUNNER_TEMP/metrics-counts-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
+          exit "$status"
+
+      # One transaction, run only after the dry run succeeded. A re-run is a no-op.
+      - name: Write metrics
+        id: write
+        if: ${{ success() && (steps.mode.outputs.mode == 'apply' || steps.mode.outputs.mode == 'apply-activate') && steps.dryrun.outcome == 'success' }}
+        env:
+          METRICS_FILE: ${{ steps.stage.outputs.path }}
+          MODE: ${{ steps.mode.outputs.mode }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: production
+        run: |
+          set -uo pipefail
+          args=(--metrics-file "$METRICS_FILE" --apply --hide-values)
+          if [ "$MODE" = "apply-activate" ]; then args+=(--activate); fi
+          status=0
+          npx tsx scripts/load-model-metrics.ts "${args[@]}" > "$RUNNER_TEMP/metrics-write.raw" 2>&1 || status=$?
+          grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/metrics-write.raw" > "$RUNNER_TEMP/metrics-write.txt" || [ "$?" -eq 1 ] || exit 2
+          rm -f "$RUNNER_TEMP/metrics-write.raw"
+          cat "$RUNNER_TEMP/metrics-write.txt"
+          grep -E '^(totals: |apply: committed)' "$RUNNER_TEMP/metrics-write.txt" > "$RUNNER_TEMP/metrics-counts-write.txt" || [ "$?" -eq 1 ] || exit 2
+          exit "$status"
+
+      - name: Remove metrics file
+        id: cleanup
+        if: ${{ always() }}
+        run: rm -f "$RUNNER_TEMP/model-metrics.json"
+
+      # Counts only (D19). Runs on failure too; it never changes the job result.
+      - name: Job summary
+        id: summary
+        if: ${{ always() }}
+        env:
+          MODE: ${{ steps.mode.outputs.mode }}
+          DRY_RUN_OUTCOME: ${{ steps.dryrun.outcome }}
+          WRITE_OUTCOME: ${{ steps.write.outcome }}
+        run: |
+          set -uo pipefail
+          case "${MODE:-}" in
+            apply) mode_label='write metrics' ;;
+            apply-activate) mode_label='write metrics and activate' ;;
+            dry-run) mode_label='dry run (nothing written)' ;;
+            *) mode_label='refused (inputs failed validation, nothing run)' ;;
+          esac
+          {
+            echo '## Model metrics load'
+            echo ''
+            echo "- Mode: ${mode_label}"
+            echo "- Dry run: ${DRY_RUN_OUTCOME:-not run}"
+            echo "- Write: ${WRITE_OUTCOME:-not run}"
+            echo ''
+            echo '### Counts'
+            echo ''
+            echo '```'
+            for part in dry-run write; do
+              if [ -s "$RUNNER_TEMP/metrics-counts-${part}.txt" ]; then
+                sed "s/^/${part}: /" "$RUNNER_TEMP/metrics-counts-${part}.txt"
+              fi
+            done
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
