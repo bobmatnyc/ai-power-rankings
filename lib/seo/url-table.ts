@@ -34,12 +34,7 @@ export const PENDING_TARGETS: readonly RegExp[] = [
   /^\/en\/rankings\/coding-harnesses$/, // #196: the harness ranking page and its category filter
   // #197: the model family pages shipped with D91 (migrations 0018, 0019); their 70 rows now 308. See #191
   /^\/en\/insights$/, // #198: the Insights hub (the 20 /whats-new rows)
-  // D6e: the per-major pages of the D58 re-point exist only after the set_status apply commits.
-  // Until then the 60 alias rows (opus-4-5, opus-4-6, sonnet-4-5, kimi-2-5, moonshot-kimi-2-5,
-  // deepseek-v3-2) are held: no 308, each alias renders its own retired page (owner accepts that
-  // it may be indexable). A release PR removes this entry after that apply commits and the four
-  // pages render. See docs/deployment/apply-migrations-workflow.md.
-  /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/,
+  // D6e: the per-major pages of the D58 re-point render since the set_status apply; their 60 alias rows now 308. See #329
 ];
 
 const LOCALE_SET: ReadonlySet<string> = new Set(locales);

@@ -98,10 +98,12 @@ describe("the committed map", () => {
   });
 
   it("ships every 308 row except those whose destination page is missing", () => {
-    // D6e: the 60 rows of the six D58 aliases are held until the release PR (151 - 60, 117 + 60).
-    expect(shipped).toHaveLength(91);
-    expect(held).toHaveLength(177);
-    expect(held.filter((row) => /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/.test(row.destination))).toHaveLength(60);
+    // D6e: released; the 60 rows of the six D58 aliases ship again (91 + 60, 177 - 60).
+    expect(shipped).toHaveLength(151);
+    expect(held).toHaveLength(117);
+    const perMajor = /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/;
+    expect(shipped.filter((row) => perMajor.test(row.destination))).toHaveLength(60);
+    expect(held.filter((row) => perMajor.test(row.destination))).toHaveLength(0);
     // #198: the 20 /whats-new rows wait for /en/insights.
     expect(held.filter((row) => row.destination === "/en/insights")).toHaveLength(20);
     expect(shipped.length + held.length).toBe(redirectRows.length);
@@ -245,10 +247,14 @@ describe("deprecated tool pages (D58)", () => {
 describe("model alias re-point (D58)", () => {
   const lifecycle = readModelLifecycle((file) => readFileSync(file, "utf8"));
 
+  // D6e: released, so the title holds; the walk asserts the resolved 308, not only the table row.
   it.each(MODEL_REDIRECT_REPOINTS.map((p) => [p.alias, p.to] as const))("%s 308s to %s in every locale", (alias, to) => {
     const rows = redirectRows.filter((row) => row.source.replace(/^\/[a-z-]+/, "") === `/tools/${alias}`);
     expect(rows.map((row) => row.source.split("/")[1]).sort()).toEqual([...locales].sort());
-    for (const row of rows) expect(row.destination).toBe(`/${row.source.split("/")[1]}/tools/${to}`);
+    for (const row of rows) {
+      expect(row.destination).toBe(`/${row.source.split("/")[1]}/tools/${to}`);
+      expect(resolveTableRedirect(row.source), row.source).toBe(row.destination);
+    }
     expect(lifecycle.rows.find((r) => r.slug === to)?.targetStatus).toBe("active");
   });
 
@@ -262,9 +268,8 @@ describe("model alias re-point (D58)", () => {
 describe("sitemap", () => {
   it("drops noindex tools and shipped 308 sources, keeps the rest", async () => {
     findAll.mockResolvedValue([
-      ...["cline", "stripe", "ollama", "clawdbot", "glm-5-0"].map((slug) => ({ slug, status: "active" })),
-      // D6e: a held alias is not a shipped source; its redirect status keeps it out of the sitemap.
-      { slug: "opus-4-6", status: "redirect" },
+      // D6e: released, so an active opus-4-6 row leaves the sitemap as a shipped 308 source.
+      ...["cline", "stripe", "ollama", "clawdbot", "glm-5-0", "opus-4-6"].map((slug) => ({ slug, status: "active" })),
     ]);
     getPublishedSlugs.mockResolvedValue([]);
     listPeriods.mockResolvedValue([]);
