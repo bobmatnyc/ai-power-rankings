@@ -26,7 +26,8 @@ export const METRIC_SLUGS: readonly string[] = metricTargetSlugs(SEED_SLUGS);
 
 /**
  * A synthetic figure: whole numbers from 40 to 99, never a leaderboard value.
- * #329: wraps after 60 rows, because the per-major seed holds more rows than 40..100 can number.
+ * D58: `i % 60` keeps every value at or below the validator's cap of 100 however many seed rows
+ * exist; values repeat from the 61st row, which no test relies on being unique.
  */
 export function syntheticValue(i: number): number {
   return 40 + (i % 60);

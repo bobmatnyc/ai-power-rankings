@@ -124,10 +124,21 @@ figures) and sets each listed row to `active` or `deprecated` with a `data.model
 record. `deprecated` is the archive: the row and its URL stay. It refuses a redirect alias, a
 non-model row and any status other than `inactive`, `active` or `deprecated`, and it writes no
 other column. Under owner ruling D0c it may activate a row with no benchmark figure. The same
-transaction then re-points the `opus-4-6` and `opus-4-5` redirect aliases from `claude-opus` to
-`claude-opus-4` (`MODEL_REDIRECT_REPOINTS`), only while each still redirects to `claude-opus`; a
-0-row match aborts the whole write. The dry run prints `would set status` and `would re-point
+transaction then re-points the D90/D91 redirect aliases to their per-major row (owner ruling
+D58, `MODEL_REDIRECT_REPOINTS`): `opus-4-6` and `opus-4-5` to `claude-opus-4`, `sonnet-4-5` to
+`claude-sonnet-4`, `kimi-2-5` and `moonshot-kimi-2-5` to `kimi-2`, `deepseek-v3-2` to
+`deepseek-base`. Each update runs only while the alias still redirects to its old family row and
+the target is `active`; a 0-row match aborts the whole write. `data/url-table-191.json` carries
+the same targets for the 308s. The dry run prints `would set status` and `would re-point
 redirect` lines, a `status:` line and a `redirects:` line.
+
+**After the D58 re-point, two historical steps fail closed on a re-run.** Migration 0019's
+"already folded" check counts aliases that redirect to their family row, so it no longer matches;
+the re-run falls through to its precondition (family rows inactive), raises
+`D91 0019: precondition failed` and writes nothing (`tests/unit/model-family-fold-d91.test.ts`).
+`scripts/merge-duplicate-tools.ts` keeps the D90 pair `deepseek-v3-2` -> `deepseek` as applied, so a
+re-run refuses that pair because the old row already redirects to `deepseek-base`. Neither needs
+to run again.
 
 **Recovery (D98).** Before the write dispatch, the owner creates a named Neon branch of
 production (name pattern: `pre-model-seed-YYYYMMDD`) and records its name and UTC time.

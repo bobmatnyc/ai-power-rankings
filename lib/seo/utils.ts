@@ -131,7 +131,8 @@ export function generateToolMetadata(tool: Tool, lang: string): Metadata {
     ogImage: `/api/og?title=${encodeURIComponent(tool.name)}&subtitle=${encodeURIComponent(tool.category)}&logo=${encodeURIComponent(tool.info?.metadata?.logo_url || "")}`,
     // #191: the signed URL table keeps these pages served but out of the index.
     // D91: an inactive tool (e.g. a family row before its fold) is noindex; a redirect row is not.
-    noIndex: isNoindexToolSlug(tool.slug) || tool.status === "inactive",
+    // D58: a deprecated (archived) tool is noindex too; its page stays served.
+    noIndex: isNoindexToolSlug(tool.slug) || tool.status === "inactive" || tool.status === "deprecated",
   });
 }
 

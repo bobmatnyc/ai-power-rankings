@@ -22,14 +22,16 @@ import {
   resolveTableRedirect,
 } from "../../lib/seo/url-table";
 
+// D58: each retired slug now lands on the row of its own major. GLM 5 is the glm row's current
+// major, so the two GLM 5.0 slugs keep it; the others move to their per-major row.
 const FAMILY_OF: Readonly<Record<string, string>> = {
-  "opus-4-6": "claude-opus",
-  "opus-4-5": "claude-opus",
-  "sonnet-4-5": "claude-sonnet",
+  "opus-4-6": "claude-opus-4",
+  "opus-4-5": "claude-opus-4",
+  "sonnet-4-5": "claude-sonnet-4",
   "glm-5-0": "glm",
   "zhipu-glm-5-0": "glm",
-  "kimi-2-5": "kimi",
-  "moonshot-kimi-2-5": "kimi",
+  "kimi-2-5": "kimi-2",
+  "moonshot-kimi-2-5": "kimi-2",
 };
 const FAMILIES = new Set(Object.values(FAMILY_OF));
 const FAMILY_TARGET = /^\/([a-z]{2})\/tools\/([^/?]+)$/;

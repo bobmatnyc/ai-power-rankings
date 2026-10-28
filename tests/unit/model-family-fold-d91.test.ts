@@ -435,6 +435,23 @@ describe("D91 0019 refusals and post-count checks roll back", () => {
   }, 120_000);
 });
 
+// D58: after the per-major re-point an alias no longer redirects to its family, so the
+// "already folded" check misses and the precondition (families inactive) refuses the re-run.
+describe("D91 0019 re-run after the D58 re-point", () => {
+  it("fails closed and writes nothing", async () => {
+    const ctx = await setup([F17, F18]);
+    await seedFold(ctx.db);
+    expect((await apply(ctx, F19)).exitCode).toBe(0);
+    await ctx.db.query(`UPDATE public."tools" SET data = data || '{"redirect_to": "claude-opus-4"}'::jsonb WHERE slug = 'opus-4-6'`);
+    const before = await snapshot(ctx.db);
+    const result = await apply(ctx, F19, { force: true });
+    expect(result.exitCode).toBe(1);
+    expect(result.lines.join("\n")).toContain("D91 0019: precondition failed");
+    expect(await snapshot(ctx.db)).toEqual(before);
+    await ctx.db.close();
+  }, 120_000);
+});
+
 describe("D91 0019 re-run after the fold refuses a row on a retired id", () => {
   it.each([
     ["a tool_links row", async (db: PGlite) => link(db, "opus-4-5", "windsurf", "supports", "2026-10-02T00:00:00Z")],

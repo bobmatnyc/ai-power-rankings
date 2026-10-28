@@ -143,7 +143,9 @@ export async function loadModelSeeds(
   let repointPlans: RedirectRepointPlan[] = [];
   if (repoints.length > 0) {
     const inserts = new Set(plans.filter((p) => p.outcome === "insert").map((p) => p.slug));
-    repointPlans = await planRedirectRepoints(db, repoints, inserts);
+    // D58: a re-point target must be a row the lifecycle sets active.
+    const lifecycleActive = new Set((lifecycle?.rows ?? []).filter((r) => r.targetStatus === "active").map((r) => r.slug));
+    repointPlans = await planRedirectRepoints(db, repoints, inserts, lifecycleActive);
     for (const p of repointPlans) {
       if (p.outcome === "refused") log(`REFUSED redirect: ${p.alias}: ${p.reason}`);
       else if (p.outcome === "unchanged") log(`redirect unchanged: ${p.alias}`);

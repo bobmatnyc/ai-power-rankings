@@ -1,4 +1,4 @@
-import { readdirSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -39,6 +39,8 @@ vi.mock("next/navigation", () => ({ permanentRedirect, redirect }));
 
 import rawRows from "../../data/url-table-191.json";
 import { locales } from "../../i18n/config";
+import { readModelLifecycle } from "../../scripts/load-model-seeds";
+import { MODEL_REDIRECT_REPOINTS } from "../../lib/db/repositories/model-redirect-repoint";
 import {
   URL_TABLE_ROWS,
   isPendingTarget,
@@ -209,15 +211,49 @@ describe("noindex rows", () => {
 
   // D91: an inactive row (a family row before 0019) is noindex; active and redirect rows
   // keep the index they had, so a retired row stays indexed until its 308 ships.
+  // D58: a deprecated (archived) row is noindex, like an inactive one.
   it.each([
     ["claude-opus", "inactive", false],
     ["glm", "active", true],
     ["opus-4-6", "redirect", true],
-    ["legacy-tool", "deprecated", true],
+    ["legacy-tool", "deprecated", false],
   ])("a %s row with status %s is indexable: %s", async (slug, status, indexable) => {
     findToolBySlug.mockResolvedValue({ id: "1", slug, name: slug, category: "other", status, info: {} });
     const { generateToolMetadata } = await import("../../app/[lang]/tools/[slug]/metadata");
     expect((await generateToolMetadata(slug, "en")).robots).toMatchObject({ index: indexable });
+  });
+});
+
+// D58: an archived model page stays served, out of the index like an inactive one, with no hreflang alternates.
+describe("deprecated tool pages (D58)", () => {
+  it("an archived model row gets the same robots as an inactive one and no alternates", async () => {
+    findToolBySlug.mockResolvedValue({ id: "1", slug: "grok-4-5", name: "Grok 4.5", category: "other", status: "deprecated", info: {} });
+    const { generateToolMetadata } = await import("../../app/[lang]/tools/[slug]/metadata");
+    const metadata = await generateToolMetadata("grok-4-5", "de");
+    findToolBySlug.mockResolvedValue({ id: "2", slug: "grok-4-5", name: "Grok 4.5", category: "other", status: "inactive", info: {} });
+    const inactive = await generateToolMetadata("grok-4-5", "de");
+    expect(metadata.robots).toMatchObject({ index: false });
+    expect(metadata.robots).toEqual(inactive.robots);
+    expect(metadata.alternates?.languages).toBeUndefined();
+  });
+});
+
+// D58: every model alias in the DB re-point list 308s to the same target in every locale, and
+// that target is the active lifecycle row of the alias's tier and major.
+describe("model alias re-point (D58)", () => {
+  const lifecycle = readModelLifecycle((file) => readFileSync(file, "utf8"));
+
+  it.each(MODEL_REDIRECT_REPOINTS.map((p) => [p.alias, p.to] as const))("%s 308s to %s in every locale", (alias, to) => {
+    const rows = redirectRows.filter((row) => row.source.replace(/^\/[a-z-]+/, "") === `/tools/${alias}`);
+    expect(rows.map((row) => row.source.split("/")[1]).sort()).toEqual([...locales].sort());
+    for (const row of rows) expect(row.destination).toBe(`/${row.source.split("/")[1]}/tools/${to}`);
+    expect(lifecycle.rows.find((r) => r.slug === to)?.targetStatus).toBe("active");
+  });
+
+  it("the URL table and the DB re-point list name the same target for every alias", () => {
+    const tableTarget = (alias: string) =>
+      redirectRows.find((row) => row.source === `/en/tools/${alias}`)?.destination.replace(/^\/en\/tools\//, "");
+    for (const pair of MODEL_REDIRECT_REPOINTS) expect(tableTarget(pair.alias), pair.alias).toBe(pair.to);
   });
 });
 
