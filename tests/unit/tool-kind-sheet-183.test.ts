@@ -143,7 +143,7 @@ function realSheetProblems(edit: (line: string) => string = (line) => line): str
 
 describe("#183 the real contract and audit", () => {
   // D91: 114 audit rows plus the four model family rows of migration 0018.
-  // #314: the contract is the state after migration 0023: three rows are productivity.
+  // #314: the contract is the state after migration 0028: three rows are productivity.
   it("the 118-row contract adds up and names the six app builders (criterion 2, D2b, D91, #314)", () => {
     const total = Object.values(KIND_SHEET_CONTRACT.kindCounts).reduce((a, b) => a + b, 0);
     expect(total).toBe(KIND_SHEET_CONTRACT.rowCount);

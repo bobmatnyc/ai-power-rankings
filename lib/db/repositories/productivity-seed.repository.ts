@@ -99,7 +99,7 @@ function parseRow(entry: unknown, i: number, ctx: ProductivitySeedContext): Prod
 
 /**
  * Why: a productivity row that is unsourced, active, mis-kinded or colliding with an existing slug
- *   must never reach migration 0022; the first problem stops the run.
+ *   must never reach migration 0027; the first problem stops the run.
  * What: parses the seed JSON text and returns typed rows. Throws an `Error` naming the row and the
  *   rule on: text that is not JSON; a missing or invalid `checked_at`; no `products` array or an
  *   empty one; and, per row, a missing required text field (slug, name, vendor, company,

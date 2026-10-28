@@ -13,14 +13,14 @@
 --   survivor's kind; they are redirect rows and sit on no board. Status, scores, metrics and
 --   every other column stay as they are. chatgpt-canvas, claude-desktop-extensions and cowork stay
 --   harnesses and are not touched.
---   APPLY WITH ACTIVATION, AFTER 2026-11-01, not with 0022: a kind change removes openclaw and
+--   APPLY WITH ACTIVATION, AFTER 2026-11-01, not with 0027: a kind change removes openclaw and
 --   claude-artifacts from the harness board at the next publish.
 --   Perplexity's tool page stays noindex: its signed noindex row in the URL table is a separate
 --   ruling and this file does not touch it.
 --   One DO block: a guard failure raises and writes nothing. The UPDATEs skip rows already in the
 --   target state, so a re-run writes nothing and leaves updated_at alone.
 --   Apply with .github/workflows/apply-migration.yml, migration_file
---   0023_convert_productivity_existing_rows.sql, show_columns_table tools.
+--   0028_convert_productivity_existing_rows.sql, show_columns_table tools.
 
 DO $p314b$
 DECLARE
@@ -41,7 +41,7 @@ BEGIN
     SELECT 1 FROM information_schema.columns
      WHERE table_schema = 'public' AND table_name = 'tools' AND column_name = 'kind'
   ) THEN
-    RAISE EXCEPTION '#314 0023: tools.kind is missing; apply 0016 first';
+    RAISE EXCEPTION '#314 0028: tools.kind is missing; apply 0016 first';
   END IF;
 
   -- #314: guard — exactly one Claude.AI row may exist, and it is claude-artifacts.
@@ -49,27 +49,27 @@ BEGIN
     FROM public."tools"
    WHERE slug <> 'claude-artifacts' AND (slug = 'claude-ai' OR lower(name) = 'claude.ai');
   IF clash IS NOT NULL THEN
-    RAISE EXCEPTION '#314 0023: another Claude.AI row exists: %', clash;
+    RAISE EXCEPTION '#314 0028: another Claude.AI row exists: %', clash;
   END IF;
 
   -- #314: guard — each row exists and is in its old state or already converted.
   SELECT kind INTO state FROM public."tools" WHERE slug = 'claude-artifacts';
   IF state IS NULL THEN
-    RAISE EXCEPTION '#314 0023: claude-artifacts has no tools row';
+    RAISE EXCEPTION '#314 0028: claude-artifacts has no tools row';
   ELSIF state NOT IN ('harness', 'productivity') THEN
-    RAISE EXCEPTION '#314 0023: claude-artifacts has kind %, expected harness or productivity', state;
+    RAISE EXCEPTION '#314 0028: claude-artifacts has kind %, expected harness or productivity', state;
   END IF;
   SELECT kind INTO state FROM public."tools" WHERE slug = 'openclaw';
   IF state IS NULL THEN
-    RAISE EXCEPTION '#314 0023: openclaw has no tools row';
+    RAISE EXCEPTION '#314 0028: openclaw has no tools row';
   ELSIF state NOT IN ('harness', 'productivity') THEN
-    RAISE EXCEPTION '#314 0023: openclaw has kind %, expected harness or productivity', state;
+    RAISE EXCEPTION '#314 0028: openclaw has kind %, expected harness or productivity', state;
   END IF;
   SELECT kind INTO state FROM public."tools" WHERE slug = 'perplexity';
   IF state IS NULL THEN
-    RAISE EXCEPTION '#314 0023: perplexity has no tools row';
+    RAISE EXCEPTION '#314 0028: perplexity has no tools row';
   ELSIF state NOT IN ('other', 'productivity') THEN
-    RAISE EXCEPTION '#314 0023: perplexity has kind %, expected other or productivity', state;
+    RAISE EXCEPTION '#314 0028: perplexity has kind %, expected other or productivity', state;
   END IF;
 
   -- #314: guard — openclaw's listing fields hold the known wrong value or already the target.
@@ -77,15 +77,15 @@ BEGIN
   biz := info->'business';
   v := info->>'website';
   IF v IS NULL OR v NOT IN ('https://openclaw.dev', 'https://openclaw.ai') THEN
-    RAISE EXCEPTION '#314 0023: openclaw data.info.website is %, expected https://openclaw.dev or https://openclaw.ai', v;
+    RAISE EXCEPTION '#314 0028: openclaw data.info.website is %, expected https://openclaw.dev or https://openclaw.ai', v;
   END IF;
   v := biz->>'pricing_model';
   IF v IS NULL OR v NOT IN ('subscription', 'free') THEN
-    RAISE EXCEPTION '#314 0023: openclaw business.pricing_model is %, expected subscription or free', v;
+    RAISE EXCEPTION '#314 0028: openclaw business.pricing_model is %, expected subscription or free', v;
   END IF;
   v := biz->>'free_tier';
   IF v IS NULL OR v NOT IN ('false', 'true') THEN
-    RAISE EXCEPTION '#314 0023: openclaw business.free_tier is %, expected false or true', v;
+    RAISE EXCEPTION '#314 0028: openclaw business.free_tier is %, expected false or true', v;
   END IF;
   -- The licence sits under info.business in the dashboard reader and under info in the API reader;
   -- every path the row carries is checked and written, and at least one must exist.
@@ -94,12 +94,12 @@ BEGIN
     IF v IS NOT NULL THEN
       lic_found := true;
       IF v NOT IN ('proprietary', 'MIT') THEN
-        RAISE EXCEPTION '#314 0023: openclaw % is %, expected proprietary or MIT', lic_path, v;
+        RAISE EXCEPTION '#314 0028: openclaw % is %, expected proprietary or MIT', lic_path, v;
       END IF;
     END IF;
   END LOOP;
   IF NOT lic_found THEN
-    RAISE EXCEPTION '#314 0023: openclaw has no license_type under data.info or data.info.business';
+    RAISE EXCEPTION '#314 0028: openclaw has no license_type under data.info or data.info.business';
   END IF;
 
   -- #314: guard — a row that stops being a harness must not be the harness side of a link
@@ -109,7 +109,7 @@ BEGIN
       FROM public."tool_links" l JOIN public."tools" t ON t.id = l.harness_tool_id
      WHERE t.slug IN ('claude-artifacts', 'openclaw', 'clawdbot', 'moltbot') AND t.kind = 'harness';
     IF clash IS NOT NULL THEN
-      RAISE EXCEPTION '#314 0023: tool_links still use these rows as a harness: %', clash;
+      RAISE EXCEPTION '#314 0028: tool_links still use these rows as a harness: %', clash;
     END IF;
   END IF;
 
@@ -191,12 +191,12 @@ BEGIN
     FROM public."tools"
    WHERE slug IN ('claude-artifacts', 'openclaw', 'perplexity') AND kind = 'productivity';
   IF n <> 3 THEN
-    RAISE EXCEPTION '#314 0023: % of 3 rows are productivity after the update', n;
+    RAISE EXCEPTION '#314 0028: % of 3 rows are productivity after the update', n;
   END IF;
   IF NOT EXISTS (SELECT 1 FROM public."tools" WHERE slug = 'claude-artifacts' AND name = 'Claude.AI') THEN
-    RAISE EXCEPTION '#314 0023: claude-artifacts is not named Claude.AI after the update';
+    RAISE EXCEPTION '#314 0028: claude-artifacts is not named Claude.AI after the update';
   END IF;
-  RAISE NOTICE '#314 0023: updated % rows', changed;
+  RAISE NOTICE '#314 0028: updated % rows', changed;
 END
 $p314b$;
 --> statement-breakpoint

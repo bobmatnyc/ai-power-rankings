@@ -20,7 +20,7 @@ const load = () => import("../../lib/news-tool-resolver");
 
 const TOOLS = [
   { id: "t-claude-code", slug: "claude-code", name: "Claude Code", kind: "harness", status: "active" },
-  // #314: the row keeps its slug; its name is Claude.AI after migration 0023.
+  // #314: the row keeps its slug; its name is Claude.AI after migration 0028.
   { id: "t-claude-artifacts", slug: "claude-artifacts", name: "Claude.AI", kind: "productivity", status: "active" },
   { id: "t-cursor", slug: "cursor", name: "Cursor", kind: "harness", status: "active" },
   { id: "t-devin", slug: "devin", name: "Devin", kind: "harness", status: "active" },

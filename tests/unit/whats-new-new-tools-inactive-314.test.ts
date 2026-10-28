@@ -1,7 +1,7 @@
 /**
  * #314: the What's New "New Tools" aggregation counts only active tools.
  *
- * Why: migrations 0018 and 0022 insert inactive rows with created_at = now(). Before this fix the
+ * Why: migrations 0018 and 0027 insert inactive rows with created_at = now(). Before this fix the
  *   monthly aggregation selected every tool created in the window, so those rows reached the public
  *   summary prompt and changed the data hash that triggers a regeneration.
  * What: runs `getMonthlyData` and `calculateDataHash` on the real schema (PGlite) with one active

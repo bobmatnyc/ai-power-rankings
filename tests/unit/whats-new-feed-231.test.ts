@@ -142,7 +142,7 @@ describe("GET /api/whats-new platform items (#231)", () => {
     expect(response.headers.get("Cache-Control")).toBe("no-store");
   });
 
-  // #314: inactive rows (migrations 0018, 0022) have updated_at = now() and must not reach the feed.
+  // #314: inactive rows (migrations 0018, 0027) have updated_at = now() and must not reach the feed.
   it("leaves an inactive tool updated inside the window out of the tools branch", async () => {
     vi.doMock("../../lib/data/changelog-entries", () => ({ CHANGELOG_ENTRIES: [entry(1, 24)] }));
     news.mockResolvedValue([]);

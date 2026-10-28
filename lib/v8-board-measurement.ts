@@ -106,7 +106,7 @@ export const SCORE_TOLERANCE = 0.001;
 /**
  * #185: the D45 gate refuses a harness list shorter than this. It is the count
  * of non-retired harness rows in `docs/refresh/tool-kind-mapping.csv`: 65
- * harness rows minus 1 retired = 64 (66 until #314: migration 0023 moves
+ * harness rows minus 1 retired = 64 (66 until #314: migration 0028 moves
  * claude-artifacts and openclaw, and openclaw's retired aliases, to productivity; Architect ruling 12:16Z). A shorter list
  * means the board changed since that review, or the kinds are wrong, and must
  * be looked at before D45 can be cleared on it. Tools outside the sheet, which
