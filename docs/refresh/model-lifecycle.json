@@ -1,0 +1,686 @@
+{
+  "checked_at": "2026-10-28",
+  "ruling": "D05 working draft (#329). Bob rules on D05; the rules below are encoded in lib/db/repositories/model-lifecycle.ts (MODEL_LIFECYCLE_RULES) so a ruling changes one constant and this file.",
+  "rules": {
+    "available": "available is true when the vendor's public API docs list the model id as callable on checked_at and the vendor has not deprecated it (basis api_docs), or when its open weights are downloadable on checked_at from the vendor's Hugging Face org (basis hf_weights). Preview-only, waitlist, consumer-app-only and restricted-access models are not available.",
+    "major": "major is the integer generation the vendor markets; the tier line (line, tier) is a separate dimension. Point releases share a major: only the latest available point of each line and major is active.",
+    "active": "Exactly one active row per line and major. An active row needs available true, an https availability source and a coding_source_url.",
+    "deprecated": "deprecated is the archive: the row stays, keeps its URL and leaves the ranking. archive_reason is superseded (superseded_by names the active row that replaced it) or unavailable.",
+    "coding": "coding_source_url names a page that lists the model in a coding benchmark. The Vals Terminal-Bench 4.0 page is the primary source. Only the URL is recorded; benchmark figures stay out of this file and load through the separate metrics step.",
+    "scope": "Every model row of the seed files plus the live family rows named in MODEL_LIFECYCLE_LIVE_SLUGS. Image and video models are out of scope (D52)."
+  },
+  "models": [
+    {
+      "slug": "claude-opus",
+      "line": "claude-opus",
+      "tier": "Opus",
+      "major": 5,
+      "point": "5.5",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "claude-opus-4",
+      "line": "claude-opus",
+      "tier": "Opus",
+      "major": 4,
+      "point": "4.8",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "claude-opus-5-0",
+      "line": "claude-opus",
+      "tier": "Opus",
+      "major": 5,
+      "point": "5.0",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "claude-opus"
+    },
+    {
+      "slug": "claude-sonnet",
+      "line": "claude-sonnet",
+      "tier": "Sonnet",
+      "major": 5,
+      "point": "5.5",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "claude-sonnet-5-0",
+      "line": "claude-sonnet",
+      "tier": "Sonnet",
+      "major": 5,
+      "point": "5.0",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "claude-sonnet"
+    },
+    {
+      "slug": "claude-fable",
+      "line": "claude-fable",
+      "tier": "Fable",
+      "major": 5,
+      "point": "5.1",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "claude-fable-5-0",
+      "line": "claude-fable",
+      "tier": "Fable",
+      "major": 5,
+      "point": "5.0",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "claude-fable"
+    },
+    {
+      "slug": "claude-haiku",
+      "line": "claude-haiku",
+      "tier": "Haiku",
+      "major": 5,
+      "point": "5.5",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gpt-astra",
+      "line": "gpt-astra",
+      "tier": "Astra",
+      "major": 6,
+      "point": "6.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-6-astra",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gpt-luna",
+      "line": "gpt-luna",
+      "tier": "Luna",
+      "major": 6,
+      "point": "6.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-6-luna",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gpt-luna-5",
+      "line": "gpt-luna",
+      "tier": "Luna",
+      "major": 5,
+      "point": "5.6",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-luna",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gpt-sol",
+      "line": "gpt-sol",
+      "tier": "Sol",
+      "major": 6,
+      "point": "6.1",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-6.1-sol",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gpt-sol-6-0",
+      "line": "gpt-sol",
+      "tier": "Sol",
+      "major": 6,
+      "point": "6.0",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-6-sol",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "gpt-sol"
+    },
+    {
+      "slug": "gpt-sol-5",
+      "line": "gpt-sol",
+      "tier": "Sol",
+      "major": 5,
+      "point": "5.6",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-sol",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gpt-terra",
+      "line": "gpt-terra",
+      "tier": "Terra",
+      "major": 6,
+      "point": "6.1",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-6.1-terra",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gpt-terra-5",
+      "line": "gpt-terra",
+      "tier": "Terra",
+      "major": 5,
+      "point": "5.6",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-5.6-terra",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gpt-mini-5-4",
+      "line": "gpt-mini",
+      "tier": "mini",
+      "major": 5,
+      "point": "5.4",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-5.4-mini",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "gpt-terra-5"
+    },
+    {
+      "slug": "gemini-argon",
+      "line": "gemini-argon",
+      "tier": "Argon",
+      "major": 4,
+      "point": "4.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/models",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gemini-flash",
+      "line": "gemini-flash",
+      "tier": "Flash",
+      "major": 3,
+      "point": "3.8",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/models",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gemini-flash-3-7",
+      "line": "gemini-flash",
+      "tier": "Flash",
+      "major": 3,
+      "point": "3.7",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "gemini-flash"
+    },
+    {
+      "slug": "gemini-flash-3-5",
+      "line": "gemini-flash",
+      "tier": "Flash",
+      "major": 3,
+      "point": "3.5",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "gemini-flash"
+    },
+    {
+      "slug": "gemini-pro-3-1",
+      "line": "gemini-pro",
+      "tier": "Pro",
+      "major": 3,
+      "point": "3.1",
+      "target_status": "deprecated",
+      "availability": {
+        "available": false,
+        "basis": "api_docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "unavailable"
+    },
+    {
+      "slug": "grok",
+      "line": "grok",
+      "tier": "Grok",
+      "major": 4,
+      "point": "4.7",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://docs.x.ai/docs/models",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "grok-4-6",
+      "line": "grok",
+      "tier": "Grok",
+      "major": 4,
+      "point": "4.6",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://docs.x.ai/docs/models",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "grok"
+    },
+    {
+      "slug": "grok-4-5",
+      "line": "grok",
+      "tier": "Grok",
+      "major": 4,
+      "point": "4.5",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://docs.x.ai/docs/models",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "grok"
+    },
+    {
+      "slug": "deepseek",
+      "line": "deepseek",
+      "tier": "Flash",
+      "major": 4,
+      "point": "4.1",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "deepseek-4-0",
+      "line": "deepseek",
+      "tier": "Flash",
+      "major": 4,
+      "point": "4.0",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-0731",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "deepseek"
+    },
+    {
+      "slug": "deepseek-pro",
+      "line": "deepseek-pro",
+      "tier": "Pro",
+      "major": 4,
+      "point": "4.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "kimi",
+      "line": "kimi",
+      "tier": "Kimi",
+      "major": 3,
+      "point": "3.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "kimi-pro",
+      "line": "kimi-pro",
+      "tier": "Pro",
+      "major": 3,
+      "point": "3.1",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.moonshot.ai/docs/pricing/chat",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "glm",
+      "line": "glm",
+      "tier": "GLM",
+      "major": 5,
+      "point": "5.3",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/zai-org/GLM-5.3",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "glm-flash",
+      "line": "glm-flash",
+      "tier": "Flash",
+      "major": 5,
+      "point": "5.3",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/zai-org/GLM-5.3-Flash",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "minimax",
+      "line": "minimax",
+      "tier": "MiniMax",
+      "major": 3,
+      "point": "3.1",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "minimax-3-0",
+      "line": "minimax",
+      "tier": "MiniMax",
+      "major": 3,
+      "point": "3.0",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "minimax"
+    },
+    {
+      "slug": "qwen",
+      "line": "qwen",
+      "tier": "Max",
+      "major": 3,
+      "point": "3.8",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "mistral-large",
+      "line": "mistral-large",
+      "tier": "Large",
+      "major": 4,
+      "point": "4.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://docs.mistral.ai/models/mistral-large-4-0",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "devstral-small-2",
+      "line": "devstral-small",
+      "tier": "Devstral Small",
+      "major": 2,
+      "point": "2.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/mistralai/Devstral-Small-2-24B-Instruct-2512",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://huggingface.co/mistralai/Devstral-Small-2-24B-Instruct-2512"
+    },
+    {
+      "slug": "muse-spark",
+      "line": "muse-spark",
+      "tier": "Muse Spark",
+      "major": 1,
+      "point": "1.3",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://llama.developer.meta.com/docs/models",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "muse-spark-1-2",
+      "line": "muse-spark",
+      "tier": "Muse Spark",
+      "major": 1,
+      "point": "1.2",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://llama.developer.meta.com/docs/models",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "muse-spark"
+    },
+    {
+      "slug": "muse-spark-open",
+      "line": "muse-spark-open",
+      "tier": "Muse Spark Open",
+      "major": 1,
+      "point": "1.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "mimo",
+      "line": "mimo",
+      "tier": "Pro",
+      "major": 2,
+      "point": "2.6",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-MOPD",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "mimo-2-5",
+      "line": "mimo",
+      "tier": "Pro",
+      "major": 2,
+      "point": "2.5",
+      "target_status": "deprecated",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.5-Pro",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
+      "archive_reason": "superseded",
+      "superseded_by": "mimo"
+    },
+    {
+      "slug": "mimo-flash",
+      "line": "mimo-flash",
+      "tier": "Flash",
+      "major": 2,
+      "point": "2.6",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Flash-MOPD",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    }
+  ]
+}

@@ -152,7 +152,7 @@ describe("loadModelMetrics (#329)", () => {
     const { db } = boundary(ALL_INACTIVE, () => []);
     const log: string[] = [];
     expect(await loadModelMetrics(db, SEED, { apply: true, activationTargets: METRIC_SLUGS, hideValues: false }, (l) => log.push(l))).toBe(1);
-    expect(log.at(-1)).toMatch(/^apply: rolled back, nothing written: activation matched 0 of 16 row\(s\)/);
+    expect(log.at(-1)).toMatch(new RegExp(`^apply: rolled back, nothing written: activation matched 0 of ${METRIC_SLUGS.length} row\\(s\\)`));
   });
 
   it.each([
@@ -185,7 +185,8 @@ describe("loadModelMetrics (#329)", () => {
     const log: string[] = [];
     await loadModelMetrics(db, SEED, { apply: false, activationTargets: METRIC_SLUGS, hideValues: true }, (l) => log.push(l));
     expect(log).toContain("  metrics.terminal_bench: (unset) -> (new value)");
-    const text = log.join("\n");
+    // #329: the totals line holds row counts, not figures; a count can equal a synthetic value.
+    const text = log.filter((l) => !l.startsWith("totals: ")).join("\n");
     for (const row of SEED.rows) expect(text).not.toMatch(new RegExp(`\\b${row.value}\\b`));
   });
 });
