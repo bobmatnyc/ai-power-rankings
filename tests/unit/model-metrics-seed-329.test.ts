@@ -128,9 +128,9 @@ describe("projected models-list metric count after activation (#329, D86)", () =
 
   it("reaches the index threshold when every seeded and allowlisted family carries a figure", () => {
     const count = projectedCount(METRIC_SLUGS.map((slug, i) => syntheticMetricRow(slug, i)));
-    expect(SEED_SLUGS).toHaveLength(13);
-    expect(METRIC_SLUGS).toHaveLength(16);
-    expect(count).toBe(16);
+    // #329: every seed row plus the three allowlisted families (claude-opus, claude-sonnet, grok).
+    expect(METRIC_SLUGS).toHaveLength(SEED_SLUGS.length + 3);
+    expect(count).toBe(METRIC_SLUGS.length);
     expect(count).toBeGreaterThanOrEqual(METRIC_INDEX_MIN_ROWS);
     // Activated rows are on the board, so the board holds at least `count` entries.
     expect(isRankingListIndexable("model", count, count)).toBe(true);

@@ -104,8 +104,9 @@ describe("#329 loader arguments", () => {
 });
 
 describe("#329 readModelSeeds", () => {
-  it("validates both committed seeds together", () => {
-    expect(ALL.map((e) => e.row.slug)).toHaveLength(13);
+  it("validates the committed seeds together", () => {
+    // #329: 8 closed + 5 open-weight + the per-major seed.
+    expect(ALL.map((e) => e.row.slug)).toHaveLength(13 + readModelSeeds("majors", readFile).length);
     expect(readModelSeeds("open-weight", readFile).every((e) => e.seedFile === SEEDS["open-weight"].file)).toBe(true);
   });
 
@@ -127,7 +128,7 @@ describe("#329 loadModelSeeds", () => {
     expect(calls.map((c) => c.sql)).toEqual([MODEL_SEED_SELECT_SQL]);
     expect(transactions()).toBe(0);
     expect(lines).toContain("  hf_repo: (null) -> deepseek-ai/DeepSeek-V4.1-Flash");
-    expect(lines).toContain("totals: 13 row(s), 13 insert, 0 update, 0 unchanged, 0 refused");
+    expect(lines).toContain(`totals: ${ALL.length} row(s), ${ALL.length} insert, 0 update, 0 unchanged, 0 refused`);
     expect(lines.at(-1)).toBe("dry run: nothing written (pass --apply to write)");
   });
 

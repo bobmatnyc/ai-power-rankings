@@ -3,16 +3,18 @@ name: Load model seed (#329)
 # #329: dispatch-only apply workflow for the reviewed model seeds, in the D96 pattern of
 # merge-duplicate-tools.yml.
 #
-# Why: the model seed rows (docs/refresh/closed-models.json and
-# docs/refresh/open-weight-models-refresh.json) reach production only through
+# Why: the model seed rows (docs/refresh/closed-models.json,
+# docs/refresh/open-weight-models-refresh.json and docs/refresh/model-majors-seed.json) reach production only through
 # scripts/load-model-seeds.ts, and only the DATABASE_URL repository secret reaches production.
 #
 # What: a manual dispatch over scripts/load-model-seeds.ts. Every run starts with the
 # script's dry run, which prints the per-row diff and exits 1 when a row is refused. A
 # dispatch with the default inputs stops there and writes nothing. Writing needs
 # `dry_run: false` AND `confirm: load-model-seed`; the write step then runs one transaction,
-# only after the dry run succeeded. The loader never activates a row and never changes an
-# existing row's status or metrics. The job runs only when dispatched from main, so no other
+# only after the dry run succeeded. The seed upsert never changes a row's status or metrics.
+# `set_status: true` (with seed all) adds the lifecycle status step: the dry run then also plans,
+# and the write also sets in the same transaction, each row's status from
+# docs/refresh/model-lifecycle.json (active or deprecated, #329). The job runs only when dispatched from main, so no other
 # ref reaches the secret-bearing steps. Any non-zero exit fails the job.
 # The job summary carries the mode, each step's outcome and the script's totals line only
 # (D19): no host, database fingerprint, role name, rank or score. The script redacts anything
@@ -32,18 +34,24 @@ on:
   workflow_dispatch:
     inputs:
       seed:
-        description: 'Which seed to load: all, closed or open-weight.'
+        description: 'Which seed to load: all, closed, open-weight or majors.'
         type: choice
         options:
           - all
           - closed
           - open-weight
+          - majors
         default: all
         required: false
       dry_run:
         description: 'Dry run only: print the per-row diff, write nothing. Leave true for the first run.'
         type: boolean
         default: true
+        required: false
+      set_status:
+        description: 'Also plan (and, on a write, set) each row''s lifecycle status from docs/refresh/model-lifecycle.json. Needs seed all.'
+        type: boolean
+        default: false
         required: false
       confirm:
         description: 'Write only: type load-model-seed (with dry_run false). Ignored on a dry run.'
@@ -87,13 +95,21 @@ jobs:
         id: mode
         env:
           SEED: ${{ inputs.seed }}
+          SET_STATUS: ${{ inputs.set_status }}
           DRY_RUN: ${{ inputs.dry_run }}
           CONFIRM: ${{ inputs.confirm }}
         run: |
           set -uo pipefail
           case "$SEED" in
-            all|closed|open-weight) echo "seed=$SEED" >> "$GITHUB_OUTPUT" ;;
-            *) echo "::error::seed must be all, closed or open-weight; nothing was run"; exit 1 ;;
+            all|closed|open-weight|majors) echo "seed=$SEED" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::seed must be all, closed, open-weight or majors; nothing was run"; exit 1 ;;
+          esac
+          case "${SET_STATUS:-false}" in
+            true)
+              if [ "$SEED" != "all" ]; then echo "::error::set_status needs seed all; nothing was run"; exit 1; fi
+              echo "set_status=true" >> "$GITHUB_OUTPUT" ;;
+            false) echo "set_status=false" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::set_status must be true or false; nothing was run"; exit 1 ;;
           esac
           if [ "$DRY_RUN" != "false" ]; then
             echo "mode=dry-run" >> "$GITHUB_OUTPUT"
@@ -113,16 +129,19 @@ jobs:
         id: dryrun
         env:
           SEED: ${{ steps.mode.outputs.seed }}
+          SET_STATUS: ${{ steps.mode.outputs.set_status }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: production
         run: |
           set -uo pipefail
           status=0
-          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --dry-run > "$RUNNER_TEMP/seed-dry-run.raw" 2>&1 || status=$?
+          status_flag=""
+          if [ "${SET_STATUS:-false}" = "true" ]; then status_flag="--set-status"; fi
+          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --dry-run ${status_flag:+"$status_flag"} > "$RUNNER_TEMP/seed-dry-run.raw" 2>&1 || status=$?
           grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/seed-dry-run.raw" > "$RUNNER_TEMP/seed-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/seed-dry-run.raw"
           cat "$RUNNER_TEMP/seed-dry-run.txt"
-          grep -E '^totals: ' "$RUNNER_TEMP/seed-dry-run.txt" > "$RUNNER_TEMP/seed-counts-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
+          grep -E '^(totals|status): ' "$RUNNER_TEMP/seed-dry-run.txt" > "$RUNNER_TEMP/seed-counts-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
           exit "$status"
 
       # One transaction, run only after the dry run succeeded. A re-run is a no-op.
@@ -131,16 +150,19 @@ jobs:
         if: ${{ success() && steps.mode.outputs.mode == 'apply' && steps.dryrun.outcome == 'success' }}
         env:
           SEED: ${{ steps.mode.outputs.seed }}
+          SET_STATUS: ${{ steps.mode.outputs.set_status }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: production
         run: |
           set -uo pipefail
           status=0
-          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --apply > "$RUNNER_TEMP/seed-write.raw" 2>&1 || status=$?
+          status_flag=""
+          if [ "${SET_STATUS:-false}" = "true" ]; then status_flag="--set-status"; fi
+          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --apply ${status_flag:+"$status_flag"} > "$RUNNER_TEMP/seed-write.raw" 2>&1 || status=$?
           grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/seed-write.raw" > "$RUNNER_TEMP/seed-write.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/seed-write.raw"
           cat "$RUNNER_TEMP/seed-write.txt"
-          grep -E '^(totals: |apply: committed)' "$RUNNER_TEMP/seed-write.txt" > "$RUNNER_TEMP/seed-counts-write.txt" || [ "$?" -eq 1 ] || exit 2
+          grep -E '^(totals: |status: |apply: committed)' "$RUNNER_TEMP/seed-write.txt" > "$RUNNER_TEMP/seed-counts-write.txt" || [ "$?" -eq 1 ] || exit 2
           exit "$status"
 
       # Counts only (D19). Runs on failure too, so a failed run still records its mode and
@@ -151,6 +173,7 @@ jobs:
         env:
           MODE: ${{ steps.mode.outputs.mode }}
           SEED: ${{ steps.mode.outputs.seed }}
+          SET_STATUS: ${{ steps.mode.outputs.set_status }}
           DRY_RUN_OUTCOME: ${{ steps.dryrun.outcome }}
           WRITE_OUTCOME: ${{ steps.write.outcome }}
         run: |
@@ -164,6 +187,7 @@ jobs:
             echo '## Model seed load'
             echo ''
             echo "- Seed: ${SEED:-not selected}"
+            echo "- Status step: ${SET_STATUS:-not selected}"
             echo "- Mode: ${mode_label}"
             echo "- Dry run: ${DRY_RUN_OUTCOME:-not run}"
             echo "- Write: ${WRITE_OUTCOME:-not run}"

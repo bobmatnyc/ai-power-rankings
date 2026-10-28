@@ -99,7 +99,8 @@ is a manual dispatch from `main`.
 
 | Input | Default | Meaning |
 |---|---|---|
-| `seed` | `all` | `closed` (`docs/refresh/closed-models.json`), `open-weight` (`docs/refresh/open-weight-models-refresh.json`) or both. |
+| `seed` | `all` | `closed` (`docs/refresh/closed-models.json`), `open-weight` (`docs/refresh/open-weight-models-refresh.json`), `majors` (`docs/refresh/model-majors-seed.json`) or all three. |
+| `set_status` | `false` | With `seed: all`, also plan (and on a write, set in the same transaction) each row's status from `docs/refresh/model-lifecycle.json`: `active` or `deprecated` (#329). |
 | `dry_run` | `true` | Validate the seeds, print the per-row diff, write nothing. |
 | `confirm` | empty | Must be `load-model-seed` to write. Ignored on a dry run. |
 
@@ -114,7 +115,15 @@ The write is an upsert keyed on slug. A new row is created `inactive`, kind `mod
 existing model row it sets only the seed columns (`open_weight`, `hf_repo`, `licence`,
 `parameters_b`, `active_parameters_b`, `release_date`) and the `data.modelSeed` provenance
 key. It never changes `status`, `name`, a description or `data.metrics`, and never activates
-a row. Activation and metrics are a later, separate change.
+a row. Metrics are a later, separate change.
+
+The status step (`set_status: true`, #329) is separate from the upsert. It validates
+`docs/refresh/model-lifecycle.json` (one active row per tier line and major version, an
+availability source and check date per row, a coding source URL per active row, no benchmark
+figures) and sets each listed row to `active` or `deprecated` with a `data.modelLifecycle`
+record. `deprecated` is the archive: the row and its URL stay. It refuses a redirect alias, a
+non-model row and any status other than `inactive`, `active` or `deprecated`, and it writes no
+other column. The dry run prints `would set status` lines and a `status:` totals line.
 
 **Recovery (D98).** Before the write dispatch, the owner creates a named Neon branch of
 production (name pattern: `pre-model-seed-YYYYMMDD`) and records its name and UTC time.
