@@ -33,14 +33,14 @@ describe("parseModelMetricsSeed (#329)", () => {
     // #329: the existing family rows stay out of the seed files and are accepted only by the allowlist.
     expect(EXISTING_FAMILY_METRIC_SLUGS).toEqual(["claude-opus", "claude-sonnet", "grok"]);
     for (const slug of EXISTING_FAMILY_METRIC_SLUGS) expect(SEED_SLUGS).not.toContain(slug);
-    expect(() => parseModelMetricsSeed(JSON.stringify(oneRow({ slug: "grok" })), new Set(SEED_SLUGS))).toThrow(/unknown slug grok/);
+    expect(() => parseModelMetricsSeed(JSON.stringify(oneRow({ slug: "grok" })), new Set(SEED_SLUGS))).toThrow(/unknown slug/);
     expect(seed.rows.every((r) => r.field === "terminal_bench" && r.source === MODEL_TERMINAL_BENCH_SOURCE)).toBe(true);
     expect(parse(oneRow({ version: "GLM snapshot 0101" })).rows[0]!.version).toBe("GLM snapshot 0101");
   });
 
   it.each([
-    ["an unknown slug", oneRow({ slug: "gpt-oss" }), /unknown slug gpt-oss/],
-    ["a version-bearing slug of an existing family", oneRow({ slug: "claude-opus-5-5" }), /unknown slug claude-opus-5-5/],
+    ["an unknown slug", oneRow({ slug: "gpt-oss" }), /unknown slug/],
+    ["a version-bearing slug of an existing family", oneRow({ slug: "claude-opus-5-5" }), /unknown slug/],
     ["a vendor source", oneRow({ source: "https://www.anthropic.com/news" }), /source must be/],
     ["the Vals page with a fragment", oneRow({ source: `${MODEL_TERMINAL_BENCH_SOURCE}#snapshot` }), /source must be/],
     ["a TB 2.1 source", oneRow({ source: "https://www.tbench.ai/leaderboard/terminal-bench/2.1" }), /source must be/],
@@ -51,13 +51,34 @@ describe("parseModelMetricsSeed (#329)", () => {
     ["a missing as_of", oneRow({ as_of: undefined }), /as_of is required/],
     ["a non-date as_of", oneRow({ as_of: "2026-02-30" }), /real YYYY-MM-DD/],
     ["an as_of after checked_at", oneRow({ as_of: "2026-10-22" }), /after checked_at/],
-    ["muse-wonder", oneRow({ slug: "muse-wonder" }), /muse-wonder is excluded/],
-    ["swe_bench", oneRow({ field: "swe_bench" }), /field swe_bench is not allowed/],
+    ["muse-wonder", oneRow({ slug: "muse-wonder" }), /slug is excluded \(muse-wonder\)/],
+    ["swe_bench", oneRow({ field: "swe_bench" }), /field is not allowed/],
     ["swe_bench.verified", oneRow({ field: "swe_bench.verified" }), /not allowed/],
-    ["an extra key", oneRow({ rank: 1 }), /unknown key rank/],
+    ["an extra key", oneRow({ rank: 1 }), /has a key outside/],
     ["an empty version", oneRow({ version: "" }), /version is required/],
   ])("rejects %s", (_name, doc, error) => {
     expect(() => parse(doc)).toThrow(error);
+  });
+
+  it("names no input text in any rejection (#329: the loader output reaches a public log)", () => {
+    const cases = [
+      oneRow({ slug: "gpt-oss" }),
+      oneRow({ field: "swe_bench" }),
+      oneRow({ rank: 1 }),
+      oneRow({ as_of: "2026-10-22" }),
+      oneRow({ source: "https://example.com/leak" }),
+      oneRow({ value: 101 }),
+    ];
+    for (const doc of cases) {
+      let message = "";
+      try {
+        parse(doc);
+      } catch (error) {
+        message = (error as Error).message;
+      }
+      expect(message).not.toBe("");
+      for (const leak of ["gpt-oss", "swe_bench", "rank", "2026-10-22", "example.com", "101"]) expect(message).not.toContain(leak);
+    }
   });
 
   it("rejects a non-finite figure, which JSON cannot carry, at the row level", () => {
