@@ -23,6 +23,7 @@
  */
 
 import tableRows from "../data/url-table-191.json";
+import { MODEL_REDIRECT_REPOINTS } from "../lib/db/repositories/model-redirect-repoint";
 
 /** D90: the seven old slugs, in URL table order. Each target comes from the table. */
 export const D90_OLD_SLUGS = [
@@ -64,6 +65,9 @@ interface TableRow {
 /**
  * Maps each old slug to its 308 target in the signed URL table (`/en/tools/<slug>` rows).
  * Throws when a slug has no row, so a pair is never invented.
+ * D58: an alias that D58 re-pointed maps to the target the D90/D91 merge applied (the
+ * re-point's `from`), so the historical pairs stay as applied. A re-run against a re-pointed
+ * database then refuses the pair (the old row already redirects elsewhere) and writes nothing.
  */
 export function derivePairs(
   oldSlugs: readonly string[] = D90_OLD_SLUGS,
@@ -73,7 +77,9 @@ export function derivePairs(
     const row = rows.find((r) => r.action === "308" && r.source === `/en/tools/${oldSlug}`);
     const newSlug = row?.destination.match(/^\/en\/tools\/([^/?#]+)$/)?.[1];
     if (!newSlug) throw new Error(`no /en/tools 308 row in the URL table for ${oldSlug}`);
-    return { oldSlug, newSlug };
+    // D58: undo the re-point for the historical pair only when the table holds the D58 target.
+    const repoint = MODEL_REDIRECT_REPOINTS.find((p) => p.alias === oldSlug && p.to === newSlug);
+    return { oldSlug, newSlug: repoint ? repoint.from : newSlug };
   });
 }
 

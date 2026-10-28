@@ -47,8 +47,9 @@ async function freshDb(): Promise<PGlite> {
   await insert("glm", "model", "active", true, {});
   await insert("kimi", "model", "active", true, {});
   await insert("deepseek", "model", "active", true, {});
-  for (const alias of ["opus-4-6", "opus-4-5"]) {
-    await insert(alias, "model", "redirect", false, { redirect_to: "claude-opus", previous_status: "active" });
+  // D58: every alias of the re-point list, at the target D90/D91 wrote.
+  for (const pair of MODEL_REDIRECT_REPOINTS) {
+    await insert(pair.alias, "model", "redirect", null, { redirect_to: pair.from, previous_status: "active" });
   }
   await insert("cursor", "harness", "active", null, {});
   // The first seed apply inserted the remaining closed and open-weight rows inactive.
@@ -104,7 +105,7 @@ describe("per-major apply on PGlite (#329)", () => {
     pg = await freshDb();
     const log: string[] = [];
     expect(await loadModelSeeds(asSeedDb(pg), ENTRIES, true, (l) => log.push(l), LIFECYCLE, MODEL_REDIRECT_REPOINTS)).toBe(0);
-    expect(log.at(-1)).toMatch(/^apply: committed, \d+ row\(s\) written, \d+ status\(es\) set, 2 redirect\(s\) re-pointed$/);
+    expect(log.at(-1)).toMatch(/^apply: committed, \d+ row\(s\) written, \d+ status\(es\) set, 6 redirect\(s\) re-pointed$/);
 
     const after = await statuses(pg);
     for (const row of LIFECYCLE.rows) expect(after.get(row.slug), row.slug).toBe(row.targetStatus);
@@ -114,10 +115,11 @@ describe("per-major apply on PGlite (#329)", () => {
       return `${row.line}#${row.major}`;
     });
     expect(new Set(keys).size).toBe(keys.length);
-    expect(after.get("opus-4-6")).toBe("redirect");
-    expect(after.get("opus-4-5")).toBe("redirect");
-    expect(await redirectTo(pg, "opus-4-6")).toBe("claude-opus-4");
-    expect(await redirectTo(pg, "opus-4-5")).toBe("claude-opus-4");
+    for (const pair of MODEL_REDIRECT_REPOINTS) {
+      expect(after.get(pair.alias), pair.alias).toBe("redirect");
+      expect(await redirectTo(pg, pair.alias), pair.alias).toBe(pair.to);
+      expect(after.get(pair.to), pair.to).toBe("active");
+    }
     expect(after.get("cursor")).toBe("active");
 
     const { rows } = await pg.query<{ data: Record<string, unknown> }>(`SELECT data FROM public."tools" WHERE slug = 'claude-opus'`);
@@ -135,7 +137,7 @@ describe("per-major apply on PGlite (#329)", () => {
     expect(await loadModelSeeds(db, ENTRIES, false, (l) => log.push(l), LIFECYCLE, MODEL_REDIRECT_REPOINTS)).toBe(0);
     expect(log).toContain(`totals: ${ENTRIES.length} row(s), 0 insert, 0 update, ${ENTRIES.length} unchanged, 0 refused`);
     expect(log).toContain(`status: ${LIFECYCLE.rows.length} row(s), 0 set active, 0 set deprecated, ${LIFECYCLE.rows.length} unchanged, 0 refused`);
-    expect(log).toContain("redirects: 2 alias(es), 0 re-point, 2 unchanged, 0 refused");
+    expect(log).toContain("redirects: 6 alias(es), 0 re-point, 6 unchanged, 0 refused");
   });
 
   // M1: a row that turns into a redirect between plan and apply makes the guarded status update
@@ -143,6 +145,8 @@ describe("per-major apply on PGlite (#329)", () => {
   it.each<[string, string, string]>([
     ["a lifecycle row turned redirect", MODEL_STATUS_UPDATE_SQL, `UPDATE public."tools" SET status = 'redirect' WHERE slug = 'gpt-astra'`],
     ["an alias re-pointed elsewhere", MODEL_REDIRECT_REPOINT_SQL, `UPDATE public."tools" SET data = data || '{"redirect_to": "claude-sonnet"}'::jsonb WHERE slug = 'opus-4-5'`],
+    // D58: the target must still be active when the re-point runs.
+    ["a re-point target turned inactive", MODEL_REDIRECT_REPOINT_SQL, `UPDATE public."tools" SET status = 'inactive' WHERE slug = 'claude-opus-4'`],
   ])("rolls everything back when %s between plan and apply", async (_name, trigger, change) => {
     pg = await freshDb();
     const before = await snapshot(pg);

@@ -17,7 +17,9 @@ import {
   type RedirectRepoint,
 } from "../../lib/db/repositories/model-redirect-repoint";
 import type { ModelSeedDb } from "../../lib/db/repositories/model-seed-writer";
-import { loadModelSeeds } from "../../scripts/load-model-seeds";
+import type { ModelLifecycle } from "../../lib/db/repositories/model-lifecycle";
+import { loadModelSeeds, readModelLifecycle } from "../../scripts/load-model-seeds";
+import { readFileSync } from "node:fs";
 
 type Row = { slug: string; kind: string; status: string; redirect_to: string | null };
 
@@ -44,13 +46,32 @@ const alias = (slug: string, redirectTo: string | null, extra: Partial<Row> = {}
 });
 const target: Row = { slug: "claude-opus-4", kind: "model", status: "active", redirect_to: null };
 const PAIR: RedirectRepoint[] = [{ alias: "opus-4-6", from: "claude-opus", to: "claude-opus-4" }];
+const LIFECYCLE = readModelLifecycle((file) => readFileSync(file, "utf8"));
+const ACTIVE = new Set(LIFECYCLE.rows.filter((r) => r.targetStatus === "active").map((r) => r.slug));
+const OPUS_4: ModelLifecycle = { checkedAt: LIFECYCLE.checkedAt, rows: LIFECYCLE.rows.filter((r) => r.slug === "claude-opus-4") };
 
 describe("redirect re-point plan (#329)", () => {
-  it("lists exactly the two Opus 4.x aliases, from claude-opus to claude-opus-4", () => {
+  // D58: the four alias groups.
+  it("lists the four alias groups, each to the active lifecycle row of its tier and major", () => {
     expect(MODEL_REDIRECT_REPOINTS).toEqual([
       { alias: "opus-4-6", from: "claude-opus", to: "claude-opus-4" },
       { alias: "opus-4-5", from: "claude-opus", to: "claude-opus-4" },
+      { alias: "sonnet-4-5", from: "claude-sonnet", to: "claude-sonnet-4" },
+      { alias: "kimi-2-5", from: "kimi", to: "kimi-2" },
+      { alias: "moonshot-kimi-2-5", from: "kimi", to: "kimi-2" },
+      { alias: "deepseek-v3-2", from: "deepseek", to: "deepseek-base" },
     ]);
+    const bySlug = new Map(LIFECYCLE.rows.map((r) => [r.slug, r]));
+    const expected: Record<string, [string, number]> = {
+      "claude-opus-4": ["claude-opus", 4],
+      "claude-sonnet-4": ["claude-sonnet", 4],
+      "kimi-2": ["kimi", 2],
+      "deepseek-base": ["deepseek-base", 3],
+    };
+    for (const pair of MODEL_REDIRECT_REPOINTS) {
+      const row = bySlug.get(pair.to)!;
+      expect([row.line, row.major, row.targetStatus], pair.alias).toEqual([...expected[pair.to]!, "active"]);
+    }
   });
 
   it.each<[string, Row[], ReadonlySet<string>, RegExp | "repoint" | "unchanged"]>([
@@ -60,19 +81,32 @@ describe("redirect re-point plan (#329)", () => {
     ["a missing alias", [target], new Set(), /no tools row/],
     ["an alias that is not a redirect", [alias("opus-4-6", "claude-opus", { status: "active" }), target], new Set(), /not a model redirect/],
     ["an alias at an unexpected target", [alias("opus-4-6", "claude-sonnet"), target], new Set(), /expected claude-opus/],
-    ["a new target that does not exist", [alias("opus-4-6", "claude-opus")], new Set(), /not a live model row/],
-    ["a new target that is itself a redirect", [alias("opus-4-6", "claude-opus"), { ...target, status: "redirect" }], new Set(), /not a live model row/],
+    ["a new target that does not exist", [alias("opus-4-6", "claude-opus")], new Set(), /status step can set active/],
+    ["a new target that is itself a redirect", [alias("opus-4-6", "claude-opus"), { ...target, status: "redirect" }], new Set(), /status step can set active/],
+    // D58: an inactive target is fine when the lifecycle sets it active earlier in the transaction.
+    ["an inactive target the lifecycle sets active", [alias("opus-4-6", "claude-opus"), { ...target, status: "inactive" }], new Set(), "repoint"],
   ])("plans %s", async (_name, rows, pending, expected) => {
-    const [plan] = await planRedirectRepoints(fakeDb(rows).db, PAIR, pending);
+    const [plan] = await planRedirectRepoints(fakeDb(rows).db, PAIR, pending, ACTIVE);
     if (typeof expected === "string") expect(plan!.outcome).toBe(expected);
     else expect(plan).toMatchObject({ outcome: "refused", reason: expect.stringMatching(expected) });
+  });
+});
+
+describe("redirect re-point target must be active (D58)", () => {
+  it("refuses a target the lifecycle does not set active", async () => {
+    const [plan] = await planRedirectRepoints(fakeDb([alias("opus-4-6", "claude-opus"), target]).db, PAIR, new Set(), new Set());
+    expect(plan).toMatchObject({ outcome: "refused", reason: "new target claude-opus-4 is not active in the lifecycle" });
+  });
+
+  it("the guarded statement needs an active target", () => {
+    expect(MODEL_REDIRECT_REPOINT_SQL).toMatch(/t\.kind = 'model' AND t\.status = 'active'\)/);
   });
 });
 
 describe("redirect re-point apply (#329)", () => {
   it("writes each re-point with the guarded statement", async () => {
     const { db, calls } = fakeDb([alias("opus-4-6", "claude-opus"), target]);
-    const plans = await planRedirectRepoints(db, PAIR, new Set());
+    const plans = await planRedirectRepoints(db, PAIR, new Set(), ACTIVE);
     expect(await applyRedirectRepoints(db, plans)).toBe(1);
     expect(calls.at(-1)).toEqual({ sql: MODEL_REDIRECT_REPOINT_SQL, params: ["opus-4-6", "claude-opus", "claude-opus-4"] });
     expect(MODEL_REDIRECT_REPOINT_SQL).toMatch(/status = 'redirect' AND data->>'redirect_to' = \$2/);
@@ -81,14 +115,14 @@ describe("redirect re-point apply (#329)", () => {
 
   it("fails closed when the guarded statement matches no row", async () => {
     const { db } = fakeDb([alias("opus-4-6", "claude-opus"), target], () => []);
-    const plans = await planRedirectRepoints(db, PAIR, new Set());
+    const plans = await planRedirectRepoints(db, PAIR, new Set(), ACTIVE);
     await expect(applyRedirectRepoints(db, plans)).rejects.toThrow(/matched no row/);
   });
 
   it("the loader's dry run prints the re-point and writes nothing", async () => {
     const { db, calls } = fakeDb([alias("opus-4-6", "claude-opus"), target]);
     const lines: string[] = [];
-    expect(await loadModelSeeds(db, [], false, (l) => lines.push(l), null, PAIR)).toBe(0);
+    expect(await loadModelSeeds(db, [], false, (l) => lines.push(l), OPUS_4, PAIR)).toBe(0);
     expect(lines).toContain("would re-point redirect: opus-4-6: claude-opus -> claude-opus-4");
     expect(lines).toContain("redirects: 1 alias(es), 1 re-point, 0 unchanged, 0 refused");
     expect(calls.filter((c) => c.sql === MODEL_REDIRECT_REPOINT_SQL)).toHaveLength(0);
@@ -97,7 +131,7 @@ describe("redirect re-point apply (#329)", () => {
   it("the loader writes nothing and exits 1 when a re-point is refused", async () => {
     const { db, calls } = fakeDb([alias("opus-4-6", "claude-sonnet"), target]);
     const lines: string[] = [];
-    expect(await loadModelSeeds(db, [], true, (l) => lines.push(l), null, PAIR)).toBe(1);
+    expect(await loadModelSeeds(db, [], true, (l) => lines.push(l), OPUS_4, PAIR)).toBe(1);
     expect(lines).toContain("REFUSED redirect: opus-4-6: alias redirects to claude-sonnet, expected claude-opus");
     expect(calls.filter((c) => c.sql === MODEL_REDIRECT_REPOINT_SQL)).toHaveLength(0);
   });
