@@ -120,7 +120,8 @@ export async function GET(request: NextRequest) {
       // Fetch recent tool updates
       (async () => {
         const toolsRepo = new ToolsRepository();
-        const allTools = await toolsRepo.findAll();
+        // #314: active tools only; inactive seeded rows (0018, 0027) have updated_at = now().
+        const allTools = await toolsRepo.findByStatus("active");
 
         const recentTools = allTools
           .filter((tool): tool is typeof tool & { updated_at: string } => {

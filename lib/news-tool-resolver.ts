@@ -31,6 +31,13 @@ export interface CatalogueTool {
   redirect_to?: unknown;
 }
 
+/**
+ * #314: former names of a catalogue row, by slug. Claude Artifacts was renamed Claude.AI with its
+ * slug kept, so an article that still says "Claude Artifacts" must reach the same row. An alias
+ * applies only when the row is in the catalogue and active, and never replaces a real name or slug.
+ */
+const FORMER_NAMES: ReadonlyArray<{ slug: string; name: string }> = [{ slug: "claude-artifacts", name: "Claude Artifacts" }];
+
 /** #187: longest redirect chain followed before a row is dropped (guards a cycle). */
 const MAX_REDIRECT_HOPS = 5;
 
@@ -116,6 +123,15 @@ export function buildToolCatalogue<T extends CatalogueTool>(tools: readonly T[])
     // in headlines, so it is attributed through mentions only.
     const name = tool.name.trim();
     if (name && !isSingleWordName(name) && !terms.has(name)) terms.set(name, target);
+  }
+
+  // #314: former names resolve to the active row that carries the slug.
+  for (const { slug, name } of FORMER_NAMES) {
+    const row = named.find((t) => t.slug === slug && t.status === "active");
+    if (!row) continue;
+    const key = normalizeKey(name);
+    if (!byKey.has(key)) byKey.set(key, row);
+    if (!terms.has(name)) terms.set(name, row);
   }
 
   // A term matches only as a whole word: no letter or digit may touch either

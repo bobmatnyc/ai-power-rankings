@@ -133,7 +133,10 @@ export class ToolMapper {
     "claude sonnet": "Claude Code",
     "claude opus": "Claude Code",
     "claude haiku": "Claude Code",
-    "claude artifacts": "Claude Artifacts",
+    // #314: Claude Artifacts is renamed Claude.AI (slug claude-artifacts kept); the old name still maps to it.
+    "claude artifacts": "Claude.AI",
+    "claude.ai": "Claude.AI",
+    "claude ai": "Claude.AI",
     "claude canvas": "Claude Code", // Claude's Canvas is part of Claude Code
 
     // Google variations
@@ -222,7 +225,7 @@ export class ToolMapper {
     "OpenAI Codex CLI",
     "Devin",
     "Continue",
-    "Claude Artifacts",
+    "Claude.AI", // #314: was "Claude Artifacts"
     "Sourcegraph Cody",
     "Cline",
     "OpenHands",
@@ -607,7 +610,7 @@ Your task is to analyze articles and extract structured information about AI too
 Focus on:
 1. Identifying ALL AI tools, models, and services mentioned - USE SPECIFIC PRODUCT NAMES when possible:
    - For OpenAI: "ChatGPT Canvas" for their code editor, "GPT-4" for the model, "OpenAI Codex CLI" for Codex
-   - For Anthropic: "Claude Code" for their coding tool, "Claude 3.5" for the model, "Claude Artifacts" for UI generation
+   - For Anthropic: "Claude Code" for their coding tool, "Claude 3.5" for the model, "Claude.AI" for the Claude assistant app (formerly Claude Artifacts)
    - For Google: "Google Gemini Code Assist" for code assistance, "Google Jules" for their agent, "Gemini" for the model
    - For GitHub/Microsoft: "GitHub Copilot" (not just "Copilot"), "Microsoft IntelliCode"
    - For Amazon: "Amazon Q Developer" (evolved from CodeWhisperer)
