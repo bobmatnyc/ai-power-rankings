@@ -199,3 +199,6 @@ wheels/
 kuzu-memories/
 .trusty-search/
 .trusty-mpm/sessions/
+
+# #329: private model metrics (Vals TB 4.0 figures are not redistributed in this repo)
+/data/private/
