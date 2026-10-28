@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { parseKindSheet } from "./db/tool-kind-sheet";
+import { backfillSheetRows, KIND_SHEET_CONTRACT, parseKindSheet } from "./db/tool-kind-sheet";
 
 import { TOOL_KINDS } from "./db/schema";
 import { computeRankings } from "./services/ranking-generation.service";
@@ -60,7 +60,7 @@ function withHarness(weights: RankingWeightsV76) {
 }
 const wrong = withHarness(negativeControlWeights(v710));
 
-/** The fixtures are smaller than the production floor (HARNESS_FLOOR, 66), so the floor is set to their harness count. */
+/** The fixtures are smaller than the production floor (HARNESS_FLOOR, 64), so the floor is set to their harness count. */
 const fixtureFloor = (tools: MeasuredTool[]) => tools.filter((t) => t.kind === "harness").length;
 
 /** A kind sheet listing every fixture tool, none retired. */
@@ -296,8 +296,12 @@ describe("measureBoard harness list check (#185)", () => {
 
   it.each<[string, () => MeasuredTool[], (r: MeasurementResult) => void]>([
     ["no harness tools", () => notHarness(mixedBoard()), (r) => expect(r.harness!.harnessTools).toBe(0)],
-    ["fewer harness tools than the floor of 66", () => harnessBoard(), (r) => expect(r.harness!.harnessTools).toBe(24)],
-    ["one harness tool below the floor (65)", () => harnessBoard(65), (r) => expect(r.harness!.harnessTools).toBe(65)],
+    ["fewer harness tools than the floor of 64", () => harnessBoard(), (r) => expect(r.harness!.harnessTools).toBe(24)],
+    [
+      "one harness tool below the floor (HARNESS_FLOOR - 1)",
+      () => harnessBoard(HARNESS_FLOOR - 1),
+      (r) => expect(r.harness!.harnessTools).toBe(HARNESS_FLOOR - 1),
+    ],
     [
       "an unmigrated kind column (null)",
       () => harnessBoard(80).map((t, i) => (i === 0 ? { ...t, kind: String(null) } : t)),
@@ -318,18 +322,26 @@ describe("measureBoard harness list check (#185)", () => {
     expect(formatMeasurementReport(result)).toMatch(/^Result: FAIL \(harness list check\)/);
   });
 
-  it("HARNESS_FLOOR is the sheet's harness rows minus its retired harness rows (69 - 3 = 66)", () => {
+  // #314 (Architect ruling 17:40Z): the floor stays 64 until migration 0028 is applied. It is at most
+  // the live (pre-0028) harness count, so today's board passes, and above the sheet's post-0028
+  // count, so applying 0028 without the activation PR lowering the floor fails the gate.
+  it("HARNESS_FLOOR is at most the pre-0028 harness count and above the post-0028 count (#314)", () => {
     const sheet = readFileSync(join(__dirname, "..", "docs", "refresh", "tool-kind-mapping.csv"), "utf8");
     const { rows, errors } = parseKindSheet(sheet);
     expect(errors).toEqual([]);
-    const harness = rows.filter((r) => r.kind === "harness");
-    const retired = harness.filter((r) => r.retired);
-    expect(HARNESS_FLOOR).toBe(harness.length - retired.length);
+    const liveHarness = (rs: typeof rows) => rs.filter((r) => r.kind === "harness" && !r.retired).length;
+    const pre0028 = liveHarness(backfillSheetRows(rows, KIND_SHEET_CONTRACT));
+    const post0028 = liveHarness(rows);
+    expect([pre0028, post0028]).toEqual([66, 61]);
+    expect(HARNESS_FLOOR).toBeLessThanOrEqual(pre0028);
+    expect(HARNESS_FLOOR).toBeGreaterThan(post0028);
+    expect(measureAtDefaultFloor(harnessBoard(post0028)).harness!.ok).toBe(false);
   });
 
-  it("passes the check at the floor of 66 harness tools with other kinds present", () => {
-    const result = measureAtDefaultFloor(harnessBoard(66));
-    expect(result.harness).toMatchObject({ harnessTools: 66, floor: 66, ok: true });
+  it("passes the check at the floor of 64 harness tools with other kinds present", () => {
+    const result = measureAtDefaultFloor(harnessBoard(HARNESS_FLOOR));
+    expect(HARNESS_FLOOR).toBe(64);
+    expect(result.harness).toMatchObject({ harnessTools: 64, floor: 64, ok: true });
     expect(result.exitCode).toBe(EXIT_CODES.ok);
   });
 });

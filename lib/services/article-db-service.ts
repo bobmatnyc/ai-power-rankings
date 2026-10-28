@@ -1015,7 +1015,7 @@ export class ArticleDatabaseService {
       "OpenAI Codex CLI",
       "Devin",
       "Continue",
-      "Claude Artifacts",
+      "Claude.AI", // #314: was "Claude Artifacts"
       "Sourcegraph Cody",
       "Cline",
       "OpenHands",
