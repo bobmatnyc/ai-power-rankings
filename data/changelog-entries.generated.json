@@ -90,8 +90,8 @@
   {
     "id": "unreleased-57587f68230f",
     "version": "Unreleased",
-    "date": "2026-10-28T16:15:35.311Z",
-    "dateSource": "build",
+    "date": "2026-10-28T16:29:33.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "db",
     "title": "migration 0022_fix_grok_stray_kind.sql gives the grok-4-5, grok-4-6 and grok-4-7 rows kind model and archives them…",
@@ -101,8 +101,8 @@
   {
     "id": "unreleased-aeccf9bee8fa",
     "version": "Unreleased",
-    "date": "2026-10-27T22:21:35.850Z",
-    "dateSource": "build",
+    "date": "2026-10-27T22:27:43.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "ui",
     "title": "the home page top-3 card titles are readable in the narrow three-column layout (about 900 px)",
@@ -112,7 +112,7 @@
   {
     "id": "unreleased-1fde6933d7dc",
     "version": "Unreleased",
-    "date": "2026-10-27T21:54:14.000Z",
+    "date": "2026-10-27T22:07:09.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "ui",
@@ -673,7 +673,7 @@
   {
     "id": "unreleased-55ef105c043f",
     "version": "Unreleased",
-    "date": "2026-10-28T17:42:00.000Z",
+    "date": "2026-10-28T17:43:58.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "tools",
@@ -992,8 +992,8 @@
   {
     "id": "unreleased-137284c94d3d",
     "version": "Unreleased",
-    "date": "2026-10-28T16:52:21.444Z",
-    "dateSource": "build",
+    "date": "2026-10-28T17:00:28.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "seo",
     "title": "the six re-pointed model aliases redirect to their per-major page (owner ruling D6e)",
@@ -1047,8 +1047,8 @@
   {
     "id": "unreleased-bc3a760513af",
     "version": "Unreleased",
-    "date": "2026-10-27T13:54:08.883Z",
-    "dateSource": "build",
+    "date": "2026-10-27T14:03:33.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "news",
     "title": "an ingested article summary is validated (#180)",
