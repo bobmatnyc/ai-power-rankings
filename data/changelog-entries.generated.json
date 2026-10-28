@@ -979,6 +979,17 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-137284c94d3d",
+    "version": "Unreleased",
+    "date": "2026-10-28T16:52:21.444Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "seo",
+    "title": "the six re-pointed model aliases redirect to their per-major page (owner ruling D6e)",
+    "description": "the six re-pointed model aliases redirect to their per-major page (owner ruling D6e). `opus-4-5` and `opus-4-6` answer one 308 to `claude-opus-4`, `sonnet-4-5` to `claude-sonnet-4`, `kimi-2-5` and `moonshot-kimi-2-5` to `kimi-2`, and `deepseek-v3-2` to `deepseek-base`, in every locale. The four pages render, so their `PENDING_TARGETS` hold is removed from `lib/seo/url-table.ts`, and the 60 alias rows leave the sitemap as redirect sources. A test fails if a released alias target is itself a 308 source or a noindex row. Tests: `tests/unit/url-table-197-release.test.ts`, `tests/unit/url-table-191.test.ts` (#329)",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-bd4b0816a25e",
     "version": "Unreleased",
     "date": "2026-10-26T14:23:56.000Z",

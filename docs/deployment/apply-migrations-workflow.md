@@ -181,6 +181,10 @@ D6e entry from `PENDING_TARGETS` and moves the 50 held rows in
 `tests/unit/url-table-197-release.test.ts` (and the six D58 aliases) to the released assertions.
 Never remove the entry before step 2: a 308 to a page that does not exist drops it from search.
 
+Done 2026-10-28 (D6e): after the `set_status` write committed and the four pages rendered with
+`index,follow`, the D6e entry left `PENDING_TARGETS`. The six aliases now answer one 308 to their
+per-major page in every locale (`tests/unit/url-table-197-release.test.ts`).
+
 **After the D58 re-point, two historical steps fail closed on a re-run.** Migration 0019's
 "already folded" check counts aliases that redirect to their family row, so it no longer matches;
 the re-run falls through to its precondition (family rows inactive), raises
