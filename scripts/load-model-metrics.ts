@@ -85,10 +85,24 @@ export function parseArgs(argv: readonly string[], env: NodeJS.ProcessEnv = proc
   return errors.length > 0 ? { errors } : { metricsFile, apply, activate, checkActivation, hideValues };
 }
 
-/** True when git tracks `file` in the current repository; a path outside any repo is untracked. */
-export function isTrackedByGit(file: string): boolean {
-  const res = spawnSync("git", ["ls-files", "--error-unmatch", "--", file], { encoding: "utf8", stdio: "pipe" });
-  return res.status === 0;
+/** The slice of `spawnSync` the tracked-file check uses; injectable for tests. */
+export type GitSpawn = (
+  command: string,
+  args: string[],
+  options: { encoding: "utf8"; stdio: "pipe" }
+) => { status: number | null; error?: Error };
+
+/**
+ * True when git tracks `file`. Exit 1 (untracked) and 128 (the path is outside any repository,
+ * as the workflow's RUNNER_TEMP file is) mean untracked.
+ * #329: fails closed: a git that cannot run, or any other exit, throws instead of passing.
+ */
+export function isTrackedByGit(file: string, spawn: GitSpawn = spawnSync): boolean {
+  const res = spawn("git", ["ls-files", "--error-unmatch", "--", file], { encoding: "utf8", stdio: "pipe" });
+  if (res.error || res.status === null) throw new Error("could not run git to check that the metrics file is untracked; refusing to run");
+  if (res.status === 0) return true;
+  if (res.status === 1 || res.status === 128) return false;
+  throw new Error(`git ls-files exited ${res.status} while checking the metrics file; refusing to run`);
 }
 
 /** #329: reads and validates the metrics file; refuses a tracked copy (the figures stay out of the repo). */

@@ -9,7 +9,9 @@
  *   a model family slug listed in the model seed files or in `EXISTING_FAMILY_METRIC_SLUGS`, the field `terminal_bench`, a positive
  *   finite value of at most 100, the Vals page as source (exactly `MODEL_TERMINAL_BENCH_SOURCE`)
  *   and an `as_of` date no later than the file's `checked_at`. `version` names the version or
- *   snapshot the figure was measured on when it is not the seeded flagship. Pure: no database,
+ *   snapshot the figure was measured on when it is not the seeded flagship. No error message
+ *   quotes input text (a figure, source, date, key or unknown slug), because the loader's output
+ *   reaches a public log; a JSON syntax error reports a byte position at most. Pure: no database,
  *   no network.
  * Test: `tests/unit/model-metrics-seed-329.test.ts`
  */
@@ -68,20 +70,34 @@ function text(e: Record<string, unknown>, key: string, what: string): string {
 }
 
 /**
+ * #329: JSON.parse's own message quotes the text near the error, which can hold a figure. This
+ * throws a fixed message with the byte position only.
+ */
+function parseJsonQuietly(jsonText: string): unknown {
+  try {
+    return JSON.parse(jsonText);
+  } catch (error) {
+    const position = /\bposition (\d+)/.exec(error instanceof Error ? error.message : "")?.[1];
+    throw new Error(`metrics seed: not valid JSON${position ? ` (at byte ${position})` : ""}`);
+  }
+}
+
+/**
  * Why: one row is one figure that may reach `tools.data`; each rule guards a D63 ruling.
  * What: returns the typed row or throws naming the row and the rule it broke.
  * Test: `tests/unit/model-metrics-seed-329.test.ts`
  */
 export function parseModelMetricRow(entry: unknown, what: string, knownSlugs: ReadonlySet<string>, checkedAt: string): ModelMetricRow {
   const e = rec(entry, what);
-  for (const key of Object.keys(e)) if (!ROW_KEYS.has(key)) throw new Error(`${what}: unknown key ${key}`);
+  // #329: messages below name the row index and the rule, never the input text.
+  for (const key of Object.keys(e)) if (!ROW_KEYS.has(key)) throw new Error(`${what}: has a key outside ${[...ROW_KEYS].join(", ")}`);
   const slug = text(e, "slug", what);
   // #329: Muse Wonder is excluded by ruling, even if a seed file ever lists it.
-  if (EXCLUDED_METRIC_SLUGS.includes(slug)) throw new Error(`${what}: ${slug} is excluded`);
-  if (!knownSlugs.has(slug)) throw new Error(`${what}: unknown slug ${slug}; a metric attaches only to a seeded or allowlisted model family row`);
+  if (EXCLUDED_METRIC_SLUGS.includes(slug)) throw new Error(`${what}: slug is excluded (${EXCLUDED_METRIC_SLUGS.join(", ")})`);
+  if (!knownSlugs.has(slug)) throw new Error(`${what}: unknown slug; a metric attaches only to a seeded or allowlisted model family row`);
   const field = text(e, "field", what);
   if (!(MODEL_METRIC_FIELDS as readonly string[]).includes(field)) {
-    throw new Error(`${what}: field ${field} is not allowed (only ${MODEL_METRIC_FIELDS.join(", ")})`);
+    throw new Error(`${what}: field is not allowed (only ${MODEL_METRIC_FIELDS.join(", ")})`);
   }
   const value = e["value"];
   if (typeof value !== "number" || !Number.isFinite(value) || value <= 0 || value > 100) {
@@ -92,7 +108,7 @@ export function parseModelMetricRow(entry: unknown, what: string, knownSlugs: Re
   if (source !== MODEL_TERMINAL_BENCH_SOURCE) throw new Error(`${what}: source must be ${MODEL_TERMINAL_BENCH_SOURCE}`);
   const asOf = text(e, "as_of", what);
   if (!isCalendarDate(asOf)) throw new Error(`${what}: as_of must be a real YYYY-MM-DD date`);
-  if (asOf > checkedAt) throw new Error(`${what}: as_of ${asOf} is after checked_at ${checkedAt}`);
+  if (asOf > checkedAt) throw new Error(`${what}: as_of is after checked_at`);
   let version: string | null = null;
   if (e["version"] !== undefined) version = text(e, "version", what);
   return { slug, field: field as ModelMetricField, value, source, asOf, version };
@@ -106,7 +122,7 @@ export function parseModelMetricRow(entry: unknown, what: string, knownSlugs: Re
  * Test: `tests/unit/model-metrics-seed-329.test.ts`
  */
 export function parseModelMetricsSeed(jsonText: string, knownSlugs: ReadonlySet<string>): ModelMetricsSeed {
-  const doc = rec(JSON.parse(jsonText), "metrics seed");
+  const doc = rec(parseJsonQuietly(jsonText), "metrics seed");
   const checkedAt = text(doc, "checked_at", "metrics seed");
   if (!isCalendarDate(checkedAt)) throw new Error("metrics seed: checked_at must be a real YYYY-MM-DD date");
   const entries = doc["metrics"];
