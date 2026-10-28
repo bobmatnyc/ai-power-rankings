@@ -222,6 +222,13 @@ BEGIN
   IF n <> 6 THEN
     RAISE EXCEPTION '#314 0028: % of 6 rows are productivity after the update', n;
   END IF;
+  -- #314: post-check — an alias row that exists must be productivity; a missing one is allowed.
+  SELECT string_agg(format('%s (kind %s)', slug, kind), ', ' ORDER BY slug) INTO clash
+    FROM public."tools"
+   WHERE slug IN ('clawdbot', 'moltbot', 'cowork-ai') AND kind IS DISTINCT FROM 'productivity';
+  IF clash IS NOT NULL THEN
+    RAISE EXCEPTION '#314 0028: retired aliases are not productivity after the update: %', clash;
+  END IF;
   IF NOT EXISTS (SELECT 1 FROM public."tools" WHERE slug = 'claude-artifacts' AND name = 'Claude.AI') THEN
     RAISE EXCEPTION '#314 0028: claude-artifacts is not named Claude.AI after the update';
   END IF;
