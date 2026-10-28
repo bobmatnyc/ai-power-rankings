@@ -1,13 +1,18 @@
 {
   "checked_at": "2026-10-28",
-  "ruling": "D05 working draft (#329). Bob rules on D05; the rules below are encoded in lib/db/repositories/model-lifecycle.ts (MODEL_LIFECYCLE_RULES) so a ruling changes one constant and this file.",
+  "ruling": "D0c (owner, 2026-10-28): the integer generation is the major, the latest point ranks, tiers are separate, and the lifecycle status step may activate a row without a benchmark figure. The rules below are encoded in lib/db/repositories/model-lifecycle.ts (MODEL_LIFECYCLE_RULES).",
   "rules": {
-    "available": "available is true when the vendor's public API docs list the model id as callable on checked_at and the vendor has not deprecated it (basis api_docs), or when its open weights are downloadable on checked_at from the vendor's Hugging Face org (basis hf_weights). Preview-only, waitlist, consumer-app-only and restricted-access models are not available.",
+    "available": "available is true when, on checked_at, the vendor has not deprecated or retired the model and either its public API docs list the model id as callable (basis api_docs) or its open weights are downloadable from the vendor's Hugging Face org (basis hf_weights; a gated download that needs a licence acceptance counts). A model the vendor has deprecated but still serves is not available. Preview-only, waitlist, consumer-app-only and restricted-access models are not available.",
     "major": "major is the integer generation the vendor markets; the tier line (line, tier) is a separate dimension. Point releases share a major: only the latest available point of each line and major is active.",
     "active": "Exactly one active row per line and major. An active row needs available true, an https availability source and a coding_source_url.",
     "deprecated": "deprecated is the archive: the row stays, keeps its URL and leaves the ranking. archive_reason is superseded (superseded_by names the active row that replaced it) or unavailable.",
-    "coding": "coding_source_url names a page that lists the model in a coding benchmark. The Vals Terminal-Bench 4.0 page is the primary source. Only the URL is recorded; benchmark figures stay out of this file and load through the separate metrics step.",
+    "coding": "coding_source_url names a page that lists the model in a coding benchmark: any Vals coding benchmark page, or for an open-weight model its vendor model card when the card reports a coding evaluation. The Vals Terminal-Bench 4.0 page is the primary source. Only the URL is recorded; benchmark figures stay out of this file and load through the separate metrics step.",
     "scope": "Every model row of the seed files plus the live family rows named in MODEL_LIFECYCLE_LIVE_SLUGS. Image and video models are out of scope (D52)."
+  },
+  "notes": {
+    "history": "Metrics history that D91 folded into claude-opus from the Opus 4.x rows stays on claude-opus; claude-opus-4 starts with none.",
+    "redirects": "The status step re-points the opus-4-6 and opus-4-5 redirect aliases from claude-opus to claude-opus-4 (MODEL_REDIRECT_REPOINTS).",
+    "archive": "Archived rows keep their tool pages; no archive page exists. Archived point rows are seeded only for superseded points listed on the Vals Terminal-Bench 4.0 page."
   },
   "models": [
     {
@@ -259,21 +264,49 @@
       "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
     },
     {
-      "slug": "gpt-mini-5-4",
+      "slug": "gpt-mini",
       "line": "gpt-mini",
       "tier": "mini",
       "major": 5,
       "point": "5.4",
-      "target_status": "deprecated",
+      "target_status": "active",
       "availability": {
         "available": true,
         "basis": "api_docs",
         "source_url": "https://developers.openai.com/api/docs/models/gpt-5.4-mini",
         "checked_at": "2026-10-28"
       },
-      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
-      "archive_reason": "superseded",
-      "superseded_by": "gpt-terra-5"
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "gpt-base",
+      "line": "gpt-base",
+      "tier": "GPT",
+      "major": 5,
+      "point": "5.5",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://developers.openai.com/api/docs/models/gpt-5.5",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "gpt-oss-120b",
+      "line": "gpt-oss-120b",
+      "tier": "gpt-oss-120b",
+      "major": 1,
+      "point": "1.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/openai/gpt-oss-120b",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
     },
     {
       "slug": "gemini-argon",
@@ -514,7 +547,7 @@
     {
       "slug": "minimax",
       "line": "minimax",
-      "tier": "MiniMax",
+      "tier": "Flash",
       "major": 3,
       "point": "3.1",
       "target_status": "active",
@@ -527,21 +560,34 @@
       "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
     },
     {
-      "slug": "minimax-3-0",
-      "line": "minimax",
-      "tier": "MiniMax",
+      "slug": "minimax-base",
+      "line": "minimax-base",
+      "tier": "MiniMax M",
       "major": 3,
       "point": "3.0",
-      "target_status": "deprecated",
+      "target_status": "active",
       "availability": {
         "available": true,
         "basis": "hf_weights",
         "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M3",
         "checked_at": "2026-10-28"
       },
-      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4",
-      "archive_reason": "superseded",
-      "superseded_by": "minimax"
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "minimax-base-2",
+      "line": "minimax-base",
+      "tier": "MiniMax M",
+      "major": 2,
+      "point": "2.7",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-M2.7",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
     },
     {
       "slug": "qwen",
@@ -579,14 +625,60 @@
       "tier": "Devstral Small",
       "major": 2,
       "point": "2.0",
+      "target_status": "deprecated",
+      "availability": {
+        "available": false,
+        "basis": "api_docs",
+        "source_url": "https://docs.mistral.ai/getting-started/models/models_overview/",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://huggingface.co/mistralai/Devstral-Small-2-24B-Instruct-2512",
+      "archive_reason": "unavailable"
+    },
+    {
+      "slug": "mistral-medium",
+      "line": "mistral-medium",
+      "tier": "Medium",
+      "major": 3,
+      "point": "3.5",
       "target_status": "active",
       "availability": {
         "available": true,
         "basis": "hf_weights",
-        "source_url": "https://huggingface.co/mistralai/Devstral-Small-2-24B-Instruct-2512",
+        "source_url": "https://huggingface.co/mistralai/Mistral-Medium-3.5-128B",
         "checked_at": "2026-10-28"
       },
-      "coding_source_url": "https://huggingface.co/mistralai/Devstral-Small-2-24B-Instruct-2512"
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-2"
+    },
+    {
+      "slug": "mistral-small-4",
+      "line": "mistral-small",
+      "tier": "Small",
+      "major": 4,
+      "point": "4.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/mistralai/Mistral-Small-4-119B-2603",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-2"
+    },
+    {
+      "slug": "mistral-large-3",
+      "line": "mistral-large",
+      "tier": "Large",
+      "major": 3,
+      "point": "3.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
     },
     {
       "slug": "muse-spark",
@@ -681,6 +773,231 @@
         "checked_at": "2026-10-28"
       },
       "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-4"
+    },
+    {
+      "slug": "mimo-base",
+      "line": "mimo-base",
+      "tier": "MiMo",
+      "major": 2,
+      "point": "2.5",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.5",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "claude-sonnet-4",
+      "line": "claude-sonnet",
+      "tier": "Sonnet",
+      "major": 4,
+      "point": "4.6",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "claude-haiku-4",
+      "line": "claude-haiku",
+      "tier": "Haiku",
+      "major": 4,
+      "point": "4.5",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "gemini-pro",
+      "line": "gemini-pro",
+      "tier": "Pro",
+      "major": 2,
+      "point": "2.5",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://ai.google.dev/gemini-api/docs/models",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "qwen-plus",
+      "line": "qwen-plus",
+      "tier": "Plus",
+      "major": 3,
+      "point": "3.7",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "api_docs",
+        "source_url": "https://www.alibabacloud.com/help/en/model-studio/models",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/vibe-code"
+    },
+    {
+      "slug": "qwen-27b",
+      "line": "qwen-27b",
+      "tier": "27B",
+      "major": 3,
+      "point": "3.8",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "kimi-2",
+      "line": "kimi",
+      "tier": "Kimi",
+      "major": 2,
+      "point": "2.6",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/moonshotai/Kimi-K2.6",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "kimi-code",
+      "line": "kimi-code",
+      "tier": "Code",
+      "major": 2,
+      "point": "2.7",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/moonshotai/Kimi-K2.7-Code",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "kimi-thinking",
+      "line": "kimi-thinking",
+      "tier": "Thinking",
+      "major": 2,
+      "point": "2.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/moonshotai/Kimi-K2-Thinking",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "glm-4",
+      "line": "glm",
+      "tier": "GLM",
+      "major": 4,
+      "point": "4.7",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/zai-org/GLM-4.7",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "deepseek-base",
+      "line": "deepseek-base",
+      "tier": "DeepSeek",
+      "major": 3,
+      "point": "3.2",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3.2",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "gemma-31b",
+      "line": "gemma-31b",
+      "tier": "31B",
+      "major": 4,
+      "point": "4.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/google/gemma-4-31B-it",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-2"
+    },
+    {
+      "slug": "nemotron-ultra",
+      "line": "nemotron-ultra",
+      "tier": "Ultra",
+      "major": 3,
+      "point": "3.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Ultra-550B-A55B-BF16",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "nemotron-lightning",
+      "line": "nemotron-lightning",
+      "tier": "Lightning",
+      "major": 3,
+      "point": "3.5",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/swebench"
+    },
+    {
+      "slug": "llama-maverick",
+      "line": "llama-maverick",
+      "tier": "Maverick",
+      "major": 4,
+      "point": "4.0",
+      "target_status": "active",
+      "availability": {
+        "available": true,
+        "basis": "hf_weights",
+        "source_url": "https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct",
+        "checked_at": "2026-10-28"
+      },
+      "coding_source_url": "https://www.vals.ai/benchmarks/terminal-bench-2"
     }
   ]
 }

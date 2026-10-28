@@ -24,9 +24,12 @@ export const SEED_SLUGS: readonly string[] = readModelSeeds("all", (file) => rea
 /** #329: every slug a metric row may name: the seed slugs plus the existing family rows. */
 export const METRIC_SLUGS: readonly string[] = metricTargetSlugs(SEED_SLUGS);
 
-/** A synthetic figure: whole numbers from 40 up, never a leaderboard value. */
+/**
+ * A synthetic figure: whole numbers from 40 to 99, never a leaderboard value.
+ * #329: wraps after 60 rows, because the per-major seed holds more rows than 40..100 can number.
+ */
 export function syntheticValue(i: number): number {
-  return 40 + i;
+  return 40 + (i % 60);
 }
 
 export function syntheticMetricRow(slug: string, i: number, overrides: Record<string, unknown> = {}): Record<string, unknown> {
