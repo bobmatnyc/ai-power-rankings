@@ -98,8 +98,10 @@ describe("the committed map", () => {
   });
 
   it("ships every 308 row except those whose destination page is missing", () => {
-    expect(shipped).toHaveLength(151);
-    expect(held).toHaveLength(117);
+    // D6e: the 60 rows of the six D58 aliases are held until the release PR (151 - 60, 117 + 60).
+    expect(shipped).toHaveLength(91);
+    expect(held).toHaveLength(177);
+    expect(held.filter((row) => /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/.test(row.destination))).toHaveLength(60);
     // #198: the 20 /whats-new rows wait for /en/insights.
     expect(held.filter((row) => row.destination === "/en/insights")).toHaveLength(20);
     expect(shipped.length + held.length).toBe(redirectRows.length);
@@ -259,9 +261,11 @@ describe("model alias re-point (D58)", () => {
 
 describe("sitemap", () => {
   it("drops noindex tools and shipped 308 sources, keeps the rest", async () => {
-    findAll.mockResolvedValue(
-      ["cline", "stripe", "ollama", "clawdbot", "opus-4-6"].map((slug) => ({ slug, status: "active" }))
-    );
+    findAll.mockResolvedValue([
+      ...["cline", "stripe", "ollama", "clawdbot", "glm-5-0"].map((slug) => ({ slug, status: "active" })),
+      // D6e: a held alias is not a shipped source; its redirect status keeps it out of the sitemap.
+      { slug: "opus-4-6", status: "redirect" },
+    ]);
     getPublishedSlugs.mockResolvedValue([]);
     listPeriods.mockResolvedValue([]);
     const { buildSitemapEntries } = await import("../../lib/sitemap");
@@ -274,6 +278,7 @@ describe("sitemap", () => {
       expect(paths.has(`/${locale}/tools/ollama`)).toBe(false);
       expect(paths.has(`/${locale}/tools/clawdbot`)).toBe(false);
       // #197: released, so the retired slug leaves the sitemap like any shipped source.
+      expect(paths.has(`/${locale}/tools/glm-5-0`)).toBe(false);
       expect(paths.has(`/${locale}/tools/opus-4-6`)).toBe(false);
     }
     for (const row of noindexRows) expect(paths.has(row.source)).toBe(false);

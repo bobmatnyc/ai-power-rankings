@@ -132,6 +132,16 @@ the target is `active`; a 0-row match aborts the whole write. `data/url-table-19
 the same targets for the 308s. The dry run prints `would set status` and `would re-point
 redirect` lines, a `status:` line and a `redirects:` line.
 
+**URL-table release step (D6e).** Until the per-major pages exist, the four targets
+(`claude-opus-4`, `claude-sonnet-4`, `kimi-2`, `deepseek-base`) are held in `PENDING_TARGETS`
+(`lib/seo/url-table.ts`). The 60 locale rows of `opus-4-5`, `opus-4-6`, `sonnet-4-5`, `kimi-2-5`,
+`moonshot-kimi-2-5` and `deepseek-v3-2` then answer no 308, and each alias renders its own
+retired page, which may be indexable (owner ruling D6e accepts this). Release order: (1) the
+`set_status` write commits; (2) the four pages render in production; (3) a release PR removes the
+D6e entry from `PENDING_TARGETS` and moves the 50 held rows in
+`tests/unit/url-table-197-release.test.ts` (and the six D58 aliases) to the released assertions.
+Never remove the entry before step 2: a 308 to a page that does not exist drops it from search.
+
 **After the D58 re-point, two historical steps fail closed on a re-run.** Migration 0019's
 "already folded" check counts aliases that redirect to their family row, so it no longer matches;
 the re-run falls through to its precondition (family rows inactive), raises

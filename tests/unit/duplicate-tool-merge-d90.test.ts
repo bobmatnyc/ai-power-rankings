@@ -261,6 +261,23 @@ describe("D90 merge on the migration chain", () => {
     expect(dry.code).toBe(0);
     expect(dry.log.filter((l) => l.endsWith("[already-merged]"))).toHaveLength(7);
   });
+
+  // D58: after the per-major re-point the old row redirects to deepseek-base, not to the pair's
+  // applied target, so a re-run must refuse the pair and write nothing, even with work pending.
+  it("a re-run after the D58 re-point refuses the re-pointed pair and writes nothing", async () => {
+    await db.query(`UPDATE public."tools" SET data = data || '{"redirect_to": "deepseek-base"}'::jsonb WHERE slug = 'deepseek-v3-2'`);
+    await link(db, "deepseek-v3-2", "kiro", "native"); // a link on the retired id: work the merge would do
+    const file = path.join(dir, "after-d58.json");
+    expect((await run(db, { mode: "backup", file })).code).toBe(0);
+    const before = await snapshot(db);
+    const dry = await run(db, { mode: "dry-run" });
+    expect(dry.code).toBe(1);
+    expect(dry.log.map((l) => l.trim())).toContain("UNRESOLVED: old row deepseek-v3-2 already redirects to deepseek-base");
+    const apply = await run(db, { mode: "apply", backupFile: file });
+    expect(apply.code).toBe(1);
+    expect(apply.log.at(-1)).toMatch(/^--apply: refused, nothing written: /);
+    expect(await snapshot(db)).toEqual(before);
+  });
 });
 
 describe("D90 merge with a target row missing", () => {
