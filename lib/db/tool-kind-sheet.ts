@@ -65,17 +65,18 @@ export interface KindSheetContract {
  * and nova-act are other. Architect 2026-10-24: flint stays a harness app builder, so
  * there are seven app builders. D91: four model family rows (migration 0018) join the
  * sheet, so 118 rows and 19 models; the seven per-version rows they replace are retired.
- * #314: the contract is the state after migration 0028, which moves claude-artifacts, openclaw
- * and perplexity to productivity, and their retired aliases clawdbot and moltbot follow openclaw:
- * harness 65, other 29, productivity 5, six app builders.
+ * #314: the contract is the state after migration 0028, which moves claude-artifacts, openclaw,
+ * perplexity, chatgpt-canvas, claude-desktop-extensions and cowork to productivity; the retired
+ * aliases clawdbot and moltbot follow openclaw and cowork-ai follows cowork:
+ * harness 61, other 29, productivity 9, six app builders.
  */
 export const KIND_SHEET_CONTRACT: KindSheetContract = {
   rowCount: 118,
-  // #314: the state after 0028 (three rows to productivity).
-  kindCounts: { harness: 65, model: 19, other: 29, productivity: 5 },
+  // #314: the state after 0028 (six rows and three retired aliases to productivity).
+  kindCounts: { harness: 61, model: 19, other: 29, productivity: 9 },
   appBuilders: ["bolt-new", "flint", "lovable", "rocket-new", "v0-vercel", "wabi"],
   addedSlugs: ["claude-opus", "claude-sonnet", "glm", "kimi"],
-  // #314: what 0017 wrote for the three rows 0028 moves.
+  // #314: what 0017 wrote for the rows 0028 moves.
   convertedAfter0017: [
     { slug: "claude-artifacts", kind: "harness", subcategory: "app_builder" },
     { slug: "openclaw", kind: "harness", subcategory: "autonomous_agent" },
@@ -83,6 +84,11 @@ export const KIND_SHEET_CONTRACT: KindSheetContract = {
     // #314: retired aliases follow their survivor's kind (validateKindSheet), so they move with openclaw.
     { slug: "clawdbot", kind: "harness", subcategory: null },
     { slug: "moltbot", kind: "harness", subcategory: null },
+    // #314 (Dd1; D8c for claude-desktop-extensions): kind only; cowork-ai follows cowork.
+    { slug: "chatgpt-canvas", kind: "harness", subcategory: "autonomous_agent" },
+    { slug: "claude-desktop-extensions", kind: "harness", subcategory: "autonomous_agent" },
+    { slug: "cowork", kind: "harness", subcategory: null },
+    { slug: "cowork-ai", kind: "harness", subcategory: null },
   ],
 };
 

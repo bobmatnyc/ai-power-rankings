@@ -62,7 +62,7 @@ describe("#314 committed seed file", () => {
     }
   });
 
-  it("does not seed the three existing rows or the rows that stay harness", () => {
+  it("does not seed the six existing rows that 0028 converts", () => {
     const slugs = seed.products.map((p) => p.slug);
     for (const s of ["claude-artifacts", "openclaw", "perplexity", "chatgpt-canvas", "cowork", "claude-desktop-extensions"]) {
       expect(slugs).not.toContain(s);

@@ -60,7 +60,7 @@ function withHarness(weights: RankingWeightsV76) {
 }
 const wrong = withHarness(negativeControlWeights(v710));
 
-/** The fixtures are smaller than the production floor (HARNESS_FLOOR, 64), so the floor is set to their harness count. */
+/** The fixtures are smaller than the production floor (HARNESS_FLOOR, 61), so the floor is set to their harness count. */
 const fixtureFloor = (tools: MeasuredTool[]) => tools.filter((t) => t.kind === "harness").length;
 
 /** A kind sheet listing every fixture tool, none retired. */
@@ -296,8 +296,8 @@ describe("measureBoard harness list check (#185)", () => {
 
   it.each<[string, () => MeasuredTool[], (r: MeasurementResult) => void]>([
     ["no harness tools", () => notHarness(mixedBoard()), (r) => expect(r.harness!.harnessTools).toBe(0)],
-    ["fewer harness tools than the floor of 64", () => harnessBoard(), (r) => expect(r.harness!.harnessTools).toBe(24)],
-    ["one harness tool below the floor (63)", () => harnessBoard(63), (r) => expect(r.harness!.harnessTools).toBe(63)],
+    ["fewer harness tools than the floor of 61", () => harnessBoard(), (r) => expect(r.harness!.harnessTools).toBe(24)],
+    ["one harness tool below the floor (60)", () => harnessBoard(60), (r) => expect(r.harness!.harnessTools).toBe(60)],
     [
       "an unmigrated kind column (null)",
       () => harnessBoard(80).map((t, i) => (i === 0 ? { ...t, kind: String(null) } : t)),
@@ -318,7 +318,7 @@ describe("measureBoard harness list check (#185)", () => {
     expect(formatMeasurementReport(result)).toMatch(/^Result: FAIL \(harness list check\)/);
   });
 
-  it("HARNESS_FLOOR is the sheet's harness rows minus its retired harness rows (65 - 1 = 64, #314)", () => {
+  it("HARNESS_FLOOR is the sheet's harness rows minus its retired harness rows (61 - 0 = 61, #314)", () => {
     const sheet = readFileSync(join(__dirname, "..", "docs", "refresh", "tool-kind-mapping.csv"), "utf8");
     const { rows, errors } = parseKindSheet(sheet);
     expect(errors).toEqual([]);
@@ -327,9 +327,9 @@ describe("measureBoard harness list check (#185)", () => {
     expect(HARNESS_FLOOR).toBe(harness.length - retired.length);
   });
 
-  it("passes the check at the floor of 64 harness tools with other kinds present", () => {
-    const result = measureAtDefaultFloor(harnessBoard(64));
-    expect(result.harness).toMatchObject({ harnessTools: 64, floor: 64, ok: true });
+  it("passes the check at the floor of 61 harness tools with other kinds present", () => {
+    const result = measureAtDefaultFloor(harnessBoard(61));
+    expect(result.harness).toMatchObject({ harnessTools: 61, floor: 61, ok: true });
     expect(result.exitCode).toBe(EXIT_CODES.ok);
   });
 });
