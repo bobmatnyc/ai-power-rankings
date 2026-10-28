@@ -9,10 +9,15 @@
  *   them (`closedSeedToModelSeed`, `parseModelSeed`, one slug per row across files), plans every
  *   row against the database and prints the diff. The default is a dry run: it writes nothing
  *   and exits 0, or 1 when a row is refused. `--apply` writes every planned row in one
- *   transaction, or nothing when any row is refused. The connection string is never printed.
+ *   transaction, or nothing when any row is refused. `--set-status` (needs `--seed all`) also
+ *   validates `docs/refresh/model-lifecycle.json` and plans, and with `--apply` writes in the
+ *   same transaction, each row's lifecycle status (active or deprecated) and `data.modelLifecycle`,
+ *   then re-points the listed redirect aliases (`MODEL_REDIRECT_REPOINTS`). D0c: a lifecycle
+ *   activation needs no benchmark figure.
+ *   The connection string is never printed.
  * Test: `tests/unit/load-model-seeds-329.test.ts`
  *
- * Usage: tsx scripts/load-model-seeds.ts [--seed all|closed|open-weight] [--dry-run | --apply]
+ * Usage: tsx scripts/load-model-seeds.ts [--seed all|closed|open-weight|majors] [--dry-run | --apply] [--set-status]
  */
 
 import fs from "node:fs";
@@ -23,6 +28,21 @@ import {
   type ModelSeed,
   parseModelSeed,
 } from "../lib/db/repositories/model-seed.repository";
+import {
+  applyModelStatusPlans,
+  MODEL_LIFECYCLE_FILE,
+  type ModelLifecycle,
+  type ModelStatusPlan,
+  parseModelLifecycle,
+  planModelStatus,
+} from "../lib/db/repositories/model-lifecycle";
+import {
+  applyRedirectRepoints,
+  MODEL_REDIRECT_REPOINTS,
+  type RedirectRepoint,
+  type RedirectRepointPlan,
+  planRedirectRepoints,
+} from "../lib/db/repositories/model-redirect-repoint";
 import {
   applyModelSeedPlans,
   type ModelSeedDb,
@@ -36,6 +56,8 @@ import { databaseFingerprint } from "./migration-preflight";
 export const SEEDS = {
   closed: { file: "docs/refresh/closed-models.json", parse: closedSeedToModelSeed },
   "open-weight": { file: "docs/refresh/open-weight-models-refresh.json", parse: parseModelSeed },
+  // #329: one row per tier line and major version, plus the archived points (D05 working draft).
+  majors: { file: "docs/refresh/model-majors-seed.json", parse: parseModelSeed },
 } as const satisfies Record<string, { file: string; parse: (text: string) => ModelSeed }>;
 export type SeedName = keyof typeof SEEDS;
 export type SeedSelection = SeedName | "all";
@@ -43,11 +65,13 @@ export type SeedSelection = SeedName | "all";
 export interface LoaderArgs {
   seed: SeedSelection;
   apply: boolean;
+  /** #329: also set each row's lifecycle status; omitted when false. */
+  setStatus?: true;
 }
 
 /** Reads and validates the selected seed files; throws on any bad row or a slug used twice. */
 export function readModelSeeds(selection: SeedSelection, readFile: (file: string) => string): ModelSeedEntry[] {
-  const names: SeedName[] = selection === "all" ? ["closed", "open-weight"] : [selection];
+  const names: SeedName[] = selection === "all" ? ["closed", "open-weight", "majors"] : [selection];
   const entries = names.flatMap((name) => {
     const { file, parse } = SEEDS[name];
     const seed = parse(readFile(file));
@@ -55,6 +79,18 @@ export function readModelSeeds(selection: SeedSelection, readFile: (file: string
   });
   assertUniqueSlugs(entries.map((e) => e.row));
   return entries;
+}
+
+/** #329: reads the lifecycle file and validates it against every seed row. */
+export function readModelLifecycle(readFile: (file: string) => string): ModelLifecycle {
+  const seedRows = readModelSeeds("all", readFile).map((e) => e.row);
+  return parseModelLifecycle(readFile(MODEL_LIFECYCLE_FILE), seedRows);
+}
+
+function formatStatusPlan(plan: ModelStatusPlan, verb: "would" | "will"): string {
+  if (plan.outcome === "refused") return `REFUSED status: ${plan.slug}: ${plan.reason}`;
+  if (plan.outcome === "unchanged") return `status unchanged: ${plan.slug}`;
+  return `${verb} set status: ${plan.slug}: ${plan.from} -> ${plan.to}`;
 }
 
 function formatPlan(plan: ModelSeedPlan, verb: "would" | "will"): string[] {
@@ -70,23 +106,55 @@ function formatPlan(plan: ModelSeedPlan, verb: "would" | "will"): string[] {
 /**
  * Why: the dry run is the review step; the apply must match it and be all-or-nothing.
  * What: plans every entry, prints the diff and a `totals:` line, then returns the exit code.
- *   `apply` false writes nothing (0, or 1 when a row is refused). `apply` true writes nothing
- *   and returns 1 when a row is refused; otherwise it writes every plan in one transaction.
+ *   With a `lifecycle`, it also plans each row's status (a row the seed inserts counts as
+ *   inactive) and prints a `status:` line. `apply` false writes nothing (0, or 1 when a row or
+ *   status is refused). `apply` true writes nothing and returns 1 when anything is refused;
+ *   otherwise it writes every seed plan, then every status plan, then every redirect re-point
+ *   (`repoints`, planned with a `redirects:` line), in one transaction; a guard that matches
+ *   no row throws and the transaction rolls back.
  * Test: `tests/unit/load-model-seeds-329.test.ts`
  */
 export async function loadModelSeeds(
   db: ModelSeedDb,
   entries: readonly ModelSeedEntry[],
   apply: boolean,
-  log: (line: string) => void = console.log
+  log: (line: string) => void = console.log,
+  lifecycle: ModelLifecycle | null = null,
+  repoints: readonly RedirectRepoint[] = []
 ): Promise<number> {
   const plans = await planModelSeedRows(db, entries);
   for (const plan of plans) for (const line of formatPlan(plan, apply ? "will" : "would")) log(line);
   const count = (o: ModelSeedPlan["outcome"]) => plans.filter((p) => p.outcome === o).length;
-  const refused = count("refused");
+  let refused = count("refused");
   log(
     `totals: ${plans.length} row(s), ${count("insert")} insert, ${count("update")} update, ${count("unchanged")} unchanged, ${refused} refused`
   );
+  let statusPlans: ModelStatusPlan[] = [];
+  if (lifecycle) {
+    const inserts = new Set(plans.filter((p) => p.outcome === "insert").map((p) => p.slug));
+    statusPlans = await planModelStatus(db, lifecycle, inserts);
+    for (const plan of statusPlans) log(formatStatusPlan(plan, apply ? "will" : "would"));
+    const set = (to: string) => statusPlans.filter((p) => p.outcome === "set" && p.to === to).length;
+    const statusRefused = statusPlans.filter((p) => p.outcome === "refused").length;
+    const unchanged = statusPlans.filter((p) => p.outcome === "unchanged").length;
+    log(`status: ${statusPlans.length} row(s), ${set("active")} set active, ${set("deprecated")} set deprecated, ${unchanged} unchanged, ${statusRefused} refused`);
+    refused += statusRefused;
+  }
+  let repointPlans: RedirectRepointPlan[] = [];
+  if (repoints.length > 0) {
+    const inserts = new Set(plans.filter((p) => p.outcome === "insert").map((p) => p.slug));
+    // D58: a re-point target must be a row the lifecycle sets active.
+    const lifecycleActive = new Set((lifecycle?.rows ?? []).filter((r) => r.targetStatus === "active").map((r) => r.slug));
+    repointPlans = await planRedirectRepoints(db, repoints, inserts, lifecycleActive);
+    for (const p of repointPlans) {
+      if (p.outcome === "refused") log(`REFUSED redirect: ${p.alias}: ${p.reason}`);
+      else if (p.outcome === "unchanged") log(`redirect unchanged: ${p.alias}`);
+      else log(`${apply ? "will" : "would"} re-point redirect: ${p.alias}: ${p.from} -> ${p.to}`);
+    }
+    const n = (o: RedirectRepointPlan["outcome"]) => repointPlans.filter((p) => p.outcome === o).length;
+    log(`redirects: ${repointPlans.length} alias(es), ${n("repoint")} re-point, ${n("unchanged")} unchanged, ${n("refused")} refused`);
+    refused += n("refused");
+  }
   if (!apply) {
     log("dry run: nothing written (pass --apply to write)");
     return refused > 0 ? 1 : 0;
@@ -96,8 +164,14 @@ export async function loadModelSeeds(
     return 1;
   }
   try {
-    const written = await db.transaction((tx) => applyModelSeedPlans(tx, plans));
-    log(`apply: committed, ${written} row(s) written`);
+    const { written, statuses, redirects } = await db.transaction(async (tx) => ({
+      written: await applyModelSeedPlans(tx, plans),
+      statuses: await applyModelStatusPlans(tx, statusPlans),
+      redirects: await applyRedirectRepoints(tx, repointPlans),
+    }));
+    const statusPart = lifecycle ? `, ${statuses} status(es) set` : "";
+    const redirectPart = repoints.length > 0 ? `, ${redirects} redirect(s) re-pointed` : "";
+    log(`apply: committed, ${written} row(s) written${statusPart}${redirectPart}`);
     return 0;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -112,30 +186,37 @@ export function parseArgs(argv: readonly string[]): LoaderArgs | { errors: strin
   let seed: SeedSelection = "all";
   let apply = false;
   let dryRun = false;
+  let setStatus = false;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]!;
     if (arg === "--apply") apply = true;
     else if (arg === "--dry-run") dryRun = true;
+    else if (arg === "--set-status") setStatus = true;
     else if (arg === "--seed") {
       const value = argv[++i];
-      if (value === "all" || value === "closed" || value === "open-weight") seed = value;
-      else errors.push(`--seed must be all, closed or open-weight`);
+      if (value === "all" || value === "closed" || value === "open-weight" || value === "majors") seed = value;
+      else errors.push(`--seed must be all, closed, open-weight or majors`);
     } else errors.push(`unknown argument ${arg}`);
   }
   if (apply && dryRun) errors.push("--dry-run and --apply are exclusive");
-  return errors.length > 0 ? { errors } : { seed, apply };
+  // #329: the lifecycle covers every seed file, so the status step runs on the whole set.
+  if (setStatus && seed !== "all") errors.push("--set-status needs --seed all");
+  if (errors.length > 0) return { errors };
+  return setStatus ? { seed, apply, setStatus: true } : { seed, apply };
 }
 
 async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
   const args = parseArgs(argv);
   if ("errors" in args) {
     for (const e of args.errors) console.error(`ERROR: ${e}`);
-    console.error("Usage: tsx scripts/load-model-seeds.ts [--seed all|closed|open-weight] [--dry-run | --apply]");
+    console.error("Usage: tsx scripts/load-model-seeds.ts [--seed all|closed|open-weight|majors] [--dry-run | --apply] [--set-status]");
     return 1;
   }
   let entries: ModelSeedEntry[];
+  let lifecycle: ModelLifecycle | null = null;
   try {
     entries = readModelSeeds(args.seed, (file) => fs.readFileSync(file, "utf8"));
+    if (args.setStatus) lifecycle = readModelLifecycle((file) => fs.readFileSync(file, "utf8"));
   } catch (error) {
     console.error(`ERROR: seed validation failed: ${error instanceof Error ? error.message : String(error)}`);
     return 1;
@@ -170,7 +251,7 @@ async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
     },
   };
   try {
-    return await loadModelSeeds(db, entries, args.apply);
+    return await loadModelSeeds(db, entries, args.apply, console.log, lifecycle, lifecycle ? MODEL_REDIRECT_REPOINTS : []);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`ERROR: load-model-seeds failed: ${redactConnectionString(message, url)}`);

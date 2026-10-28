@@ -508,7 +508,6 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       slug: dbTool.slug,
       name: dbTool.name,
       category: dbTool.category,
-      status: dbTool.status,
       company_id: dbTool.companyId || undefined,
       info: info,
       tags: tags || [],
@@ -517,6 +516,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       ...toolData, // Spread JSONB data first
       db_id: dbTool.id, // Then override with authoritative database UUID to prevent overwriting
       kind: dbTool.kind, // #186: the column decides list membership, never a JSONB copy
+      status: dbTool.status, // D58: the column decides status; a stale data.status never overrides it
     };
   }
 

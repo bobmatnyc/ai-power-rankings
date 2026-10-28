@@ -364,7 +364,10 @@ describe("D91 0019 folds the seven rows into the four families", () => {
   it("the generator, /api/tools and the sitemap list the four families instead of the seven", async () => {
     // After 0018 alone: the inactive families are off every list; the seven are on it.
     // #197: the seven are shipped 308 sources, so the sitemap drops them whatever their status.
-    expect(beforeSelections).toEqual({ generator: [...OLD].sort(), api: [...OLD].sort(), sitemap: [] });
+    // D6e: the five whose rows are held until the release PR are not shipped sources, so while
+    // still active (before the fold) they are listed; after the fold their redirect status drops them.
+    const held = ["kimi-2-5", "moonshot-kimi-2-5", "opus-4-5", "opus-4-6", "sonnet-4-5"];
+    expect(beforeSelections).toEqual({ generator: [...OLD].sort(), api: [...OLD].sort(), sitemap: held });
     expect(await selections(ctx.db)).toEqual({ generator: FAMILIES, api: FAMILIES, sitemap: FAMILIES });
   });
 
@@ -431,6 +434,23 @@ describe("D91 0019 refusals and post-count checks roll back", () => {
     expect(result.lines.join("\n")).toContain(message);
     expect(await snapshot(ctx.db)).toEqual(before);
     expect(await ctx.mdb.listAppliedFilenames()).toEqual([F17, F18]);
+    await ctx.db.close();
+  }, 120_000);
+});
+
+// D58: after the per-major re-point an alias no longer redirects to its family, so the
+// "already folded" check misses and the precondition (families inactive) refuses the re-run.
+describe("D91 0019 re-run after the D58 re-point", () => {
+  it("fails closed and writes nothing", async () => {
+    const ctx = await setup([F17, F18]);
+    await seedFold(ctx.db);
+    expect((await apply(ctx, F19)).exitCode).toBe(0);
+    await ctx.db.query(`UPDATE public."tools" SET data = data || '{"redirect_to": "claude-opus-4"}'::jsonb WHERE slug = 'opus-4-6'`);
+    const before = await snapshot(ctx.db);
+    const result = await apply(ctx, F19, { force: true });
+    expect(result.exitCode).toBe(1);
+    expect(result.lines.join("\n")).toContain("D91 0019: precondition failed");
+    expect(await snapshot(ctx.db)).toEqual(before);
     await ctx.db.close();
   }, 120_000);
 });

@@ -99,7 +99,8 @@ is a manual dispatch from `main`.
 
 | Input | Default | Meaning |
 |---|---|---|
-| `seed` | `all` | `closed` (`docs/refresh/closed-models.json`), `open-weight` (`docs/refresh/open-weight-models-refresh.json`) or both. |
+| `seed` | `all` | `closed` (`docs/refresh/closed-models.json`), `open-weight` (`docs/refresh/open-weight-models-refresh.json`), `majors` (`docs/refresh/model-majors-seed.json`) or all three. |
+| `set_status` | `false` | With `seed: all`, also plan (and on a write, set in the same transaction) each row's status from `docs/refresh/model-lifecycle.json`: `active` or `deprecated` (#329). |
 | `dry_run` | `true` | Validate the seeds, print the per-row diff, write nothing. |
 | `confirm` | empty | Must be `load-model-seed` to write. Ignored on a dry run. |
 
@@ -114,7 +115,40 @@ The write is an upsert keyed on slug. A new row is created `inactive`, kind `mod
 existing model row it sets only the seed columns (`open_weight`, `hf_repo`, `licence`,
 `parameters_b`, `active_parameters_b`, `release_date`) and the `data.modelSeed` provenance
 key. It never changes `status`, `name`, a description or `data.metrics`, and never activates
-a row. Activation and metrics are a later, separate change.
+a row. Metrics are a later, separate change.
+
+The status step (`set_status: true`, #329) is separate from the upsert. It validates
+`docs/refresh/model-lifecycle.json` (one active row per tier line and major version, an
+availability source and check date per row, a coding source URL per active row, no benchmark
+figures) and sets each listed row to `active` or `deprecated` with a `data.modelLifecycle`
+record. `deprecated` is the archive: the row and its URL stay. It refuses a redirect alias, a
+non-model row and any status other than `inactive`, `active` or `deprecated`, and it writes no
+other column. Under owner ruling D0c it may activate a row with no benchmark figure. The same
+transaction then re-points the D90/D91 redirect aliases to their per-major row (owner ruling
+D58, `MODEL_REDIRECT_REPOINTS`): `opus-4-6` and `opus-4-5` to `claude-opus-4`, `sonnet-4-5` to
+`claude-sonnet-4`, `kimi-2-5` and `moonshot-kimi-2-5` to `kimi-2`, `deepseek-v3-2` to
+`deepseek-base`. Each update runs only while the alias still redirects to its old family row and
+the target is `active`; a 0-row match aborts the whole write. `data/url-table-191.json` carries
+the same targets for the 308s. The dry run prints `would set status` and `would re-point
+redirect` lines, a `status:` line and a `redirects:` line.
+
+**URL-table release step (D6e).** Until the per-major pages exist, the four targets
+(`claude-opus-4`, `claude-sonnet-4`, `kimi-2`, `deepseek-base`) are held in `PENDING_TARGETS`
+(`lib/seo/url-table.ts`). The 60 locale rows of `opus-4-5`, `opus-4-6`, `sonnet-4-5`, `kimi-2-5`,
+`moonshot-kimi-2-5` and `deepseek-v3-2` then answer no 308, and each alias renders its own
+retired page, which may be indexable (owner ruling D6e accepts this). Release order: (1) the
+`set_status` write commits; (2) the four pages render in production; (3) a release PR removes the
+D6e entry from `PENDING_TARGETS` and moves the 50 held rows in
+`tests/unit/url-table-197-release.test.ts` (and the six D58 aliases) to the released assertions.
+Never remove the entry before step 2: a 308 to a page that does not exist drops it from search.
+
+**After the D58 re-point, two historical steps fail closed on a re-run.** Migration 0019's
+"already folded" check counts aliases that redirect to their family row, so it no longer matches;
+the re-run falls through to its precondition (family rows inactive), raises
+`D91 0019: precondition failed` and writes nothing (`tests/unit/model-family-fold-d91.test.ts`).
+`scripts/merge-duplicate-tools.ts` keeps the D90 pair `deepseek-v3-2` -> `deepseek` as applied, so a
+re-run refuses that pair because the old row already redirects to `deepseek-base`. Neither needs
+to run again.
 
 **Recovery (D98).** Before the write dispatch, the owner creates a named Neon branch of
 production (name pattern: `pre-model-seed-YYYYMMDD`) and records its name and UTC time.

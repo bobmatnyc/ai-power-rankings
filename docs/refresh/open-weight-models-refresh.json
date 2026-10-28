@@ -12,7 +12,7 @@
     "relation": "This file refreshes family rows of the open-weight seed in PR #298 (docs/refresh/open-weight-models.json, not merged) to the generations the vendors ship now. It does not fork that seed: a row here carries only the refreshed facts, and #298 rows not listed here are unchanged. When #298 merges, its rows can be folded into this format.",
     "facts": "Every stated fact sits under facts with its own source_url. A fact the reviewed sources do not state is left out, never estimated.",
     "licence_review": "not_required only when the licence tag is an OSI licence id; pending when the tag names a custom licence or no licence is stated. The review happens before activation, not in this seed.",
-    "status": "Rows are inactive. A loader never activates a row and never changes an existing row's status or metrics.",
+    "status": "Rows are inserted inactive. The seed upsert never changes a row's status or metrics; the separate status step sets the lifecycle target from docs/refresh/model-lifecycle.json (#329).",
     "scope": "This file is a reviewed seed only. Nothing here is read by ranking or scoring code, and it carries no metrics."
   },
   "models": [

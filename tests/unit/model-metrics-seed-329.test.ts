@@ -31,7 +31,8 @@ describe("parseModelMetricsSeed (#329)", () => {
     const seed = parse(syntheticMetricsDoc());
     expect(seed.rows.map((r) => r.slug)).toEqual(METRIC_SLUGS);
     // #329: the existing family rows stay out of the seed files and are accepted only by the allowlist.
-    expect(EXISTING_FAMILY_METRIC_SLUGS).toEqual(["claude-opus", "claude-sonnet", "grok"]);
+    // M3: devstral-small-2 joins through the lifecycle's live slugs.
+    expect(EXISTING_FAMILY_METRIC_SLUGS).toEqual(["claude-opus", "claude-sonnet", "grok", "devstral-small-2"]);
     for (const slug of EXISTING_FAMILY_METRIC_SLUGS) expect(SEED_SLUGS).not.toContain(slug);
     expect(() => parseModelMetricsSeed(JSON.stringify(oneRow({ slug: "grok" })), new Set(SEED_SLUGS))).toThrow(/unknown slug/);
     expect(seed.rows.every((r) => r.field === "terminal_bench" && r.source === MODEL_TERMINAL_BENCH_SOURCE)).toBe(true);
@@ -128,9 +129,9 @@ describe("projected models-list metric count after activation (#329, D86)", () =
 
   it("reaches the index threshold when every seeded and allowlisted family carries a figure", () => {
     const count = projectedCount(METRIC_SLUGS.map((slug, i) => syntheticMetricRow(slug, i)));
-    expect(SEED_SLUGS).toHaveLength(13);
-    expect(METRIC_SLUGS).toHaveLength(16);
-    expect(count).toBe(16);
+    // #329: every seed row plus the allowlisted live rows (the lifecycle's live slugs).
+    expect(METRIC_SLUGS).toHaveLength(SEED_SLUGS.length + EXISTING_FAMILY_METRIC_SLUGS.length);
+    expect(count).toBe(METRIC_SLUGS.length);
     expect(count).toBeGreaterThanOrEqual(METRIC_INDEX_MIN_ROWS);
     // Activated rows are on the board, so the board holds at least `count` entries.
     expect(isRankingListIndexable("model", count, count)).toBe(true);
