@@ -120,6 +120,61 @@ a row. Activation and metrics are a later, separate change.
 production (name pattern: `pre-model-seed-YYYYMMDD`) and records its name and UTC time.
 Rollback is a restore from that branch.
 
+## Loading model metrics and activating the model rows (#329)
+
+The **Load model metrics (#329)** workflow (`.github/workflows/load-model-metrics.yml`) runs
+`scripts/load-model-metrics.ts` against production, in the same D96 pattern. Its only trigger
+is a manual dispatch from `main`. It writes the Vals Terminal-Bench 4.0 figure of each listed
+seeded model row (D63) and, as a separate explicit step, activates the seeded model rows.
+
+**Where the figures live.** The leaderboard figures are not published in this repository. The
+reviewed file sits at the gitignored path `data/private/model-metrics.json` on the reviewer's
+machine; the loader refuses a copy that is under version control. The workflow reads it from
+the `MODEL_METRICS_JSON_B64` repository secret (the file, base64-encoded:
+`base64 < data/private/model-metrics.json`), decodes it to a file under `RUNNER_TEMP`, never
+prints it, and deletes it at the end. The loader runs with `--hide-values`, so the public log
+shows which rows change but no figure. Locally the file path comes from `--metrics-file <path>`
+or `MODEL_METRICS_FILE`.
+
+File format: `checked_at` and a `metrics` array; each row has `slug` (a slug of the model seed
+files), `field` (`terminal_bench` only), `value` (above 0, at most 100), `source` (exactly
+`https://www.vals.ai/benchmarks/terminal-bench-4`), `as_of` (no later than `checked_at`) and an
+optional `version` naming the version or dated snapshot measured when it is not the seeded
+flagship. Muse Wonder is refused.
+
+| Input | Default | Meaning |
+|---|---|---|
+| `dry_run` | `true` | Validate the file, print the per-row diff, write nothing. |
+| `activate` | `false` | Also set the seeded model rows `active` in the same transaction. |
+| `confirm` | empty | `load-model-metrics` to write metrics; `activate-model-metrics` to write and activate. Ignored on a dry run. |
+
+1. **Dry run.** Dispatch with the defaults (add `activate: true` to also check the
+   activation). The job prints `update`, `unchanged` or `REFUSED` per row and a `totals:` line.
+   A refused row (no row with that slug, a non-model row, a redirect alias, a non-object
+   `data.metrics`) or a refused activation fails the job.
+2. **Write.** Dispatch with `dry_run: false` and `confirm: load-model-metrics`. The job repeats
+   the dry run, then writes in one transaction. The write merges only
+   `data.metrics.terminal_bench` (a bare number) and `data.metrics_provenance.terminal_bench`
+   (`{ source, as_of }`); every other key stays. It never writes a redirect row and never
+   changes `status`.
+3. **Activate.** Dispatch with `dry_run: false`, `activate: true` and
+   `confirm: activate-model-metrics`. The same transaction then sets `status = 'active'` on
+   every row the model seed files list, and is refused unless each of them is an inactive or
+   active model row that carries a Vals figure after the write. Other kinds, redirect rows and
+   unlisted model rows never change.
+
+**Activation gate (D63 Q10).** Do not dispatch step 3 before #318 has merged and the #317
+audit has confirmed that no parent-company figures sit on model rows. Steps 1 and 2 may run
+earlier.
+
+**Public source line.** Any page that shows one of these figures carries: "Source: Vals AI,
+Terminal-Bench 4.0 leaderboard, https://www.vals.ai/benchmarks/terminal-bench-4, as of
+<as_of>". The models page shows no figure yet.
+
+**Recovery (D98).** Before any write dispatch, the owner creates a named Neon branch of
+production (name pattern: `pre-model-metrics-YYYYMMDD`) and records its name and UTC time.
+Rollback is a restore from that branch.
+
 ## Files
 
 - `scripts/apply-migrations.ts` — the runner, and `tests/unit/apply-migrations.test.ts`
@@ -129,3 +184,6 @@ Rollback is a restore from that branch.
 - `.github/workflows/load-model-seed.yml` — the model seed load dispatch (#329), with
   `scripts/load-model-seeds.ts`, `tests/unit/load-model-seed-workflow-329.test.ts` and
   `tests/unit/load-model-seeds-329.test.ts`
+- `.github/workflows/load-model-metrics.yml` — the model metrics and activation dispatch
+  (#329), with `scripts/load-model-metrics.ts`, `tests/unit/load-model-metrics-workflow-329.test.ts`,
+  `tests/unit/load-model-metrics-329.test.ts` and `tests/unit/model-metrics-pglite-329.test.ts`
