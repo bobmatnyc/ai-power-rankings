@@ -1,8 +1,8 @@
 /**
- * #314: migrations 0022 (nine new productivity rows) and 0023 (three existing rows move) on the
+ * #314: migrations 0027 (nine new productivity rows) and 0028 (three existing rows move) on the
  * real migration chain (PGlite).
  *
- * Why: 0022 and 0023 are hand-applied to production at different times (0023 with activation, after
+ * Why: 0027 and 0028 are hand-applied to production at different times (0028 with activation, after
  *   11-01). Their claims are executor behaviour: the new rows are inactive and unscored, a clash
  *   refuses and writes nothing, a re-run is a no-op, the rename keeps the slug, a second Claude.AI
  *   row stops the rename, and the harnesses that stay harnesses are untouched.
@@ -21,8 +21,8 @@ import { chainDb, MIGRATION_FILES, readMigration, REPO_ROOT } from "./fixtures/m
 import { pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
 
 const F17 = "0017_backfill_tool_kind.sql";
-const F22 = "0022_create_productivity_rows.sql";
-const F23 = "0023_convert_productivity_existing_rows.sql";
+const F22 = "0027_create_productivity_rows.sql";
+const F23 = "0028_convert_productivity_existing_rows.sql";
 const NEW_SLUGS = [
   "chatgpt",
   "genspark",
@@ -87,7 +87,7 @@ async function rows(slugs?: readonly string[]) {
   return r.rows;
 }
 
-describe("#314 migration 0022 creates the nine new rows", () => {
+describe("#314 migration 0027 creates the nine new rows", () => {
   it("inserts them inactive, kind productivity, unscored and without metrics, matching the seed", async () => {
     expect((await apply(ctx, F22)).exitCode).toBe(0);
     const got = await rows(NEW_SLUGS);
@@ -138,7 +138,7 @@ describe("#314 migration 0022 creates the nine new rows", () => {
   });
 });
 
-describe("#314 migration 0023 converts the three existing rows", () => {
+describe("#314 migration 0028 converts the three existing rows", () => {
   it("renames claude-artifacts to Claude.AI, keeps its slug and moves it to productivity", async () => {
     const before = (await rows(["claude-artifacts"]))[0]!.row;
     expect(before["kind"]).toBe("harness");

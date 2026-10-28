@@ -51,7 +51,7 @@ export interface KindSheetContract {
   /** D91: rows created by a later migration, so absent from the #177 audit; never in 0017. */
   addedSlugs: readonly string[];
   /**
-   * #314: rows a later migration (0023) moves to kind productivity. The sheet holds them as
+   * #314: rows a later migration (0028) moves to kind productivity. The sheet holds them as
    * productivity; this lists the kind and subcategory migration 0017 wrote, so the 0017 view of
    * the sheet (`backfillSheetRows`) still renders the applied file.
    */
@@ -65,17 +65,17 @@ export interface KindSheetContract {
  * and nova-act are other. Architect 2026-10-24: flint stays a harness app builder, so
  * there are seven app builders. D91: four model family rows (migration 0018) join the
  * sheet, so 118 rows and 19 models; the seven per-version rows they replace are retired.
- * #314: the contract is the state after migration 0023, which moves claude-artifacts, openclaw
+ * #314: the contract is the state after migration 0028, which moves claude-artifacts, openclaw
  * and perplexity to productivity, and their retired aliases clawdbot and moltbot follow openclaw:
  * harness 65, other 29, productivity 5, six app builders.
  */
 export const KIND_SHEET_CONTRACT: KindSheetContract = {
   rowCount: 118,
-  // #314: the state after 0023 (three rows to productivity).
+  // #314: the state after 0028 (three rows to productivity).
   kindCounts: { harness: 65, model: 19, other: 29, productivity: 5 },
   appBuilders: ["bolt-new", "flint", "lovable", "rocket-new", "v0-vercel", "wabi"],
   addedSlugs: ["claude-opus", "claude-sonnet", "glm", "kimi"],
-  // #314: what 0017 wrote for the three rows 0023 moves.
+  // #314: what 0017 wrote for the three rows 0028 moves.
   convertedAfter0017: [
     { slug: "claude-artifacts", kind: "harness", subcategory: "app_builder" },
     { slug: "openclaw", kind: "harness", subcategory: "autonomous_agent" },
@@ -88,7 +88,7 @@ export const KIND_SHEET_CONTRACT: KindSheetContract = {
 
 /**
  * D91: the sheet rows 0017 was built from: every row except the contract's added slugs.
- * #314: the rows 0023 converts are put back at the kind and subcategory 0017 wrote.
+ * #314: the rows 0028 converts are put back at the kind and subcategory 0017 wrote.
  */
 export function backfillSheetRows(rows: readonly KindSheetRow[], contract: KindSheetContract): KindSheetRow[] {
   return rows
@@ -235,9 +235,9 @@ export function validateKindSheet(
     }
   }
 
-  // #314: a row 0023 converts must be productivity in the sheet.
+  // #314: a row 0028 converts must be productivity in the sheet.
   for (const { slug } of contract.convertedAfter0017) {
-    if (bySlug.get(slug)?.kind !== "productivity") errors.push(`${slug}: converted by 0023, must be kind productivity`);
+    if (bySlug.get(slug)?.kind !== "productivity") errors.push(`${slug}: converted by 0028, must be kind productivity`);
   }
   for (const slug of contract.appBuilders) {
     const row = bySlug.get(slug);
