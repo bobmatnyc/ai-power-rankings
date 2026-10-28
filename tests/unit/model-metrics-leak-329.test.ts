@@ -4,8 +4,9 @@
  * Why: the loader's output reaches the public Actions log, and JSON.parse's own message quotes
  *   the text near a syntax error, so a malformed file could print a licensed figure. A guard that
  *   treats "git could not run" as "untracked" would let a tracked copy of the figures through.
- * What: a synthetic metrics document with a trailing comma right after a figure must throw, and
- *   the loader run as a process must print, a message without that figure. `isTrackedByGit` must
+ * What: a synthetic metrics document with a trailing comma right after the row holding a figure
+ *   (V8 then quotes the figure) must throw, and the loader run as a process must print, a
+ *   message without that figure. `isTrackedByGit` must
  *   throw on a spawn error or an unexpected exit, and keep exit 1 and 128 (outside a repository,
  *   as the workflow's RUNNER_TEMP file is) as untracked.
  * Test: `npx vitest run tests/unit/model-metrics-leak-329.test.ts`. No database, no network.
@@ -21,7 +22,7 @@ import { isTrackedByGit } from "../../scripts/load-model-metrics";
 
 // Synthetic, not a leaderboard value.
 const FIGURE = "47.3";
-const TRAILING_COMMA = `{"checked_at":"2026-10-21","metrics":[{"slug":"glm","field":"terminal_bench","value": ${FIGURE},]}`;
+const TRAILING_COMMA = `{"checked_at":"2026-10-21","metrics":[{"slug":"glm","field":"terminal_bench","value": ${FIGURE}},]}`;
 
 describe("metrics parse errors (#329)", () => {
   it("a JSON syntax error right after a figure throws a message without the figure", () => {
