@@ -137,7 +137,8 @@ shows which rows change but no figure. Locally the file path comes from `--metri
 or `MODEL_METRICS_FILE`.
 
 File format: `checked_at` and a `metrics` array; each row has `slug` (a slug of the model seed
-files), `field` (`terminal_bench` only), `value` (above 0, at most 100), `source` (exactly
+files, or one of the existing family rows `claude-opus`, `claude-sonnet` and `grok`, which stay
+out of the seed so a seed load never rewrites those live rows), `field` (`terminal_bench` only), `value` (above 0, at most 100), `source` (exactly
 `https://www.vals.ai/benchmarks/terminal-bench-4`), `as_of` (no later than `checked_at`) and an
 optional `version` naming the version or dated snapshot measured when it is not the seeded
 flagship. Muse Wonder is refused.
@@ -159,9 +160,10 @@ flagship. Muse Wonder is refused.
    changes `status`.
 3. **Activate.** Dispatch with `dry_run: false`, `activate: true` and
    `confirm: activate-model-metrics`. The same transaction then sets `status = 'active'` on
-   every row the model seed files list, and is refused unless each of them is an inactive or
-   active model row that carries a Vals figure after the write. Other kinds, redirect rows and
-   unlisted model rows never change.
+   every inactive target row (the seed rows plus `claude-opus`, `claude-sonnet` and `grok`), and
+   is refused unless each target is an inactive or active model row that carries a Vals figure
+   after the write. An active row stays as it is. Other kinds, redirect rows and unlisted model
+   rows never change.
 
 **Activation gate (D63 Q10).** Do not dispatch step 3 before #318 has merged and the #317
 audit has confirmed that no parent-company figures sit on model rows. Steps 1 and 2 may run

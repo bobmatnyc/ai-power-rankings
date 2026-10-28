@@ -8,11 +8,11 @@
  *   published in this repo, so the file comes from a path outside version control.
  * What: reads the metrics file (`--metrics-file`, else `MODEL_METRICS_FILE`, else the gitignored
  *   `MODEL_METRICS_DEFAULT_PATH`), refuses a copy that git tracks, validates it against the slugs
- *   of the model seed files, plans every row against the database and prints the diff. Default:
+ *   of the model seed files and the existing family allowlist, plans every row against the database and prints the diff. Default:
  *   dry run, writes nothing. `--apply` writes `data.metrics.terminal_bench` and
  *   `data.metrics_provenance.terminal_bench` in one transaction. `--activate` (only with
- *   `--apply`, and refused unless every seeded model row would carry a Vals figure) also sets
- *   those rows active in that transaction. `--hide-values` prints no figure (the public
+ *   `--apply`, and refused unless every target row (seed slugs plus the allowlist) would carry a
+ *   Vals figure) also sets the inactive ones active in that transaction; an active row stays. `--hide-values` prints no figure (the public
  *   workflow log uses it). `--check-activation` (dry run only) plans the activation read-only.
  *   The connection string is never printed.
  * Test: `tests/unit/load-model-metrics-329.test.ts`
@@ -26,6 +26,7 @@ import { resolveDatabaseUrl } from "../lib/db/database-url";
 import {
   MODEL_METRICS_DEFAULT_PATH,
   type ModelMetricsSeed,
+  metricTargetSlugs,
   parseModelMetricsSeed,
 } from "../lib/db/repositories/model-metrics-seed.repository";
 import {
@@ -173,10 +174,11 @@ async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
     return 1;
   }
   let seed: ModelMetricsSeed;
-  let seedSlugs: string[];
+  let targets: string[];
   try {
-    seedSlugs = readModelSeeds("all", (file) => fs.readFileSync(file, "utf8")).map((e) => e.row.slug);
-    seed = readModelMetrics(args.metricsFile, new Set(seedSlugs), (file) => fs.readFileSync(file, "utf8"));
+    // #329: seed-file slugs plus the existing family rows (claude-opus, claude-sonnet, grok).
+    targets = metricTargetSlugs(readModelSeeds("all", (file) => fs.readFileSync(file, "utf8")).map((e) => e.row.slug));
+    seed = readModelMetrics(args.metricsFile, new Set(targets), (file) => fs.readFileSync(file, "utf8"));
   } catch (error) {
     console.error(`ERROR: metrics validation failed: ${error instanceof Error ? error.message : String(error)}`);
     return 1;
@@ -212,7 +214,7 @@ async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
   try {
     return await loadModelMetrics(db, seed, {
       apply: args.apply,
-      activationTargets: args.activate || args.checkActivation ? seedSlugs : null,
+      activationTargets: args.activate || args.checkActivation ? targets : null,
       hideValues: args.hideValues,
     });
   } catch (error) {

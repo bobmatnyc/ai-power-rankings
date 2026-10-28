@@ -6,7 +6,7 @@
  *   must stop the run, so every rule throws. The real figures stay out of this public repo: the
  *   file lives at a gitignored path (`MODEL_METRICS_DEFAULT_PATH`) or is supplied at apply time.
  * What: `parseModelMetricsSeed` reads one metrics document and returns typed rows. Each row names
- *   a model family slug listed in the model seed files, the field `terminal_bench`, a positive
+ *   a model family slug listed in the model seed files or in `EXISTING_FAMILY_METRIC_SLUGS`, the field `terminal_bench`, a positive
  *   finite value of at most 100, the Vals page as source (exactly `MODEL_TERMINAL_BENCH_SOURCE`)
  *   and an `as_of` date no later than the file's `checked_at`. `version` names the version or
  *   snapshot the figure was measured on when it is not the seeded flagship. Pure: no database,
@@ -23,6 +23,18 @@ export const MODEL_METRICS_DEFAULT_PATH = "data/private/model-metrics.json";
 /** #329 (D63): the only metric field this file may set. */
 export const MODEL_METRIC_FIELDS = ["terminal_bench"] as const;
 export type ModelMetricField = (typeof MODEL_METRIC_FIELDS)[number];
+
+/**
+ * #329 (Architect ruling): existing D91 family rows that take a metric without being seed rows.
+ * They are live rows, so they stay out of the seed files: a seed load would rewrite their
+ * release date, open_weight and data.modelSeed. The metrics write touches only the metric keys.
+ */
+export const EXISTING_FAMILY_METRIC_SLUGS: readonly string[] = ["claude-opus", "claude-sonnet", "grok"];
+
+/** #329: the slugs a metric row may name: the seed-file slugs plus the existing family rows. */
+export function metricTargetSlugs(seedSlugs: readonly string[]): string[] {
+  return [...new Set([...seedSlugs, ...EXISTING_FAMILY_METRIC_SLUGS])];
+}
 
 /** #329: Muse Wonder stays excluded until the owner rules on its source. */
 export const EXCLUDED_METRIC_SLUGS: readonly string[] = ["muse-wonder"];
@@ -66,7 +78,7 @@ export function parseModelMetricRow(entry: unknown, what: string, knownSlugs: Re
   const slug = text(e, "slug", what);
   // #329: Muse Wonder is excluded by ruling, even if a seed file ever lists it.
   if (EXCLUDED_METRIC_SLUGS.includes(slug)) throw new Error(`${what}: ${slug} is excluded`);
-  if (!knownSlugs.has(slug)) throw new Error(`${what}: unknown slug ${slug}; a metric attaches only to a seeded model family row`);
+  if (!knownSlugs.has(slug)) throw new Error(`${what}: unknown slug ${slug}; a metric attaches only to a seeded or allowlisted model family row`);
   const field = text(e, "field", what);
   if (!(MODEL_METRIC_FIELDS as readonly string[]).includes(field)) {
     throw new Error(`${what}: field ${field} is not allowed (only ${MODEL_METRIC_FIELDS.join(", ")})`);
@@ -88,7 +100,7 @@ export function parseModelMetricRow(entry: unknown, what: string, knownSlugs: Re
 
 /**
  * Why: the metrics file is checked as a whole before any figure is planned or written.
- * What: parses the JSON text against the slugs the model seed files list. Throws on text that
+ * What: parses the JSON text against `knownSlugs` (`metricTargetSlugs`). Throws on text that
  *   is not JSON, a missing or invalid `checked_at`, no `metrics` array or an empty one, any row
  *   rule (`parseModelMetricRow`) and a slug used twice. Pure.
  * Test: `tests/unit/model-metrics-seed-329.test.ts`

@@ -20,9 +20,9 @@ import {
 import type { ModelSeedDb } from "../../lib/db/repositories/model-seed-writer";
 import { MODEL_TERMINAL_BENCH_SOURCE } from "../../lib/rankings/lists";
 import { loadModelMetrics, parseArgs } from "../../scripts/load-model-metrics";
-import { SEED_SLUGS, syntheticMetricsDoc, syntheticValue } from "./fixtures/model-metrics-329-fixture";
+import { METRIC_SLUGS, syntheticMetricsDoc, syntheticValue } from "./fixtures/model-metrics-329-fixture";
 
-const SEED = parseModelMetricsSeed(JSON.stringify(syntheticMetricsDoc()), new Set(SEED_SLUGS));
+const SEED = parseModelMetricsSeed(JSON.stringify(syntheticMetricsDoc()), new Set(METRIC_SLUGS));
 
 interface Call {
   sql: string;
@@ -69,7 +69,7 @@ function boundary(found: Record<string, unknown>[], activated?: (params: unknown
   return { db, calls, transactions: () => transactions };
 }
 
-const ALL_INACTIVE = SEED_SLUGS.map((slug) => existing(slug));
+const ALL_INACTIVE = METRIC_SLUGS.map((slug) => existing(slug));
 
 describe("parseArgs (#329)", () => {
   it("defaults to a dry run with no activation, reading the gitignored path", () => {
@@ -108,10 +108,10 @@ describe("loadModelMetrics (#329)", () => {
     expect(await loadModelMetrics(db, SEED, { apply: false, activationTargets: null, hideValues: false }, (l) => log.push(l))).toBe(0);
     expect(calls.map((c) => c.sql)).toEqual([MODEL_METRICS_SELECT_SQL]);
     expect(transactions()).toBe(0);
-    expect(log).toContain(`would update: ${SEED_SLUGS[0]}`);
+    expect(log).toContain(`would update: ${METRIC_SLUGS[0]}`);
     expect(log).toContain(`  metrics.terminal_bench: (null) -> ${syntheticValue(0)}`);
     expect(log).toContain(
-      `totals: ${SEED_SLUGS.length} metric row(s), ${SEED_SLUGS.length} update, 0 unchanged, 0 refused; activation: not requested`
+      `totals: ${METRIC_SLUGS.length} metric row(s), ${METRIC_SLUGS.length} update, 0 unchanged, 0 refused; activation: not requested`
     );
     expect(log.at(-1)).toBe("dry run: nothing written (pass --apply to write)");
   });
@@ -122,10 +122,10 @@ describe("loadModelMetrics (#329)", () => {
     expect(await loadModelMetrics(db, SEED, { apply: true, activationTargets: null, hideValues: false }, (l) => log.push(l))).toBe(0);
     expect(transactions()).toBe(1);
     const writes = calls.filter((c) => c.inTransaction);
-    expect(writes.map((c) => c.sql)).toEqual(SEED_SLUGS.map(() => MODEL_METRIC_UPDATE_SQL));
-    expect(writes[0]!.params).toEqual([SEED_SLUGS[0], syntheticValue(0), MODEL_TERMINAL_BENCH_SOURCE, "2026-10-20"]);
+    expect(writes.map((c) => c.sql)).toEqual(METRIC_SLUGS.map(() => MODEL_METRIC_UPDATE_SQL));
+    expect(writes[0]!.params).toEqual([METRIC_SLUGS[0], syntheticValue(0), MODEL_TERMINAL_BENCH_SOURCE, "2026-10-20"]);
     expect(calls.some((c) => c.sql === MODEL_ACTIVATE_SQL)).toBe(false);
-    expect(log.at(-1)).toBe(`apply: committed, ${SEED_SLUGS.length} metric row(s) written, 0 row(s) activated`);
+    expect(log.at(-1)).toBe(`apply: committed, ${METRIC_SLUGS.length} metric row(s) written, 0 row(s) activated`);
   });
 
   it("the metric statement never names status; the activation statement guards kind, status and the Vals source", () => {
@@ -136,23 +136,23 @@ describe("loadModelMetrics (#329)", () => {
   });
 
   it("with --activate, activates the inactive targets after the metric writes, inside the same transaction", async () => {
-    const found = SEED_SLUGS.map((slug, i) => existing(slug, i === 0 ? { status: "active" } : {}));
+    const found = METRIC_SLUGS.map((slug, i) => existing(slug, i === 0 ? { status: "active" } : {}));
     const { db, calls, transactions } = boundary(found);
     const log: string[] = [];
-    const code = await loadModelMetrics(db, SEED, { apply: true, activationTargets: SEED_SLUGS, hideValues: false }, (l) => log.push(l));
+    const code = await loadModelMetrics(db, SEED, { apply: true, activationTargets: METRIC_SLUGS, hideValues: false }, (l) => log.push(l));
     expect(code).toBe(0);
     expect(transactions()).toBe(1);
     const last = calls.at(-1)!;
-    expect(last).toEqual({ sql: MODEL_ACTIVATE_SQL, params: [SEED_SLUGS.slice(1), MODEL_TERMINAL_BENCH_SOURCE], inTransaction: true });
-    expect(log).toContain(`already active: ${SEED_SLUGS[0]}`);
-    expect(log).toContain(`will activate: ${SEED_SLUGS[1]}`);
+    expect(last).toEqual({ sql: MODEL_ACTIVATE_SQL, params: [METRIC_SLUGS.slice(1), MODEL_TERMINAL_BENCH_SOURCE], inTransaction: true });
+    expect(log).toContain(`already active: ${METRIC_SLUGS[0]}`);
+    expect(log).toContain(`will activate: ${METRIC_SLUGS[1]}`);
   });
 
   it("rolls back when the activation matches fewer rows than planned", async () => {
     const { db } = boundary(ALL_INACTIVE, () => []);
     const log: string[] = [];
-    expect(await loadModelMetrics(db, SEED, { apply: true, activationTargets: SEED_SLUGS, hideValues: false }, (l) => log.push(l))).toBe(1);
-    expect(log.at(-1)).toMatch(/^apply: rolled back, nothing written: activation matched 0 of 13 row\(s\)/);
+    expect(await loadModelMetrics(db, SEED, { apply: true, activationTargets: METRIC_SLUGS, hideValues: false }, (l) => log.push(l))).toBe(1);
+    expect(log.at(-1)).toMatch(/^apply: rolled back, nothing written: activation matched 0 of 16 row\(s\)/);
   });
 
   it.each([
@@ -161,7 +161,7 @@ describe("loadModelMetrics (#329)", () => {
     ["a harness row", (slug: string) => existing(slug, slug === "glm" ? { kind: "harness" } : {}), "REFUSED: glm: slug is held by a harness row, not a model"],
     ["a non-object metrics value", (slug: string) => existing(slug, slug === "glm" ? { metrics_type: "string" } : {}), "REFUSED: glm: data.metrics is a string, not an object"],
   ])("refuses %s and writes nothing", async (_name, make, line) => {
-    const { db, transactions } = boundary(SEED_SLUGS.map(make).filter((r) => r !== null) as Record<string, unknown>[]);
+    const { db, transactions } = boundary(METRIC_SLUGS.map(make).filter((r) => r !== null) as Record<string, unknown>[]);
     const log: string[] = [];
     expect(await loadModelMetrics(db, SEED, { apply: true, activationTargets: null, hideValues: false }, (l) => log.push(l))).toBe(1);
     expect(log).toContain(line);
@@ -170,20 +170,20 @@ describe("loadModelMetrics (#329)", () => {
   });
 
   it("refuses activation of a target row with no figure, and of a row in another status", async () => {
-    const partial = parseModelMetricsSeed(JSON.stringify(syntheticMetricsDoc(SEED_SLUGS.slice(1))), new Set(SEED_SLUGS));
-    const found = SEED_SLUGS.map((slug) => existing(slug, slug === SEED_SLUGS[1] ? { status: "deprecated" } : {}));
+    const partial = parseModelMetricsSeed(JSON.stringify(syntheticMetricsDoc(METRIC_SLUGS.slice(1))), new Set(METRIC_SLUGS));
+    const found = METRIC_SLUGS.map((slug) => existing(slug, slug === METRIC_SLUGS[1] ? { status: "deprecated" } : {}));
     const { db, transactions } = boundary(found);
     const log: string[] = [];
-    expect(await loadModelMetrics(db, partial, { apply: true, activationTargets: SEED_SLUGS, hideValues: false }, (l) => log.push(l))).toBe(1);
-    expect(log).toContain(`REFUSED activation: ${SEED_SLUGS[0]}: row would carry no Vals Terminal-Bench 4.0 figure after the write`);
-    expect(log).toContain(`REFUSED activation: ${SEED_SLUGS[1]}: status is deprecated; only inactive rows are activated`);
+    expect(await loadModelMetrics(db, partial, { apply: true, activationTargets: METRIC_SLUGS, hideValues: false }, (l) => log.push(l))).toBe(1);
+    expect(log).toContain(`REFUSED activation: ${METRIC_SLUGS[0]}: row would carry no Vals Terminal-Bench 4.0 figure after the write`);
+    expect(log).toContain(`REFUSED activation: ${METRIC_SLUGS[1]}: status is deprecated; only inactive rows are activated`);
     expect(transactions()).toBe(0);
   });
 
   it("--hide-values prints no figure", async () => {
     const { db } = boundary(ALL_INACTIVE);
     const log: string[] = [];
-    await loadModelMetrics(db, SEED, { apply: false, activationTargets: SEED_SLUGS, hideValues: true }, (l) => log.push(l));
+    await loadModelMetrics(db, SEED, { apply: false, activationTargets: METRIC_SLUGS, hideValues: true }, (l) => log.push(l));
     expect(log).toContain("  metrics.terminal_bench: (unset) -> (new value)");
     const text = log.join("\n");
     for (const row of SEED.rows) expect(text).not.toMatch(new RegExp(`\\b${row.value}\\b`));
