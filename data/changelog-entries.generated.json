@@ -88,6 +88,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-57587f68230f",
+    "version": "Unreleased",
+    "date": "2026-10-28T16:15:35.311Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "db",
+    "title": "migration 0022_fix_grok_stray_kind.sql gives the grok-4-5, grok-4-6 and grok-4-7 rows kind model and archives them…",
+    "description": "migration `0022_fix_grok_stray_kind.sql` gives the `grok-4-5`, `grok-4-6` and `grok-4-7` rows kind `model` and archives them (owner ruling D7b). The rows held the 0016 default kind `harness` with status `pending_review`, so the model seed refused `grok-4-5` and `grok-4-6`, and its status step refuses a `pending_review` row. The migration sets `kind = 'model'`, `subcategory = NULL` and `status = 'deprecated'` on all three and records `data.d7b.supersededBy = 'grok'`; `grok-4-7` duplicates the live `grok` row (Grok 4.7). The seed's status step then moves `grok-4-5` and `grok-4-6` from deprecated to deprecated and adds its lifecycle record. One DO block: it raises and writes nothing unless all three rows exist as `harness`/`pending_review`, no `tool_links` row touches them, and `grok` is an active model. A re-run is a no-op, and a partial state raises. Tests: `tests/unit/grok-kind-fix-d7b.test.ts` (#329)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-aeccf9bee8fa",
     "version": "Unreleased",
     "date": "2026-10-27T22:21:35.850Z",
