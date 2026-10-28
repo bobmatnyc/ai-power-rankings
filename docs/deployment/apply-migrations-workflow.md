@@ -91,6 +91,45 @@ rollback.
 **Known gap (D99).** The dry run and the backup use the same writer `DATABASE_URL`
 repository secret, by name. There is no read-only role.
 
+## Fixing the stray Grok rows (D7b, migration 0022)
+
+`0022_fix_grok_stray_kind.sql` sets `grok-4-5`, `grok-4-6` and `grok-4-7` to kind `model`
+(owner ruling D7b) and archives all three as `deprecated` with `data.d7b.supersededBy = 'grok'`.
+It also sets the status of `grok-4-5` and `grok-4-6` because the seed's `set_status` step refuses
+a `pending_review` row (`MODEL_STATUS_FROM` in `lib/db/repositories/model-lifecycle.ts`). From
+`deprecated`, that step later sets deprecated to deprecated and adds its `data.modelLifecycle`
+record; it never names `grok-4-7`. The migration is one DO block that raises and writes nothing
+unless all three rows are `harness`/`pending_review`, no `tool_links` row touches them, and
+`grok` is an active model. Any other status, `redirect` included, aborts it. A re-run is a no-op.
+
+1. **Pre-check.** Run these read-only SELECTs against production, before the pre-apply branch
+   of step 3 is created, and paste counts, not ids:
+   (1) the three rows: `SELECT slug, kind, status, subcategory, open_weight, data ? 'redirect_to'
+   FROM tools WHERE slug IN ('grok-4-5','grok-4-6','grok-4-7')`, expect 3 rows, all
+   `harness`/`pending_review`; (2) the target: `SELECT kind, status FROM tools WHERE slug =
+   'grok'`, expect `model`/`active`; (3) the links: `SELECT count(*) FROM tool_links l JOIN tools
+   t ON t.id IN (l.model_tool_id, l.harness_tool_id) WHERE t.slug IN
+   ('grok-4-5','grok-4-6','grok-4-7')`, expect 0; (4) the eligible rows: `SELECT count(*) FROM
+   tools WHERE slug IN ('grok-4-5','grok-4-6','grok-4-7') AND kind = 'harness' AND status =
+   'pending_review'`, expect 3. Stop on any other result; the migration would abort anyway.
+   **Observed 2026-10-28 16:12Z:** (1) 3 rows, all `harness`/`pending_review`, subcategory and
+   `open_weight` null, no `redirect_to`; (2) `model`/`active`; (3) 0. The first draft of check
+   (4) counted status `inactive`, `active` or `deprecated` and returned 0; with `pending_review`
+   it is expected to return 3.
+2. **Dry run.** Dispatch `apply-migration.yml` with `migration_file=0022_fix_grok_stray_kind.sql`,
+   `dry_run=true`, `show_columns_table=tools`. It lists 0022 as pending and prints the `tools`
+   columns; it does not read the three rows.
+3. **Recovery point (D98).** Before the `dry_run=false` dispatch, the owner creates a named Neon
+   branch of production; the owner records its name and UTC time privately. Rollback is a
+   restore from that branch; each row's `data.d7b.from_*` also keeps its previous kind,
+   subcategory and status.
+4. **Apply.** Dispatch the same file with `dry_run=false`. The runner does not print the
+   migration's NOTICE lines, so check the result with two reads:
+   (a) the read-only post-check `SELECT slug, kind, status, data->'d7b'->>'supersededBy' FROM
+   tools WHERE slug IN ('grok-4-5','grok-4-6','grok-4-7')`, expect 3 rows, each
+   `model`/`deprecated`/`grok`; (b) the seed dry run (`set_status=true`), expect `grok-4-5` and
+   `grok-4-6` as deprecated to deprecated, not refused. A failed apply raises and writes nothing.
+
 ## Loading the model seeds (#329)
 
 The **Load model seed (#329)** workflow (`.github/workflows/load-model-seed.yml`) runs
