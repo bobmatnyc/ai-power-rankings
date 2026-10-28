@@ -123,7 +123,11 @@ availability source and check date per row, a coding source URL per active row, 
 figures) and sets each listed row to `active` or `deprecated` with a `data.modelLifecycle`
 record. `deprecated` is the archive: the row and its URL stay. It refuses a redirect alias, a
 non-model row and any status other than `inactive`, `active` or `deprecated`, and it writes no
-other column. The dry run prints `would set status` lines and a `status:` totals line.
+other column. Under owner ruling D0c it may activate a row with no benchmark figure. The same
+transaction then re-points the `opus-4-6` and `opus-4-5` redirect aliases from `claude-opus` to
+`claude-opus-4` (`MODEL_REDIRECT_REPOINTS`), only while each still redirects to `claude-opus`; a
+0-row match aborts the whole write. The dry run prints `would set status` and `would re-point
+redirect` lines, a `status:` line and a `redirects:` line.
 
 **Recovery (D98).** Before the write dispatch, the owner creates a named Neon branch of
 production (name pattern: `pre-model-seed-YYYYMMDD`) and records its name and UTC time.

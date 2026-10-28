@@ -11,7 +11,9 @@
  *   and exits 0, or 1 when a row is refused. `--apply` writes every planned row in one
  *   transaction, or nothing when any row is refused. `--set-status` (needs `--seed all`) also
  *   validates `docs/refresh/model-lifecycle.json` and plans, and with `--apply` writes in the
- *   same transaction, each row's lifecycle status (active or deprecated) and `data.modelLifecycle`.
+ *   same transaction, each row's lifecycle status (active or deprecated) and `data.modelLifecycle`,
+ *   then re-points the listed redirect aliases (`MODEL_REDIRECT_REPOINTS`). D0c: a lifecycle
+ *   activation needs no benchmark figure.
  *   The connection string is never printed.
  * Test: `tests/unit/load-model-seeds-329.test.ts`
  *
@@ -34,6 +36,13 @@ import {
   parseModelLifecycle,
   planModelStatus,
 } from "../lib/db/repositories/model-lifecycle";
+import {
+  applyRedirectRepoints,
+  MODEL_REDIRECT_REPOINTS,
+  type RedirectRepoint,
+  type RedirectRepointPlan,
+  planRedirectRepoints,
+} from "../lib/db/repositories/model-redirect-repoint";
 import {
   applyModelSeedPlans,
   type ModelSeedDb,
@@ -100,7 +109,9 @@ function formatPlan(plan: ModelSeedPlan, verb: "would" | "will"): string[] {
  *   With a `lifecycle`, it also plans each row's status (a row the seed inserts counts as
  *   inactive) and prints a `status:` line. `apply` false writes nothing (0, or 1 when a row or
  *   status is refused). `apply` true writes nothing and returns 1 when anything is refused;
- *   otherwise it writes every seed plan, then every status plan, in one transaction.
+ *   otherwise it writes every seed plan, then every status plan, then every redirect re-point
+ *   (`repoints`, planned with a `redirects:` line), in one transaction; a guard that matches
+ *   no row throws and the transaction rolls back.
  * Test: `tests/unit/load-model-seeds-329.test.ts`
  */
 export async function loadModelSeeds(
@@ -108,7 +119,8 @@ export async function loadModelSeeds(
   entries: readonly ModelSeedEntry[],
   apply: boolean,
   log: (line: string) => void = console.log,
-  lifecycle: ModelLifecycle | null = null
+  lifecycle: ModelLifecycle | null = null,
+  repoints: readonly RedirectRepoint[] = []
 ): Promise<number> {
   const plans = await planModelSeedRows(db, entries);
   for (const plan of plans) for (const line of formatPlan(plan, apply ? "will" : "would")) log(line);
@@ -128,6 +140,19 @@ export async function loadModelSeeds(
     log(`status: ${statusPlans.length} row(s), ${set("active")} set active, ${set("deprecated")} set deprecated, ${unchanged} unchanged, ${statusRefused} refused`);
     refused += statusRefused;
   }
+  let repointPlans: RedirectRepointPlan[] = [];
+  if (repoints.length > 0) {
+    const inserts = new Set(plans.filter((p) => p.outcome === "insert").map((p) => p.slug));
+    repointPlans = await planRedirectRepoints(db, repoints, inserts);
+    for (const p of repointPlans) {
+      if (p.outcome === "refused") log(`REFUSED redirect: ${p.alias}: ${p.reason}`);
+      else if (p.outcome === "unchanged") log(`redirect unchanged: ${p.alias}`);
+      else log(`${apply ? "will" : "would"} re-point redirect: ${p.alias}: ${p.from} -> ${p.to}`);
+    }
+    const n = (o: RedirectRepointPlan["outcome"]) => repointPlans.filter((p) => p.outcome === o).length;
+    log(`redirects: ${repointPlans.length} alias(es), ${n("repoint")} re-point, ${n("unchanged")} unchanged, ${n("refused")} refused`);
+    refused += n("refused");
+  }
   if (!apply) {
     log("dry run: nothing written (pass --apply to write)");
     return refused > 0 ? 1 : 0;
@@ -137,11 +162,14 @@ export async function loadModelSeeds(
     return 1;
   }
   try {
-    const { written, statuses } = await db.transaction(async (tx) => ({
+    const { written, statuses, redirects } = await db.transaction(async (tx) => ({
       written: await applyModelSeedPlans(tx, plans),
       statuses: await applyModelStatusPlans(tx, statusPlans),
+      redirects: await applyRedirectRepoints(tx, repointPlans),
     }));
-    log(`apply: committed, ${written} row(s) written${lifecycle ? `, ${statuses} status(es) set` : ""}`);
+    const statusPart = lifecycle ? `, ${statuses} status(es) set` : "";
+    const redirectPart = repoints.length > 0 ? `, ${redirects} redirect(s) re-pointed` : "";
+    log(`apply: committed, ${written} row(s) written${statusPart}${redirectPart}`);
     return 0;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -221,7 +249,7 @@ async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
     },
   };
   try {
-    return await loadModelSeeds(db, entries, args.apply, console.log, lifecycle);
+    return await loadModelSeeds(db, entries, args.apply, console.log, lifecycle, lifecycle ? MODEL_REDIRECT_REPOINTS : []);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`ERROR: load-model-seeds failed: ${redactConnectionString(message, url)}`);

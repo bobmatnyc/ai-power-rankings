@@ -3,15 +3,19 @@
  *
  * Why: the owner asked for one ranked row per available major version of each model line, with
  *   older or unavailable points archived. The seed upsert never changes status, so the status
- *   change is its own explicit step, checked as a whole before any write. The rules are a
- *   working draft until the owner rules on D05, so they live in one constant.
+ *   change is its own explicit step, checked as a whole before any write. The rules live in one
+ *   constant so a ruling changes one place.
+ *   D0c (owner, 2026-10-28): this step may activate a row that carries no benchmark figure. The
+ *   D86 Vals Terminal-Bench 4.0 figure gate still governs the metrics loader's `--activate`
+ *   (`model-metrics-writer.ts`) and the models-list 10-row index threshold (`lib/rankings/lists.ts`).
  * What: `parseModelLifecycle` validates `docs/refresh/model-lifecycle.json` against the seed
  *   slugs and `MODEL_LIFECYCLE_RULES`. `planModelStatus` reads the rows (one SELECT) and returns
  *   per row `set` (with the status change, if any) or `unchanged` or `refused`.
  *   `applyModelStatusPlans` runs `MODEL_STATUS_UPDATE_SQL` per `set` plan inside the caller's
  *   transaction. The statement writes only `status` and `data.modelLifecycle`, and never matches
  *   a redirect alias or a non-model row. `deprecated` is the archive: the row and its URL stay.
- * Test: `tests/unit/model-lifecycle-329.test.ts`
+ *   `dropArchivedSlugs` removes archived rows from a slug list (the metrics loader's activation targets).
+ * Test: `tests/unit/model-lifecycle-329.test.ts`, `tests/unit/model-lifecycle-pglite-329.test.ts`
  */
 
 import { EXCLUDED_MODEL_MODALITIES } from "../../rankings/lists";
@@ -21,7 +25,7 @@ import { isCalendarDate } from "./model-seed.repository";
 export const MODEL_LIFECYCLE_FILE = "docs/refresh/model-lifecycle.json";
 
 /**
- * #329 D05 working draft. Change these when the owner rules; the file text in `rules` follows.
+ * #329 rules as ruled by the owner (D0c). Change these when a ruling changes; the file text in `rules` follows.
  * - `availabilityBases`: how availability may be shown (vendor API docs, vendor Hugging Face weights).
  * - `activeNeedsCodingSource`: an active row names a coding benchmark page.
  * - `oneActivePerLineMajor`: only the latest available point of a line and major is active.
@@ -113,7 +117,7 @@ const ROW_KEYS = new Set([
   "superseded_by",
 ]);
 const AVAILABILITY_KEYS = new Set(["available", "basis", "source_url", "checked_at"]);
-const DOC_KEYS = new Set(["checked_at", "ruling", "rules", "models"]);
+const DOC_KEYS = new Set(["checked_at", "ruling", "rules", "notes", "models"]);
 
 /** Compares two points such as 4.8 and 4.10 numerically by part; negative when `a` is earlier. */
 export function comparePoints(a: string, b: string): number {
@@ -351,6 +355,7 @@ export const MODEL_STATUS_FROM = ["inactive", "active", "deprecated"] as const;
 // #329: writes status and the top-level data.modelLifecycle key only. The WHERE refuses a
 // non-model row, a redirect alias and any status outside MODEL_STATUS_FROM; it then returns no
 // row and the caller rolls back. Metrics, facts and name are never named.
+// D0c: no metric condition here; activation without a figure is the owner's ruling for this step.
 export const MODEL_STATUS_UPDATE_SQL = `UPDATE tools SET
   status = $2,
   data = data || jsonb_build_object('modelLifecycle', $3::jsonb),
@@ -421,7 +426,20 @@ export async function planModelStatus(
   });
 }
 
-/** Writes every `set` plan through `tx`; throws when a guarded update matches no row. */
+/**
+ * #329: `slugs` without the rows the lifecycle archives (`deprecated`). Pure; keeps order.
+ * The metrics loader uses it so an archived row is never an activation target.
+ */
+export function dropArchivedSlugs(slugs: readonly string[], lifecycle: ModelLifecycle): string[] {
+  const archived = new Set(lifecycle.rows.filter((r) => r.targetStatus === "deprecated").map((r) => r.slug));
+  return slugs.filter((slug) => !archived.has(slug));
+}
+
+/**
+ * Writes every `set` plan through `tx`; throws when a guarded update matches no row, so the
+ * caller rolls the whole transaction back.
+ * D0c: a `set` to active needs no benchmark figure; the plan came from the reviewed lifecycle file.
+ */
 export async function applyModelStatusPlans(tx: ModelSeedQueryable, plans: readonly ModelStatusPlan[]): Promise<number> {
   let written = 0;
   for (const plan of plans) {

@@ -13,8 +13,10 @@
 
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { EXISTING_FAMILY_METRIC_SLUGS } from "../../lib/db/repositories/model-metrics-seed.repository";
 import {
   assertNoBenchmarkFigures,
+  dropArchivedSlugs,
   KNOWN_REDIRECT_SLUGS,
   type LifecycleSeedRow,
   MODEL_LIFECYCLE_FILE,
@@ -78,7 +80,7 @@ describe("shipped per-major seed and lifecycle (#329)", () => {
       expect(row.codingSourceUrl, row.slug).toMatch(/^https:\/\//);
     }
     expect(active.length).toBeGreaterThanOrEqual(20);
-    expect(active.length).toBeLessThanOrEqual(35);
+    expect(active.length).toBeLessThanOrEqual(60);
   });
 
   it("covers every expected vendor family with an active row", () => {
@@ -120,8 +122,9 @@ describe("lifecycle rules each fail on a bad fixture (#329)", () => {
     ["an active row with no coding source", (d) => delete entry(d, "glm")["coding_source_url"], /needs a coding_source_url/],
     ["an image or video model slug", (d) => (entry(d, "glm")["slug"] = "gemini-image"), /out of scope \(D52\)/],
     ["a slug that is a redirect alias", (d) => (entry(d, "glm")["slug"] = "opus-4-6"), /redirect alias/],
-    ["a benchmark figure key", (d) => (entry(d, "glm")["terminal_bench"] = 40), /names a benchmark figure/],
-    ["a benchmark figure in text", (d) => (d["ruling"] = "GLM 5.3 scored 38.9 on TB 4.0"), /names a score/],
+    // Synthetic text only: no real model name sits beside a figure in this file.
+    ["a benchmark figure key", (d) => ((d["rules"] as Record<string, unknown>)["terminal_bench"] = 1), /names a benchmark figure/],
+    ["a benchmark figure in text", (d) => (d["ruling"] = "Model Zeta scored 1 on TB"), /names a score/],
     ["a deprecated row without a reason", (d) => delete entry(d, "grok-4-5")["archive_reason"], /needs archive_reason/],
     ["a superseded row pointing at an archived row", (d) => (entry(d, "grok-4-5")["superseded_by"] = "grok-4-6"), /not an active row/],
     ["an archived point later than the active one", (d) => (entry(d, "grok-4-5")["point"] = "4.9"), /not earlier than the active grok/],
@@ -168,8 +171,37 @@ function fakeDb(rows: Record<string, unknown>[]): { db: ModelSeedDb; calls: Call
 
 const one = (slug: string): ModelLifecycle => ({ checkedAt: LIFECYCLE.checkedAt, rows: LIFECYCLE.rows.filter((r) => r.slug === slug) });
 
+describe("lifecycle helpers (#329)", () => {
+  it("dropArchivedSlugs drops every deprecated slug and keeps every active one", () => {
+    const all = LIFECYCLE.rows.map((r) => r.slug);
+    const kept = dropArchivedSlugs([...all, "not-in-lifecycle"], LIFECYCLE);
+    for (const row of LIFECYCLE.rows) expect(kept.includes(row.slug), row.slug).toBe(row.targetStatus === "active");
+    expect(kept).toContain("not-in-lifecycle");
+  });
+
+  it("the metrics allowlist is the lifecycle's live slugs, devstral-small-2 included", () => {
+    expect([...EXISTING_FAMILY_METRIC_SLUGS]).toEqual([...MODEL_LIFECYCLE_LIVE_SLUGS]);
+    expect(EXISTING_FAMILY_METRIC_SLUGS).toContain("devstral-small-2");
+  });
+});
+
 describe("status step plan and loader (#329)", () => {
-  it("plans each status move and refuses redirect, other kinds and missing rows", async () => {
+  it("moves a deprecated row to active only when the lifecycle file says active", async () => {
+    const row = { slug: "grok-4-5", kind: "model", status: "deprecated", redirect_to: null, model_lifecycle: null };
+    const archived = one("grok-4-5");
+    expect(archived.rows[0]!.targetStatus).toBe("deprecated");
+    const stay = await planModelStatus(fakeDb([row]).db, archived, new Set());
+    expect(stay).toEqual([expect.objectContaining({ slug: "grok-4-5", outcome: "set", from: "deprecated", to: "deprecated" })]);
+    const flipped: ModelLifecycle = { ...archived, rows: [{ ...archived.rows[0]!, targetStatus: "active", archiveReason: null, supersededBy: null }] };
+    const move = await planModelStatus(fakeDb([row]).db, flipped, new Set());
+    expect(move).toEqual([expect.objectContaining({ slug: "grok-4-5", outcome: "set", from: "deprecated", to: "active" })]);
+    // A deprecated row the lifecycle does not list is never planned.
+    const other = await planModelStatus(fakeDb([row, { ...row, slug: "legacy-model" }]).db, flipped, new Set());
+    expect(other.map((p) => p.slug)).toEqual(["grok-4-5"]);
+  });
+
+  // D0c: the status step activates rows that carry no benchmark figure (none of these rows has one).
+  it("D0c: plans each status move, activating without a figure, and refuses redirect, other kinds and missing rows", async () => {
     const { db } = fakeDb([
       { slug: "gpt-astra", kind: "model", status: "inactive", redirect_to: null, model_lifecycle: null },
       { slug: "claude-opus", kind: "model", status: "active", redirect_to: null, model_lifecycle: null },

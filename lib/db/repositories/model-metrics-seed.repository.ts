@@ -17,6 +17,7 @@
  */
 
 import { MODEL_TERMINAL_BENCH_SOURCE } from "../../rankings/lists";
+import { MODEL_LIFECYCLE_LIVE_SLUGS } from "./model-lifecycle";
 import { isCalendarDate } from "./model-seed.repository";
 
 /** #329: the gitignored default location of the real-figures file (never committed). */
@@ -30,8 +31,9 @@ export type ModelMetricField = (typeof MODEL_METRIC_FIELDS)[number];
  * #329 (Architect ruling): existing D91 family rows that take a metric without being seed rows.
  * They are live rows, so they stay out of the seed files: a seed load would rewrite their
  * release date, open_weight and data.modelSeed. The metrics write touches only the metric keys.
+ * #329: the same list as the lifecycle's live rows, so the two cannot drift apart.
  */
-export const EXISTING_FAMILY_METRIC_SLUGS: readonly string[] = ["claude-opus", "claude-sonnet", "grok"];
+export const EXISTING_FAMILY_METRIC_SLUGS: readonly string[] = MODEL_LIFECYCLE_LIVE_SLUGS;
 
 /** #329: the slugs a metric row may name: the seed-file slugs plus the existing family rows. */
 export function metricTargetSlugs(seedSlugs: readonly string[]): string[] {

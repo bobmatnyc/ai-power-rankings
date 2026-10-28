@@ -14,7 +14,8 @@ name: Load model seed (#329)
 # only after the dry run succeeded. The seed upsert never changes a row's status or metrics.
 # `set_status: true` (with seed all) adds the lifecycle status step: the dry run then also plans,
 # and the write also sets in the same transaction, each row's status from
-# docs/refresh/model-lifecycle.json (active or deprecated, #329). The job runs only when dispatched from main, so no other
+# docs/refresh/model-lifecycle.json (active or deprecated, #329), then re-points the listed
+# Opus 4.x redirect aliases to claude-opus-4. The job runs only when dispatched from main, so no other
 # ref reaches the secret-bearing steps. Any non-zero exit fails the job.
 # The job summary carries the mode, each step's outcome and the script's totals line only
 # (D19): no host, database fingerprint, role name, rank or score. The script redacts anything
@@ -141,7 +142,7 @@ jobs:
           grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/seed-dry-run.raw" > "$RUNNER_TEMP/seed-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/seed-dry-run.raw"
           cat "$RUNNER_TEMP/seed-dry-run.txt"
-          grep -E '^(totals|status): ' "$RUNNER_TEMP/seed-dry-run.txt" > "$RUNNER_TEMP/seed-counts-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
+          grep -E '^(totals|status|redirects): ' "$RUNNER_TEMP/seed-dry-run.txt" > "$RUNNER_TEMP/seed-counts-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
           exit "$status"
 
       # One transaction, run only after the dry run succeeded. A re-run is a no-op.
@@ -162,7 +163,7 @@ jobs:
           grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/seed-write.raw" > "$RUNNER_TEMP/seed-write.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/seed-write.raw"
           cat "$RUNNER_TEMP/seed-write.txt"
-          grep -E '^(totals: |status: |apply: committed)' "$RUNNER_TEMP/seed-write.txt" > "$RUNNER_TEMP/seed-counts-write.txt" || [ "$?" -eq 1 ] || exit 2
+          grep -E '^(totals: |status: |redirects: |apply: committed)' "$RUNNER_TEMP/seed-write.txt" > "$RUNNER_TEMP/seed-counts-write.txt" || [ "$?" -eq 1 ] || exit 2
           exit "$status"
 
       # Counts only (D19). Runs on failure too, so a failed run still records its mode and

@@ -37,6 +37,7 @@ import {
 } from "../lib/db/repositories/model-metrics-writer";
 import type { ModelSeedDb } from "../lib/db/repositories/model-seed-writer";
 import { redactConnectionString } from "./apply-migrations";
+import { dropArchivedSlugs } from "../lib/db/repositories/model-lifecycle";
 import { readModelLifecycle, readModelSeeds } from "./load-model-seeds";
 import { databaseFingerprint } from "./migration-preflight";
 
@@ -194,12 +195,7 @@ async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
     // #329: seed-file slugs plus the existing family rows (claude-opus, claude-sonnet, grok).
     targets = metricTargetSlugs(readModelSeeds("all", (file) => fs.readFileSync(file, "utf8")).map((e) => e.row.slug));
     // #329: an archived (lifecycle deprecated) row is never an activation target.
-    const archived = new Set(
-      readModelLifecycle((file) => fs.readFileSync(file, "utf8"))
-        .rows.filter((r) => r.targetStatus === "deprecated")
-        .map((r) => r.slug)
-    );
-    activationTargets = targets.filter((slug) => !archived.has(slug));
+    activationTargets = dropArchivedSlugs(targets, readModelLifecycle((file) => fs.readFileSync(file, "utf8")));
     seed = readModelMetrics(args.metricsFile, new Set(targets), (file) => fs.readFileSync(file, "utf8"));
   } catch (error) {
     console.error(`ERROR: metrics validation failed: ${error instanceof Error ? error.message : String(error)}`);
