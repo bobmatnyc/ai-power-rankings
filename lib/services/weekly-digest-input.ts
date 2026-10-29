@@ -149,7 +149,7 @@ Hard rules:
 - Never write a rank position or a rank move: no "#1", "No. 1", "number one", "top 5", "ranked third", "first place" or "moved up 2 places", in digits or in words.
 - Links: only [text](/en/news/<slug>) with a slug from the source material, or [AI Power Rankings](/). No other links and no bare URLs.
 - Do not write a title, a "Sources" section or a closing summary. Code adds the title and the source list.
-- Plain markdown only: no HTML, no tables, no bold text used as a heading.
+- Plain markdown only: no HTML, no tables, no footnotes, no bold text used as a heading.
 - Heading and bullet markers do not count as words.`;
 
 /** The short tier's word target, the middle of `DIGEST_WORDS.short`. */
@@ -158,13 +158,13 @@ const SHORT_TARGET_WORDS = Math.round((DIGEST_WORDS.short.min + DIGEST_WORDS.sho
 function tierRules(tier: DigestTier, hasNewAndChanged: boolean, articleCount: number): string {
   const { min, max } = DIGEST_WORDS[tier];
   if (tier === "short") {
-    // #339: five sentences in all, at 16-20 words each plus about six words of
-    // link text per article, land inside 80-120 for one article (3 + 2) and for
+    // #339: five sentences in all, at 16-20 words each plus 3-6 words of link
+    // text per article, land inside 80-120 for one article (3 + 2) and for
     // two (3 + 1 + 1). Two sentences per bullet with two articles reach 152.
     const perBullet = articleCount >= 2 ? "1 sentence" : "2 sentences";
     return `This was a quiet week. Write ${min}-${max} words (aim for about ${SHORT_TARGET_WORDS} words) in this exact structure, with no headings. Keep each sentence to 16-20 words:
 1. An opening paragraph of 3 sentences: what the week covered, the biggest item, and why it matters to a developer.
-2. One bullet per article, each ${perBullet}: what changed and who it affects. Each bullet links its article.`;
+2. One bullet per article, each ${perBullet}: what changed and who it affects. Each bullet links its article. Use 3-6 words of link text.`;
   }
   const newAndChanged = hasNewAndChanged
     ? 'Then "## New and changed": the new tools and site changes in the material.'
