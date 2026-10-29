@@ -5,10 +5,10 @@
 --   providers follow in a later change. run_id links a call made inside an
 --   automated ingestion run and becomes NULL if that run is deleted. No existing
 --   table is changed and no older run is backfilled.
---   Numbered 0026 because 0022-0025 are taken on unmerged branches.
+--   Numbered 0029 because 0027 and 0028 are taken on main.
 --   Every statement is guarded with IF NOT EXISTS, so a re-run is a no-op.
 --   Apply with .github/workflows/apply-migration.yml, migration_file
---   0026_create_provider_usage_events.sql, show_columns_table provider_usage_events.
+--   0029_create_provider_usage_events.sql, show_columns_table provider_usage_events.
 
 CREATE TABLE IF NOT EXISTS "provider_usage_events" (
   "id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
