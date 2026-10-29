@@ -10,7 +10,8 @@ import { buildSitemapEntries, renderSitemapXml } from "@/lib/sitemap";
  * or articles until its first ISR revalidation; a failed read at request time
  * was cached the same way for an hour.
  * What: Lists `buildSitemapEntries(siteOrigin())` as XML with a one-hour CDN
- * lifetime. A failed database read is a 503 marked `no-store`, so the CDN keeps
+ * lifetime. A failed tool, article or report read is a 503 marked `no-store` (a
+ * failed weekly digest read only leaves digest URLs out, #181), so the CDN keeps
  * serving the last complete copy (within `stale-while-revalidate`) or nothing.
  * Test: `tests/unit/sitemap-route.test.ts`.
  */

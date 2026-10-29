@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-716463e00fae",
+    "version": "Unreleased",
+    "date": "2026-10-29T19:21:18.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "seo",
+    "title": "the sitemap stays available if the weekly digest list cannot be read; digest pages are left out until it can.",
+    "description": "the sitemap stays available if the weekly digest list cannot be read; digest pages are left out until it can.",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-57587f68230f",
     "version": "Unreleased",
     "date": "2026-10-28T16:29:33.000Z",
@@ -684,7 +695,7 @@
   {
     "id": "unreleased-13747232521c",
     "version": "Unreleased",
-    "date": "2026-10-29T19:00:43.000Z",
+    "date": "2026-10-29T19:10:33.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "news",
