@@ -341,6 +341,45 @@ export const automatedIngestionRuns = pgTable(
 );
 
 /**
+ * Paid provider call ledger (#325): one row per paid provider call.
+ *
+ * Why: run rows hold only a partial cost estimate, and three of the LLM paths
+ *   (what's-new, State of AI, admin analyze) have no run row at all, so spend can
+ *   only be attributed per call.
+ * What: `reported_cost_usd` is the provider's own figure; `estimated_cost_usd` is
+ *   tokens x an env unit price; `cost_is_estimated` is false only when a reported
+ *   cost exists. `run_id` links a call made inside an ingestion run and is set to
+ *   NULL if the run is deleted. `units` holds non-token quantities (credits,
+ *   requests) for non-LLM providers. Written by `lib/services/provider-usage.ts`.
+ * Test: `tests/unit/provider-usage-migration-325.test.ts` (matches migration 0029).
+ */
+export const providerUsageEvents = pgTable(
+  "provider_usage_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    provider: text("provider").notNull(),
+    operation: text("operation").notNull(),
+    model: text("model"),
+    runId: uuid("run_id").references(() => automatedIngestionRuns.id, { onDelete: "set null" }),
+    inputTokens: integer("input_tokens"),
+    outputTokens: integer("output_tokens"),
+    units: numeric("units", { precision: 14, scale: 4 }),
+    reportedCostUsd: numeric("reported_cost_usd", { precision: 12, scale: 6 }),
+    estimatedCostUsd: numeric("estimated_cost_usd", { precision: 12, scale: 6 }),
+    costIsEstimated: boolean("cost_is_estimated").notNull().default(true),
+  },
+  (table) => ({
+    createdAtIdx: index("provider_usage_events_created_at_idx").on(table.createdAt),
+    providerCreatedAtIdx: index("provider_usage_events_provider_created_at_idx").on(
+      table.provider,
+      table.createdAt
+    ),
+    runIdIdx: index("provider_usage_events_run_id_idx").on(table.runId),
+  })
+);
+
+/**
  * Tool metrics history (#95) — private, kept forever.
  *
  * Why: collector metrics were only ever written over `tools.data.metrics`, so no
@@ -466,6 +505,8 @@ export type StateOfAiSummary = typeof stateOfAiSummaries.$inferSelect;
 export type NewStateOfAiSummary = typeof stateOfAiSummaries.$inferInsert;
 export type AutomatedIngestionRun = typeof automatedIngestionRuns.$inferSelect;
 export type NewAutomatedIngestionRun = typeof automatedIngestionRuns.$inferInsert;
+export type ProviderUsageEvent = typeof providerUsageEvents.$inferSelect; // #325
+export type NewProviderUsageEvent = typeof providerUsageEvents.$inferInsert; // #325
 export type ToolLink = typeof toolLinks.$inferSelect;
 export type NewToolLink = typeof toolLinks.$inferInsert;
 
