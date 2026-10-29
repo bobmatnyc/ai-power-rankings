@@ -28,6 +28,8 @@ interface RankingData {
     website_url?: string;
     logo?: string;  // Stored local logo path (legacy; see D82)
     description?: string | RichTextBlock[]; // Can be string or RichText array
+    /** #329: a model row's version; null or absent shows nothing. */
+    version?: string | null;
   };
   scores: {
     overall: number;
@@ -109,6 +111,12 @@ export function RankingCard({
                     .replace(/-/g, " ")
                     .replace(/\b\w/g, (l) => l.toUpperCase())}
                 </CardDescription>
+                {/* #329: the model's version, only when the row carries one. */}
+                {ranking.tool.version ? (
+                  <p className="text-xs text-muted-foreground truncate" data-testid="model-version">
+                    Version {ranking.tool.version}
+                  </p>
+                ) : null}
               </div>
             </div>
             <div className="flex items-center space-x-2 flex-shrink-0">
