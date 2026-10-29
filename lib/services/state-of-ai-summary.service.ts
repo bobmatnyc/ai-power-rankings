@@ -282,7 +282,7 @@ Write the monthly update now (4-5 sections, 400-600 words, markdown format - onl
         ],
         temperature: 0.4, // Slightly higher for editorial creativity
         max_tokens: 2000,
-      });
+      }, { operation: "state_of_ai_summary" }); // #325: ledger row label
 
       const llmDuration = Date.now() - llmStartTime;
 

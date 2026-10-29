@@ -6,6 +6,7 @@ import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 import { extractJsonObject, readCompletion } from "@/lib/services/llm-completion";
+import { OPENROUTER_USAGE_REQUEST, recordOpenRouterUsage } from "@/lib/services/provider-usage"; // #325
 import { ToolMapper } from "@/lib/services/tool-mapper.service";
 import { jinaReaderService, type JinaReaderMetadata } from "@/lib/services/jina-reader.service";
 
@@ -369,7 +370,7 @@ REMINDER: The field name MUST be "tool" (not "name", "tool_name", or anything el
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: requestHeaders,
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({ ...requestBody, ...OPENROUTER_USAGE_REQUEST }), // #325: ask for usage.cost
     });
 
     const responseTime = Date.now() - startTime;
@@ -486,6 +487,9 @@ REMINDER: The field name MUST be "tool" (not "name", "tool_name", or anything el
       console.error("[News Analysis] Failed to parse response as JSON:", responseText);
       throw new Error("Invalid JSON response from OpenRouter API");
     }
+
+    // #325: one ledger row per billed completion. Never throws.
+    await recordOpenRouterUsage({ operation: "admin_news_analyze", model: modelName, body: data });
 
     // #172: log finish_reason/length/model; a max_tokens cut-off throws as truncation.
     const { content, diagnostics } = readCompletion(data as OpenRouterResponse, {
