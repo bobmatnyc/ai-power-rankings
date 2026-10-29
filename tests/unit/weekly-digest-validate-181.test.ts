@@ -124,6 +124,41 @@ describe("validateDigest no-score rule (#181)", () => {
     expect(failures).toEqual([]);
   });
 
+  // #339: normal digest wording that names no rank position of a tool.
+  it.each([
+    ["a count of stories", "These were the top three stories of the week."],
+    ["a count of stories in digits", "The top 3 stories all came from one vendor."],
+    ["an idiom", "The bug should not have shipped in the first place."],
+    ["an issue reference", "The release fixes issue #42 in the editor."],
+    ["a list of issue references", "It closes issues #4, #5 and #7 for teams."],
+    ["a pull request reference", "The change landed in PR #12 on Tuesday."],
+    ["a percentile", "It sits in the top 10% of pass rates."],
+    ["a percentile in words", "It sits in the top 10 percent of pass rates."],
+    ["top-tier", "A top-tier agent shipped a fix."],
+    ["the top story", "The top story was a new agent."],
+    ["model versions", "GPT-5.4 and Claude Opus 4 shipped this week."],
+    ["a quarter", "The plan lands in Q3 for most teams."],
+    ["an OS version", "It now runs on Windows 11 and macOS."],
+    ["a count of tools", "The site added 3 new tools this week."],
+  ])("allows %s", (_name, sentence) => {
+    const failures = validateDigest(sized(300, { extra: sentence }), FULL).filter((f) =>
+      f.startsWith("score_or_rank_number")
+    );
+    expect(failures).toEqual([]);
+  });
+
+  // #339: the accepted wording above sits next to rank positions that stay rejected.
+  it.each([
+    ["first place with a preposition", "Cursor is in first place among editors."],
+    ["a top-N list of tools", "It joined the top 5 agents this week."],
+    ["a top-N list with no noun", "It joined the top three this week."],
+    ["a hash rank before a noun", "It is the #2 agent for teams."],
+    ["a hash rank in brackets", "Cursor (#1) shipped a fix."],
+  ])("still rejects %s", (_name, sentence) => {
+    const failures = validateDigest(sized(300, { extra: sentence }), FULL);
+    expect(failures.some((f) => f.startsWith("score_or_rank_number"))).toBe(true);
+  });
+
   it("ignores digits inside a link target", () => {
     const slugs = new Set(["rank-7-update"]);
     const body = words(100) + " [story](/en/news/rank-7-update)";
@@ -183,5 +218,20 @@ describe("validateDigest links (#181)", () => {
   ])("rejects %s", (_name, link) => {
     const failures = validateDigest(`${words(100)} ${link}`, SHORT);
     expect(failures.some((f) => f.startsWith("disallowed_link"))).toBe(true);
+  });
+
+  // #339: a reference-style link is held to the same targets as an inline one.
+  it.each([
+    ["a protocol-relative target", "//evil.example/x"],
+    ["a protocol-relative target in angle brackets", "<//evil.example/x>"],
+    ["another site path", "/en/tools/cursor"],
+  ])("rejects a reference-style link with %s", (_name, target) => {
+    const failures = validateDigest(`${words(100)} [story][r]\n\n[r]: ${target}`, SHORT);
+    expect(failures).toContain(`disallowed_link (${target.replace(/^<|>$/g, "")})`);
+  });
+
+  it("allows a reference-style link to an input article", () => {
+    const body = `${words(100)} [story][r]\n\n[r]: /en/news/alpha-launch`;
+    expect(validateDigest(body, SHORT)).toEqual([]);
   });
 });
