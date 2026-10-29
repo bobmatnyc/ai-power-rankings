@@ -5,7 +5,7 @@
  * coding tools. It is a paid LLM call whose output is published to the site and
  * RSS, so it must run once per closed ISO week, skip a week with nothing to say,
  * never overwrite a stored week by accident, and never store a body that breaks
- * the owner's rules.
+ * the digest rules.
  * What: `generateWeeklyDigest` resolves the previous full ISO week, then: a stored
  * week is skipped unless `force`; 0 articles is skipped with no LLM call; `dryRun`
  * reports counts and stops. Otherwise it makes one OpenRouter call, validates the

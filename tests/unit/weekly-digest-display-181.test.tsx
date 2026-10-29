@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 /**
  * Interim display of the weekly digest on `/whats-new` and in RSS (#181).
  *
- * Why: the owner wants weekly digests visible on the site and in a feed before
+ * Why: weekly digests must be visible on the site and in a feed before
  * the Insights pages (#198) exist. A permalink must name exactly one stored week,
  * a failed read must not look like "no digests", and the feed must escape what
  * it carries.

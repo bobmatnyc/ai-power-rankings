@@ -2,7 +2,7 @@
  * Weekly digest validation (#181).
  *
  * Why: the model writes the digest body and a bad one would be published to
- * readers and RSS. The owner ruled a 250-350 word digest (80-120 for a thin
+ * readers and RSS. The rule is a 250-350 word digest (80-120 for a thin
  * week), no score numbers or rank changes, and a fixed structure. This is the
  * same shape of control as `validateSummary` (#180) for an article summary.
  * What: `validateDigest` returns the failed checks as short codes; an empty
@@ -27,7 +27,7 @@ export interface DigestValidationContext {
   hasNewAndChanged: boolean;
 }
 
-/** Owner ruling 2026-10-27: 250-350 words; a short digest is 80-120. */
+/** A full digest is 250-350 words; a short digest is 80-120. */
 export const DIGEST_WORDS: Record<DigestTier, { min: number; max: number }> = {
   short: { min: 80, max: 120 },
   full: { min: 250, max: 350 },

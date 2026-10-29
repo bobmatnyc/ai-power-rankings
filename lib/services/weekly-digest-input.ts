@@ -1,11 +1,11 @@
 /**
  * Pure input handling for the weekly digest (#181).
  *
- * Why: the digest service mixes a database, an LLM and ownership rules; the
+ * Why: the digest service mixes a database, an LLM and publishing rules; the
  * rules themselves (which tier a week gets, what text the model may read, what
  * the hash covers, what the stored text looks like) need no I/O and are easier
  * to pin on their own.
- * What: `digestTier` maps an article count to the owner's three branches.
+ * What: `digestTier` maps an article count to one of three branches.
  * `articleSummaryForPrompt` feeds the model a summary only when it passes
  * `validateSummary`, else the `toMetaDescription` cut. `siteChangesForWindow`
  * reads the generated changelog for one window. `calculateDigestHash` hashes the
@@ -52,7 +52,7 @@ export interface DigestInputs {
 }
 
 /**
- * Owner ruling 2026-10-27: 0 articles is no digest, 1-2 a short one, 3 or more
+ * 0 articles is no digest, 1-2 a short one, 3 or more
  * the full shape.
  */
 export function digestTier(articleCount: number): DigestTier | null {
