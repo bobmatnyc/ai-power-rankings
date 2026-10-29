@@ -101,12 +101,23 @@
   {
     "id": "unreleased-716463e00fae",
     "version": "Unreleased",
-    "date": "2026-10-29T19:21:18.000Z",
+    "date": "2026-10-29T19:23:35.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "seo",
     "title": "the sitemap stays available if the weekly digest list cannot be read; digest pages are left out until it can.",
     "description": "the sitemap stays available if the weekly digest list cannot be read; digest pages are left out until it can.",
+    "changeType": "fix"
+  },
+  {
+    "id": "unreleased-81a7950b938f",
+    "version": "Unreleased",
+    "date": "2026-10-29T19:43:57.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "news",
+    "title": "the weekly digest check accepts normal wording, and a short digest fits its word range (#339)",
+    "description": "the weekly digest check accepts normal wording, and a short digest fits its word range (#339). The rank check still rejects a rank position or move (\"#1\", \"No. 1\", \"number one\", \"top 5\", \"ranked third\", \"first place\", \"in first place\", \"top 5 agents\", \"See #1 Cursor\", \"the issue #1 agent\", \"moved up two places\", \"fell two spots\"), and now accepts an issue or pull request reference (\"fixes issue #42\", \"issues #4, #5 and #7\", \"issues #4, #5, and #7\", \"issues #4 & #5\", \"PR #12\"), \"in one place\", \"in two places\", \"two positions open\", \"in the first place\", \"top 10%\" and \"top 10 percent\", and \"top three stories\" (a number after \"top\" followed by a word for news items). A number word before \"places\", \"positions\" or \"spots\" is a rank move only after a move word such as \"moved\", \"fell\" or \"up\". The generation prompt names the banned rank forms and bans footnotes. A short digest asks for five sentences in all (a three-sentence opening, then two sentences for one article or one sentence per article for two), 16-20 words each with 3-6 words of link text, aiming for 100 words, so a compliant one- or two-article draft lands inside 80-120; the old shape gave 124-152 words for two articles. The link check parses the digest with the same markdown parser and GitHub-flavoured extensions the digest page renders it with, and holds every link, image and link definition URL to the allowed targets (`/en/news/<slug>` for one of the week's articles, or `/`). That includes a definition inside a blockquote or list item or with its target on the next line, and autolinks and email addresses; a protocol-relative `//host/x`, `javascript:`, `data:`, `mailto:` or empty URL is rejected. A rank in link text or a definition title is rejected. A footnote (`[^1]: ...`) or a line such as `[Note]: Node.js shipped a fix.` is read as text, not a link. A digest that fails the check is still regenerated once and then not stored. Tests: `tests/unit/weekly-digest-validate-181.test.ts`, `tests/unit/weekly-digest-input-181.test.ts` (#339)",
     "changeType": "fix"
   },
   {
