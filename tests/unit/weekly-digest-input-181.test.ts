@@ -9,7 +9,7 @@ import {
   digestTier,
   siteChangesForWindow,
 } from "../../lib/services/weekly-digest-input";
-import { validateDigest } from "../../lib/weekly-digest-validate";
+import { countDigestWords, validateDigest } from "../../lib/weekly-digest-validate";
 import { windowForWeek } from "../../lib/weekly-digest-window";
 
 /**
@@ -113,35 +113,87 @@ describe("calculateDigestHash (#181)", () => {
 describe("short-tier prompt and word floor (#181)", () => {
   /** A plain sentence of `n` words. */
   const sentence = (n: number) => `${Array.from({ length: n - 1 }, () => "word").join(" ")} done.`;
-  /** Words in a short plain sentence; the floor must hold for sentences no longer than this. */
-  const WORDS_PER_SENTENCE = 16;
-
-  // #181: the fewest sentences the prompt allows must still reach the validator's floor.
-  it.each([1, 2])("a %i-article digest at the prompt's fewest sentences reaches the floor", (count) => {
-    const articles = Array.from({ length: count }, (_, i) => ({
+  const articlesOf = (count: number) =>
+    Array.from({ length: count }, (_, i) => ({
       id: `a${i}`,
       slug: `story-${i}`,
-      title: `Story ${i}`,
+      title: `Story ${i} ships a new agent`,
       summary: GOOD,
       publishedAt: null,
       toolMentions: [],
     }));
+
+  // #339: a draft that follows the prompt's sentence counts and link-text range
+  // must land inside 80-120 for one and for two articles, at the short end (16
+  // words per sentence, shortest link text) and the long end (20, longest).
+  it.each([
+    [1, 16],
+    [1, 20],
+    [2, 16],
+    [2, 20],
+  ])("a compliant %i-article digest at %i words per sentence passes validation", (count, perSentence) => {
+    const articles = articlesOf(count);
     const { system } = buildDigestPrompt({ window: WINDOW, tier: "short", articles, newTools: [], siteChanges: [] });
-    const opening = Number(/opening paragraph of (\d+) sentences/.exec(system)?.[1]);
-    // A bullet the prompt sizes only as "one line" holds one sentence.
-    const perBullet = Number(/One bullet per article, each (\d+) sentences/.exec(system)?.[1] ?? 1);
+    const opening = Number(/opening paragraph of (\d+) sentences?/.exec(system)?.[1]);
+    const perBullet = Number(/One bullet per article, each (\d+) sentences?/.exec(system)?.[1]);
+    const linkRange = /Use (\d+)-(\d+) words of link text/.exec(system);
+    const linkWords = Number(perSentence === 20 ? linkRange?.[2] : linkRange?.[1]);
     expect(opening).toBeGreaterThan(0);
+    expect(perBullet).toBeGreaterThan(0);
+    expect(linkWords).toBeGreaterThan(0);
+    // The prompt names a word target inside the validator's range.
+    const target = Number(/aim for about (\d+) words/.exec(system)?.[1]);
+    expect(target).toBeGreaterThanOrEqual(80);
+    expect(target).toBeLessThanOrEqual(120);
 
     const body = [
-      Array.from({ length: opening }, () => sentence(WORDS_PER_SENTENCE)).join(" "),
+      Array.from({ length: opening }, () => sentence(perSentence)).join(" "),
       "",
       ...articles.map(
         (a) =>
-          `- ${Array.from({ length: perBullet }, () => sentence(WORDS_PER_SENTENCE)).join(" ")} [${a.title}](/en/news/${a.slug})`
+          `- ${Array.from({ length: perBullet }, () => sentence(perSentence)).join(" ")} [${Array.from({ length: linkWords }, () => "link").join(" ")}](/en/news/${a.slug})`
       ),
     ].join("\n");
+    expect(countDigestWords(body)).toBeLessThanOrEqual(120);
+    expect(countDigestWords(body)).toBeGreaterThanOrEqual(80);
     const context = { tier: "short" as const, allowedSlugs: new Set(articles.map((a) => a.slug)), hasNewAndChanged: false };
     expect(validateDigest(body, context)).toEqual([]);
+  });
+});
+
+describe("prompt names the banned rank forms (#339)", () => {
+  // #339: the first draft avoids a rank form only when the prompt names it.
+  const BANNED = ['"#1"', '"No. 1"', '"number one"', '"top 5"', '"ranked third"', '"first place"'];
+
+  it.each(["short", "full"] as const)("the %s-tier system prompt names each banned form, and the validator rejects each", (tier) => {
+    const articles = Array.from({ length: tier === "short" ? 1 : 3 }, (_, i) => ({
+      id: `a${i}`,
+      slug: `s-${i}`,
+      title: `T ${i}`,
+      summary: GOOD,
+      publishedAt: null,
+      toolMentions: [],
+    }));
+    const { system } = buildDigestPrompt({ window: WINDOW, tier, articles, newTools: [], siteChanges: [] });
+    expect(system).toContain("no footnotes");
+    for (const form of BANNED) {
+      expect(system).toContain(form);
+      const body = `${GOOD} It is ${form.slice(1, -1)} now.`;
+      const failures = validateDigest(body, { tier: "short", allowedSlugs: new Set(), hasNewAndChanged: false });
+      expect(failures.some((f) => f.startsWith("score_or_rank_number"))).toBe(true);
+    }
+  });
+
+  // #339: the prompt bans a rank move "in digits or in words"; the validator rejects both.
+  it.each(["moved up 2 places", "moved up two places", "fell two spots"])("rejects the rank move %s", (form) => {
+    const { system } = buildDigestPrompt({ window: WINDOW, tier: "short", articles: [], newTools: [], siteChanges: [] });
+    expect(system).toContain('"moved up 2 places", in digits or in words');
+    const failures = validateDigest(`${GOOD} It ${form} this week.`, {
+      tier: "short",
+      allowedSlugs: new Set(),
+      hasNewAndChanged: false,
+    });
+    expect(failures.some((f) => f.startsWith("score_or_rank_number"))).toBe(true);
   });
 });
 
