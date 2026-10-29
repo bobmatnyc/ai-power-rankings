@@ -203,7 +203,7 @@ async function formatRanking(ranking: any, toolsRepo: ToolsRepository) {
       website_url: toolInfo?.website || "",
       logo: logoPath,
       description: toolInfo?.description || "",
-      // #329: a model row carries its version (lifecycle point, else seed current_version, else null).
+      // #329: a model row carries its version (lifecycle point, else null).
       ...(kind === "model" ? { version: modelVersion(tool) } : {}),
     },
     total_score: ranking["score"] || ranking["total_score"] || 0,

@@ -1,22 +1,19 @@
 /**
  * #329: the version a model row shows on the Models list and its tool page.
  *
- * Why: the owner ruled that every ranked model shows its version (D0c: the latest
- * point within the major ranks). Before this, the only version a reader saw was
- * prose inside the description.
+ * Why: every ranked model shows its version: the latest point release within its
+ * major. Before this, the only version a reader saw was prose inside the description.
  * What: for a tool whose `kind` is `model`, returns the stored lifecycle point
- * (`data.modelLifecycle.point`), else the stored seed fact
- * (`data.modelSeed.facts.current_version.value`), else null. Any other kind
- * returns null. The description is never read.
+ * (`data.modelLifecycle.point`), else null. Any other kind returns null. The seed
+ * `current_version` fact holds a full model name, not a version, so it is never
+ * read; neither is the description.
  * Test: `tests/unit/model-version-329.test.ts`.
  */
 export function modelVersion(tool: unknown): string | null {
   if (typeof tool !== "object" || tool === null) return null;
   const t = tool as Record<string, any>;
   if (t["kind"] !== "model") return null;
-  const point = nonEmpty(t["modelLifecycle"]?.["point"]);
-  if (point !== null) return point;
-  return nonEmpty(t["modelSeed"]?.["facts"]?.["current_version"]?.["value"]);
+  return nonEmpty(t["modelLifecycle"]?.["point"]);
 }
 
 function nonEmpty(value: unknown): string | null {
