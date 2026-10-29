@@ -19,8 +19,8 @@ import { generateWeeklyDigest } from "@/lib/services/weekly-digest.service";
  *
  * Uses ALERT_WEBHOOK_URL env var (e.g. a Slack incoming webhook or similar).
  * Silently no-ops if the env var is not set.
- * #181: copied from the sibling cron routes, not shared (the #95 ruling keeps
- * the copies; extracting one helper is a decision for the Architect).
+ * #181: copied from the sibling cron routes, not shared (the other cron routes keep
+ * their own copies; extracting one shared helper is a separate change).
  */
 async function sendCronAlert(
   route: string,

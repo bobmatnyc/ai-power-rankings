@@ -13,7 +13,7 @@ import { windowForWeek } from "../../lib/weekly-digest-window";
 /**
  * Pure input handling for the weekly digest (#181).
  *
- * Why: the owner ruled three branches by article count, summaries that are
+ * Why: the digest has three branches by article count, summaries that are
  * validated or truncated, a window of site changes, and a hash that is the
  * same for the same inputs.
  * What: calls the pure helpers directly; no database, no network.

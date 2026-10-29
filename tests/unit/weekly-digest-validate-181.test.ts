@@ -5,7 +5,7 @@ import { type DigestValidationContext, validateDigest } from "../../lib/weekly-d
 /**
  * The weekly digest validator (#181).
  *
- * Why: the model writes the digest body. The owner ruled 250-350 words for a
+ * Why: the model writes the digest body. The rule is 250-350 words for a
  * full digest, no score numbers, and a fixed structure; a body that breaks any
  * of them must not be stored.
  * What: `validateDigest(body, context)` returns the failed checks; an empty

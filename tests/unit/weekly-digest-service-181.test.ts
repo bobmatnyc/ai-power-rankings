@@ -10,7 +10,7 @@ import { countDigestWords } from "../../lib/weekly-digest-validate";
  * Weekly digest generate-and-store (#181).
  *
  * Why: the digest is a paid LLM call that publishes to readers and RSS, so the
- * owner's rules must hold: nothing for an empty week, a short digest for one or
+ * digest rules must hold: nothing for an empty week, a short digest for one or
  * two articles, a stored week never rewritten without `force`, one retry for a
  * body the validator rejects, and no write on any failure.
  * What: runs the real service, input rules and validator over an in-memory
