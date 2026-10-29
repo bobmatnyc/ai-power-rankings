@@ -8,6 +8,7 @@ import { canonicalLocale } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import { findToolBySlug } from "@/lib/tools/tool-page-request";
 import { buildToolProfile } from "@/lib/tools/tool-profile";
+import { modelVersion } from "@/lib/rankings/model-version";
 import { getToolProfileRankingData } from "@/lib/tools/tool-profile-data";
 import { newsForTool } from "@/lib/tools/tool-news";
 import { getToolNewsBySlug } from "@/lib/tools/tool-news-data";
@@ -141,6 +142,8 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
         slug={slug}
         lang={lang as Locale}
         dict={dict}
+        // #329: a model's tool page shows the same version as its ranking card.
+        version={modelVersion(tool)}
         profile={
           <>
             <ToolProfileSections name={tool.name} lang={canonicalLocale(lang)} profile={profile} news={news} />
