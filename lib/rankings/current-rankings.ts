@@ -10,6 +10,7 @@ import {
   listTier,
   type RankingList,
 } from "@/lib/rankings/lists";
+import { modelVersion } from "@/lib/rankings/model-version";
 
 /** #186: where a list's rows came from: its own current row, or the combined board split by list. */
 export type ListBoardSource = "list" | "combined";
@@ -202,6 +203,8 @@ async function formatRanking(ranking: any, toolsRepo: ToolsRepository) {
       website_url: toolInfo?.website || "",
       logo: logoPath,
       description: toolInfo?.description || "",
+      // #329: a model row carries its version (lifecycle point, else null).
+      ...(kind === "model" ? { version: modelVersion(tool) } : {}),
     },
     total_score: ranking["score"] || ranking["total_score"] || 0,
     scores: {
