@@ -15,6 +15,8 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/api-auth";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
+// #95: typed admin metrics with write-time validation.
+import { applyAdminMetrics, validateAdminMetrics } from "@/lib/admin-metrics-validation";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -31,6 +33,8 @@ const toolEditSchema = z
     category: z.string().trim().min(1).max(100),
     status: z.enum(EDITABLE_STATUSES),
     description: z.string().trim().max(5000),
+    // #95: the typed metrics object is checked by validateAdminMetrics, not zod.
+    metrics: z.record(z.string(), z.unknown()),
   })
   .partial()
   .refine((v) => Object.keys(v).length > 0, { message: "No editable field given" });
@@ -53,7 +57,12 @@ function writeFailed() {
 }
 
 /**
- * PUT /api/admin/tools/[slug] — edit name, category, status or description.
+ * PUT /api/admin/tools/[slug] — edit name, category, status, description or metrics.
+ *
+ * #95: `metrics` takes `{ monthly_arr, users, valuation, swe_bench: { verified } }`,
+ * each `{ value, source, as_of }`. Values are stored as bare numbers in
+ * `data.metrics.<field>`; provenance in `data.metrics_provenance.<field>`.
+ * Any invalid field answers 400 and nothing is written.
  *
  * Answers 400 for an unreadable or invalid body, 404 for an unknown slug, and
  * `{ tool }` (the updated repository row) on success.
@@ -78,12 +87,24 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     );
   }
 
+  // #95: validate every metric before any read or write; one bad field rejects the request.
+  const { description, metrics: metricsInput, ...columns } = parsed.data;
+  let metricEntries: ReturnType<typeof validateAdminMetrics> | null = null;
+  if (metricsInput !== undefined) {
+    metricEntries = validateAdminMetrics(metricsInput);
+    if (!metricEntries.ok) {
+      return NextResponse.json(
+        { error: "Invalid tool metrics", issues: metricEntries.errors },
+        { status: 400 }
+      );
+    }
+  }
+
   try {
     const repo = new ToolsRepository();
     const existing = await repo.findBySlug(slug);
     if (!existing) return notFound(slug);
 
-    const { description, ...columns } = parsed.data;
     const updates: Record<string, unknown> = { ...columns };
     if (description !== undefined) {
       // The manager reads info.product.description first, then info.description.
@@ -95,10 +116,16 @@ export async function PUT(request: NextRequest, context: RouteContext) {
         ...(product && { product: { ...product, description } }),
       };
     }
+    // #95: metrics go to data.metrics (the engine's authoritative path), never data.info.
+    if (metricEntries?.ok) {
+      Object.assign(updates, applyAdminMetrics(existing as Record<string, unknown>, metricEntries.entries));
+    }
 
     const tool = await repo.update(rowKey(existing), updates);
     if (!tool) return writeFailed();
-    return NextResponse.json({ tool });
+    // #95: magnitude warnings are returned, not blocking.
+    const warnings = metricEntries?.ok ? metricEntries.warnings : [];
+    return NextResponse.json({ tool, ...(warnings.length > 0 && { warnings }) });
   } catch (error) {
     loggers.api.error("Error in admin/tools/[slug] PUT", { error, userId: authResult.userId });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
