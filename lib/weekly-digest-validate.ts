@@ -39,13 +39,22 @@ const HEADING = /^(#{1,6})\s+(.*?)\s*$/;
 const BULLET = /^\s*[-*]\s+/;
 const NEWS_LINK = /^\/en\/news\/([a-z0-9-]+)$/;
 
-// #181: a score or a rank change, as digits. Counts, versions and dates are not matched.
+const NUMBER_WORD = "(?:one|two|three|four|five|six|seven|eight|nine|ten|twenty|fifty|hundred)";
+const ORDINAL_WORD = "(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)";
+
+// #181: a score, a rank change or a rank position, in digits or number words.
+// Counts ("3 new tools"), versions ("GPT-5.4"), quarters, dates and issue
+// references ("#181": three or more digits) are not matched; "top" alone is
+// not a rank, only "top" followed by a number is.
 const SCORE_OR_RANK: readonly RegExp[] = [
   /\b\d+(?:\.\d+)?\s*(?:\/|out of)\s*(?:10|100)\b/i,
   /\b(?:scores?|scored|ratings?|rated)\b\W+(?:\w+\W+){0,3}?\d/i,
-  /\brank(?:ed|ing|s)?\b\W+(?:(?:at|in|as|to|from|number|no\.?)\W+){0,2}\d/i,
-  /\b\d+(?:st|nd|rd|th)\s+(?:place|rank|position|spot)\b/i,
+  new RegExp(`\\brank(?:ed|ing|s)?\\b\\W+(?:(?:at|in|as|to|from|number|no\\.?)\\W+){0,2}(?:\\d|${ORDINAL_WORD}\\b)`, "i"),
+  new RegExp(`\\b(?:\\d+(?:st|nd|rd|th)|${ORDINAL_WORD})\\s+(?:place|rank|position|spot)\\b`, "i"),
   /\b\d+\s*(?:places?|positions?|spots?)\b/i,
+  /(?<![\w&#/])#\d{1,2}(?![\d\w])/,
+  new RegExp(`\\b(?:no\\.|number)\\s*(?:\\d+|${NUMBER_WORD})\\b`, "i"),
+  new RegExp(`\\btop\\s+(?:\\d+|${NUMBER_WORD})\\b`, "i"),
 ];
 
 /** A fresh global pattern per call: a shared one keeps `lastIndex` between calls. */
@@ -126,9 +135,16 @@ export function validateDigest(body: string, context: DigestValidationContext): 
 
   // Link targets can hold digits (a slug), so the score check reads the text alone.
   const prose = text.replace(markdownLinks(), "]");
+  // One failure per stretch of text: "ranked #2" matches two patterns but is one rank.
+  const hits: Array<{ start: number; end: number }> = [];
   for (const pattern of SCORE_OR_RANK) {
     const hit = pattern.exec(prose);
-    if (hit) failures.push(`score_or_rank_number (${hit[0].trim()})`);
+    if (!hit) continue;
+    const start = hit.index;
+    const end = start + hit[0].length;
+    if (hits.some((h) => start < h.end && h.start < end)) continue;
+    hits.push({ start, end });
+    failures.push(`score_or_rank_number (${hit[0].trim()})`);
   }
   return failures;
 }

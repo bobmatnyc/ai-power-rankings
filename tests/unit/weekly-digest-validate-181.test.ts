@@ -101,6 +101,29 @@ describe("validateDigest no-score rule (#181)", () => {
     expect(failures).toEqual([]);
   });
 
+  // #181: a rank position is a rank number even with no "ranked" or "place" next to it.
+  it.each([
+    ["a hash rank", "Cursor is #1 for editors this week."],
+    ["a No. rank", "It is the No. 1 agent now."],
+    ["a rank in number words", "It is number one for agents."],
+    ["a top-N list", "It joined the top 5 this week."],
+    ["a top-N list in words", "It joined the top ten this week."],
+    ["a rank as an ordinal word", "It ranked third among editors."],
+    ["a place as an ordinal word", "It took first place among agents."],
+  ])("rejects %s", (_name, sentence) => {
+    const failures = validateDigest(sized(300, { extra: sentence }), FULL);
+    expect(failures.some((f) => f.startsWith("score_or_rank_number"))).toBe(true);
+  });
+
+  it("allows issue references, model names, quarters, counts and the word top", () => {
+    const extra =
+      "See #181. A top-tier agent was the top story. Claude Opus 4 and GPT-5.4 shipped in Q3 with 3 new tools.";
+    const failures = validateDigest(sized(300, { extra }), FULL).filter((f) =>
+      f.startsWith("score_or_rank_number")
+    );
+    expect(failures).toEqual([]);
+  });
+
   it("ignores digits inside a link target", () => {
     const slugs = new Set(["rank-7-update"]);
     const body = words(100) + " [story](/en/news/rank-7-update)";
