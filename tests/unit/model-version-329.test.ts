@@ -37,7 +37,7 @@ vi.mock("../../lib/db/repositories/rankings.repository", () => ({
 }));
 
 import { loadCurrentRankings } from "../../lib/rankings/current-rankings";
-import * as versionModule from "../../lib/rankings/model-version";
+import { readFileSync } from "node:fs";
 
 function paramsOf(node: any): unknown[] {
   if (!node || typeof node !== "object") return [];
@@ -105,22 +105,26 @@ describe("model rows carry a version (#329)", () => {
     expect(versions).toEqual({ alpha: "5.5", bravo: "Bravo 4.8", charlie: null });
   });
 
-  it("adds no version key to a non-model row", async () => {
-    seed([tool(1, "delta", "harness", { modelLifecycle: { point: "5.5" } })]);
-    const board = (await loadCurrentRankings("harness"))!;
-    expect(board.rankings).toHaveLength(1);
-    expect("version" in board.rankings[0]!.tool).toBe(false);
+  it("adds a version to the model row and no version key to a non-model row", async () => {
+    const stored = { modelLifecycle: { point: "5.5" } };
+    seed([tool(1, "delta", "harness", stored), tool(2, "echo", "model", stored)]);
+    const models = (await loadCurrentRankings("model"))!;
+    expect(models.rankings.map((r) => [r.tool.slug, (r.tool as any).version])).toEqual([["echo", "5.5"]]);
+    const harnesses = (await loadCurrentRankings("harness"))!;
+    expect(harnesses.rankings.map((r) => r.tool.slug)).toEqual(["delta"]);
+    expect("version" in harnesses.rankings[0]!.tool).toBe(false);
   });
 
-  it("resolves a version for each of the six live family rows from the lifecycle file", async () => {
-    const { readFileSync } = await import("node:fs");
+  it("resolves a version for each of the six live family rows from the lifecycle file's points", async () => {
     const doc = JSON.parse(readFileSync("docs/refresh/model-lifecycle.json", "utf8"));
     const families = ["claude-opus", "claude-sonnet", "deepseek", "glm", "grok", "kimi"];
-    const rows = (doc.models as Array<Record<string, unknown>>).filter((r) => families.includes(String(r["slug"])));
+    const rows = (doc.models as Array<Record<string, any>>).filter((r) => families.includes(r["slug"]));
     expect(rows.map((r) => r["slug"]).sort()).toEqual([...families].sort());
-    for (const row of rows) {
-      const stored = { kind: "model", modelLifecycle: { point: row["point"] } };
-      expect(versionModule.modelVersion(stored), String(row["slug"])).toMatch(/^\d+\.\d+$/);
-    }
+    // As the status step stores them: data.modelLifecycle.point, no seed facts.
+    seed(rows.map((r, i) => tool(i + 1, r["slug"], "model", { modelLifecycle: { point: r["point"] } })));
+    const board = (await loadCurrentRankings("model"))!;
+    const got = Object.fromEntries(board.rankings.map((r) => [r.tool.slug, (r.tool as any).version]));
+    expect(got).toEqual(Object.fromEntries(rows.map((r) => [r["slug"], r["point"]])));
+    for (const v of Object.values(got)) expect(v).toMatch(/^\d+\.\d+$/);
   });
 });
