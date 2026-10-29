@@ -671,14 +671,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-7a29307adb1b",
+    "id": "unreleased-94f9035eac1e",
     "version": "Unreleased",
-    "date": "2026-10-29T11:22:06.000Z",
+    "date": "2026-10-29T13:04:42.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "models",
-    "title": "every model row on the Models list shows its version (owner instruction)",
-    "description": "every model row on the Models list shows its version (owner instruction). `/api/rankings` and the home board (`loadCurrentRankings`) give each model row a `tool.version`: the stored lifecycle point (`data.modelLifecycle.point`), else the stored seed `current_version`, else null; the description is never parsed (`lib/rankings/model-version.ts`). Rows of other lists carry no `version` key. The ranking card and the model's tool page show \"Version <value>\" when it is set and nothing when it is null. The six live family rows get their version from the lifecycle points the pending status step writes. Tests: `tests/unit/model-version-329.test.ts`, `tests/unit/ranking-card-version-329.test.tsx` (#329)",
+    "title": "every model row on the Models list shows its version: the latest point release within its major",
+    "description": "every model row on the Models list shows its version: the latest point release within its major. `/api/rankings` and the home board (`loadCurrentRankings`) give each model row a `tool.version`: the stored lifecycle point (`data.modelLifecycle.point`), else null; the seed `current_version` (a full model name) and the description are never read (`lib/rankings/model-version.ts`). Rows of other lists carry no `version` key. The ranking card and the model's tool page show \"Version <value>\" when it is set and nothing when it is null. The six live family rows get their version from the lifecycle points the pending status step writes. Tests: `tests/unit/model-version-329.test.ts`, `tests/unit/ranking-card-version-329.test.tsx` (#329)",
     "changeType": "feature"
   },
   {
