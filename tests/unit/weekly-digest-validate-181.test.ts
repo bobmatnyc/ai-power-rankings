@@ -131,7 +131,11 @@ describe("validateDigest no-score rule (#181)", () => {
     ["an idiom", "The bug should not have shipped in the first place."],
     ["an issue reference", "The release fixes issue #42 in the editor."],
     ["a list of issue references", "It closes issues #4, #5 and #7 for teams."],
+    ["an Oxford-comma list of issue references", "Issues #4, #5, and #7 are closed."],
+    ["issue references joined by a comma and or", "It fixes issue #4, or #5 for some teams."],
+    ["issue references joined by an ampersand", "It closes issues #4 & #5 for teams."],
     ["a pull request reference", "The change landed in PR #12 on Tuesday."],
+    ["one place in words", "The settings now live in one place."],
     ["a percentile", "It sits in the top 10% of pass rates."],
     ["a percentile in words", "It sits in the top 10 percent of pass rates."],
     ["top-tier", "A top-tier agent shipped a fix."],
@@ -154,6 +158,14 @@ describe("validateDigest no-score rule (#181)", () => {
     ["a top-N list with no noun", "It joined the top three this week."],
     ["a hash rank before a noun", "It is the #2 agent for teams."],
     ["a hash rank in brackets", "Cursor (#1) shipped a fix."],
+    ["a hash rank after see", "See #1 Cursor."],
+    ["a hash rank after ref", "Cursor, ref #1."],
+    ["an issue word before a hash rank of a tool", "Cursor is the issue #1 agent."],
+    ["a hash rank after an Oxford comma", "Cursor, Copilot, and #1 Claude shipped."],
+    ["a hash rank after an ampersand", "Cursor & #1 Claude shipped."],
+    ["a rank move in number words", "The agent moved up two places."],
+    ["a rank move by spots in number words", "It fell two spots this week."],
+    ["a rank move of one place", "It moved up one place."],
   ])("still rejects %s", (_name, sentence) => {
     const failures = validateDigest(sized(300, { extra: sentence }), FULL);
     expect(failures.some((f) => f.startsWith("score_or_rank_number"))).toBe(true);
@@ -233,5 +245,28 @@ describe("validateDigest links (#181)", () => {
   it("allows a reference-style link to an input article", () => {
     const body = `${words(100)} [story][r]\n\n[r]: /en/news/alpha-launch`;
     expect(validateDigest(body, SHORT)).toEqual([]);
+  });
+
+  // #339: a footnote and a "[Label]: text" line hold no link target.
+  it.each([
+    ["a footnote definition", `${words(100)} Claim.[^1]\n\n[^1]: From the vendor blog.`],
+    ["a bracket-led line with a text target", `${words(100)}\n\n[Update]: Cursor shipped a fix.`],
+  ])("does not read %s as a link", (_name, body) => {
+    expect(validateDigest(body, SHORT)).toEqual([]);
+  });
+
+  it.each([
+    ["a dot-domain target", "evil.example/x"],
+    ["a scheme target", "https://evil.example/x"],
+  ])("still rejects a bracket-led line with %s", (_name, target) => {
+    expect(validateDigest(`${words(100)}\n\n[Update]: ${target}`, SHORT)).toContain(`disallowed_link (${target})`);
+  });
+
+  // #339: text outside the link target is prose, so the rank check reads it.
+  it.each([
+    ["a footnote", `${words(100)} Claim.[^1]\n\n[^1]: Cursor ranked #1 this week.`],
+    ["a reference definition title", `${words(100)} [story][r]\n\n[r]: /en/news/alpha-launch "ranked #1"`],
+  ])("rejects a rank in %s", (_name, body) => {
+    expect(validateDigest(body, SHORT).some((f) => f.startsWith("score_or_rank_number"))).toBe(true);
   });
 });

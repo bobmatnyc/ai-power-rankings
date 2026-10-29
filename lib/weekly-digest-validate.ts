@@ -47,9 +47,12 @@ const ORDINAL_WORD = "(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ni
 const ITEM_NOUN =
   "(?:stor(?:y|ies)|items?|articles?|headlines?|news|changes?|updates?|releases?|launches|announcements?|themes?|points?|takeaways?|reads?|links?|topics?|highlights?|developments?)";
 // #339: a word that marks "#N" as an issue or pull request reference, and the
-// "#4, #5 and" run that may sit between it and a later reference.
-const ISSUE_REF_LEAD = "\\b(?:issues?|PRs?|pull\\s+requests?|bugs?|tickets?|fix(?:es|ed)?|close[sd]?|resolve[sd]?|refs?|see)\\s+";
-const ISSUE_REF_RUN = "(?:#\\d+\\s*(?:,|and|or)\\s*)*";
+// "#4, #5, and" run that may sit between it and a later reference. "see" and
+// "ref" are not lead words: "See #1 Cursor." is a rank.
+const ISSUE_REF_LEAD = "\\b(?:issues?|PRs?|pull\\s+requests?|bugs?|tickets?|fix(?:es|ed)?|close[sd]?|resolve[sd]?)\\s+";
+const ISSUE_REF_RUN = "(?:#\\d+\\s*(?:,\\s*(?:and|or)\\b|,|and\\b|or\\b|&)\\s*)*";
+// #339: "#N" before one of these is a rank position even after an issue word.
+const TOOL_NOUN = "(?:agents?|tools?|editors?|models?|assistants?|IDEs?|extensions?|picks?|choices?)";
 
 // #181: a score, a rank change or a rank position, in digits or number words.
 // Counts ("3 new tools"), versions ("GPT-5.4"), quarters, dates and issue
@@ -64,8 +67,11 @@ const SCORE_OR_RANK: readonly RegExp[] = [
   /\b(?:scores?|scored|ratings?|rated)\b\W+(?:\w+\W+){0,3}?\d/i,
   new RegExp(`\\brank(?:ed|ing|s)?\\b\\W+(?:(?:at|in|as|to|from|number|no\\.?)\\W+){0,2}(?:\\d|${ORDINAL_WORD}\\b)`, "i"),
   new RegExp(`(?<!\\bin\\s+the\\s+)\\b(?:\\d+(?:st|nd|rd|th)|${ORDINAL_WORD})\\s+(?:place|rank|position|spot)\\b`, "i"),
-  /\b\d+\s*(?:places?|positions?|spots?)\b/i,
+  // #339: a move in number words too ("two spots"); "one place" only after a move word.
+  new RegExp(`\\b(?:\\d+|(?!one\\b)${NUMBER_WORD})\\s*(?:places?|positions?|spots?)\\b`, "i"),
+  /\b(?:up|down|by)\s+one\s+(?:place|position|spot)\b/i,
   new RegExp(`(?<![\\w&#/])(?<!${ISSUE_REF_LEAD}${ISSUE_REF_RUN})#\\d{1,2}(?![\\d\\w])`, "i"),
+  new RegExp(`(?<![\\w&#/])#\\d{1,2}\\s+${TOOL_NOUN}\\b`, "i"),
   new RegExp(`\\b(?:no\\.|number)\\s*(?:\\d+|${NUMBER_WORD})\\b`, "i"),
   new RegExp(
     `\\btop\\s+(?:\\d+|${NUMBER_WORD})\\b(?!\\s*(?:%|percent\\b|per\\s+cent\\b))(?!\\s+${ITEM_NOUN}\\b)`,
@@ -75,12 +81,31 @@ const SCORE_OR_RANK: readonly RegExp[] = [
 
 /** A fresh global pattern per call: a shared one keeps `lastIndex` between calls. */
 const markdownLinks = () => /\[[^\]]*\]\(([^)\s]*)\)/g;
-// #339: a reference-style link definition, `[label]: target` or `[label]: <target>`.
-const referenceDefinitions = () => /^ {0,3}\[[^\]]+\]:[ \t]*<?([^\s>]*)>?.*$/gm;
+// #339: a `[label]: target` or `[label]: <target>` line; group 1 is the target,
+// group 2 the rest (a title). A footnote label (`[^1]`) is not a link.
+const bracketLabelLines = () => /^ {0,3}\[(?!\^)[^\]]+\]:[ \t]*(<[^>\n]*>|[^\s<]*)(.*)$/gm;
+// #339: a scheme, a leading `/` `.` `#` or `?`, or a dot-domain. "[Update]: Cursor
+// shipped a fix." has none, so it is prose, not a link definition.
+const URL_SHAPED = /^(?:[a-z][a-z0-9+.-]*:.|[/.#?]|[^\s/]+\.[a-z]{2,}(?:[/:?#]|$))/i;
 
-/** `body` with inline link targets and reference definitions removed; both are checked by `linkFailures`. */
+/** The reference-style link definitions in `body`: target and the text after it. */
+function referenceDefinitions(body: string): Array<{ target: string; rest: string; index: number; length: number }> {
+  return [...body.matchAll(bracketLabelLines())]
+    .map((m) => ({ target: (m[1] ?? "").replace(/^<|>$/g, ""), rest: m[2] ?? "", index: m.index, length: m[0].length }))
+    .filter((d) => URL_SHAPED.test(d.target));
+}
+
+/**
+ * `body` with inline link targets and reference definition targets removed;
+ * both are checked by `linkFailures`. A definition's title stays, so the rank
+ * check reads it.
+ */
 function withoutLinkTargets(body: string): string {
-  return body.replace(markdownLinks(), "]").replace(referenceDefinitions(), "");
+  let text = body;
+  for (const d of referenceDefinitions(body).reverse()) {
+    text = text.slice(0, d.index) + d.rest + text.slice(d.index + d.length);
+  }
+  return text.replace(markdownLinks(), "]");
 }
 
 /** The word count `validateDigest` measures: heading and bullet markers are not words. */
@@ -134,9 +159,8 @@ function structureFailures(body: string, context: DigestValidationContext): stri
 function linkFailures(body: string, allowedSlugs: ReadonlySet<string>): string[] {
   const failures: string[] = [];
   // #339: a reference definition's target gets the same check as an inline target.
-  const targets = [...body.matchAll(markdownLinks()), ...body.matchAll(referenceDefinitions())];
-  for (const match of targets) {
-    const target = match[1] ?? "";
+  const targets = [...[...body.matchAll(markdownLinks())].map((m) => m[1] ?? ""), ...referenceDefinitions(body).map((d) => d.target)];
+  for (const target of targets) {
     const slug = NEWS_LINK.exec(target)?.[1];
     if (target !== "/" && !(slug && allowedSlugs.has(slug))) failures.push(`disallowed_link (${target})`);
   }
