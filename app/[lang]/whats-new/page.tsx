@@ -44,9 +44,10 @@ export async function generateMetadata({
  * Summary Available" while a summary was stored.
  * What: Reads the latest stored row through the summary service and renders it
  * with a link to its permalink. The empty state means no row exists; a failed
- * database read throws to the error boundary instead. #181: the newest eight
+ * monthly read throws to the error boundary instead. #181: the newest eight
  * weekly digests are listed under it (or under the empty state), each linking
- * its permalink.
+ * its permalink. A failed weekly list read is logged and shows no list; the
+ * page still renders.
  * Test: `tests/unit/whats-new-permalink.test.ts` (AC8),
  * `tests/unit/weekly-digest-display-181.test.tsx`.
  */
