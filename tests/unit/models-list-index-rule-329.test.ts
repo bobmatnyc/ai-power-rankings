@@ -12,11 +12,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *   mocked repository boundary: inactive rows and rows without metrics do not count.
  *   #185: after v8 activation the combined board is never read, so the count comes from the
  *   models list's own board only; a combined row alone yields no board, and the API answers an
- *   empty models board that stays noindex with the metrics-pending note.
+ *   empty models board that stays noindex with the metrics-pending note. A rejected
+ *   `tools.status` lookup on the models board rejects the read (fails closed).
  * Test: `npx vitest run tests/unit/models-list-index-rule-329.test.ts`. No network, no database.
  */
 
-const current = vi.hoisted(() => ({ rows: {} as Record<string, unknown> }));
+const current = vi.hoisted(() => ({ rows: {} as Record<string, unknown>, failStatusLookup: false }));
 
 vi.mock("server-only", () => ({}));
 vi.mock("../../lib/db/connection", () => ({ getDb: () => ({}) }));
@@ -33,6 +34,7 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
       return t ? { ...t, db_id: t.id, category: "other", info: {} } : null;
     }
     async findColumnStatuses(ids: string[]) {
+      if (current.failStatusLookup) throw new Error("status lookup failed");
       return new Map(ids.flatMap((id) => (TOOLS[id] ? [[id, TOOLS[id].status] as [string, string]] : [])));
     }
     async findBySlug() {
@@ -150,6 +152,7 @@ function seed(boardKind: "combined" | "model" | "harness", metricActive: number)
 }
 
 beforeEach(() => {
+  current.failStatusLookup = false;
   vi.spyOn(console, "warn").mockImplementation(() => {});
   vi.stubEnv("NODE_ENV", "production");
 });
@@ -182,6 +185,12 @@ describe("models board count (loadCurrentRankings and /api/rankings)", () => {
     const body = (await res.json()) as { rankings: unknown[]; list_meta: { indexable: boolean; metric_row_count: number; metrics_pending_note: boolean } };
     expect(body.rankings).toEqual([]);
     expect(body.list_meta).toMatchObject({ indexable: false, metric_row_count: 0, metrics_pending_note: true });
+  });
+
+  it("rejects when the models board's status lookup rejects (fails closed)", async () => {
+    seed("model", 10);
+    current.failStatusLookup = true;
+    await expect(loadCurrentRankings("model")).rejects.toThrow("status lookup failed");
   });
 
   it("the harness board does not count model metrics", async () => {
