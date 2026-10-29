@@ -3,7 +3,7 @@
  *
  * Why: the ledger is the only per-call spend record; a call site that does not write
  *   a row makes its spend invisible, and an estimate shown as a reported figure
- *   misleads (D02: env prices, labelled "estimated").
+ *   misleads (a cost from env prices is labelled "estimated").
  * What: checks the row builder (reported `usage.cost` wins; else tokens x env price,
  *   flagged estimated; else no cost), run linkage through `runWithUsageRun` (a dry-run
  *   placeholder id is never written), and drives `OpenRouterService.generate` and

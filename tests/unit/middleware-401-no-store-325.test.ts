@@ -1,5 +1,5 @@
 /**
- * #325 (Architect ruling 10-27): the middleware's anonymous `/api/admin/*` 401 is no-store.
+ * #325: the middleware's anonymous `/api/admin/*` 401 is no-store.
  *
  * Why: the middleware refuses an anonymous admin API request before the route runs, so a
  *   route's own no-store wrapper never sees that response; it went out as
