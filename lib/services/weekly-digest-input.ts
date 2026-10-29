@@ -153,10 +153,11 @@ Hard rules:
 
 function tierRules(tier: DigestTier, hasNewAndChanged: boolean): string {
   const { min, max } = DIGEST_WORDS[tier];
+  // #181: 3 opening sentences plus 2 per bullet reach the floor with one article.
   if (tier === "short") {
     return `This was a quiet week. Write ${min}-${max} words in this exact structure, with no headings:
-1. An opening paragraph of 2 sentences: what the week covered and the biggest item.
-2. One bullet per article, each one line, each linking its article.`;
+1. An opening paragraph of 3 sentences: what the week covered, the biggest item, and why it matters to a developer.
+2. One bullet per article, each 2 sentences: what changed and who it affects. Each bullet links its article.`;
   }
   const newAndChanged = hasNewAndChanged
     ? 'Then "## New and changed": the new tools and site changes in the material.'
