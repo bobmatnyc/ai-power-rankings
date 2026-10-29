@@ -7,8 +7,8 @@
  * route file may only export route fields, so the list and the serialiser live
  * here.
  * What: `buildSitemapEntries` returns the static pages, category pages, active
- * tools, active news articles and monthly What's New reports, and throws when
- * any database read fails.
+ * tools, active news articles, monthly What's New reports and weekly digests,
+ * and throws when any database read fails except the optional digest read.
  * `renderSitemapXml` serialises entries as a sitemaps.org 0.9 `<urlset>`.
  * Test: `tests/unit/sitemap-route.test.ts`, `tests/unit/seo-canonical-origin.test.ts`.
  */
@@ -76,7 +76,8 @@ const staticPages = [
  * (D53); the models list also needs 10 active board rows with metrics, counted by
  * `loadCurrentRankings` as the page does (#329, D63); `/rankings` is the harness list's canonical, so `/rankings/coding-harnesses`
  * is never listed. All URLs start with `baseUrl`. Rejects when any database read rejects,
- * except the models board read, whose failure only leaves `/rankings/models` out (#329).
+ * except the models board read, whose failure only leaves `/rankings/models` out (#329),
+ * and the weekly digest read, whose failure is logged and only leaves the digest URLs out (#181).
  * Test: `tests/unit/sitemap-route.test.ts`, `tests/unit/seo-canonical-origin.test.ts`.
  */
 export async function buildSitemapEntries(
@@ -110,13 +111,21 @@ export async function buildSitemapEntries(
     });
   }
 
-  // #162: every read throws on failure; none is caught here, so a partial
-  // list never reaches a cache. #54 adds the report periods to that rule.
+  // #162: the tool, article and report reads throw on failure; none is caught
+  // here, so a partial list never reaches a cache. #54 adds the report periods.
   const [tools, articles, reportPeriods, digestWeeks] = await Promise.all([
     toolsRepository.findAll(),
     newsRepository.getPublishedSlugs(),
     listPeriods(),
-    listDigestWeeks(), // #181
+    // #181: digest URLs are optional, like the /whats-new list; a failed read (e.g. the
+    // weekly_digests table not migrated yet) logs and leaves them out instead of a 503.
+    listDigestWeeks().catch((error: unknown) => {
+      loggers.api.error("Sitemap: weekly digest read failed; digest URLs left out", {
+        name: error instanceof Error ? error.name : typeof error,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return [];
+    }),
   ]);
 
   // 3. Active tool pages, one per locale
