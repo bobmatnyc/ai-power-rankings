@@ -218,11 +218,12 @@ describe("every OpenRouter call site records usage", () => {
       .map((file) => path.relative(ROOT, file))
       .sort();
 
-    // The four call sites as of #325; a new one must be added here and instrumented.
+    // The known call sites; a new one must be added here and instrumented.
     expect(callers).toEqual([
       "app/api/admin/news/analyze/route.ts",
       "lib/services/article-ingestion.service.ts",
       "lib/services/openrouter.service.ts",
+      "lib/services/weekly-digest.service.ts",
       "lib/services/whats-new-summary.service.ts",
     ]);
     for (const file of callers) {
