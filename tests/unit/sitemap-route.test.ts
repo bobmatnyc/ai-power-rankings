@@ -14,7 +14,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * `<lastmod>`, the success and failure cache headers, and that a failed read
  * is a `no-store` 503 rather than a 200 without articles. #54: each stored
  * monthly report is listed once, under `/en/whats-new/<period>`, and a failed
- * period read is the same 503.
+ * period read is the same 503. #181: a failed weekly digest read only leaves
+ * the digest URLs out and is logged; the route still answers 200.
  * Test: `npx vitest run tests/unit/sitemap-route.test.ts`. No database access,
  * no network.
  */
@@ -48,6 +49,7 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
 
 import * as route from "../../app/sitemap.xml/route";
 import { locales } from "../../i18n/config";
+import { loggers } from "../../lib/logger";
 import { renderSitemapXml } from "../../lib/sitemap";
 
 const ORIGIN = "https://aipowerranking.com";
@@ -159,7 +161,6 @@ describe("GET /sitemap.xml (#162)", () => {
     ["the news read", () => getPublishedSlugs.mockRejectedValue(new Error("connection reset"))],
     ["the tools read", () => findAll.mockRejectedValue(new Error("Database not connected"))],
     ["the report period read (#54)", () => listPeriods.mockRejectedValue(new Error("connection reset"))],
-    ["the weekly digest read (#181)", () => listDigestWeeks.mockRejectedValue(new Error("connection reset"))],
   ])("answers 503 no-store, not an article-less 200, when %s fails", async (_what, fail) => {
     fail();
 
@@ -168,6 +169,29 @@ describe("GET /sitemap.xml (#162)", () => {
     expect(response.status).toBe(503);
     expect(response.headers.get("Cache-Control")).toBe("no-store");
     expect(await response.text()).not.toContain("<urlset");
+  });
+
+  it("still answers 200 without digest URLs, and logs an error, when the weekly digest read fails (#181)", async () => {
+    // #181: production before migration 0030 is applied.
+    listDigestWeeks.mockRejectedValue(new Error('relation "weekly_digests" does not exist'));
+    const logged = vi.spyOn(loggers.api, "error").mockImplementation(() => undefined);
+
+    const response = await fetchSitemap();
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("Cache-Control")).toBe(
+      "public, s-maxage=3600, stale-while-revalidate=86400"
+    );
+    const urls = listedUrls(await response.text());
+    expect(urls.some((u) => u.loc === `${ORIGIN}/en/news/big-launch`)).toBe(true);
+    expect(urls.filter((u) => u.loc.endsWith("/tools/cursor"))).toHaveLength(locales.length);
+    expect(urls.some((u) => u.loc === `${ORIGIN}/en/whats-new/2026-08`)).toBe(true);
+    expect(urls.some((u) => u.loc.includes("/whats-new/weekly/"))).toBe(false);
+    expect(logged).toHaveBeenCalledWith(
+      "Sitemap: weekly digest read failed; digest URLs left out",
+      expect.objectContaining({ error: 'relation "weekly_digests" does not exist' })
+    );
+    logged.mockRestore();
   });
 });
 
