@@ -3,11 +3,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 /**
  * #329: every ranked model row carries its version.
  *
- * Why: the owner ruled that each model shows its version; the API sent none, and the
- *   card showed one only when the description prose happened to name it.
+ * Why: every ranked model shows its version: the latest point release within its major.
+ *   The API sent none, and the card showed one only when the description prose named it.
  * What: runs the REAL `ToolsRepository` and `loadCurrentRankings()` over a fake `getDb`
  *   (the #301 test's pattern). A model row's `tool.version` is the stored lifecycle point,
- *   else the stored seed `current_version`, else null; the description is never parsed.
+ *   else null; the seed `current_version` (a full model name) and the description are
+ *   never read.
  *   A non-model row has no `version` key. Also checks that the six live family rows
  *   resolve to a version through the lifecycle record the status step writes.
  * Test: `npx vitest run tests/unit/model-version-329.test.ts`. No network.
@@ -91,7 +92,7 @@ afterEach(() => {
 });
 
 describe("model rows carry a version (#329)", () => {
-  it("uses the lifecycle point first, then the seed current_version, else null", async () => {
+  it("uses the lifecycle point only, never the seed current_version, else null", async () => {
     seed([
       tool(1, "alpha", "model", {
         modelLifecycle: { point: "5.5" },
@@ -102,7 +103,7 @@ describe("model rows carry a version (#329)", () => {
     ]);
     const board = (await loadCurrentRankings("model"))!;
     const versions = Object.fromEntries(board.rankings.map((r) => [r.tool.slug, (r.tool as any).version]));
-    expect(versions).toEqual({ alpha: "5.5", bravo: "Bravo 4.8", charlie: null });
+    expect(versions).toEqual({ alpha: "5.5", bravo: null, charlie: null });
   });
 
   it("adds a version to the model row and no version key to a non-model row", async () => {

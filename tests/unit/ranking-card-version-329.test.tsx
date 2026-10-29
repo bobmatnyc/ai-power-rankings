@@ -2,7 +2,7 @@
 /**
  * #329: the ranking card shows a model's version.
  *
- * Why: the owner ruled that every ranked model shows its version.
+ * Why: every ranked model shows its version: the latest point release within its major.
  * What: renders RankingCard with `tool.version` set ("Version 5.5" appears) and with it
  *   null or absent (no version element, no "undefined", no bare "Version" label).
  * Test: `npx vitest run tests/unit/ranking-card-version-329.test.tsx`. No network.
