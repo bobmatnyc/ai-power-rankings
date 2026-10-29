@@ -2,7 +2,7 @@
   {
     "id": "unreleased-dc3b1f003ddc",
     "version": "Unreleased",
-    "date": "2026-10-27T22:55:10.000Z",
+    "date": "2026-10-29T18:11:07.000Z",
     "dateSource": "commit",
     "section": "Security",
     "scope": "auth",
@@ -684,7 +684,7 @@
   {
     "id": "unreleased-94f9035eac1e",
     "version": "Unreleased",
-    "date": "2026-10-29T13:04:42.000Z",
+    "date": "2026-10-29T13:24:39.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "models",
@@ -701,6 +701,17 @@
     "scope": "tools",
     "title": "the productivity board gains entries",
     "description": "the productivity board gains entries. The seed `docs/refresh/productivity-tools.json` lists nine new productivity rows: ChatGPT, Gemini, Hermes Agent, Microsoft Copilot, Manus, Genspark, Mistral Vibe, Notion AI and Grok, each with its vendor source page. `parseProductivitySeed` (`lib/db/repositories/productivity-seed.repository.ts`) rejects a row with no https source URL, a slug that is already taken or reserved, or a kind other than productivity. Migration `0027_create_productivity_rows.sql` inserts the nine rows inactive and unscored, so no list shows them yet. Migration `0028_convert_productivity_existing_rows.sql`, applied later with activation, renames the Claude Artifacts tool to Claude.AI (the URL and history stay) and moves it, OpenClaw, Perplexity, ChatGPT Canvas, Claude Desktop with Extensions and Cowork (with its retired alias Cowork AI) to productivity; no status changes. The kind sheet and its contract hold that end state, the D45 harness floor drops from 66 to 64 now and to 61 in the activation change that applies 0028, and news mentions of \"Claude.AI\", \"claude.ai\" and \"Claude Artifacts\" resolve to the same tool. Tests: `tests/unit/productivity-seed-314.test.ts`, `tests/unit/productivity-rows-pglite-314.test.ts` (#314)",
+    "changeType": "feature"
+  },
+  {
+    "id": "unreleased-11bc0a5bf969",
+    "version": "Unreleased",
+    "date": "2026-10-29T18:12:01.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "admin",
+    "title": "PUT /api/admin/tools/[slug] accepts typed metrics (monthly_arr, users, valuation, swe_bench.verified), each { value,…",
+    "description": "`PUT /api/admin/tools/[slug]` accepts typed `metrics` (`monthly_arr`, `users`, `valuation`, `swe_bench.verified`), each `{ value, source, as_of }` (#95). `lib/admin-metrics-validation.ts` rejects non-finite or negative values, a missing or non-http(s) source, and a missing or future `as_of` with 400 before any write, and returns magnitude warnings. Values are stored as bare numbers in `data.metrics`, the path the v7.6 engine reads first; provenance goes to `data.metrics_provenance`.",
     "changeType": "feature"
   },
   {
