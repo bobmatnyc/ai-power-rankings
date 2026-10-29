@@ -99,14 +99,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-4aff9ebfe3b5",
+    "id": "unreleased-716463e00fae",
     "version": "Unreleased",
-    "date": "2026-10-29T19:16:18.000Z",
+    "date": "2026-10-29T19:21:18.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "seo",
-    "title": "/sitemap.xml answers 200 when the weekly digest read fails",
-    "description": "`/sitemap.xml` answers 200 when the weekly digest read fails. The digest-week read failed in production because the `weekly_digests` table was not migrated yet, and the route answered 503 on every request. A failed digest read is now logged at error level and only leaves the `/en/whats-new/weekly/<week>` URLs out; a failed tool, article or monthly report read is still a 503 (#162). Tests: `tests/unit/sitemap-route.test.ts` (#181)",
+    "title": "the sitemap stays available if the weekly digest list cannot be read; digest pages are left out until it can.",
+    "description": "the sitemap stays available if the weekly digest list cannot be read; digest pages are left out until it can.",
     "changeType": "fix"
   },
   {
