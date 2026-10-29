@@ -42,23 +42,46 @@ const NEWS_LINK = /^\/en\/news\/([a-z0-9-]+)$/;
 const NUMBER_WORD = "(?:one|two|three|four|five|six|seven|eight|nine|ten|twenty|fifty|hundred)";
 const ORDINAL_WORD = "(?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth)";
 
+// #339: words that, after "top N", make it a count of the week's items rather
+// than a list of ranked tools ("the top three stories").
+const ITEM_NOUN =
+  "(?:stor(?:y|ies)|items?|articles?|headlines?|news|changes?|updates?|releases?|launches|announcements?|themes?|points?|takeaways?|reads?|links?|topics?|highlights?|developments?)";
+// #339: a word that marks "#N" as an issue or pull request reference, and the
+// "#4, #5 and" run that may sit between it and a later reference.
+const ISSUE_REF_LEAD = "\\b(?:issues?|PRs?|pull\\s+requests?|bugs?|tickets?|fix(?:es|ed)?|close[sd]?|resolve[sd]?|refs?|see)\\s+";
+const ISSUE_REF_RUN = "(?:#\\d+\\s*(?:,|and|or)\\s*)*";
+
 // #181: a score, a rank change or a rank position, in digits or number words.
 // Counts ("3 new tools"), versions ("GPT-5.4"), quarters, dates and issue
 // references ("#181": three or more digits) are not matched; "top" alone is
 // not a rank, only "top" followed by a number is.
+// #339: the boundary is a rank position of a tool. "#N" after an issue word,
+// "in the first place", "top N%" / "top N percent" and "top N <item noun>" are
+// accepted; "#N" elsewhere, "in first place" and "top N" before any other word
+// stay rejected.
 const SCORE_OR_RANK: readonly RegExp[] = [
   /\b\d+(?:\.\d+)?\s*(?:\/|out of)\s*(?:10|100)\b/i,
   /\b(?:scores?|scored|ratings?|rated)\b\W+(?:\w+\W+){0,3}?\d/i,
   new RegExp(`\\brank(?:ed|ing|s)?\\b\\W+(?:(?:at|in|as|to|from|number|no\\.?)\\W+){0,2}(?:\\d|${ORDINAL_WORD}\\b)`, "i"),
-  new RegExp(`\\b(?:\\d+(?:st|nd|rd|th)|${ORDINAL_WORD})\\s+(?:place|rank|position|spot)\\b`, "i"),
+  new RegExp(`(?<!\\bin\\s+the\\s+)\\b(?:\\d+(?:st|nd|rd|th)|${ORDINAL_WORD})\\s+(?:place|rank|position|spot)\\b`, "i"),
   /\b\d+\s*(?:places?|positions?|spots?)\b/i,
-  /(?<![\w&#/])#\d{1,2}(?![\d\w])/,
+  new RegExp(`(?<![\\w&#/])(?<!${ISSUE_REF_LEAD}${ISSUE_REF_RUN})#\\d{1,2}(?![\\d\\w])`, "i"),
   new RegExp(`\\b(?:no\\.|number)\\s*(?:\\d+|${NUMBER_WORD})\\b`, "i"),
-  new RegExp(`\\btop\\s+(?:\\d+|${NUMBER_WORD})\\b`, "i"),
+  new RegExp(
+    `\\btop\\s+(?:\\d+|${NUMBER_WORD})\\b(?!\\s*(?:%|percent\\b|per\\s+cent\\b))(?!\\s+${ITEM_NOUN}\\b)`,
+    "i"
+  ),
 ];
 
 /** A fresh global pattern per call: a shared one keeps `lastIndex` between calls. */
 const markdownLinks = () => /\[[^\]]*\]\(([^)\s]*)\)/g;
+// #339: a reference-style link definition, `[label]: target` or `[label]: <target>`.
+const referenceDefinitions = () => /^ {0,3}\[[^\]]+\]:[ \t]*<?([^\s>]*)>?.*$/gm;
+
+/** `body` with inline link targets and reference definitions removed; both are checked by `linkFailures`. */
+function withoutLinkTargets(body: string): string {
+  return body.replace(markdownLinks(), "]").replace(referenceDefinitions(), "");
+}
 
 /** The word count `validateDigest` measures: heading and bullet markers are not words. */
 export function countDigestWords(body: string): number {
@@ -110,12 +133,14 @@ function structureFailures(body: string, context: DigestValidationContext): stri
 
 function linkFailures(body: string, allowedSlugs: ReadonlySet<string>): string[] {
   const failures: string[] = [];
-  for (const match of body.matchAll(markdownLinks())) {
+  // #339: a reference definition's target gets the same check as an inline target.
+  const targets = [...body.matchAll(markdownLinks()), ...body.matchAll(referenceDefinitions())];
+  for (const match of targets) {
     const target = match[1] ?? "";
     const slug = NEWS_LINK.exec(target)?.[1];
     if (target !== "/" && !(slug && allowedSlugs.has(slug))) failures.push(`disallowed_link (${target})`);
   }
-  const bare = /(?:https?:\/\/|www\.)\S+/i.exec(body.replace(markdownLinks(), "]"));
+  const bare = /(?:https?:\/\/|www\.)\S+/i.exec(withoutLinkTargets(body));
   if (bare) failures.push(`disallowed_link (${bare[0]})`);
   return failures;
 }
@@ -134,7 +159,7 @@ export function validateDigest(body: string, context: DigestValidationContext): 
   failures.push(...linkFailures(text, context.allowedSlugs));
 
   // Link targets can hold digits (a slug), so the score check reads the text alone.
-  const prose = text.replace(markdownLinks(), "]");
+  const prose = withoutLinkTargets(text);
   // One failure per stretch of text: "ranked #2" matches two patterns but is one rank.
   const hits: Array<{ start: number; end: number }> = [];
   for (const pattern of SCORE_OR_RANK) {
