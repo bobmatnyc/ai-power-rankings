@@ -115,9 +115,11 @@ interface ToolDetailClientProps {
   dict: Dictionary;
   /** #193: the server-rendered profile block, shown under the Overview card in every state. */
   profile?: ReactNode;
+  /** #329: a model's version (`modelVersion`); null or absent shows nothing. */
+  version?: string | null;
 }
 
-export function ToolDetailClient({ slug, lang, dict, profile }: ToolDetailClientProps) {
+export function ToolDetailClient({ slug, lang, dict, profile, version }: ToolDetailClientProps) {
   const [tool, setTool] = useState<Tool | null>(null);
   const [toolData, setToolData] = useState<ToolDetailData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -257,6 +259,12 @@ export function ToolDetailClient({ slug, lang, dict, profile }: ToolDetailClient
                   {tool.category.replace(/-/g, " ")}
                 </Badge>
                 <StatusIndicator status={tool.status} showLabel />
+                {/* #329: the model's version, only when it has one. */}
+                {version ? (
+                  <Badge variant="outline" data-testid="model-version">
+                    Version {version}
+                  </Badge>
+                ) : null}
                 {/* Current Ranking Display */}
                 {toolData?.ranking && (
                   <Badge variant="outline" className="text-primary border-primary">
