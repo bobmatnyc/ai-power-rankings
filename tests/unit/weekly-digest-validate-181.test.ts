@@ -1,6 +1,10 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { defaultUrlTransform } from "react-markdown";
 import { describe, expect, it } from "vitest";
+import { WeeklyDigestView } from "../../components/whats-new/weekly-digest-view";
 import { countWords } from "../../lib/article-summary";
-import { type DigestValidationContext, validateDigest } from "../../lib/weekly-digest-validate";
+import { type DigestValidationContext, digestLinkTargets, validateDigest } from "../../lib/weekly-digest-validate";
 
 /**
  * The weekly digest validator (#181).
@@ -144,6 +148,10 @@ describe("validateDigest no-score rule (#181)", () => {
     ["a quarter", "The plan lands in Q3 for most teams."],
     ["an OS version", "It now runs on Windows 11 and macOS."],
     ["a count of tools", "The site added 3 new tools this week."],
+    // #339: a number word before "places" or "spots" with no move word is a count.
+    ["a count of places in words", "The setting is now in two places."],
+    ["a count of positions in words", "It has two positions open."],
+    ["a count of spots in words", "It opened fifty spots for the beta."],
   ])("allows %s", (_name, sentence) => {
     const failures = validateDigest(sized(300, { extra: sentence }), FULL).filter((f) =>
       f.startsWith("score_or_rank_number")
@@ -166,6 +174,7 @@ describe("validateDigest no-score rule (#181)", () => {
     ["a rank move in number words", "The agent moved up two places."],
     ["a rank move by spots in number words", "It fell two spots this week."],
     ["a rank move of one place", "It moved up one place."],
+    ["a rank move after a move word", "Cursor dropped two places this week."],
   ])("still rejects %s", (_name, sentence) => {
     const failures = validateDigest(sized(300, { extra: sentence }), FULL);
     expect(failures.some((f) => f.startsWith("score_or_rank_number"))).toBe(true);
@@ -268,5 +277,69 @@ describe("validateDigest links (#181)", () => {
     ["a reference definition title", `${words(100)} [story][r]\n\n[r]: /en/news/alpha-launch "ranked #1"`],
   ])("rejects a rank in %s", (_name, body) => {
     expect(validateDigest(body, SHORT).some((f) => f.startsWith("score_or_rank_number"))).toBe(true);
+  });
+
+  // #339: a definition the renderer reads is checked wherever the parser finds it.
+  it.each([
+    ["with its target on the next line", "[story][r]\n\n[r]:\n//evil.example/x"],
+    ["inside a blockquote", "[story][r]\n\n> [r]: //evil.example/x"],
+    ["inside a list item", "[story][r]\n\n- [r]: //evil.example/x"],
+    ["inside nested containers", "[story][r]\n\n> - > [r]: //evil.example/x"],
+  ])("rejects a reference definition %s", (_name, tail) => {
+    expect(validateDigest(`${words(100)} ${tail}`, SHORT)).toContain("disallowed_link (//evil.example/x)");
+  });
+
+  it.each([
+    ["a protocol-relative inline link", "[x](//evil.example/x)", "//evil.example/x"],
+    ["an autolink", "<https://evil.example/x>", "https://evil.example/x"],
+    ["a javascript: link", "[x](javascript:alert(1))", "javascript:alert(1)"],
+    ["a data: link", "[x](data:text/html,hi)", "data:text/html,hi"],
+    ["a mailto: link", "[x](mailto:a@evil.example)", "mailto:a@evil.example"],
+    ["an empty definition target", "[story][r]\n\n[r]: <>", ""],
+  ])("still rejects %s", (_name, link, target) => {
+    expect(validateDigest(`${words(100)} ${link}`, SHORT)).toContain(`disallowed_link (${target})`);
+  });
+
+  // #339: CommonMark reads these lines as paragraphs, not link definitions.
+  it.each(["[Note]: Node.js shipped a fix.", "[Update]: Cursor.ai shipped a fix."])("accepts %s", (line) => {
+    expect(validateDigest(`${words(100)}\n\n${line}`, SHORT)).toEqual([]);
+  });
+});
+
+/** Every `href` and `src` in `html`, with the attribute escapes React writes decoded. */
+function renderedUrls(html: string): string[] {
+  const decode = (s: string) =>
+    s.replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+  return [...html.matchAll(/\s(?:href|src)="([^"]*)"/g)].map((m) => decode(m[1] ?? ""));
+}
+
+describe("validateDigest reads the links the page renders (#339)", () => {
+  // Each fixture references every definition it holds, so every checked URL renders.
+  it.each([
+    ["a news link and the site root", "[a](/en/news/alpha-launch) [home](/)"],
+    ["a next-line definition", "[story][r]\n\n[r]:\n//evil.example/x"],
+    ["a blockquote definition", "[story][r]\n\n> [r]: //evil.example/x"],
+    ["a list-item definition", "[story][r]\n\n- [r]: //evil.example/x"],
+    ["a nested-container definition", "[story][r]\n\n> - > [r]: //evil.example/x"],
+    ["a protocol-relative inline link", "[x](//evil.example/x)"],
+    ["autolinks", "<https://evil.example/a> https://evil.example/b www.evil.example a@evil.example"],
+    ["script, data and mail links", "[x](javascript:alert(1)) [y](data:text/html,hi) [z](mailto:a@evil.example)"],
+    ["an image and a reference image", "![a](/en/news/beta-update) ![b][i]\n\n[i]: //evil.example/i.png"],
+    ["a footnote and a titled definition", 'Claim.[^1] [s][r]\n\n[^1]: Note.\n\n[r]: /en/news/gamma-release "t"'],
+  ])("checks exactly the URLs rendered for %s", (_name, tail) => {
+    const body = `${words(100)} ${tail}`;
+    const element = createElement(WeeklyDigestView, {
+      digest: { week: "2026-W43", content: body, generatedAt: "2026-10-26T00:00:00.000Z" },
+    });
+    // remark-rehype adds footnote links of its own; they come from no URL in the body.
+    const rendered = renderedUrls(renderToStaticMarkup(element)).filter((u) => !u.startsWith("#user-content-fn"));
+    // With no allowed slug, every checked URL but the site root is a failure.
+    const failed = validateDigest(body, { ...SHORT, allowedSlugs: new Set() })
+      .filter((f) => f.startsWith("disallowed_link ("))
+      .map((f) => f.slice("disallowed_link (".length, -1));
+    const checked = [...failed, ...(rendered.includes("/") ? ["/"] : [])];
+    // The page applies react-markdown's URL filter; the check reads the URL before it.
+    expect(new Set(checked.map((u) => defaultUrlTransform(u)))).toEqual(new Set(rendered));
+    expect(new Set(digestLinkTargets(body))).toEqual(new Set(checked));
   });
 });
