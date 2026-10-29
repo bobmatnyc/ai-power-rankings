@@ -6,7 +6,7 @@
  * What: `recordOpenRouterUsage` turns one OpenRouter completion body into one
  *   `provider_usage_events` row. Cost is the `usage.cost` OpenRouter reports when
  *   present; otherwise tokens x the env unit prices `OPENROUTER_INPUT_USD_PER_MTOKEN`
- *   and `OPENROUTER_OUTPUT_USD_PER_MTOKEN`, flagged as estimated (D02). With neither,
+ *   and `OPENROUTER_OUTPUT_USD_PER_MTOKEN`, flagged as estimated. With neither,
  *   the row is still written with no cost and flagged as estimated.
  *   `runWithUsageRun` scopes calls to an ingestion run through AsyncLocalStorage, so
  *   call sites do not thread a run id. Every write is awaited with a time bound and
