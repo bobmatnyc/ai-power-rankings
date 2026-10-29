@@ -682,14 +682,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-611600bef9fa",
+    "id": "unreleased-13747232521c",
     "version": "Unreleased",
-    "date": "2026-10-29T18:50:03.000Z",
+    "date": "2026-10-29T19:00:43.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "news",
     "title": "a weekly digest of the week's AI coding tool news (#181)",
-    "description": "a weekly digest of the week's AI coding tool news (#181). Every Monday at 07:30 UTC a cron route (`/api/cron/weekly-digest`, same `CRON_SECRET` check as the other cron routes) writes a 250-350 word digest for the previous full ISO week, Monday to Sunday UTC, stored in the new `weekly_digests` table (migration 0030, one row per `YYYY-Www`). It is written for developers choosing AI coding tools, in a factual tone, from that week's articles plus new tools and site changes, and carries no score numbers or rank changes. A week with no articles stores nothing and makes no LLM call; one or two articles give a short digest of 80-120 words. A stored week is never overwritten unless the caller passes `?force=1`; `?dry_run=1` reports counts and writes nothing. A digest that fails the check on word range, structure, links or score numbers is regenerated once, then the run fails, alerts and stores nothing. Article summaries that pass `validateSummary` are sent as stored; a longer older summary is cut with `toMetaDescription`. `/whats-new` lists the newest eight digests, each at `/whats-new/weekly/<week>`; the sitemap lists each stored week; `/{lang}/whats-new/rss.xml` carries weekly digests and monthly reports. Apply migration 0030 before the deploy. The digest completion is recorded in the provider usage ledger as `weekly_digest`. Tests: `tests/unit/weekly-digest-window-181.test.ts`, `tests/unit/weekly-digest-validate-181.test.ts`, `tests/unit/weekly-digest-input-181.test.ts`, `tests/unit/weekly-digest-service-181.test.ts`, `tests/unit/weekly-digests-migration-181.test.ts`, `tests/unit/cron-weekly-digest-181.test.ts`, `tests/unit/weekly-digest-display-181.test.tsx`",
+    "description": "a weekly digest of the week's AI coding tool news (#181). Every Monday at 07:30 UTC a cron route (`/api/cron/weekly-digest`, same `CRON_SECRET` check as the other cron routes) writes a 250-350 word digest for the previous full ISO week, Monday to Sunday UTC, stored in the new `weekly_digests` table (migration 0030, one row per `YYYY-Www`). It is written for developers choosing AI coding tools, in a factual tone, from that week's articles plus new tools and site changes, and carries no score numbers, rank changes or rank positions (\"#1\", \"No. 1\", \"top 5\"). A week with no articles stores nothing and makes no LLM call; one or two articles give a short digest of 80-120 words (a three-sentence opening and a two-sentence bullet per article). A stored week is never overwritten unless the caller passes `?force=1`; `?dry_run=1` reports counts and writes nothing. A digest that fails the check on word range, structure, links or score and rank numbers is regenerated once, then the run fails, alerts and stores nothing. Article summaries that pass `validateSummary` are sent as stored; a longer older summary is cut with `toMetaDescription`. `/whats-new` lists the newest eight digests, each at `/whats-new/weekly/<week>`; the sitemap lists each stored week; `/{lang}/whats-new/rss.xml` carries weekly digests and monthly reports. Apply migration 0030 before the deploy. The digest completion is recorded in the provider usage ledger as `weekly_digest`. Tests: `tests/unit/weekly-digest-window-181.test.ts`, `tests/unit/weekly-digest-validate-181.test.ts`, `tests/unit/weekly-digest-input-181.test.ts`, `tests/unit/weekly-digest-service-181.test.ts`, `tests/unit/weekly-digests-migration-181.test.ts`, `tests/unit/cron-weekly-digest-181.test.ts`, `tests/unit/weekly-digest-display-181.test.tsx`",
     "changeType": "feature"
   },
   {
@@ -717,7 +717,7 @@
   {
     "id": "unreleased-11bc0a5bf969",
     "version": "Unreleased",
-    "date": "2026-10-29T18:12:01.000Z",
+    "date": "2026-10-29T18:55:08.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "admin",
