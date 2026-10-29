@@ -1,14 +1,14 @@
 -- Migration: Create the weekly digest table
 -- Created: 2026-10-27
--- Description: #181 (M2-3) — the weekly-digest cron route writes one row per closed
+-- Description: #181 — the weekly-digest cron route writes one row per closed
 --   ISO week, keyed "YYYY-Www" (unique), holding the digest markdown, the week's
 --   window, a hash of its input ids and generation metadata. It is a new table, not a
 --   kind of monthly_summaries row: a "W" key sorts after every "YYYY-MM" period and
 --   would be read as the latest monthly report. Nothing existing is touched.
---   Numbered 0025 because 0022-0024 are reserved by open pull requests.
+--   Numbered 0030 because 0027-0029 are taken on main.
 --   Every statement is guarded with IF NOT EXISTS, so a re-run is a no-op.
 --   Apply with .github/workflows/apply-migration.yml, migration_file
---   0025_create_weekly_digests.sql, show_columns_table weekly_digests.
+--   0030_create_weekly_digests.sql, show_columns_table weekly_digests.
 
 -- #181: apply this before the deploy that ships the weekly digest; the /whats-new
 -- list and the sitemap read the table.
