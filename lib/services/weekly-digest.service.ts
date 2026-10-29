@@ -22,6 +22,7 @@ import type { ChangelogEntry } from "@/lib/data/changelog-generator";
 import { loggers } from "@/lib/logger";
 import { readCompletion } from "@/lib/services/llm-completion";
 import { getOpenRouterModel } from "@/lib/services/openrouter-model";
+import { OPENROUTER_USAGE_REQUEST, recordOpenRouterUsage } from "@/lib/services/provider-usage";
 import {
   type DigestInputs,
   assembleDigest,
@@ -115,6 +116,7 @@ async function callModel(
       ],
       temperature: 0.3,
       max_tokens: DIGEST_MAX_TOKENS,
+      ...OPENROUTER_USAGE_REQUEST,
     }),
   });
   if (!response.ok) {
@@ -122,8 +124,11 @@ async function callModel(
     loggers.api.error("OpenRouter API error (weekly digest)", { status: response.status });
     throw new Error(`OpenRouter API error (${response.status}): ${errorText.substring(0, 200)}`);
   }
+  const data = await response.json();
+  // #325: one ledger row per billed completion, written before the content checks. Never throws.
+  await recordOpenRouterUsage({ operation: "weekly_digest", model, body: data });
   // #172: a digest cut off at max_tokens throws here and is never stored.
-  const { content, diagnostics } = readCompletion(await response.json(), {
+  const { content, diagnostics } = readCompletion(data, {
     label: "WeeklyDigest",
     model,
     maxTokens: DIGEST_MAX_TOKENS,
