@@ -20,6 +20,7 @@ vi.mock("server-only", () => ({}));
 vi.mock("../../lib/db/connection", () => ({ getDb: () => ({}) }));
 vi.mock("../../lib/services/whats-new-summary.service", () => ({ listPeriods: async () => [] }));
 vi.mock("../../lib/db/repositories/news", () => ({ newsRepository: { getPublishedSlugs: async () => [] } }));
+vi.mock("../../lib/services/weekly-digest.repository", () => ({ listDigestWeeks: async () => [] }));
 vi.mock("../../lib/db/repositories/rankings.repository", () => ({
   rankingsRepository: {
     getCurrentRankings: async (list = "combined") => {

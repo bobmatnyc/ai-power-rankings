@@ -33,6 +33,8 @@ vi.mock("next/navigation", () => ({
 
 const { findAll } = vi.hoisted(() => ({ findAll: vi.fn() }));
 vi.mock("../../lib/services/whats-new-summary.service", () => ({ listPeriods: async () => [] }));
+// #181: the sitemap also reads stored weekly digests; this suite stores none.
+vi.mock("../../lib/services/weekly-digest.repository", () => ({ listDigestWeeks: async () => [] }));
 vi.mock("../../lib/db/repositories/news", () => ({ newsRepository: { getPublishedSlugs: async () => [] } }));
 vi.mock("../../lib/db/repositories/tools.repository", () => {
   class ToolsRepository {
