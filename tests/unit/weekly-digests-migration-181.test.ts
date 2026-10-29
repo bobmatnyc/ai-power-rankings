@@ -1,5 +1,5 @@
 /**
- * #181: migration 0025 creates `weekly_digests`, matches the drizzle schema, is
+ * #181: migration 0030 creates `weekly_digests`, matches the drizzle schema, is
  * idempotent, and applies through the existing apply-migration runner.
  *
  * Why: migrations here are applied by hand through
@@ -20,7 +20,7 @@ import { describe, expect, it } from "vitest";
 import { weeklyDigests } from "../../lib/db/schema";
 import { type MigrationDb, runMigrations, splitStatements } from "../../scripts/apply-migrations";
 
-const FILE = "0025_create_weekly_digests.sql";
+const FILE = "0030_create_weekly_digests.sql";
 const SQL_TEXT = readFileSync(path.resolve(__dirname, "../../lib/db/migrations", FILE), "utf8");
 const STATEMENTS = splitStatements(SQL_TEXT);
 
@@ -58,9 +58,9 @@ function schemaColumns(): ParsedColumn[] {
   }));
 }
 
-describe("#181 migration 0025", () => {
-  it("is numbered 0025: 0022-0024 are reserved by open pull requests", () => {
-    expect(FILE.slice(0, 4)).toBe("0025");
+describe("#181 migration 0030", () => {
+  it("is numbered 0030: 0027-0029 are taken on main", () => {
+    expect(FILE.slice(0, 4)).toBe("0030");
   });
 
   it("weekly_digests columns match the drizzle schema", () => {
