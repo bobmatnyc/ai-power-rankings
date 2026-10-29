@@ -4,10 +4,12 @@ import type { ChangelogEntry } from "../../lib/data/changelog-generator";
 import {
   articleSummaryForPrompt,
   assembleDigest,
+  buildDigestPrompt,
   calculateDigestHash,
   digestTier,
   siteChangesForWindow,
 } from "../../lib/services/weekly-digest-input";
+import { validateDigest } from "../../lib/weekly-digest-validate";
 import { windowForWeek } from "../../lib/weekly-digest-window";
 
 /**
@@ -105,6 +107,41 @@ describe("calculateDigestHash (#181)", () => {
   it("changes when an input id or the week changes", () => {
     expect(calculateDigestHash(base)).not.toBe(calculateDigestHash({ ...base, articleIds: ["a", "b", "c"] }));
     expect(calculateDigestHash(base)).not.toBe(calculateDigestHash({ ...base, week: "2026-W44" }));
+  });
+});
+
+describe("short-tier prompt and word floor (#181)", () => {
+  /** A plain sentence of `n` words. */
+  const sentence = (n: number) => `${Array.from({ length: n - 1 }, () => "word").join(" ")} done.`;
+  /** Words in a short plain sentence; the floor must hold for sentences no longer than this. */
+  const WORDS_PER_SENTENCE = 16;
+
+  // #181: the fewest sentences the prompt allows must still reach the validator's floor.
+  it.each([1, 2])("a %i-article digest at the prompt's fewest sentences reaches the floor", (count) => {
+    const articles = Array.from({ length: count }, (_, i) => ({
+      id: `a${i}`,
+      slug: `story-${i}`,
+      title: `Story ${i}`,
+      summary: GOOD,
+      publishedAt: null,
+      toolMentions: [],
+    }));
+    const { system } = buildDigestPrompt({ window: WINDOW, tier: "short", articles, newTools: [], siteChanges: [] });
+    const opening = Number(/opening paragraph of (\d+) sentences/.exec(system)?.[1]);
+    // A bullet the prompt sizes only as "one line" holds one sentence.
+    const perBullet = Number(/One bullet per article, each (\d+) sentences/.exec(system)?.[1] ?? 1);
+    expect(opening).toBeGreaterThan(0);
+
+    const body = [
+      Array.from({ length: opening }, () => sentence(WORDS_PER_SENTENCE)).join(" "),
+      "",
+      ...articles.map(
+        (a) =>
+          `- ${Array.from({ length: perBullet }, () => sentence(WORDS_PER_SENTENCE)).join(" ")} [${a.title}](/en/news/${a.slug})`
+      ),
+    ].join("\n");
+    const context = { tier: "short" as const, allowedSlugs: new Set(articles.map((a) => a.slug)), hasNewAndChanged: false };
+    expect(validateDigest(body, context)).toEqual([]);
   });
 });
 
