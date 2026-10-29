@@ -31,6 +31,7 @@ export type OpenRouterOperation =
   | "article_analysis"
   | "whats_new_summary"
   | "state_of_ai_summary"
+  | "weekly_digest"
   | "admin_news_analyze"
   | "generate";
 

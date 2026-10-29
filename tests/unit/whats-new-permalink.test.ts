@@ -93,6 +93,10 @@ function neonEndpoint(body: string): Response {
   const { query, params } = JSON.parse(body) as { query: string; params: string[] };
   db.queries.push(query);
   if (db.fail) return Response.json({ message: "fixture: connection refused" }, { status: 500 });
+  // #181: the index also lists weekly digests; this fixture stores none.
+  if (/from "weekly_digests"/.test(query)) {
+    return Response.json({ command: "SELECT", rowCount: 0, fields: [], rows: [] });
+  }
 
   const columns = [...(/^select (.*) from "monthly_summaries"/.exec(query)?.[1] ?? "").matchAll(/"(\w+)"(?:,|$)/g)]
     .map((m) => m[1]!);

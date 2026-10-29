@@ -88,6 +88,11 @@ vi.mock("../../lib/db/repositories/news", () => {
 const reports = vi.hoisted(() => ({
   latest: null as null | { period: string },
 }));
+// #181: the sitemap also reads stored weekly digests; this suite stores none.
+vi.mock("../../lib/services/weekly-digest.repository", () => ({
+  listDigestWeeks: async () => [],
+  listDigests: async () => [],
+}));
 vi.mock("../../lib/services/whats-new-summary.service", () => ({
   getLatestStoredSummary: async () => reports.latest,
   listPeriods: async () => [{ period: "2026-07", updatedAt: new Date("2026-08-02") }],
