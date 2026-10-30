@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
+import { invalidateRankingsCache } from "@/lib/cache/invalidation.service";
 import { RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
 
@@ -32,10 +33,21 @@ export async function POST(request: NextRequest) {
 
     loggers.api.info("Successfully set current ranking period", { period });
 
+    // #354: purge once the write commits; a throwing setAsCurrent never reaches here.
+    const purge = await invalidateRankingsCache();
+    if (!purge.success) {
+      loggers.api.error("Set-current committed but the rankings cache purge failed", {
+        period,
+        errors: purge.errors,
+      });
+    }
+
     return NextResponse.json({
       success: true,
       period,
       message: `Successfully set ${period} as the current ranking period`,
+      // #354: a failed purge is reported, never an error for a committed write.
+      cache_purge: { success: purge.success, errors: purge.errors },
     });
   } catch (error) {
     loggers.api.error("Set current rankings error", { error });

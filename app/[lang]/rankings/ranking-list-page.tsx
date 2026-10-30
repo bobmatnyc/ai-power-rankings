@@ -7,6 +7,7 @@ import { FAQSection, QuickAnswerBox } from "@/components/seo";
 import { generalFAQs } from "@/data/seo-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
+import { CACHE_TAGS } from "@/lib/cache/invalidation.service";
 import { getUrl } from "@/lib/get-url";
 import { loggers } from "@/lib/logger";
 import { generateRankingOGImageUrl } from "@/lib/og-utils";
@@ -74,7 +75,8 @@ async function fetchListBoard(list: RankingList, purpose: "metadata" | "page"): 
   try {
     const url = rankingsApiUrl(list, purpose === "page" && isDev ? Date.now() : undefined);
     const response = await fetch(url, {
-      next: { revalidate: isDev ? 0 : 300 },
+      // #354: tagged so the rankings purge's `revalidateTag('rankings')` reaches this entry.
+      next: { revalidate: isDev ? 0 : 300, tags: [CACHE_TAGS.RANKINGS] },
       ...(purpose === "page" ? { cache: isDev ? ("no-store" as const) : ("default" as const) } : {}),
     });
     if (!response.ok) return { rankings: [], meta: null, header: NO_HEADER };

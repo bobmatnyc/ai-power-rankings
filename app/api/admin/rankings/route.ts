@@ -12,6 +12,7 @@ import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
+import { invalidateRankingsCache } from "@/lib/cache/invalidation.service";
 import { writeRankingsStaticCache } from "@/lib/cache/rankings-static-cache";
 import { type RankingData, RankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { loggers } from "@/lib/logger";
@@ -299,6 +300,15 @@ export async function POST(request: NextRequest) {
         // Set as current
         await rankingsRepo.setAsCurrent(data.id);
 
+        // #354: purge once the write commits; a throwing setAsCurrent never reaches here.
+        const purge = await invalidateRankingsCache();
+        if (!purge.success) {
+          loggers.api.error("Set-current committed but the rankings cache purge failed", {
+            period,
+            errors: purge.errors,
+          });
+        }
+
         // #256: write `{ rankings: [...] }`, never a bare array spread into numeric keys.
         const publicPath = join(process.cwd(), "public", "data", "rankings.json");
         writeFileSync(publicPath, JSON.stringify(currentSnapshotDocument(data), null, 2));
@@ -306,6 +316,8 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: `Set ${period} as current ranking period`,
+          // #354: a failed purge is reported, never an error for a committed write.
+          cache_purge: { success: purge.success, errors: purge.errors },
         });
       }
 

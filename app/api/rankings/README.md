@@ -161,6 +161,14 @@ clears nothing. The publish response carries the purge outcome as
 publish has already committed. Test:
 `tests/unit/rankings-current-publish-purge-311.test.ts`.
 
+#354: the admin set-current action (`POST /api/admin/rankings` with
+`set-current`, and `POST /api/admin/rankings/set-current`) calls the same
+purge after its write commits and reports it as `cache_purge` in the same way.
+The purge revalidates `/<lang>`, `/<lang>/rankings` and `/<lang>/tools` for
+every locale in `i18n/config.ts`, and the `/api/rankings` fetch on
+`/<lang>/rankings` carries the `rankings` tag that `revalidateTag('rankings')`
+clears. Test: `tests/unit/set-current-cache-purge-354.test.ts`.
+
 ## `GET /api/rankings/trending`
 
 Source: `app/api/rankings/trending/route.ts`
