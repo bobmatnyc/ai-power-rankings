@@ -134,7 +134,11 @@ jobs:
           esac
           # #334: slug:column pairs only, so the value is safe to pass as one argument.
           pair='[a-z0-9][a-z0-9.-]*:(hf_repo|licence|parameters_b|active_parameters_b|release_date)'
-          if [ -n "${OVERWRITE:-}" ] && ! printf '%s' "$OVERWRITE" | grep -qE "^${pair}(,${pair})*\$"; then
+          # The whole string is matched, so a newline or carriage return cannot smuggle a second
+          # line into $GITHUB_OUTPUT.
+          nl=$'\n'
+          cr=$'\r'
+          if [ -n "${OVERWRITE:-}" ] && { [[ "$OVERWRITE" == *"$nl"* || "$OVERWRITE" == *"$cr"* ]] || ! [[ "$OVERWRITE" =~ ^${pair}(,${pair})*$ ]]; }; then
             echo "::error::overwrite must be slug:column pairs separated by commas; nothing was run"
             exit 1
           fi

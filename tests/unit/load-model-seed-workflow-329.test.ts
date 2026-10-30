@@ -176,6 +176,10 @@ describe("load-model-seed workflow step scripts (#329)", () => {
     ["an overwrite of a non-curated column", { SEED: "all", OVERWRITE: "glm:status", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
     ["an overwrite with shell text", { SEED: "all", OVERWRITE: "glm:licence --apply", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
     ["an overwrite with a trailing comma", { SEED: "all", OVERWRITE: "glm:licence,", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
+    // #334: the whole value is validated, so an extra line cannot reach $GITHUB_OUTPUT.
+    ["an overwrite with an injected output line", { SEED: "all", OVERWRITE: "glm:licence\nseed=closed", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
+    ["an overwrite with a trailing newline", { SEED: "all", OVERWRITE: "glm:licence\n", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
+    ["an overwrite with a carriage return", { SEED: "all", OVERWRITE: "glm:licence\rseed=closed", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
   ])("mode selection on %s", (_name, env, code, mode) => {
     const res = runStep("mode", env);
     expect(res.code).toBe(code);
