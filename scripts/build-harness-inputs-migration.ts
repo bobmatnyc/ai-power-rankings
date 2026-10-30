@@ -3,7 +3,7 @@
  * Builds migration 0024 (harness input corrections) from the reviewed source file (#313, #312).
  *
  * Why: the corrections are reviewed as `docs/refresh/harness-inputs-2026-10.json` and applied by
- *   hand. The SQL is generated so the two cannot drift, and a De4 group can be switched off.
+ *   hand. The SQL is generated so the two cannot drift, and an input group (a)-(d) can be switched off.
  * What: reads the file and the kind sheet, validates, and writes
  *   `lib/db/migrations/0024_correct_harness_inputs.sql`. Exits 1, writing nothing, on any
  *   validation error. Flags: --inputs, --sheet, --out, --exclude-groups a,b,c,d,sourced

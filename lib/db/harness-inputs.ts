@@ -1,7 +1,7 @@
 /**
  * Harness input corrections: the reviewed source file, its parser and its validator (#313, #312).
  *
- * Why: the De4 ruling (2026-10-27) corrects the adoption inputs of the harness board with
+ * Why: issue #313 (2026-10-27) corrects the adoption inputs of the harness board with
  *   sourced figures and removes parent-company figures. Those are many data changes, so they are
  *   reviewed as a file and applied as one migration (0024). The file names every change; a row
  *   with no source, a row on a tool that is not in the kind sheet, or a row that reaches the
@@ -13,7 +13,7 @@
  * Test: `tests/unit/harness-inputs-sheet-313.test.ts`.
  */
 
-/** The De4 items a row belongs to; `sourced` is a plain correction with its own source. */
+/** The input groups (a)-(d) a row belongs to; `sourced` is a plain correction with its own source. */
 export const HARNESS_INPUT_GROUPS = ["sourced", "a", "b", "c", "d"] as const;
 export type HarnessInputGroup = (typeof HARNESS_INPUT_GROUPS)[number];
 
@@ -39,7 +39,7 @@ export const HARNESS_INPUT_FIELDS = [
   "users",
 ] as const;
 
-/** De4 (d): the seven tools whose stored data marks valuation or funding as parent-level. */
+/** The product-level-figures rule (#313): the seven tools whose stored data marks valuation or funding as parent-level. */
 export const PARENT_LEVEL_TOOLS = [
   "claude-code",
   "claude-artifacts",
@@ -50,7 +50,7 @@ export const PARENT_LEVEL_TOOLS = [
   "snyk-code",
 ] as const;
 
-/** The fields De4 (d) may delete on a parent-level tool. */
+/** The fields the product-level-figures rule (#313) may delete on a parent-level tool. */
 export const PARENT_LEVEL_FIELDS = ["valuation", "funding", "monthly_arr"] as const;
 
 export interface HarnessInputRow {
@@ -206,13 +206,13 @@ export function validateHarnessInputs(rows: readonly HarnessInputRow[], kindSlug
       writes.add(`${row.slug}|${row.field}`);
     }
 
-    // #313: group contracts. The scope is the De4 ruling, nothing wider.
+    // #313: group contracts. The scope is issue #313, nothing wider.
     if (row.group === "a" && !(row.slug === "github-copilot" && row.field === "monthly_arr" && row.op === "delete")) {
       err("group a is the removal of Copilot's monthly_arr only");
     }
     if (row.group === "b") err("group b has no rows: @cursor/sdk does not count as Cursor's npm");
     // #312: Cursor's VS Code count came from an unrelated extension; its row deletes it and no row may count another package instead.
-    if (row.slug === "cursor" && row.field === "npm") err("a Cursor npm row would count @cursor/sdk, which De4 (b) refuses");
+    if (row.slug === "cursor" && row.field === "npm") err("a Cursor npm row would count @cursor/sdk, which group (b) of #313 refuses");
     if (row.group === "c" && !(row.compute === NEWS_COMPUTE_RULE && row.field === "news_mentions" && row.op === "set")) {
       err("group c rows set news_mentions by compute");
     }

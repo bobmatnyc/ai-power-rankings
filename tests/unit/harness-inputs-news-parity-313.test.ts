@@ -1,7 +1,7 @@
 /**
  * #313: the SQL port of the news corpus rule counts what the TypeScript rule counts.
  *
- * Why: De4 (c) sets news_mentions to the site's /api/news corpus, and 0024 recomputes it in SQL.
+ * Why: the news-mentions rule (#313) sets news_mentions to the site's /api/news corpus, and 0024 recomputes it in SQL.
  *   The SQL is a port of `buildToolCatalogue` and `articleToolTags`, so it is held to them on
  *   articles built to hit each branch: mention shapes, relevance gates, per-kind tags, redirect
  *   rows, whole-word title matching with letter, digit, punctuation and non-ASCII neighbours.
@@ -35,7 +35,7 @@ const RELEVANCE = [undefined, 0.2, 0.49, 0.5, 0.9, 1, "0.9", null];
 async function scenario(): Promise<PGlite> {
   const db = await kindedChainDb();
   await seedOldState(db);
-  // A retired model row that redirects to an active one (D91 shape), and a stale data.slug-free redirect.
+  // A retired model row that redirects to an active one (the model-alias shape), and a stale data.slug-free redirect.
   await db.exec(`UPDATE public."tools" SET status = 'redirect', data = data || '{"redirect_to": "opus-4-6"}'::jsonb WHERE slug = 'opus-4-5'`);
   const ids = Object.fromEntries(
     (await db.query<{ slug: string; id: string }>(`SELECT slug, id FROM public."tools" WHERE slug IN ('claude-code','cursor','github-copilot','opus-4-6','windsurf')`)).rows.map((r) => [r.slug, r.id])

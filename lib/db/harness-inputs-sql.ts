@@ -3,7 +3,7 @@
  *
  * Why: the corrections are data, reviewed as `docs/refresh/harness-inputs-2026-10.json` and
  *   applied by hand. Generating the SQL keeps file and migration in step, and lets the owner
- *   switch a De4 group off at generation time (`excludeGroups`) without editing SQL.
+ *   switch an input group (a)-(d) off at generation time (`excludeGroups`) without editing SQL.
  * What: `buildHarnessInputsSql(rows, { excludeGroups })` returns one DO block. It locks the
  *   rows, refuses a missing slug, and per row writes only when the current value equals the
  *   expected old value or already equals the target; any other value RAISES and the whole block
@@ -41,7 +41,7 @@ function rowTuple(r: HarnessInputRow): string {
 }
 
 export interface BuildOptions {
-  /** De4 groups left out of the file. Default: none (the committed file has every group). */
+  /** Input groups (a)-(d) left out of the file. Default: none (the committed file has every group). */
   excludeGroups?: readonly HarnessInputGroup[];
 }
 

@@ -3,7 +3,7 @@
   "related": [
     "#312"
   ],
-  "ruling": "De4, 2026-10-27",
+  "decided": "#313, 2026-10-27",
   "basis": "Input figures only: no algorithm setting and no company field is touched. Paths are relative to tools.data. A path under info.metrics is data->info->metrics; a path under metrics is data->metrics. A row writes where the key already lives; an absent key goes to data.metrics.",
   "groups": {
     "sourced": "Plain corrections to inputs the stored data gets wrong, each with its source.",
