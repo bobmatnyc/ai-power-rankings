@@ -26,6 +26,8 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
     findBySlugs = async () => [];
   },
 }));
+const board311 = vi.hoisted(() => ({ load: async (): Promise<unknown> => null }));
+vi.mock("../../lib/rankings/current-rankings", () => ({ loadCurrentRankings: () => board311.load() }));
 vi.mock("../../lib/services/ranking-generation.service", () => ({
   RankingGenerationInProgressError: class extends Error {
     period = "";
@@ -35,6 +37,7 @@ vi.mock("../../lib/services/ranking-generation.service", () => ({
 
 import { GET as cronPublish } from "../../app/api/cron/regenerate-rankings/route";
 import { GET as readCurrent } from "../../app/api/rankings/current/route";
+import { GET as readRankings } from "../../app/api/rankings/route";
 import { clearCache } from "../../lib/memory-cache";
 import { createFakeRankingsDb, rankingRow } from "../../lib/services/__fixtures__/fake-rankings-db";
 
@@ -129,5 +132,45 @@ describe("/api/rankings/current after a publish (#311)", () => {
     const ok = await current();
     expect(ok.status).toBe(200);
     expect(ok.cacheControl).toBe("no-store");
+  });
+});
+
+describe("/api/rankings cache headers (#311)", () => {
+  const rankingsRequest = () => new Request("http://localhost/api/rankings?list=harness");
+  const stamp = new Date("2026-10-01T00:00:00Z");
+
+  beforeEach(() => vi.stubEnv("NODE_ENV", "production"));
+
+  it("sends no-store on a board, so the edge holds no month past a publish", async () => {
+    board311.load = async () => ({
+      snapshot: { period: "2026-10", algorithm_version: "7.9", published_at: stamp, created_at: stamp },
+      rankings: [],
+      source: "list",
+      metricRowCount: 0,
+    });
+    const res = await readRankings(rankingsRequest());
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+  });
+
+  it("sends no-store on the empty board", async () => {
+    board311.load = async () => null;
+    const res = await readRankings(rankingsRequest());
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+  });
+
+  it("sends no-store on a 500 and a 503", async () => {
+    board311.load = async () => {
+      throw new Error("read failed");
+    };
+    const failed = await readRankings(rankingsRequest());
+    expect(failed.status).toBe(500);
+    expect(failed.headers.get("Cache-Control")).toBe("no-store");
+
+    db.client = null;
+    const down = await readRankings(rankingsRequest());
+    expect(down.status).toBe(503);
+    expect(down.headers.get("Cache-Control")).toBe("no-store");
   });
 });

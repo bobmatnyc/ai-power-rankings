@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { cachedJsonResponse } from "@/lib/api-cache";
+import { uncachedJsonResponse } from "@/lib/api-cache";
 import { getDb } from "@/lib/db/connection";
 import { loggers } from "@/lib/logger";
 import { loadCurrentRankings } from "@/lib/rankings/current-rankings";
@@ -48,9 +48,9 @@ export async function GET(request: Request): Promise<NextResponse> {
       // Dynamic import for test-only mock data
       const { getMockRankingsResponse } = await import("@/lib/test-utils/mock-rankings");
       const mockResponse = getMockRankingsResponse();
-      return cachedJsonResponse(
+      return uncachedJsonResponse(
         { ...mockResponse, list, list_meta: rankingListMeta(list, mockResponse.rankings.length) },
-        "/api/rankings"
+        200
       );
     }
 
@@ -64,7 +64,7 @@ export async function GET(request: Request): Promise<NextResponse> {
           error: "Database connection unavailable",
           message: "The database service is currently unavailable. Please try again later.",
         },
-        { status: 503 }
+        { status: 503, headers: { "Cache-Control": "no-store" } }
       );
     }
 
@@ -76,7 +76,7 @@ export async function GET(request: Request): Promise<NextResponse> {
       loggers.api.warn("No current rankings found in database");
 
       // Return a proper empty response structure
-      return cachedJsonResponse(
+      return uncachedJsonResponse(
         {
           rankings: [],
           list, // #186: D51, the response names its list
@@ -97,7 +97,7 @@ export async function GET(request: Request): Promise<NextResponse> {
           _timestamp: new Date().toISOString(),
           _message: "No rankings data available. Please check back later.",
         },
-        "/api/rankings"
+        200
       );
     }
 
@@ -118,7 +118,7 @@ export async function GET(request: Request): Promise<NextResponse> {
 
     const maxNewsImpact = newsImpacts.length > 0 ? Math.max(...newsImpacts) : 0;
 
-    return cachedJsonResponse(
+    return uncachedJsonResponse(
       {
         rankings: validRankings,
         // #186: D51 names the list; list_meta carries the D53 and D54 rules for it.
@@ -147,7 +147,7 @@ export async function GET(request: Request): Promise<NextResponse> {
         _timestamp: new Date().toISOString(),
         _cacheVersion: "2025-09-26-db", // Force cache refresh with new database source
       },
-      "/api/rankings"
+      200 // #311: no-store, so the edge never serves a board from before a publish
     );
   } catch (error) {
     loggers.api.error("Error fetching rankings", {
@@ -181,7 +181,7 @@ export async function GET(request: Request): Promise<NextResponse> {
               message: error instanceof Error ? error.message : String(error)
             }
           },
-          { status: 503 }
+          { status: 503, headers: { "Cache-Control": "no-store" } }
         );
       }
     }
@@ -198,7 +198,7 @@ export async function GET(request: Request): Promise<NextResponse> {
           stack: error instanceof Error ? error.stack?.split("\n").slice(0, 5) : undefined,
         } : undefined,
       },
-      { status: 500 }
+      { status: 500, headers: { "Cache-Control": "no-store" } } // #311: never cache a failure
     );
   }
 }

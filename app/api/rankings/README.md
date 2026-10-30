@@ -87,6 +87,9 @@ If no rankings are marked current, the route returns the same shape with an
 empty `rankings` array and `_source: "empty"`. On a database outage it
 returns HTTP 503; on an unexpected error, HTTP 500.
 
+#311: every 200, 500 and 503 is `Cache-Control: no-store`. The route has no
+in-memory cache, so a read after a publish always gets the new board.
+
 ## `GET /api/rankings/current`
 
 Source: `app/api/rankings/current/route.ts`
