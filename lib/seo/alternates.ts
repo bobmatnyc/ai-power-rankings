@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { i18n, locales } from "@/i18n/config";
+import { i18n, isLocale, locales } from "@/i18n/config";
 import { siteOrigin } from "@/lib/site-origin";
 
 type Alternates = NonNullable<Metadata["alternates"]>;
@@ -10,14 +10,15 @@ export const NEWS_RSS_TITLE = "AI Power Rankings - News & Updates";
  * The locale a `[lang]` segment's URLs are built for: `lang` itself when it is
  * a locale in `i18n/config.ts`, else `i18n.defaultLocale`.
  *
- * Why: nothing rejects an unknown segment, so `/xx/news` and `/EN/tools/cursor`
- * render the English page with a 200. Naming the junk segment in canonical,
- * `og:url` or the RSS link made it an indexable duplicate and advertised a
- * feed that 404s (#156).
+ * Why: `/xx/news` and `/EN/tools/cursor` once rendered the English page with a
+ * 200. Naming the junk segment in canonical, `og:url` or the RSS link made it
+ * an indexable duplicate and advertised a feed that 404s (#156). The `[lang]`
+ * layout now answers 404 for such a segment (#340), but metadata and route
+ * handlers can still be called with one.
  * Test: `tests/unit/seo-canonical-origin.test.ts`.
  */
 export function canonicalLocale(lang: string): string {
-  return (locales as readonly string[]).includes(lang) ? lang : i18n.defaultLocale;
+  return isLocale(lang) ? lang : i18n.defaultLocale;
 }
 
 /**

@@ -121,15 +121,28 @@ export function resolveTableRedirect(pathname: string): string | null {
   const literal = LITERAL_REDIRECTS.get(path);
   if (literal) return literal;
 
+  const english = patternEnglishPath(path);
+  if (!english || HELD_SOURCES.has(english)) return null;
+  return LITERAL_REDIRECTS.get(english) ?? english;
+}
+
+/** #191 Q-A85-1: `/en/<rest>` for a path whose first segment is not a locale nor reserved, else null. */
+function patternEnglishPath(path: string): string | null {
   const segments = path.split("/").slice(1);
   const first = segments[0] ?? "";
   if (segments.length < 2 || LOCALE_SET.has(first)) return null;
   if (RESERVED_FIRST_SEGMENTS.has(first.toLowerCase()) || /^[._]|[.%]/.test(first)) return null;
+  return `/en/${segments.slice(1).join("/")}`;
+}
 
-  // #191 Q-A85-1: one pattern rule for every non-locale first segment.
-  const english = `/en/${segments.slice(1).join("/")}`;
-  if (HELD_SOURCES.has(english)) return null;
-  return LITERAL_REDIRECTS.get(english) ?? english;
+/**
+ * The held `/en/...` page that a non-locale path lands on under the pattern
+ * rule, or null. #340: the `[lang]` layout 404s a non-locale segment, so such a
+ * held source is served from this page instead, at its own URL.
+ */
+export function resolveHeldSourcePage(pathname: string): string | null {
+  const english = patternEnglishPath(trimTrailingSlash(pathname));
+  return english && HELD_SOURCES.has(english) ? english : null;
 }
 
 /** True when `path` 308s under a shipped literal row; such a URL leaves the sitemap. */

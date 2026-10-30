@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { ClientLayout } from "@/components/layout/client-layout";
-import type { Locale } from "@/i18n/config";
+import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
 import { newsRssAlternateTypes } from "@/lib/seo/alternates";
@@ -51,6 +52,11 @@ export default async function LanguageLayout({
   children: React.ReactNode;
   params: Promise<{ lang: string }>;
 }>) {
+  // #340: a segment that is not a locale (`/news_sitemap.xml/rankings`) reached
+  // toLocaleDateString and threw, a 500. Reject it here, outside the try below,
+  // whose catch would swallow notFound() and render "Layout Error" instead.
+  if (!isLocale((await params).lang)) notFound();
+
   try {
     console.log("[Layout] LanguageLayout: Starting layout render");
     console.log("[Layout] LanguageLayout: Node environment:", process.env["NODE_ENV"]);

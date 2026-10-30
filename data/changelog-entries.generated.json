@@ -99,10 +99,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-2f6d48605032",
+    "version": "Unreleased",
+    "date": "2026-10-30T05:58:51.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "i18n",
+    "title": "a URL whose language segment is not a supported locale (such as /news_sitemap.xml/rankings) returns 404 instead of an…",
+    "description": "a URL whose language segment is not a supported locale (such as /news_sitemap.xml/rankings) returns 404 instead of an error page; the held legacy best-of URLs keep rendering as before. Tests: tests/unit/lang-segment-not-found-340.test.tsx (#340)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-ef8900c4d4f7",
     "version": "Unreleased",
-    "date": "2026-10-30T05:18:18.214Z",
-    "dateSource": "build",
+    "date": "2026-10-30T05:44:16.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "news",
     "title": "the weekly digest check rejects a rank move written in words with any move verb in any form (\"gained two places\", \"lost…",
