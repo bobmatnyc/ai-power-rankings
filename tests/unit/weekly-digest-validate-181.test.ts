@@ -187,6 +187,33 @@ describe("validateDigest no-score rule (#181)", () => {
   });
 });
 
+// #343: a rank move in number words is rejected whatever its move verb.
+describe("validateDigest rank moves written in words (#343)", () => {
+  const rankFailures = (sentence: string): string[] =>
+    validateDigest(sized(300, { extra: sentence }), FULL).filter((f) => f.startsWith("score_or_rank_number"));
+
+  it.each([
+    "Cursor gained two places.",
+    "Cursor lost three spots.",
+    "Cursor falls two spots.",
+    "Cursor drops two places.",
+    "It advanced two positions.",
+  ])("rejects %s", (sentence) => {
+    expect(rankFailures(sentence)).not.toEqual([]);
+  });
+
+  it.each([
+    "The setting is in two places.",
+    "It has two positions open.",
+    "It opened fifty spots for the beta.",
+    "The settings now live in one place.",
+    "It is shared by two places.",
+    "The extension gained support in two places.",
+  ])("allows %s", (sentence) => {
+    expect(rankFailures(sentence)).toEqual([]);
+  });
+});
+
 describe("validateDigest structure (#181)", () => {
   it("requires an opening before the first heading", () => {
     const body = sized(300).split("\n").slice(2).join("\n");
