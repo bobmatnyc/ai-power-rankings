@@ -231,6 +231,33 @@ describe("publish-rankings publish step under a stub curl (#101)", () => {
     expect(run.output).not.toContain("LEAK");
   });
 
+  // #311: the publish has committed before the purge, so a failed purge warns and keeps exit 0.
+  it("200 with 7.10 and a failed cache purge exits 0 with a warning and no error text", () => {
+    const run = runPublish({
+      status: "200",
+      body: {
+        period: "2026-10",
+        algorithm_version: "7.10",
+        tool_count: 51,
+        cache_purge: { success: false, errors: ["LEAK purge detail"] },
+      },
+    });
+    expect(run.code).toBe(0);
+    expectOneSafeCall(run);
+    expect(run.output).toContain("::warning::cache purge did not succeed (cache_purge.success: false)");
+    expect(run.output).not.toContain("LEAK");
+  });
+
+  it("200 with 7.10 and a successful cache purge reports it with no warning", () => {
+    const run = runPublish({
+      status: "200",
+      body: { period: "2026-10", algorithm_version: "7.10", tool_count: 51, cache_purge: { success: true, errors: [] } },
+    });
+    expect(run.code).toBe(0);
+    expect(run.output).toContain("cache_purge: ok");
+    expect(run.output).not.toContain("::warning::");
+  });
+
   it("200 with 7.9 exits 4 and says the row WAS published", () => {
     const run = runPublish({
       status: "200",

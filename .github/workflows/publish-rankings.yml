@@ -14,8 +14,10 @@ name: Publish rankings (manual)
 #     `env:`. curl reads the Authorization header from stdin (`--header @-`), so
 #     the secret is never in `run:` text, in the process arguments or in the log.
 #   - #101: the repository is public. The log and the job summary carry the HTTP
-#     status and the response's period, algorithm_version and tool_count only:
-#     no response body, no tool, rank or score.
+#     status and the response's period, algorithm_version, tool_count and
+#     cache_purge.success only: no response body, no tool, rank or score.
+#   - #311: a failed cache purge after a committed publish is a `::warning::`,
+#     not a failure; the exit code follows the publish alone.
 #   - No automatic retry: a retry after a 409, a 5xx or a timeout can publish twice.
 #   - `concurrency` with cancel-in-progress false queues a second dispatch behind
 #     a running one; two runs never overlap.
@@ -123,6 +125,16 @@ jobs:
               summary "period: ${period}"
               summary "algorithm_version: ${version}"
               summary "tool_count: ${tool_count}"
+              # #311: the publish has committed before the purge runs, so a failed purge
+              # warns without changing the exit code. Only the flag is printed, never the errors.
+              purge=$(jq -r '.cache_purge.success | if type == "boolean" or type == "null" then tostring else "invalid" end' "$body" 2>/dev/null || echo "invalid")
+              if [ "$purge" = "true" ]; then
+                summary "cache_purge: ok"
+              else
+                msg="cache purge did not succeed (cache_purge.success: ${purge}); cached rankings may show the previous month until they expire. Do not re-dispatch; the route log has the errors."
+                echo "::warning::${msg}"
+                summary "cache_purge: WARNING ${msg}"
+              fi
               if [ "$version" = "7.10" ] || [ "$version" = "v7.10" ]; then
                 summary "Result: published v7.10"
                 code=0

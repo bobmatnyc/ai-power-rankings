@@ -217,6 +217,8 @@ export async function invalidateRankingsCache(): Promise<InvalidationResult> {
 
     // Clear in-memory caches
     const memoryPatterns = [
+      // #311: the key /api/rankings/current caches its board under.
+      '^api:rankings:',
       '^rankings:',
       '^tools:',
     ];

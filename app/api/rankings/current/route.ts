@@ -248,7 +248,8 @@ export async function GET() {
       status: statusCode,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        // #311: the edge cannot be purged on publish, so it must not keep a board past one.
+        "Cache-Control": "no-store",
         "X-Processing-Time": `${processingTime}ms`,
       },
     });
@@ -269,7 +270,7 @@ export async function GET() {
         message: error instanceof Error ? error.message : "An unexpected error occurred",
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500, headers: { "Cache-Control": "no-store" } } // #311: never cache a failure
     );
   }
 }
