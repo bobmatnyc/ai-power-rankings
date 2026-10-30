@@ -133,7 +133,7 @@ async function readHistoricalRankings(list: RankingList): Promise<RankingPeriod[
  * Query Parameters:
  * - months: number | 'all' - Time range to analyze (default: 'all')
  * - list (alias kind): #185, the list whose history is analyzed; default the coding
- *   harnesses (D51). Unknown, empty or conflicting is 400.
+ *   harnesses. Unknown, empty or conflicting is 400.
  *
  * #185: a failed read is 500 with no cached body; it is never an empty 200.
  * Test: `tests/unit/rankings-current-trending-185.test.ts`.
@@ -175,7 +175,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const monthsParam = searchParams.get("months");
-    // #185: one list's history, D51 default.
+    // #185: one list's history, default.
     const parsed = parseListQuery(searchParams);
     if (!parsed.ok) {
       return NextResponse.json(

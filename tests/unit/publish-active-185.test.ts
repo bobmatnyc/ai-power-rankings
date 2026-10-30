@@ -4,19 +4,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * #185 PR-3: the publish path writes per-list boards under the active profile set.
  *
  * Why: after activation the monthly cron and the CLI publish one board per list,
- *   each scored by its kind's v8 profile, and never write the combined board (D55
- *   keeps its rows). A refused or invalid profile set, or a failed write, must leave
+ *   each scored by its kind's v8 profile, and never write the combined board (its
+ *   rows are kept). A refused or invalid profile set, or a failed write, must leave
  *   every row as it was and must not fall back to the combined layout or v7.10.
  * What: runs `publishActiveRankings()` and the cron route against the in-memory
  *   Drizzle stand-in, seeded with a current combined v7.10 row and tools of every kind.
  *   With a v8.0-active config (`tests/fixtures/scoring-profiles-v8-active-185.ts`) it
- *   checks the rows written, the version, per-kind weights, the D8f tie order and that
+ *   checks the rows written, the version, per-kind weights, the tie order and that
  *   no write touches the combined rows. With a v7.10-active config and with a set
  *   missing a list profile it checks the refusal writes nothing; a failed
  *   insert rolls the whole publish back. #185 M3: a committed publish revalidates the
  *   `rankings` tag and the home, rankings and tools layouts and clears the in-memory
- *   rankings entries; a refused or failed publish revalidates nothing. #185 (owner
- *   ruling, v8 Q3): the checked-in active set is v8.0 with no `other` profile, and no
+ *   rankings entries; a refused or failed publish revalidates nothing. #185: the checked-in active set is v8.0 with no `other` profile, and no
  *   publish writes an `other` board.
  * Test: `npx vitest run tests/unit/publish-active-185.test.ts`. No network.
  */
@@ -79,7 +78,7 @@ const TOOLS: FakeToolRow[] = [
   tool("o1", "other", 9_900_000),
 ];
 
-// The published v7.10 board: h-tie-b sits above h-tie-a, so D8f puts it first in the tie.
+// The published v7.10 board: h-tie-b sits above h-tie-a, so the tie order puts it first in the tie.
 const COMBINED_DATA = ["h1", "h2", "h3", "h4", "h-tie-b", "h-tie-a", "m1", "m2", "m3", "p1", "o1"].map((id, i) => ({
   tool_id: id,
   rank: i + 1,
@@ -138,7 +137,7 @@ describe("resolvePublishScoring (#185)", () => {
 describe("publishActiveRankings with v8.0 active (#185)", () => {
   const publish = () => publishActiveRankings({ now, loadProfiles: v8ActiveConfig });
 
-  it("writes one current 8.0 row per list and never writes or changes a combined row (D55)", async () => {
+  it("writes one current 8.0 row per list and never writes or changes a combined row", async () => {
     const before = structuredClone(rowOf("combined", "2026-10"));
     const result = await publish();
 
@@ -170,7 +169,7 @@ describe("publishActiveRankings with v8.0 active (#185)", () => {
     expect(entries("model").map((e) => e.score)).not.toEqual(withV710.map((e) => e.score));
   });
 
-  it("D8f: a v8 tie follows the published v7.10 position, not the read order", async () => {
+  it("a v8 tie follows the published v7.10 position, not the read order", async () => {
     await publish();
     const harness = entries("harness");
     const a = harness.find((e) => e.tool_id === "h-tie-a")!;
@@ -285,7 +284,7 @@ describe("GET /api/cron/regenerate-rankings (#185)", () => {
   });
 });
 
-describe("no other list under v8 (#185, owner ruling v8 Q3)", () => {
+describe("no other list under v8 (#185)", () => {
   it("the checked-in active set has no other profile, the cron publishes no other board, and other cannot re-enter", async () => {
     // The checked-in config itself, with no override: what the cron and the CLI publish.
     const config = loadCheckedInScoringProfiles();
@@ -312,7 +311,7 @@ describe("no other list under v8 (#185, owner ruling v8 Q3)", () => {
     const reentered = v8ActiveRaw();
     reentered["profileSets"]["v8.0"]["profiles"]["other"] = {
       ...reentered["profileSets"]["v8.0"]["profiles"]["harness"],
-      provisional: "D44 harness weights, pending an Architect decision on the other profile",
+      provisional: "harness weights, awaiting a decision on the other profile",
     };
     expect(() => parseScoringProfiles(reentered)).toThrow(/holds the provisional profile "other"/);
     // Without the provisional marker it parses, but the publish refuses a profile with no list.

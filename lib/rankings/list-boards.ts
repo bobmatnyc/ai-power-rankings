@@ -3,10 +3,10 @@
  *
  * Why: before v8 activation, article ingestion, the article service and the category
  *   counts read the one current combined board to learn every ranked tool and its rank.
- *   After activation the combined board is no public view (D55 keeps its rows for
+ *   After activation the combined board is no public view (its rows are kept for
  *   rollback and export), so these readers read the per-list boards instead. A tool is
  *   ranked in at most one list, so the union of the boards ranks each tool once, and a
- *   tool's rank is its rank within its own list (D2e).
+ *   tool's rank is its rank within its own list.
  * What: `currentListBoardsWhere()` is the `rankings` condition for the current row of
  *   every list in `RANKING_LISTS`, and never the combined row. `listBoardEntries()`
  *   flattens such rows into one entry array in `RANKING_LISTS` order, each entry tagged

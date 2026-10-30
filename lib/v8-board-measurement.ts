@@ -15,7 +15,7 @@
  *   only, not every tool harness) and stops if that fails. Otherwise it
  *   scores the candidate set through its kind routing (PR-2: a harness with
  *   the harness profile, a model with the model profile; kind `other` is left
- *   out of the v8 board and counted, ruling "Dad") and returns counts
+ *   out of the v8 board and counted) and returns counts
  *   and shift statistics. The D45 gate ranks harness tools within the harness
  *   list (basis D2e); global rank shift and the models-only rank shift (model
  *   rank within the model list) are information only. Baseline positions are the published
@@ -164,7 +164,7 @@ export interface Reproduction {
   duplicatePublishedIds: number;
   /** #185: published rows sharing a rank with a row of a different score. */
   duplicatePublishedRanksOutsideTies: number;
-  /** #185: published ids mapped through redirects (0018/0019, D90); unmapped, cycles and unexplained collisions fail. */
+  /** #185: published ids mapped through redirects (0018/0019 and the duplicate merge); unmapped, cycles and unexplained collisions fail. */
   redirects: RedirectCounts;
 }
 
@@ -233,7 +233,7 @@ export interface MeasurementResult {
   harness?: HarnessCheck;
   /** Absent unless the baseline reproduced and the harness list passed its check. */
   candidate?: CandidateMeasurement;
-  /** #185 (ruling "Dad"): active tools of kind `other`, left out of the v8 board only. */
+  /** #185: active tools of kind `other`, left out of the v8 board only. */
   v8ExcludedOtherKind: number;
   engineLogLinesSuppressed: number;
   exitCode: number;
@@ -394,14 +394,14 @@ export function isReproduced(r: Reproduction): boolean {
     r.versionMatches &&
     r.toolsScored > 0 &&
     // #185: a duplicated published row collapses in any id-keyed comparison, so count rows.
-    // #185 (ruling option a): rows retired into a survivor are not on today's board.
+    // #185: rows retired into a survivor are not on today's board.
     r.publishedRows - r.redirects.retired === r.toolsScored &&
     r.duplicatePublishedIds === 0 &&
     r.duplicatePublishedRanksOutsideTies === 0 &&
     // #185: an unresolvable or colliding published id is a mismatch, never a pass.
     r.redirects.unmapped === 0 &&
     r.redirects.cycles === 0 &&
-    // #185 (ruling option a): an explained collision compares its survivor; only an unexplained one fails.
+    // #185: an explained collision compares its survivor; only an unexplained one fails.
     r.redirects.unexplainedCollisions === 0 &&
     r.onlyRecomputed === 0 &&
     r.onlyPublished === 0 &&
@@ -491,7 +491,7 @@ export function checkHarness(tools: MeasuredTool[], sheet: KindSheetView, floor 
   };
 }
 
-/** #185 (ruling "Dad"): v8.0 has no `other` profile, so the v8 board leaves those tools out. */
+/** #185: v8.0 has no `other` profile, so the v8 board leaves those tools out. */
 function v8BoardTools(tools: MeasuredTool[]): MeasuredTool[] {
   return tools.filter((t) => t.kind !== "other");
 }
@@ -577,7 +577,7 @@ function measureCandidate(input: MeasureInput, allBase: RankingEntry[], publishe
 export function measureBoard(input: MeasureInput): MeasurementResult {
   const run = quietly(() => {
     const base = computeRankings(input.tools, new Map(), input.published.publishedAt, input.baseline);
-    // #185: published v7.10 ids carry pre-0018/0019 (and D90) ids; map them through redirects first.
+    // #185: published v7.10 ids carry pre-0018/0019 (and the duplicate merge) ids; map them through redirects first.
     const resolution = resolvePublishedIds(input.published.rows, input.toolIdentities);
     const reproduction = checkReproduction(input, base, resolution);
     const reproduced = isReproduced(reproduction);
@@ -662,7 +662,7 @@ export function formatMeasurementReport(result: MeasurementResult): string {
   lines.push(
     "",
     "1c. v8 board scope",
-    // #185 (ruling "Dad"): kept apart so the v7.10 tool count and the v8 board size reconcile.
+    // #185: kept apart so the v7.10 tool count and the v8 board size reconcile.
     `tools of kind other left out of the v8 board (kept in the v7.10 reproduction): ${result.v8ExcludedOtherKind}`
   );
   const c = result.candidate;

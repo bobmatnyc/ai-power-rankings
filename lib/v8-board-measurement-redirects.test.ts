@@ -15,7 +15,7 @@ import type { ToolIdentity } from "./v8-published-id-resolution";
 /**
  * #185 — the v7.10 baseline maps published tool ids through redirects.
  *
- * Why: migrations 0018/0019 (D91) and the D90 merge retired tool rows as
+ * Why: migrations 0018/0019 and the duplicate-tool merge retired tool rows as
  *   `status = 'redirect'` with `data.redirect_to` naming the canonical slug.
  *   The published v7.10 snapshot still carries the old ids, so an id-keyed
  *   comparison counted every folded tool as "only published" and the
@@ -23,7 +23,7 @@ import type { ToolIdentity } from "./v8-published-id-resolution";
  *   followed (cycle, no row, no target), or two published ids reaching one
  *   canonical id with no identifiable survivor, must still fail the
  *   reproduction, never pass silently. An explained collision compares the
- *   survivor and renumbers ranks past the retired rows (ruling option a).
+ *   survivor and renumbers ranks past the retired rows.
  *   After the v8.0 switch (fd7565d6) the v8 board leaves out kind `other`,
  *   which v8.0 cannot route, while the v7.10 reproduction keeps it.
  * What: builds a current board in which some published tools now sit under a
@@ -97,8 +97,8 @@ describe("v7.10 baseline through redirects (#185)", () => {
     expect(result.exitCode).toBe(EXIT_CODES.ok);
   });
 
-  // #185 (Architect ruling, option a): a collision is compared against its survivor; the rest retire.
-  it("D91 fold: compares the family against its carriedFrom survivor, retires the alias and renumbers ranks", () => {
+  // #185: a collision is compared against its survivor; the rest retire.
+  it("family fold: compares the family against its carriedFrom survivor, retires the alias and renumbers ranks", () => {
     const before = harnessBoard();
     const published = quietPublished(before);
     // The alias sits at published rank 2, so every rank below it must be renumbered to match.
@@ -122,7 +122,7 @@ describe("v7.10 baseline through redirects (#185)", () => {
     expect(result.exitCode).toBe(EXIT_CODES.ok);
   });
 
-  it("D90 merge: a target that is itself published is its own survivor; the old row retires", () => {
+  it("duplicate merge: a target that is itself published is its own survivor; the old row retires", () => {
     const before = harnessBoard();
     const published = quietPublished(before);
     const [target, old] = [atRank(before, published, 8), atRank(before, published, 3)];
@@ -195,7 +195,7 @@ describe("v7.10 baseline through redirects (#185)", () => {
   });
 });
 
-describe("v8 board leaves out kind other; the v7.10 reproduction keeps it (#185, ruling 'Dad')", () => {
+describe("v8 board leaves out kind other; the v7.10 reproduction keeps it (#185)", () => {
   it("an other-kind tool tied on score leaves every v8 candidate statistic, ties included, unchanged", () => {
     const without = mixedBoard();
     // Same data as a harness tool, so it ties with it on the v7.10 board.

@@ -14,14 +14,14 @@ import { parseListQuery, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/l
  * What: `list` (or its alias `kind`, the issue's name) is a list id (`harness`,
  *   `model`, `productivity`) or its URL slug. An unknown value is 400 and lists the
  *   valid ones. The body is the #192 shape plus `list` and `list_meta` (entry count,
- *   D53 indexable flag and tier scheme, D54 provisional-note flag). #185: the board is
+ *   indexable flag and tier scheme, provisional-note flag). #185: the board is
  *   the list's own current row only; with none the body is the empty board.
  * Test: `tests/unit/rankings-per-list-read-186.test.ts`,
  *   `tests/unit/home-live-rankings-192.test.tsx`.
  */
 // #186: Next.js route exports require a non-optional Request
 export async function GET(request: Request): Promise<NextResponse> {
-  // #186: D51 — an absent list parameter means the coding-harness board; a present-but-empty
+  // #186: an absent list parameter means the coding-harness board; a present-but-empty
   // list, or list and kind naming different lists, is an error, never the default.
   const parsed = parseListQuery(new URL(request.url).searchParams);
   if (!parsed.ok) {

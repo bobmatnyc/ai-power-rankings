@@ -92,7 +92,7 @@ export function parseRankingListParam(raw: string | null | undefined): ParsedLis
 /**
  * The list a request's query names, from `list` or its alias `kind` (#186, #185).
  *
- * Both absent means the default list (D51). A present-but-empty value, an unknown
+ * Both absent means the default list. A present-but-empty value, an unknown
  * value, or `list` and `kind` naming different lists is an error, never the default.
  * Shared by every public rankings route so they read the same list for one query.
  */

@@ -1259,7 +1259,7 @@ export class ArticleIngestionService {
       if (db) {
         try {
           // #185: every list's current board, never the combined one. A tool is ranked in at
-          // most one list, and its rank here is its rank within that list (D2e).
+          // most one list, and its rank here is its rank within that list.
           const listRows = await db.select().from(rankings).where(currentListBoardsWhere());
 
           if (listRows.length > 0) {

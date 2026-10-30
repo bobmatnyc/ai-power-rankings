@@ -6,7 +6,7 @@
  * - #185: publishes one current board per list (models, coding harnesses,
  *   productivity tools), scored by the active scoring profile set, through
  *   `publishActiveRankings()`. Each list's previous current row is demoted; the
- *   legacy combined rows are neither written nor changed (D55). A refused or
+ *   legacy combined rows are neither written nor changed. A refused or
  *   invalid profile set fails the run (500 and alert) before any write.
  * - Requires CRON_SECRET authentication via Bearer token (same as sibling crons)
  * - Idempotent per period; concurrent/duplicate runs for the same period return 409

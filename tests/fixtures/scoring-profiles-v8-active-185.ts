@@ -3,8 +3,8 @@
  *
  * Why: the publish tests need the v8.0-active config, one-change copies of it, and a
  *   config whose active set is the legacy v7.10 table (the refusal arm). Since the
- *   switch, the checked-in config is v8.0-active with no `other` profile (owner
- *   ruling, v8 Q3), so the v8.0-active config is the checked-in one, unchanged.
+ *   switch, the checked-in config is v8.0-active with no `other` profile
+ *   (the v8.0 set drops it), so the v8.0-active config is the checked-in one, unchanged.
  * What: `v8ActiveRaw()` is a deep copy of the checked-in config; `v8ActiveConfig()`
  *   parses it. `legacyActiveConfig()` is the same copy with `activeProfileSet` set to
  *   v7.10. Each goes through the real `parseScoringProfiles()`, so the active-set rule

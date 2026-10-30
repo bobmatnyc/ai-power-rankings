@@ -28,7 +28,7 @@
  *   same `computeRankings()` call.
  * - #185 (v8 activation): `scoring` hands a per-list run the active profile set's
  *   kind routing and stored version. Each list's tools then reach the engine in the
- *   D8f tie order (published v7.10 position, from the combined board). The cron and
+ *   tie order (published v7.10 position, from the combined board). The cron and
  *   the CLI publish only this way, through `lib/rankings/publish-active.ts`.
  */
 
@@ -664,7 +664,7 @@ export function createDbPersistence(): RankingPersistencePort {
  * #186: `layout` "per-list" publishes one current row per list through
  * `saveListSnapshots` (dry-run writes nothing; draft is refused).
  * #185: `scoring` (per-list only) scores with a profile set's kind routing in the
- * D8f tie order and stores its version. Callers resolve it before this call, so a
+ * tie order and stores its version. Callers resolve it before this call, so a
  * profile error writes nothing.
  * Test: `lib/services/ranking-generation.golden.test.ts` (publish unchanged),
  * `lib/services/ranking-generation.modes.test.ts` (draft, dry-run),
@@ -696,7 +696,7 @@ export async function regenerateRankings(
   if (layout === "per-list" && mode === "publish" && !persistence.saveListSnapshots) {
     throw new Error("Per-list publish needs a persistence port with saveListSnapshots");
   }
-  // #185: a profile set scores per-list boards only; the combined board stays v7.10 (D55).
+  // #185: a profile set scores per-list boards only; the combined board stays v7.10.
   const scoring = options.scoring;
   if (scoring && layout !== "per-list") {
     throw new Error("A scoring profile set applies to the per-list layout only (#185)");
@@ -740,7 +740,7 @@ export async function regenerateRankings(
         ? [{ sourceTools: scoredTools, previousRankMap: buildPreviousRankMap(prevSnapshot?.data ?? null) }]
         : await listBoards(scoredTools, prevSnapshot?.data ?? null, persistence);
 
-    // #185 (D8f): v8 ties follow the published v7.10 position, read from the combined board.
+    // #185: v8 ties follow the published v7.10 position, read from the combined board.
     const v710Positions = buildPreviousRankMap(prevSnapshot?.data ?? null);
     const snapshots: RankingSnapshotInput[] = boards.map(({ list, sourceTools, previousRankMap }) => {
       const data = scoring

@@ -4,8 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * #185: `/api/tools/[slug]/json` takes a tool's rank from its own list's board.
  *
  * Why: the tool page header reads its rank from this route. After v8 activation the
- *   combined board is no public view, so the rank is the tool's rank within its list
- *   (D2e); a tool in no list is unranked, and a failed list read leaves the rank empty
+ *   combined board is no public view, so the rank is the tool's rank within its list;
+ *   a tool in no list is unranked, and a failed list read leaves the rank empty
  *   instead of reading the combined board.
  * What: calls the GET handler with the tools, news and rankings repositories mocked
  *   and a database stand-in that answers every other query with no rows. Records the
