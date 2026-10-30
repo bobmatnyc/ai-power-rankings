@@ -38,6 +38,8 @@ export interface FakeDbState {
   tables: Record<string, FakeRow[]>;
   writes: Array<{ op: "insert" | "upsert" | "update" | "delete"; table: string }>;
   failInsert: boolean;
+  /** #182: a table name here makes every read and insert of that table throw this error. */
+  tableErrors?: Record<string, Error>;
 }
 
 interface EqCondition {
@@ -80,6 +82,8 @@ export function createFakeDb(state: FakeDbState) {
           let limit: number | undefined;
 
           const run = (): FakeRow[] => {
+            const tableError = state.tableErrors?.[name];
+            if (tableError) throw tableError;
             let rows = [...(state.tables[name] ?? [])];
             for (const { eq, value } of conditions) {
               const key = keys.get(eq)!;
@@ -128,6 +132,8 @@ export function createFakeDb(state: FakeDbState) {
             async returning() {
               state.writes.push({ op: "insert", table: name });
               if (state.failInsert) throw new Error("database write failed");
+              const tableError = state.tableErrors?.[name];
+              if (tableError) throw tableError;
               const rows = (state.tables[name] ??= []);
               if (
                 name === "monthly_report_versions" &&

@@ -13,14 +13,21 @@
  *   version and never updates a row; a concurrent insert of the same version
  *   fails on the unique `(period, version)` index instead of overwriting.
  *   Every function throws when the database is unavailable or a read fails,
- *   never an empty result (#162). None needs an OpenRouter key (#54).
+ *   never an empty result (#162). One exception: a read of
+ *   `monthly_report_versions` that fails because the table does not exist yet
+ *   (SQLSTATE 42P01, migration 0031 not applied) counts as "no versions" and
+ *   is logged as a degradation, so the legacy content is served as before
+ *   #182. `appendReportVersion` still throws then. None needs an OpenRouter
+ *   key (#54).
  * Test: `tests/unit/monthly-report-182.test.ts`,
+ *   `tests/unit/monthly-report-missing-table-182.test.ts`,
  *   `tests/unit/whats-new-auto-regenerate.test.ts`,
  *   `tests/unit/whats-new-permalink.test.ts`.
  */
 
 import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
+import { loggers } from "@/lib/logger";
 import {
   type MonthlyReportVersion,
   type MonthlySummary,
@@ -86,6 +93,35 @@ function legacyReport(row: MonthlySummary): StoredMonthlyReport {
   return { ...row, version: 0, generatedBy: LEGACY_GENERATED_BY };
 }
 
+/** Postgres SQLSTATE `undefined_table`. */
+const UNDEFINED_TABLE = "42P01";
+
+/** True when `error` (or its `cause`) carries SQLSTATE 42P01. */
+export function isUndefinedTableError(error: unknown): boolean {
+  const codeOf = (value: unknown): unknown =>
+    value && typeof value === "object" ? (value as { code?: unknown }).code : undefined;
+  const cause = error && typeof error === "object" ? (error as { cause?: unknown }).cause : undefined;
+  return codeOf(error) === UNDEFINED_TABLE || codeOf(cause) === UNDEFINED_TABLE;
+}
+
+/**
+ * Runs a read of `monthly_report_versions`. #182: before migration 0031 is
+ * applied the table does not exist; that one error reads as no rows, so the
+ * legacy tables are served unchanged. Any other error is rethrown (#162).
+ */
+async function readVersionsTable<T>(operation: string, read: () => Promise<T[]>): Promise<T[]> {
+  try {
+    return await read();
+  } catch (error) {
+    if (!isUndefinedTableError(error)) throw error;
+    loggers.api.warn("monthly_report_versions is missing; serving pre-#182 monthly reports", {
+      operation,
+      degradation: "monthly-report-versions-table-missing",
+    });
+    return [];
+  }
+}
+
 async function readLegacyRow(period: string): Promise<MonthlySummary | null> {
   const rows = await requireDb()
     .select()
@@ -96,11 +132,14 @@ async function readLegacyRow(period: string): Promise<MonthlySummary | null> {
 }
 
 async function readVersionRows(period: string): Promise<MonthlyReportVersion[]> {
-  return requireDb()
-    .select()
-    .from(monthlyReportVersions)
-    .where(eq(monthlyReportVersions.period, period))
-    .orderBy(desc(monthlyReportVersions.version));
+  const db = requireDb();
+  return readVersionsTable("readVersionRows", () =>
+    db
+      .select()
+      .from(monthlyReportVersions)
+      .where(eq(monthlyReportVersions.period, period))
+      .orderBy(desc(monthlyReportVersions.version))
+  );
 }
 
 /**
@@ -121,11 +160,13 @@ export async function getStoredSummary(period: string): Promise<StoredMonthlyRep
 /** The newest report of the latest stored period, or null; throws on a failed read (#54). */
 export async function getLatestStoredSummary(): Promise<StoredMonthlyReport | null> {
   const db = requireDb();
-  const [newestVersion] = await db
-    .select({ period: monthlyReportVersions.period })
-    .from(monthlyReportVersions)
-    .orderBy(desc(monthlyReportVersions.period))
-    .limit(1);
+  const [newestVersion] = await readVersionsTable("getLatestStoredSummary", () =>
+    db
+      .select({ period: monthlyReportVersions.period })
+      .from(monthlyReportVersions)
+      .orderBy(desc(monthlyReportVersions.period))
+      .limit(1)
+  );
   const [legacy] = await db
     .select()
     .from(monthlySummaries)
@@ -147,9 +188,11 @@ export async function getLatestStoredSummary(): Promise<StoredMonthlyReport | nu
  */
 export async function listPeriods(): Promise<StoredSummaryPeriod[]> {
   const db = requireDb();
-  const versionRows = await db
-    .select({ period: monthlyReportVersions.period, generatedAt: monthlyReportVersions.generatedAt })
-    .from(monthlyReportVersions);
+  const versionRows = await readVersionsTable("listPeriods", () =>
+    db
+      .select({ period: monthlyReportVersions.period, generatedAt: monthlyReportVersions.generatedAt })
+      .from(monthlyReportVersions)
+  );
   const legacyRows = await db
     .select({ period: monthlySummaries.period, updatedAt: monthlySummaries.updatedAt })
     .from(monthlySummaries)
@@ -211,7 +254,9 @@ export async function getStoredSummaryVersion(
 
 /**
  * Inserts `row` as the next version of its period and returns it. Never
- * updates or deletes a row, and never writes a predecessor table.
+ * updates or deletes a row, and never writes a predecessor table. Its reads
+ * do not use the missing-table degradation: with no table it throws, so a
+ * generation is never reported as stored (#182).
  */
 export async function appendReportVersion(
   row: Omit<NewMonthlyReportVersion, "version" | "id">
