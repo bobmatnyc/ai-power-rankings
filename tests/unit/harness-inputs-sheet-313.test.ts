@@ -101,7 +101,14 @@ describe("#313 the generated migration", () => {
     expect(COMMITTED.match(/^DO \$k313\$$/gm)).toHaveLength(1);
     expect(COMMITTED).toContain("SET LOCAL lock_timeout = '5s';");
     expect(COMMITTED).toContain("FOR UPDATE;");
-    expect(COMMITTED).toContain("lib/news-tool-resolver.ts:231");
+    expect(COMMITTED).toContain("lib/news-tool-resolver.ts:248");
+    // Each resolver line the header cites holds the symbol it names.
+    const resolver = readFileSync(path.join(ROOT, "lib/news-tool-resolver.ts"), "utf8").split("\n");
+    const cites = [...COMMITTED.matchAll(/lib\/news-tool-resolver\.ts:([\d,]+)\s+(\w+)/g)];
+    expect(cites.map((m) => m[2])).toEqual(["buildToolCatalogue", "FORMER_NAMES", "articleToolTags", "primaryArticleTool"]);
+    for (const [, lines, symbol] of cites) {
+      for (const line of lines!.split(",")) expect([line, resolver[Number(line) - 1]]).toEqual([line, expect.stringContaining(symbol!)]);
+    }
     expect(COMMITTED).not.toMatch(/company_name|weights|info', 'company/);
   });
 

@@ -190,13 +190,14 @@ BEGIN
   ) AS v(seq, grp, slug, path, op, field, exp_absent, expected, newv, compute, source, as_of, reason, ident_path, ident);
 
   -- #313 (group c): news_mentions = the site's news corpus over the last 12 months.
-  -- Corpus rule, mirrored from the code that serves GET /api/news (origin/main 9473bea9):
+  -- Corpus rule, mirrored from the code that serves GET /api/news (origin/main a1fea245):
   --   app/api/news/route.ts:138-148   each item's tools[] = articleToolTags(article, catalogue)
   --   app/api/news/route.ts:119-127   event date = published_date, else created_at
   --   lib/db/repositories/news.ts:184 corpus = articles with status = 'active'
-  --   lib/news-tool-resolver.ts:88    buildToolCatalogue: active rows + redirects, keys, title terms
-  --   lib/news-tool-resolver.ts:231   articleToolTags: primary, relevance >= 0.5 per kind, title fill
-  --   lib/news-tool-resolver.ts:293   primaryArticleTool: top-relevance mention, else first title name
+  --   lib/news-tool-resolver.ts:96    buildToolCatalogue: active rows + redirects, keys, title terms
+  --   lib/news-tool-resolver.ts:40,130 FORMER_NAMES: a renamed row's former name, key and title term
+  --   lib/news-tool-resolver.ts:248   articleToolTags: primary, relevance >= 0.5 per kind, title fill
+  --   lib/news-tool-resolver.ts:310   primaryArticleTool: top-relevance mention, else first title name
   --   lib/db/repositories/tools.repository.ts:57,499  catalogue rows: data.slug/name/id over columns
   -- A tool's count = active articles in the window whose tags include its slug.
   CREATE TEMP TABLE t313_cls (lo integer, hi integer, cls text) ON COMMIT DROP;
@@ -259,6 +260,15 @@ BEGIN
         INSERT INTO t313_term (term, target_slug, target_kind) VALUES (nm, rec_e.target_slug, rec_e.target_kind) ON CONFLICT DO NOTHING;
       END IF;
     END IF;
+  END LOOP;
+
+  -- #313: former names of renamed rows (lib/news-tool-resolver.ts FORMER_NAMES).
+  FOR rec_e IN SELECT * FROM (VALUES (0, 'claude-artifacts', 'Claude Artifacts')) AS f(ord, slug, name) ORDER BY f.ord LOOP
+    SELECT t.slug, t.kind INTO n_slug, n_kind FROM t313_tool AS t WHERE t.slug = rec_e.slug AND t.status = 'active' ORDER BY t.ord LIMIT 1;
+    CONTINUE WHEN NOT FOUND;
+    k := lower(regexp_replace(rec_e.name, '^\s+|\s+$', '', 'g'));
+    INSERT INTO t313_key VALUES (k, n_slug, n_kind) ON CONFLICT DO NOTHING;
+    INSERT INTO t313_term (term, target_slug, target_kind) VALUES (rec_e.name, n_slug, n_kind) ON CONFLICT DO NOTHING;
   END LOOP;
 
   FOR rec_a IN

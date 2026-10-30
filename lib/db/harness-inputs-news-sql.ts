@@ -12,6 +12,8 @@
  * Test: `tests/unit/harness-inputs-news-parity-313.test.ts` (SQL against the TypeScript rule).
  */
 
+import { FORMER_NAMES } from "../news-tool-resolver";
+
 /** Code-point ranges and their class for JS `\p{L}` (L), `\p{N}` (N) and neither (x). */
 const CLASS_RANGES: ReadonlyArray<readonly [number, number, "L" | "N" | "x"]> = [
   [0, 47, "x"], [48, 57, "N"], [58, 64, "x"], [65, 90, "L"], [91, 96, "x"], [97, 122, "L"], [123, 169, "x"],
@@ -79,15 +81,37 @@ export const NEWS_DECLARE = `
 
 const rangeRows = CLASS_RANGES.map(([lo, hi, cls]) => `(${lo}, ${hi}, '${cls}')`).join(", ");
 
+const sqlText = (value: string): string => `'${value.replace(/'/g, "''")}'`;
+
+/**
+ * The resolver's former names (`FORMER_NAMES`), after every catalogue key and term, as there.
+ * A former name keys the first active row with its slug, never displacing a key or term a real
+ * row holds, so 0024 counts "Claude Artifacts" whether or not 0028 has renamed the row.
+ */
+const FORMER_NAMES_SQL =
+  FORMER_NAMES.length === 0
+    ? ""
+    : `
+  -- #313: former names of renamed rows (lib/news-tool-resolver.ts FORMER_NAMES).
+  FOR rec_e IN SELECT * FROM (VALUES ${FORMER_NAMES.map((f, i) => `(${i}, ${sqlText(f.slug)}, ${sqlText(f.name)})`).join(", ")}) AS f(ord, slug, name) ORDER BY f.ord LOOP
+    SELECT t.slug, t.kind INTO n_slug, n_kind FROM t313_tool AS t WHERE t.slug = rec_e.slug AND t.status = 'active' ORDER BY t.ord LIMIT 1;
+    CONTINUE WHEN NOT FOUND;
+    k := lower(regexp_replace(rec_e.name, '^\\s+|\\s+$', '', 'g'));
+    INSERT INTO t313_key VALUES (k, n_slug, n_kind) ON CONFLICT DO NOTHING;
+    INSERT INTO t313_term (term, target_slug, target_kind) VALUES (rec_e.name, n_slug, n_kind) ON CONFLICT DO NOTHING;
+  END LOOP;
+`;
+
 export const NEWS_BODY = `
   -- #313 (group c): news_mentions = the site's news corpus over the last 12 months.
-  -- Corpus rule, mirrored from the code that serves GET /api/news (origin/main 9473bea9):
+  -- Corpus rule, mirrored from the code that serves GET /api/news (origin/main a1fea245):
   --   app/api/news/route.ts:138-148   each item's tools[] = articleToolTags(article, catalogue)
   --   app/api/news/route.ts:119-127   event date = published_date, else created_at
   --   lib/db/repositories/news.ts:184 corpus = articles with status = 'active'
-  --   lib/news-tool-resolver.ts:88    buildToolCatalogue: active rows + redirects, keys, title terms
-  --   lib/news-tool-resolver.ts:231   articleToolTags: primary, relevance >= 0.5 per kind, title fill
-  --   lib/news-tool-resolver.ts:293   primaryArticleTool: top-relevance mention, else first title name
+  --   lib/news-tool-resolver.ts:96    buildToolCatalogue: active rows + redirects, keys, title terms
+  --   lib/news-tool-resolver.ts:40,130 FORMER_NAMES: a renamed row's former name, key and title term
+  --   lib/news-tool-resolver.ts:248   articleToolTags: primary, relevance >= 0.5 per kind, title fill
+  --   lib/news-tool-resolver.ts:310   primaryArticleTool: top-relevance mention, else first title name
   --   lib/db/repositories/tools.repository.ts:57,499  catalogue rows: data.slug/name/id over columns
   -- A tool's count = active articles in the window whose tags include its slug.
   CREATE TEMP TABLE t313_cls (lo integer, hi integer, cls text) ON COMMIT DROP;
@@ -151,7 +175,7 @@ export const NEWS_BODY = `
       END IF;
     END IF;
   END LOOP;
-
+${FORMER_NAMES_SQL}
   FOR rec_a IN
     SELECT x.title, x.tool_mentions FROM public."articles" AS x
      WHERE x.status = 'active'
