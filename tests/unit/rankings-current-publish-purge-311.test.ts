@@ -88,10 +88,25 @@ describe("/api/rankings/current after a publish (#311)", () => {
     expect((await current()).period).toBe("2026-09"); // now cached
 
     publishOk("2026-10");
-    expect((await cronPublish(cronRequest())).status).toBe(200);
+    const res = await cronPublish(cronRequest());
+    expect(res.status).toBe(200);
+    expect(((await res.json()) as { cache_purge?: unknown }).cache_purge).toEqual({ success: true, errors: [] });
 
     expect((await current()).period).toBe("2026-10");
     expect(nextCache.revalidateTag).toHaveBeenCalledWith("rankings");
+  });
+
+  it("reports a failed purge in the 200 body without failing the committed publish", async () => {
+    nextCache.revalidateTag.mockImplementationOnce(() => {
+      throw new Error("tag store down");
+    });
+    publishOk("2026-10");
+    const res = await cronPublish(cronRequest());
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { success: boolean; cache_purge?: { success: boolean; errors: string[] } };
+    expect(body.success).toBe(true);
+    expect(body.cache_purge?.success).toBe(false);
+    expect(body.cache_purge?.errors).toEqual(["Failed to revalidate tag rankings: tag store down"]);
   });
 
   it("keeps serving the cached month when the publish fails", async () => {
