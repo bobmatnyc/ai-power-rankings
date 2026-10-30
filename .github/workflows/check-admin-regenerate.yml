@@ -37,6 +37,7 @@ jobs:
   check:
     name: admin dry-run diffs
     runs-on: ubuntu-latest
+    environment: prod-db
     timeout-minutes: 15
     steps:
       - name: Checkout
