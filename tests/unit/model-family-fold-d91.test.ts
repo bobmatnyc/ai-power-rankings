@@ -195,7 +195,8 @@ describe("D91 0018 creates the family rows inactive", () => {
         kind: "model",
         company_id: null,
         open_weight: f.openWeight,
-        licence: f.licence,
+        // #329: the applied 0018 file inserted glm as "mit"; the seed loader corrects it.
+        licence: f.slug === "glm" ? "mit" : f.licence,
         data,
       }))
     );
