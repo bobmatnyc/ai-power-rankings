@@ -64,6 +64,7 @@ jobs:
     # Only a dispatch from main runs; a branch's edited copy of this file never gets the secrets.
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    environment: prod-db
     timeout-minutes: 20
     steps:
       - name: Checkout
