@@ -192,7 +192,7 @@ export default function StateOfAiClient() {
             <h1 className="text-3xl font-bold tracking-tight">State of AI Editorial</h1>
           </div>
           <p className="text-muted-foreground">
-            Generate monthly &quot;State of AI&quot; editorial summaries using Claude Sonnet 4
+            Generate the monthly report (300-450 words), shared with What&apos;s New
           </p>
         </div>
       </div>
@@ -256,8 +256,9 @@ export default function StateOfAiClient() {
           {/* Info */}
           <Alert>
             <AlertDescription className="text-sm">
-              <strong>Note:</strong> Generation analyzes the last 4 weeks of AI news, rankings, and tool
-              launches. Uses Claude Sonnet 4 via OpenRouter (~$0.01-0.03 per generation).
+              <strong>Note:</strong> Generation analyzes the month&apos;s AI news, rankings, and tool
+              launches through OpenRouter. Each generation is stored as a new version; earlier
+              versions stay available.
             </AlertDescription>
           </Alert>
         </CardContent>
