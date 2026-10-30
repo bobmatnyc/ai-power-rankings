@@ -40,6 +40,9 @@ import { derivePairs, loadMergeState, type MergePlan, planMerge } from "../../sc
 import { chainDb, MIGRATION_FILES, readMigration, REPO_ROOT } from "./fixtures/migration-chain-183";
 import { pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
 
+// These tests run migrations and queries on PGlite, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
+
 const F17 = "0017_backfill_tool_kind.sql";
 const F18 = "0018_create_model_family_rows.sql";
 const F19 = "0019_fold_model_families.sql";

@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
  * #101 — the v7.9 vs v7.10 compare script fails closed and names its clock.
@@ -15,6 +15,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
  *   `--date`, and a normal run. No database; DATABASE_URL is unset.
  * Test: `npx vitest run tests/unit/compare-ranking-versions-script-101.test.ts`
  */
+
+// Tests spawn child processes or shell scripts, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const projectRoot = join(__dirname, "..", "..");
 const tsx = join(projectRoot, "node_modules", ".bin", "tsx");

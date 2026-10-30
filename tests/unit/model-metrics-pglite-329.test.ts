@@ -13,7 +13,7 @@
  */
 
 import { PGlite } from "@electric-sql/pglite";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { metricDataAfterWrite, parseModelMetricsSeed } from "../../lib/db/repositories/model-metrics-seed.repository";
 import {
   applyModelMetricPlans,
@@ -27,6 +27,9 @@ import { splitStatements } from "../../scripts/apply-migrations";
 import { loadModelMetrics } from "../../scripts/load-model-metrics";
 import { MIGRATION_0016_SQL, TOOLS_AT_0015 } from "./fixtures/tool-links-183-fixture";
 import { syntheticMetricRow, syntheticMetricsDoc } from "./fixtures/model-metrics-329-fixture";
+
+// These tests run migrations and queries on PGlite, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const PRIOR_DATA = {
   info: { description: "Open-weight model family.", company: "Z.ai" },

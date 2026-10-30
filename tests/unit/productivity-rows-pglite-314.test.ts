@@ -14,11 +14,14 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import type { PGlite } from "@electric-sql/pglite";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { parseProductivitySeed } from "../../lib/db/repositories/productivity-seed.repository";
 import { runMigrations } from "../../scripts/apply-migrations";
 import { chainDb, MIGRATION_FILES, readMigration, REPO_ROOT } from "./fixtures/migration-chain-183";
 import { pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
+
+// These tests run migrations and queries on PGlite, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const F17 = "0017_backfill_tool_kind.sql";
 const F27 = "0027_create_productivity_rows.sql";

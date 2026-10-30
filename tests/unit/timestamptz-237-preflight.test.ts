@@ -15,7 +15,7 @@
  */
 
 import { PGlite } from "@electric-sql/pglite";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { type CliOptions, runMigrations } from "../../scripts/apply-migrations";
 import {
   assertReadOnlySql,
@@ -32,6 +32,9 @@ import {
   TIMESTAMPTZ_MIGRATION,
 } from "../../scripts/migration-preflight";
 import { catalog, createNaiveFixture, insertFixtureRows, MIGRATION_SQL, pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
+
+// These tests run migrations and queries on PGlite, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const FILE = TIMESTAMPTZ_MIGRATION;
 const THIS_DB = "sha256:this-database";

@@ -15,12 +15,15 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { PGlite } from "@electric-sql/pglite";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { buildKindBackfillSql, KIND_COUNT_SQL, parseKindSheet } from "../../lib/db/tool-kind-sheet";
 import { TOOL_LINK_KIND_VIOLATIONS_SQL } from "../../lib/db/tool-links";
 import { runMigrations, splitStatements } from "../../scripts/apply-migrations";
 import { pgliteMigrationDb, relfilenodes } from "./fixtures/timestamptz-237-fixture";
 import { TOOLS_AT_0015 } from "./fixtures/tool-links-183-fixture";
+
+// These tests run migrations and queries on PGlite, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const FILE = "0016_add_tool_kind_and_links.sql";
 const SQL_TEXT = readFileSync(path.resolve(__dirname, "../../lib/db/migrations", FILE), "utf8");

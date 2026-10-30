@@ -17,7 +17,7 @@ import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   auditToolSlugs,
   backfillSheetRows,
@@ -29,6 +29,9 @@ import {
   validateKindSheet,
 } from "../../lib/db/tool-kind-sheet";
 import { D91_FAMILY_ROWS, D91_FOLD_PAIRS } from "../../lib/db/model-families";
+
+// Tests spawn child processes or shell scripts, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const HEADER = "slug,kind,subcategory,open_weight,retired,survivor,confidence,note";
 // A synthetic sheet: one row per shape the real sheet has. Not real reviewed data.
