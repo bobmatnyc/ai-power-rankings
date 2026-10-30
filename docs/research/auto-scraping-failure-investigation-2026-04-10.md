@@ -143,7 +143,7 @@ TAVILY_API_KEY: SET (tvly-prod-5...)
    # Check Vercel Dashboard → Project → Settings → Environment Variables
    # Ensure these are set for Production environment:
    TAVILY_API_KEY=tvly-REDACTED
-   CRON_SECRET=cron-secret-aipowerranking-2026-v2-a65HfuSHbwxkXkhn
+   CRON_SECRET=[REDACTED]
    OPENROUTER_API_KEY=[value]
    DATABASE_URL=[value]
    ```
@@ -156,7 +156,7 @@ TAVILY_API_KEY: SET (tvly-prod-5...)
    ```bash
    # Test production cron endpoint manually
    curl -X GET "https://aipowerranking.com/api/cron/daily-news" \
-        -H "Authorization: Bearer cron-secret-aipowerranking-2026-v2-a65HfuSHbwxkXkhn"
+        -H "Authorization: Bearer [REDACTED]"
    ```
 
 ### Verification Steps
