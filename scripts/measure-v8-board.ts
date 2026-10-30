@@ -67,8 +67,8 @@ const KIND_SHEET_PATH = "docs/refresh/tool-kind-mapping.csv";
 
 // Same rows `loadActiveTools()` scores, plus kind.
 const TOOLS_QUERY = "SELECT id, name, slug, category, status, kind, data FROM tools WHERE status = $1";
-// #185: every row, any status, so a published id retired by 0019 or D90 resolves to its canonical row.
-// #185 (ruling option a): carriedFrom names the survivor 0019 copied onto a family row.
+// #185: every row, any status, so a published id retired by 0019 or the duplicate merge resolves to its canonical row.
+// #185: carriedFrom names the survivor 0019 copied onto a family row.
 const IDENTITY_QUERY =
   "SELECT id, slug, status, data->>'redirect_to' AS redirect_to, data->>'carriedFrom' AS carried_from FROM tools";
 const CURRENT_QUERY =

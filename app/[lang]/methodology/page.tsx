@@ -11,7 +11,7 @@ import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
  *
  * Why: #185 activates v8: one ranking per list (#186) and one scoring profile per kind.
  *   The methodology page must say so in every locale and publish the factor tables,
- *   the productivity provisional-weights note (D54) and the open-weight rule (D2f).
+ *   the productivity provisional-weights note and the open-weight rule.
  *   It replaces the English-only v7.6 markdown page.
  * What: the text comes from the `methodologyV8` dictionary block and the list names
  *   from `rankings.lists`. The weight tables are read from the checked-in
@@ -97,7 +97,7 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
           return (
             <section key={list} data-profile={list}>
               <h3>{lists[list].title}</h3>
-              {/* #185 (D54): the productivity profile is provisional and says so. */}
+              {/* #185: the productivity profile is provisional and says so. */}
               {listHasProvisionalNote(list) && (
                 <p role="note" data-note="provisional-weights">
                   {text.provisionalNote}

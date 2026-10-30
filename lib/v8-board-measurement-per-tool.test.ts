@@ -69,7 +69,7 @@ describe("per-tool table (#185, D8b)", () => {
   // #185: the mixed-board digest is re-pinned after its `other` tool became a productivity
   // tool (v8.0 has no other profile); the one changed line is the kind count.
   // #185: re-pinned again for the added redirect-count line and the 1c v8 board scope section,
-  // and again for the retired and unexplained counts on that line (ruling option a).
+  // and again for the retired and unexplained counts on that line.
   it.each([
     ["harness board, v8.0", () => measure(harnessBoard()), "a64fba1b8537123b0cd6862ade4ecf31ebc5aa1b1e7c3c127e12c94c03080ca3"],
     ["harness board, negative control", () => measure(harnessBoard(), wrong), "46ba7bb6436485247c5b3015d2b49393f5588f838e06e8965bb5d82b1b50289f"],

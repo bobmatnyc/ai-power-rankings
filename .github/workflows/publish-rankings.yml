@@ -1,7 +1,7 @@
 name: Publish rankings (manual)
 
-# Why: Bob's ruling D24 on #101 publishes the rankings now, without waiting
-# for the monthly cron on the 1st. This workflow is that manual publish.
+# Why: the rankings can be published now, without waiting for the monthly
+# cron on the 1st. This workflow is that manual publish.
 # #185: after v8 activation the route publishes the per-list boards with the
 # version of the active scoring profile set. EXPECTED_VERSION (below) is the one
 # version this workflow accepts; it is 8.0 for the v8.0 set.

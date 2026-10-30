@@ -68,7 +68,7 @@ describe("v8.0 model profile, D4b (#185)", () => {
     expect(basisPoints(model.weights)).toBe(10_000);
     expect(model.declaredTotal).toBe(1);
     expect(model.provisional).toBeUndefined();
-    expect(v8.description).toMatch(/model: ruling D4b, signed off by the owner under D9b\./);
+    expect(v8.description).toMatch(/model: its own weights, approved for the active set\./);
     // The three factors D4b leaves alone keep their v7.10 values.
     for (const key of ["innovation", "businessSentiment", "platformResilience"] as const) {
       expect(model.weights[key]).toBe(ALGORITHM_V76_WEIGHTS[key]);
@@ -102,12 +102,12 @@ describe("v8.0 model profile, D4b (#185)", () => {
     expect(() => parseScoringProfiles(broken)).toThrow(/provisional must be a non-empty string/);
   });
 
-  it("keeps the harness profile at D44, gives productivity the D44 weights marked provisional, and has no other profile", () => {
+  it("keeps the harness profile at its v8 weights, gives productivity the harness weights marked provisional, and has no other profile", () => {
     expect(v8.profiles["harness"]!.weights).toEqual(D44_HARNESS);
     expect(v8.profiles["harness"]!.provisional).toBeUndefined();
     expect(v8.profiles["productivity"]!.weights).toEqual(D44_HARNESS);
     expect(v8.profiles["productivity"]!.provisional).toMatch(/Architect decision/);
-    // #185: owner ruling (Q3) drops the provisional other profile from v8.0.
+    // #185: v8.0 has no other profile.
     expect(Object.keys(v8.profiles).sort()).toEqual(["harness", "model", "productivity"]);
   });
 });

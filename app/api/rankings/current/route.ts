@@ -32,7 +32,7 @@ function deriveCompleteScores(partialScores: any, overallScore: number) {
  * `GET /api/rankings/current[?list=<list>]`: one list's current board (#185 H1).
  *
  * Why: #185 activation ends the legacy combined board as a public view. This route
- *   served the combined board; it now serves one list's board, the D51 default list
+ *   served the combined board; it now serves one list's board, the default list
  *   (coding harnesses) when no list is named, like `/api/rankings`.
  * What: `list` (alias `kind`) is parsed by `parseListQuery()`; an unknown, empty or
  *   conflicting value is 400. Reads only the list's `is_current` row
@@ -44,7 +44,7 @@ function deriveCompleteScores(partialScores: any, overallScore: number) {
 // #186: Next.js route exports require a non-optional Request
 export async function GET(request: Request) {
   const startTime = Date.now();
-  // #185: one list's board, D51 default; never the combined board.
+  // #185: one list's board, default; never the combined board.
   const parsed = parseListQuery(new URL(request.url).searchParams);
   if (!parsed.ok) {
     return NextResponse.json(
@@ -238,7 +238,7 @@ export async function GET(request: Request) {
         return {
           success: true,
           data: {
-            // #185: the response names its list and carries the D53/D54 list rules.
+            // #185: the response names its list and carries the list rules.
             list,
             list_meta: rankingListMeta(list, validRankings.length),
             period: currentRankings.period,

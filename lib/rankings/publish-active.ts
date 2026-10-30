@@ -54,7 +54,7 @@ export function resolvePublishScoring(config: ScoringProfilesConfig): PerListSco
     throw new ScoringProfileError([`active set "${setId}" has no profile for list(s): ${missing.join(", ")}`]);
   }
   // #185: the active set's profiles and RANKING_LISTS must match; a profile with no list
-  // (the dropped `other`, owner ruling v8 Q3) would be scored for a board no reader serves.
+  // (the dropped `other`) would be scored for a board no reader serves.
   const unlisted = Object.keys(set.profiles).filter((name) => !(RANKING_LISTS as readonly string[]).includes(name));
   if (unlisted.length > 0) {
     throw new ScoringProfileError([`active set "${setId}" has profile(s) for no list: ${unlisted.join(", ")}`]);
@@ -78,7 +78,7 @@ export type PublishActiveOptions = Omit<RegenerateRankingsOptions, "layout" | "m
 export async function publishActiveRankings(options: PublishActiveOptions = {}): Promise<RankingGenerationResult> {
   const { loadProfiles = loadCheckedInScoringProfiles, ...rest } = options;
   const scoring = resolvePublishScoring(loadProfiles());
-  // #185: the publish path writes the per-list boards only; the combined rows stay as they are (D55).
+  // #185: the publish path writes the per-list boards only; the combined rows stay as they are.
   const result = await regenerateRankings({ ...rest, mode: "publish", layout: "per-list", scoring });
   // #185: a committed publish revalidates the rankings pages and routes (tag `rankings`,
   // the home, rankings and tools layouts) and clears their in-memory entries, so no cached

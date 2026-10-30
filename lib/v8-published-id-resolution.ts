@@ -1,7 +1,7 @@
 /**
  * Map published v7.10 tool ids to today's canonical ids through redirects (#185).
  *
- * Why: the D90 merge and the D91 fold (migrations 0018/0019) retired tool rows
+ * Why: the duplicate-tool merge and the fold (migrations 0018/0019) retired tool rows
  *   as `tools.status = 'redirect'` with `tools.data.redirect_to` naming the
  *   canonical row's slug. The published v7.10 snapshot keeps the old ids, so a
  *   reproduction keyed on `tool_id` counts every retired tool as missing.
@@ -10,10 +10,9 @@
  *   redirect, and re-keys the published rows to that row's id. A cycle, an id
  *   with no row, and a redirect with no target or a target slug with no row
  *   are counted and their rows dropped from the comparison. Two or more
- *   published ids reaching one canonical id are a collision (Architect ruling,
- *   option a): the survivor is the published id whose slug the canonical row's
+ *   published ids reaching one canonical id are a collision: the survivor is the published id whose slug the canonical row's
  *   `data.carriedFrom` names (0019), else the canonical id itself when it was
- *   published (a D90 target). The survivor's row stands for the canonical id,
+ *   published (a merge target). The survivor's row stands for the canonical id,
  *   the others are counted as retired and removed, and every published rank
  *   below a retired row moves up by one per retired row above it. A collision
  *   with no survivor, or a survivor outside the group, is unexplained: its rows
@@ -38,7 +37,7 @@ export interface ToolIdentity {
   carriedFrom?: string | null;
 }
 
-/** Counts only (D19): no id, slug or name. */
+/** Counts only: no id, slug or name. */
 export interface RedirectCounts {
   /** Published ids that reached a different canonical id through one or more redirects. */
   mapped: number;
@@ -104,7 +103,7 @@ export function resolvePublishedIds(rows: readonly SnapshotRow[], identities: re
   const groups = new Map<string, string[]>();
   for (const [published, o] of outcomes) if (o.kind === "canonical") groups.set(o.id, [...(groups.get(o.id) ?? []), published]);
   const collided = new Set([...groups].filter(([, ids]) => ids.length > 1).map(([id]) => id));
-  // #185 (ruling option a): each collision keeps its survivor's row; the other members retire.
+  // #185: each collision keeps its survivor's row; the other members retire.
   const survivors = new Map<string, string>();
   for (const canonical of collided) {
     const members = groups.get(canonical)!;

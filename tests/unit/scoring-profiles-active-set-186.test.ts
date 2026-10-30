@@ -17,8 +17,7 @@ import {
  *   accepted when that profile carries `publicNote: true` and refused without it; a
  *   provisional profile of any other name is refused even with the flag; the flag is
  *   refused on a non-provisional profile or as a non-true value; a staged set is not
- *   held to the rule. The checked-in config flags productivity only. #185 (owner ruling,
- *   v8 Q3): the checked-in v8.0 set is active with no `other` profile, and the dropped
+ *   held to the rule. The checked-in config flags productivity only. #185: the checked-in v8.0 set is active with no `other` profile, and the dropped
  *   provisional `other` profile is refused if it comes back.
  * Test: `npx vitest run tests/unit/scoring-profiles-active-set-186.test.ts`.
  */
@@ -72,7 +71,7 @@ describe("active set with a provisional profile (#186 amendment)", () => {
 
   it("refuses the dropped provisional other profile if it comes back into the active set (#185)", () => {
     const config = activeV8((profiles) => {
-      profiles["other"] = { ...profiles["harness"], provisional: "D44 harness weights, pending an Architect decision" };
+      profiles["other"] = { ...profiles["harness"], provisional: "harness weights, awaiting a decision" };
     });
     expect(problems(config)).toEqual([
       'active set "v8.0" holds the provisional profile "other"; only productivity may be provisional',
@@ -90,7 +89,7 @@ describe("active set with a provisional profile (#186 amendment)", () => {
 
   it("holds only the active set to the rule: a provisional other profile in a set that is not active loads", () => {
     const config = activeV8((profiles) => {
-      profiles["other"] = { ...profiles["harness"], provisional: "D44 harness weights, pending an Architect decision" };
+      profiles["other"] = { ...profiles["harness"], provisional: "harness weights, awaiting a decision" };
     });
     config["activeProfileSet"] = "v7.10";
     const parsed = parseScoringProfiles(config);

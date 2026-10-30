@@ -28,9 +28,9 @@ import {
  *   publish only through `publishActiveRankings()`, and only that module reads the
  *   profiles"; "the active set is still v7.10" becomes "the checked-in active set is
  *   v8.0 with no `other` profile, and the publish resolves it" (#185: the switch is the
- *   one config point, `activeProfileSet`; owner ruling v8 Q3 drops `other`); "one
+ *   one config point, `activeProfileSet`; v8.0 drops `other`); "one
  *   `computeRankings()` call with no scoring argument"
- *   becomes "two calls: the v7.10 one and the per-list routing one in D8f order".
+ *   becomes "two calls: the v7.10 one and the per-list routing one in tie order".
  * Test: `npx vitest run lib/scoring-profiles.activation-185.test.ts`
  */
 
@@ -99,7 +99,7 @@ describe("publish path activated (#185 PR-3, replaces the PR-1/PR-2 inert checks
   );
 
   it("the checked-in active set is v8.0 without the other profile, and the publish path resolves it", () => {
-    // #185: the switch to v8.0 is `activeProfileSet`; owner ruling (v8 Q3) dropped `other`.
+    // #185: the switch to v8.0 is `activeProfileSet`; v8.0 dropped `other`.
     expect(config.activeProfileSet).toBe("v8.0");
     expect(Object.hasOwn(config.profileSets["v8.0"]!.profiles, "other")).toBe(false);
     const scoring = resolvePublishScoring(config);
@@ -109,7 +109,7 @@ describe("publish path activated (#185 PR-3, replaces the PR-1/PR-2 inert checks
     expect(() => resolvePublishScoring({ ...config, activeProfileSet: "v7.10" })).toThrow(/legacy one-table set/);
   });
 
-  it("regenerateRankings() has two scoring calls: v7.10 for the combined board, the routing in D8f order per list", () => {
+  it("regenerateRankings() has two scoring calls: v7.10 for the combined board, the routing in tie order per list", () => {
     const service = source("lib/services/ranking-generation.service.ts");
     const calls = service.match(/(=|\?|:)\s*computeRankings\([^;]*?\)(?=\s*(:|;|\n))/g) ?? [];
     expect(calls.map((c) => c.replace(/^[=?:]\s*/, ""))).toEqual([
