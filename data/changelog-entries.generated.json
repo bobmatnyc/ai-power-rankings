@@ -244,8 +244,8 @@
   {
     "id": "unreleased-1040517df015",
     "version": "Unreleased",
-    "date": "2026-10-30T00:03:39.086Z",
-    "dateSource": "build",
+    "date": "2026-11-03T23:08:44.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "data",
     "title": "correct harness adoption inputs with sourced figures (#313, #312)",
@@ -816,8 +816,8 @@
   {
     "id": "unreleased-a40be3d85ffb",
     "version": "Unreleased",
-    "date": "2026-11-03T21:03:23.700Z",
-    "dateSource": "build",
+    "date": "2026-11-03T21:08:33.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "db",
     "title": "the apply-migration workflow's show_columns_table output, in both the dry run and the apply, prints each column's…",
