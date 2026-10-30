@@ -7,7 +7,10 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { cachedJsonResponse } from "@/lib/api-cache";
-import { WhatsNewSummaryService } from "@/lib/services/whats-new-summary.service";
+import {
+  WhatsNewSummaryService,
+  getStoredSummaryVersion,
+} from "@/lib/services/whats-new-summary.service";
 import { loggers } from "@/lib/logger";
 
 // Runtime configuration for Vercel
@@ -26,21 +29,34 @@ export const maxDuration = 300;
  * stored. Without a period it returns the current month's stored summary,
  * else the most recent stored one, else 404. #160: the daily-news cron
  * (re)generates the current month's row, so the fallback covers the days
- * before a new month has any articles.
- * Test: `tests/unit/auth-hardening.test.ts`.
+ * before a new month has any articles. #182: `&version=N` with a period returns
+ * that stored version (0 = the pre-merge row), so regenerating keeps every
+ * earlier version reachable; a malformed version is 400.
+ * Test: `tests/unit/auth-hardening.test.ts`, `tests/unit/monthly-report-182.test.ts`.
  */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const period = searchParams.get("period") || undefined; // YYYY-MM format
+    const versionParam = searchParams.get("version");
 
     loggers.api.info("Fetching monthly summary", { period: period || "current" });
+
+    // #182: an exact version needs an exact period.
+    if (versionParam !== null && (!period || !/^\d+$/.test(versionParam))) {
+      return NextResponse.json(
+        { error: "Bad request", message: "version needs a period and a whole number.", summary: null },
+        { status: 400 }
+      );
+    }
 
     const summaryService = new WhatsNewSummaryService();
 
     const stored =
-      (await summaryService.getCachedSummary(period)) ??
-      (period ? null : await summaryService.getLatestSummary());
+      versionParam !== null && period
+        ? await getStoredSummaryVersion(period, Number(versionParam))
+        : ((await summaryService.getCachedSummary(period)) ??
+          (period ? null : await summaryService.getLatestSummary()));
 
     if (!stored) {
       loggers.api.info("No stored summary found", { period: period || "current" });
@@ -54,6 +70,7 @@ export async function GET(request: NextRequest) {
       {
         summary: {
           period: stored.period,
+          version: stored.version,
           content: stored.content,
           generatedAt: stored.generatedAt,
           metadata: stored.metadata,
@@ -63,7 +80,7 @@ export async function GET(request: NextRequest) {
         _timestamp: new Date().toISOString(),
         _cached: true,
       },
-      `/api/whats-new/summary?period=${period || "current"}`,
+      `/api/whats-new/summary?period=${period || "current"}${versionParam !== null ? `&version=${versionParam}` : ""}`,
       200, // HTTP status code
       { maxAge: 300, sMaxAge: 300 } // Cache for 5 minutes
     );
@@ -118,12 +135,14 @@ export async function POST(request: NextRequest) {
     });
 
     const summaryService = new WhatsNewSummaryService();
-    const result = await summaryService.generateMonthlySummary(period, true);
+    // #182: a forced regeneration appends a version; earlier ones stay readable.
+    const result = await summaryService.generateMonthlySummary(period, true, authResult.userId ?? "admin");
 
     return NextResponse.json({
       success: true,
       summary: {
         period: result.summary.period,
+        version: result.summary.version,
         content: result.summary.content,
         generatedAt: result.summary.generatedAt,
         metadata: result.summary.metadata,

@@ -94,7 +94,9 @@ function neonEndpoint(body: string): Response {
   db.queries.push(query);
   if (db.fail) return Response.json({ message: "fixture: connection refused" }, { status: 500 });
   // #181: the index also lists weekly digests; this fixture stores none.
-  if (/from "weekly_digests"/.test(query)) {
+  // #182: the pages read the merged report's versions first; this fixture stores
+  // only pre-merge `monthly_summaries` rows, so they render as before.
+  if (/from "weekly_digests"/.test(query) || /from "monthly_report_versions"/.test(query)) {
     return Response.json({ command: "SELECT", rowCount: 0, fields: [], rows: [] });
   }
 
