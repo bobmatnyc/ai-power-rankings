@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 /**
  * #185: the readers that need every ranked tool read the per-list boards.
  *
- * Why: after v8 activation the combined board is no public view (D55 keeps its rows).
+ * Why: after v8 activation the combined board is no public view (its rows are kept).
  *   Article ingestion, the article service, the category counts and What's New read the
  *   current per-list boards instead; a tool's rank is its rank within its own list, and
  *   a failed read must throw instead of turning into "no rankings".

@@ -160,7 +160,7 @@ describe("loadCurrentRankings(list) after activation (#185; was: before any per-
   });
 
   // #185: was "the image and video models are in no list" on the combined split; same rule on a list row.
-  it("D52: an image or video model found in the model row is dropped", async () => {
+  it("an image or video model found in the model row is dropped", async () => {
     current.rows["model"] = listRow("model", [MODELS[0]!, IMAGE, MODELS[1]!, VIDEO]);
     const model = (await loadCurrentRankings("model"))!;
     expect(slugsOf(model.rankings)).toEqual([MODELS[0]!.slug, MODELS[1]!.slug]);
@@ -233,7 +233,7 @@ describe("loadCurrentRankings(list) with a per-list row (#186)", () => {
 
 describe("rankWithinList (#186)", () => {
   // #185: was the combined-source renumbering; only list rows remain, whose movement is kept as stored.
-  it("ranks 1..n with D53 tiers and keeps the stored movement", () => {
+  it("ranks 1..n with tiers and keeps the stored movement", () => {
     const rows = [
       { rank: 4, previousRank: null, rankChange: 0 },
       { rank: 7, previousRank: 1, rankChange: -1 },

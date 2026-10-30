@@ -903,7 +903,7 @@ export class ArticleDatabaseService {
    * Get current rankings from database.
    *
    * #185: the union of every list's current board, never the combined board. A tool is
-   * ranked in at most one list, and its `rank` is its rank within that list (D2e). A
+   * ranked in at most one list, and its `rank` is its rank within that list. A
    * failed read throws, so no caller builds a snapshot or a change from missing ranks.
    * Test: `tests/unit/list-boards-185.test.ts`.
    */

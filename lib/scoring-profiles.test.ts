@@ -66,7 +66,7 @@ const harness = (c: Json) => c["profileSets"]["v8.0"]["profiles"]["harness"];
 describe("checked-in config/scoring-profiles.json (#185)", () => {
   const config = loadCheckedInScoringProfiles();
 
-  it("selects v8.0 as the active set, marked active, with no other profile (#185, owner ruling Q3)", () => {
+  it("selects v8.0 as the active set, marked active, with no other profile (#185)", () => {
     expect(config.activeProfileSet).toBe("v8.0");
     expect(config.profileSets["v8.0"]!.status).toBe("active");
     expect(Object.hasOwn(config.profileSets["v8.0"]!.profiles, "other")).toBe(false);

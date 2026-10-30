@@ -7,7 +7,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *
  * Why: v8 activation publishes per-list rankings scored by per-kind profiles; the
  *   methodology page must explain that in every locale, publish the factor tables, the
- *   productivity provisional-weights note (D54) and the open-weight rule, and name no
+ *   productivity provisional-weights note and the open-weight rule, and name no
  *   tool, rank or score.
  * What: renders the real page in English and German and checks the three list
  *   sections, each table against the checked-in v8.0 weights, the provisional note on

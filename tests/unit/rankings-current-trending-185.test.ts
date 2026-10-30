@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * #185 H1: `/api/rankings/current` and `/api/rankings/trending` serve per-list data.
  *
  * Why: the acceptance criterion H1 of the v8 activation: neither route may serve the
- *   legacy combined board. Each serves one list's board, the D51 default (coding
+ *   legacy combined board. Each serves one list's board, the default (coding
  *   harnesses) when no list is named, or the list a `list` (alias `kind`) parameter
  *   names. A failed read must be an error, never an empty success or the combined board.
  * What: mocks the rankings repository with a current combined row and current and
@@ -107,7 +107,7 @@ describe("GET /api/rankings/current (#185 H1)", () => {
     return { status: response.status, body: await response.json() };
   };
 
-  it("D51: with no list it serves the coding-harness board, named, not the combined board", async () => {
+  it("with no list it serves the coding-harness board, named, not the combined board", async () => {
     const { status, body } = await get();
     expect(status).toBe(200);
     expect(body.data.list).toBe("harness");
@@ -184,7 +184,7 @@ describe("GET /api/rankings/trending (#185 H1)", () => {
     return { status: response.status, body: await response.json() };
   };
 
-  it("D51: with no list it analyzes the coding-harness history only", async () => {
+  it("with no list it analyzes the coding-harness history only", async () => {
     const { status, body } = await get();
     expect(status).toBe(200);
     expect(body.list).toBe("harness");

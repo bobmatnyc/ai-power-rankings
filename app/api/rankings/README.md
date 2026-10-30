@@ -93,7 +93,7 @@ Source: `app/api/rankings/current/route.ts`
 
 #185: returns one list's current board, never the legacy combined board.
 `list` (alias `kind`) takes the same values as `/api/rankings`; absent means
-`harness` (D51); an unknown, empty or conflicting value is 400. `data` also
+`harness`; an unknown, empty or conflicting value is 400. `data` also
 carries `list` and `list_meta`. Result is cached in-memory for 60 seconds per
 list (`CACHE_TTL.rankings`). Supports `OPTIONS` for CORS.
 

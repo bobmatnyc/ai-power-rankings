@@ -6,7 +6,7 @@
  * request; the page is ISR (`revalidate = 1800`), and this read is cached for
  * the same 30 minutes and shared by every tool page of one list. #185: after v8
  * activation a tool's rank, change and alternatives come from its own list's
- * board (D2e); the combined board is never read.
+ * board; the combined board is never read.
  * What: `getToolProfileRankingData(list)` returns that list's `is_current`
  * period, the list's latest period before it, and the active catalogue, through
  * one `unstable_cache` entry per list (tags `rankings` and `tools`, so the

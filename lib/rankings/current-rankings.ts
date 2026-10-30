@@ -32,10 +32,10 @@ export interface CurrentListBoard {
  * Takes the snapshot's rankings array (an array, or one under `rankings` or
  * `data`), joins each entry to its tool by id then slug, drops entries whose tool
  * is missing (one warning each) or whose kind now maps to another list (or none),
- * sorts by stored rank and renumbers 1..n with D53 tiers, keeping the stored
+ * sorts by stored rank and renumbers 1..n with tiers, keeping the stored
  * movement. #329: for a metric-gated list (models) `metricRowCount` counts the
  * board rows whose `tools.status` column is `active` and whose tool carries a
- * coding metric (`hasCodingMetric`), for the D63 index rule. Throws when a
+ * coding metric (`hasCodingMetric`), for the index rule. Throws when a
  * database read throws.
  * Test: `tests/unit/home-live-rankings-192.test.tsx`,
  *   `tests/unit/rankings-per-list-read-186.test.ts`.
@@ -64,7 +64,7 @@ export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LI
 
   // Filter out null values (tools that weren't found), then the tools of other lists.
   const joined = formatted.filter((r): r is FormattedRanking => r !== null);
-  // #329: only ACTIVE rows with a coding metric count toward the D63 index threshold, so a
+  // #329: only ACTIVE rows with a coding metric count toward the index threshold, so a
   // metric-gated list (models) reads the `tools.status` COLUMN (the joined tool's `status`
   // can be a stale JSONB copy); a failed read rejects here (fails closed).
   const columnStatus = isMetricGatedList(list)
@@ -95,7 +95,7 @@ function inList(entry: FormattedRanking, list: RankingList): boolean {
 }
 
 /**
- * #186 PURE: ranks 1..n and D53 tiers for one list's rows, in the given order. The
+ * #186 PURE: ranks 1..n and tiers for one list's rows, in the given order. The
  * stored movement is kept: a list row's previous rank is already within the list.
  */
 export function rankWithinList(rows: CurrentRankingRow[]): CurrentRankingRow[] {
