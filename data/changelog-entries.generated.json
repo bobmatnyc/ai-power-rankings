@@ -1111,6 +1111,17 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-7ea3740992e5",
+    "version": "Unreleased",
+    "date": "2026-10-30T10:09:16.000Z",
+    "dateSource": "commit",
+    "section": "Changed",
+    "scope": "whats-new",
+    "title": "one monthly report generator",
+    "description": "one monthly report generator. The What's New summary and the State of AI editorial were two generators writing two tables; every caller (the daily-news cron, the monthly cron, the admin regenerate and State of AI routes, `scripts/generate-state-of-ai.ts`) now runs `WhatsNewSummaryService`, which asks for 300-450 words and stores no reply outside that range. Each generation appends the month's next version to the new `monthly_report_versions` table, so regenerating a month keeps every earlier version; `GET /api/whats-new/summary?period=YYYY-MM&version=N` returns one (0 is the pre-merge row). `monthly_summaries` and `state_of_ai_summaries` are read-only: no code writes them, and their rows are still served while a month has no version. `/api/state-of-ai/current` serves the merged report once one exists. Migration `0031_create_monthly_report_versions.sql` must be applied before this deploys, because the What's New pages, the sitemap and `/api/state-of-ai/current` read the new table. Tests: `tests/unit/monthly-report-182.test.ts`, `tests/unit/whats-new-auto-regenerate.test.ts`, `tests/unit/monthly-report-versions-migration-182.test.ts` (#182)",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-137284c94d3d",
     "version": "Unreleased",
     "date": "2026-10-28T17:00:28.000Z",
