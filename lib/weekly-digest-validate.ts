@@ -56,6 +56,16 @@ const ISSUE_REF_LEAD = "\\b(?:issues?|PRs?|pull\\s+requests?|bugs?|tickets?|fix(
 const ISSUE_REF_RUN = "(?:#\\d+\\s*(?:,\\s*(?:and|or)\\b|,|and\\b|or\\b|&)\\s*)*";
 // #339: "#N" before one of these is a rank position even after an issue word.
 const TOOL_NOUN = "(?:agents?|tools?|editors?|models?|assistants?|IDEs?|extensions?|picks?|choices?)";
+// #343: a word that makes "<number word> places" a rank move, in every verb
+// form. "by" has its own rule below.
+const MOVE_WORD =
+  "(?:up|down|mov(?:e|es|ed|ing)|climb(?:s|ed|ing)?|ris(?:e|es|en|ing)|rose|fall(?:s|en|ing)?|fell|" +
+  "drop(?:s|ped|ping)?|slip(?:s|ped|ping)?|jump(?:s|ed|ing)?|gain(?:s|ed|ing)?|los(?:e|es|ing)|lost|" +
+  "advanc(?:e|es|ed|ing)|slid(?:e|es|ing)?|sank|sink(?:s|ing)?|sunk|tumbl(?:e|es|ed|ing)|" +
+  "leap(?:s|ed|t|ing)?|plung(?:e|es|ed|ing)|surg(?:e|es|ed|ing))";
+// #343: words between the move word and the number; a preposition starts a
+// place phrase ("gained support in two places"), not a rank move.
+const MOVE_GAP = "(?:(?!(?:in|at|across|for|of|on|with)\\b)\\w+\\W+){0,2}?";
 
 // #181: a score, a rank change or a rank position, in digits or number words.
 // Counts ("3 new tools"), versions ("GPT-5.4"), quarters, dates and issue
@@ -74,7 +84,14 @@ const SCORE_OR_RANK: readonly RegExp[] = [
   // #339: a move in number words ("fell two spots") needs a move word before it;
   // "in two places" and "fifty spots for the beta" are counts, not moves.
   new RegExp(
-    `\\b(?:up|down|by|moved|climbed|rose|fell|dropped|slipped|jumped)\\W+(?:\\w+\\W+){0,2}?${NUMBER_WORD}\\s+(?:places?|positions?|spots?)\\b`,
+    `\\b${MOVE_WORD}\\W+${MOVE_GAP}${NUMBER_WORD}\\s+(?:places?|positions?|spots?)\\b`,
+    "i"
+  ),
+  // #343: "by <number word> places" is a rank move after any verb ("improved
+  // by two places", "leapfrogged Copilot by two places"), except after share,
+  // split or divide ("shared by two places" is a count).
+  new RegExp(
+    `(?<!\\b(?:shar|split|divid)\\w*\\s+)\\bby\\W+${MOVE_GAP}${NUMBER_WORD}\\s+(?:places?|positions?|spots?)\\b`,
     "i"
   ),
   new RegExp(`(?<![\\w&#/])(?<!${ISSUE_REF_LEAD}${ISSUE_REF_RUN})#\\d{1,2}(?![\\d\\w])`, "i"),

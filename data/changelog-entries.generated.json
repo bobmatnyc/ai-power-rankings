@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-ef8900c4d4f7",
+    "version": "Unreleased",
+    "date": "2026-10-30T05:18:18.214Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "news",
+    "title": "the weekly digest check rejects a rank move written in words with any move verb in any form (\"gained two places\", \"lost…",
+    "description": "the weekly digest check rejects a rank move written in words with any move verb in any form (\"gained two places\", \"lost three spots\", \"falls two spots\", \"drops two places\", \"advanced two positions\"), not only after \"moved\", \"fell\", \"up\" and a few others. \"shared by two places\" and \"gained support in two places\" are counts and pass, as do \"in two places\", \"two positions open\", \"fifty spots for the beta\" and \"in one place\". Tests: `tests/unit/weekly-digest-validate-181.test.ts` (#343)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-716463e00fae",
     "version": "Unreleased",
     "date": "2026-10-29T19:23:35.000Z",
