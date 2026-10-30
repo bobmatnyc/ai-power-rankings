@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isApiPath, routeAccess } from "./lib/route-access";
 import { searchKeyRedirect } from "./lib/search-url-keys";
-import { urlTableRedirect } from "./lib/url-table-redirect";
+import { heldSourceRewrite, urlTableRedirect } from "./lib/url-table-redirect";
 
 // Quick Win #4: Only log in development to save 10-30ms TTFB in production
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -16,6 +16,10 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   // #233: strip search-term keys from page URLs before any HTML (and gtag) loads; runs even with auth disabled.
   const stripped = searchKeyRedirect(req);
   if (stripped) return stripped;
+
+  // #340: a held non-locale source keeps rendering, from its held /en page.
+  const held = heldSourceRewrite(req);
+  if (held) return held;
 
   // Check if auth is disabled for development/testing
   if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
