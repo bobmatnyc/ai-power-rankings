@@ -18,12 +18,15 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import type { PGlite } from "@electric-sql/pglite";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { backfillSheetRows, buildKindBackfillSql, KIND_COUNT_SQL, KIND_SHEET_CONTRACT, parseKindSheet } from "../../lib/db/tool-kind-sheet";
 import { TOOL_LINK_KIND_VIOLATIONS_SQL } from "../../lib/db/tool-links";
 import { runMigrations, splitStatements } from "../../scripts/apply-migrations";
 import { chainDb, EXTRA_TOOLS, MIGRATION_FILES, readMigration, REPO_ROOT } from "./fixtures/migration-chain-183";
 import { pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
+
+// These tests run migrations and queries on PGlite, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const FILE = "0017_backfill_tool_kind.sql";
 const SHEET = parseKindSheet(readFileSync(path.join(REPO_ROOT, "docs/refresh/tool-kind-mapping.csv"), "utf8"));

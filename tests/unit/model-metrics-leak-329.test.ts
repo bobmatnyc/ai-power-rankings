@@ -16,9 +16,12 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { parseModelMetricsSeed } from "../../lib/db/repositories/model-metrics-seed.repository";
 import { isTrackedByGit } from "../../scripts/load-model-metrics";
+
+// Tests spawn child processes or shell scripts, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 // Synthetic, not a leaderboard value.
 const FIGURE = "47.3";

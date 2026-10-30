@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, unlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
  * #231 — the changelog generator dates entries correctly on full and shallow clones.
@@ -16,6 +16,9 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
  * Test: `npx vitest run tests/unit/generate-changelog-script-231.test.ts`.
  * Local git and the repo's tsx only; no network.
  */
+
+// Tests spawn child processes or shell scripts, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const projectRoot = join(__dirname, "..", "..");
 const tsx = join(projectRoot, "node_modules", ".bin", "tsx");

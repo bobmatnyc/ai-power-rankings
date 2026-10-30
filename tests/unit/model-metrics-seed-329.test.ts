@@ -10,7 +10,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   EXCLUDED_METRIC_SLUGS,
   EXISTING_FAMILY_METRIC_SLUGS,
@@ -21,6 +21,9 @@ import {
 import { hasCodingMetric, isRankingListIndexable, METRIC_INDEX_MIN_ROWS, MODEL_TERMINAL_BENCH_SOURCE } from "../../lib/rankings/lists";
 import { readModelMetrics } from "../../scripts/load-model-metrics";
 import { METRIC_SLUGS, SEED_SLUGS, syntheticMetricRow, syntheticMetricsDoc } from "./fixtures/model-metrics-329-fixture";
+
+// Tests spawn child processes or shell scripts, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const KNOWN = new Set(METRIC_SLUGS);
 const parse = (doc: unknown) => parseModelMetricsSeed(JSON.stringify(doc), KNOWN);

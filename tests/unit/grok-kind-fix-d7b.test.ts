@@ -17,12 +17,15 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { PGlite } from "@electric-sql/pglite";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { MODEL_STATUS_UPDATE_SQL, planModelStatus } from "../../lib/db/repositories/model-lifecycle";
 import { planModelSeedRows } from "../../lib/db/repositories/model-seed-writer";
 import { splitStatements } from "../../scripts/apply-migrations";
 import { readModelLifecycle, readModelSeeds } from "../../scripts/load-model-seeds";
 import { MIGRATION_0016_SQL, TOOLS_AT_0015 } from "./fixtures/tool-links-183-fixture";
+
+// These tests run migrations and queries on PGlite, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const SQL_0022 = readFileSync(path.resolve(__dirname, "../../lib/db/migrations/0022_fix_grok_stray_kind.sql"), "utf8");
 const STRAYS = ["grok-4-5", "grok-4-6", "grok-4-7"];

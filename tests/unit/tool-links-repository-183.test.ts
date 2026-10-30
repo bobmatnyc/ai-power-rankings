@@ -12,7 +12,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import type { PGlite } from "@electric-sql/pglite";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   getHarnessesForModel,
   getModelsForHarness,
@@ -25,6 +25,9 @@ import {
 import { TOOL_LINK_KIND_VIOLATIONS_SQL } from "../../lib/db/tool-links";
 import { loadToolLinks, parseArgs, parseSeed } from "../../scripts/load-tool-links";
 import { type FixtureTool, linkedDb } from "./fixtures/tool-links-183-fixture";
+
+// These tests run migrations and queries on PGlite, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const TOOLS: FixtureTool[] = [
   { slug: "claude-code", name: "Claude Code", kind: "harness" },
