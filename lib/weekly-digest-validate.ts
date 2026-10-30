@@ -57,8 +57,7 @@ const ISSUE_REF_RUN = "(?:#\\d+\\s*(?:,\\s*(?:and|or)\\b|,|and\\b|or\\b|&)\\s*)*
 // #339: "#N" before one of these is a rank position even after an issue word.
 const TOOL_NOUN = "(?:agents?|tools?|editors?|models?|assistants?|IDEs?|extensions?|picks?|choices?)";
 // #343: a word that makes "<number word> places" a rank move, in every verb
-// form. "by" is not one: "shared by two places" is a count, and "moved up by
-// two places" already has "up".
+// form. "by" has its own rule below.
 const MOVE_WORD =
   "(?:up|down|mov(?:e|es|ed|ing)|climb(?:s|ed|ing)?|ris(?:e|es|en|ing)|rose|fall(?:s|en|ing)?|fell|" +
   "drop(?:s|ped|ping)?|slip(?:s|ped|ping)?|jump(?:s|ed|ing)?|gain(?:s|ed|ing)?|los(?:e|es|ing)|lost|" +
@@ -86,6 +85,13 @@ const SCORE_OR_RANK: readonly RegExp[] = [
   // "in two places" and "fifty spots for the beta" are counts, not moves.
   new RegExp(
     `\\b${MOVE_WORD}\\W+${MOVE_GAP}${NUMBER_WORD}\\s+(?:places?|positions?|spots?)\\b`,
+    "i"
+  ),
+  // #343: "by <number word> places" is a rank move after any verb ("improved
+  // by two places", "leapfrogged Copilot by two places"), except after share,
+  // split or divide ("shared by two places" is a count).
+  new RegExp(
+    `(?<!\\b(?:shar|split|divid)\\w*\\s+)\\bby\\W+${MOVE_GAP}${NUMBER_WORD}\\s+(?:places?|positions?|spots?)\\b`,
     "i"
   ),
   new RegExp(`(?<![\\w&#/])(?<!${ISSUE_REF_LEAD}${ISSUE_REF_RUN})#\\d{1,2}(?![\\d\\w])`, "i"),

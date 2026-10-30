@@ -198,6 +198,9 @@ describe("validateDigest rank moves written in words (#343)", () => {
     "Cursor falls two spots.",
     "Cursor drops two places.",
     "It advanced two positions.",
+    "Cursor leapfrogged Copilot by two places.",
+    "Cursor improved by two places.",
+    "Cursor shifted by two spots.",
   ])("rejects %s", (sentence) => {
     expect(rankFailures(sentence)).not.toEqual([]);
   });
