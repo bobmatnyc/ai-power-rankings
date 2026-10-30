@@ -10,6 +10,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { invalidateRankingsCache } from "@/lib/cache/invalidation.service";
 import { loggers } from "@/lib/logger";
 import {
   RankingGenerationInProgressError,
@@ -118,6 +119,17 @@ export async function GET(request: Request) {
       durationMs: duration,
     });
 
+    // #311: only a committed publish gets here, so purge the cached current board; a failed one threw above.
+    // #311: the purge never throws; report its outcome in the 200 body rather than
+    // failing a publish that has already committed (a failure would invite a re-publish).
+    const purge = await invalidateRankingsCache();
+    if (!purge.success) {
+      loggers.api.error("Cron: Rankings published but the cache purge failed", {
+        period: result.period,
+        errors: purge.errors,
+      });
+    }
+
     // 3. Return JSON summary
     return NextResponse.json(
       {
@@ -128,6 +140,7 @@ export async function GET(request: Request) {
         tool_count: result.toolCount,
         published_at: result.publishedAt,
         top_movers: result.topMovers,
+        cache_purge: { success: purge.success, errors: purge.errors },
         durationMs: duration,
       },
       { status: 200 }
