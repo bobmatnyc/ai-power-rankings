@@ -121,3 +121,31 @@ describe("#313 a title neighbour the table cannot classify", () => {
     await db.close();
   }, 120_000);
 });
+
+// #313: 0028 (#314) renames claude-artifacts to Claude.AI and keeps the slug; the resolver's
+// FORMER_NAMES keeps "Claude Artifacts" pointing at that row. 0024 may run before or after 0028.
+describe.each([
+  { renamed: false, expected: 2 },
+  { renamed: true, expected: 3 },
+])("#313 a renamed tool's former name (0028 applied first: $renamed)", ({ renamed, expected }) => {
+  it("counts the former name as the TypeScript rule does", async () => {
+    const db = await kindedChainDb();
+    await seedOldState(db);
+    if (renamed) {
+      // The rename 0028 makes: column and JSON name, kind productivity, slug and id kept.
+      await db.exec(
+        `UPDATE public."tools" SET name = 'Claude.AI', kind = 'productivity', data = jsonb_set(data, '{name}', '"Claude.AI"') WHERE slug = 'claude-artifacts'`
+      );
+    }
+    await addArticle(db, { slug: "former-title", title: "Claude Artifacts gets a new editor", mentions: [] });
+    await addArticle(db, { slug: "former-mention", title: "Release notes", mentions: [{ name: "Claude Artifacts", relevance: 0.9 }] });
+    await addArticle(db, { slug: "new-title", title: "Claude.AI adds projects", mentions: [] });
+    const oracle = await expectedNewsCounts(db);
+    const result = await apply0024(db, pgliteMigrationDb(db));
+    expect(result.exitCode, result.lines.join("\n")).toBe(0);
+    const { rows } = await db.query<{ data: any }>(`SELECT data FROM public."tools" WHERE slug = 'claude-artifacts'`);
+    expect(oracle["claude-artifacts"]).toBe(expected);
+    expect(rows[0]!.data.metrics.news_mentions).toBe(expected);
+    await db.close();
+  }, 120_000);
+});
