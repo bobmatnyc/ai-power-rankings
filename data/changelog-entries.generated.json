@@ -101,8 +101,8 @@
   {
     "id": "unreleased-bc271a0ebd98",
     "version": "Unreleased",
-    "date": "2026-10-30T08:59:29.833Z",
-    "dateSource": "build",
+    "date": "2026-10-30T09:04:45.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "rankings",
     "title": "/api/rankings/current returns the new month within 60 seconds of a publish",
@@ -200,8 +200,8 @@
   {
     "id": "unreleased-1040517df015",
     "version": "Unreleased",
-    "date": "2026-10-30T00:03:39.086Z",
-    "dateSource": "build",
+    "date": "2026-10-30T09:17:21.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "data",
     "title": "correct harness adoption inputs with sourced figures (#313, #312)",
