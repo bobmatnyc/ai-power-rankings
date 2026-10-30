@@ -69,19 +69,19 @@ function tool(n: number, slug: string, kind: string, data: Record<string, unknow
 
 function seed(rows: Array<Record<string, any>>) {
   db.rows = rows;
-  current.rows = {
-    combined: {
-      id: "combined-row",
-      period: "2026-10",
-      list: "combined",
-      algorithm_version: "7.10",
-      is_current: true,
-      published_at: STAMP,
-      created_at: STAMP,
-      updated_at: STAMP,
-      data: rows.map((r, i) => ({ tool_id: r.id, rank: i + 1, score: 50 })),
-    },
-  };
+  // #185: each list's own board; after v8 activation the combined board is never read.
+  const board = (list: "model" | "harness") => ({
+    id: `${list}-row`,
+    period: "2026-10",
+    list,
+    algorithm_version: "7.10",
+    is_current: true,
+    published_at: STAMP,
+    created_at: STAMP,
+    updated_at: STAMP,
+    data: rows.filter((r) => r.kind === list).map((r, i) => ({ tool_id: r.id, rank: i + 1, score: 50 })),
+  });
+  current.rows = { model: board("model"), harness: board("harness") };
 }
 
 beforeEach(() => {

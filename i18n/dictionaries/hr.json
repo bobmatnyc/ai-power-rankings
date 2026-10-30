@@ -881,5 +881,36 @@
     "title": "AI Power Rankings - Konačno mjesečno rangiranje AI alata za kodiranje",
     "description": "Konačno mjesečno rangiranje i analiza agentskih AI alata za kodiranje. Usporedite Cursor, GitHub Copilot, Claude i preko 50 AI asistenata kojima vjeruju developeri diljem svijeta.",
     "keywords": "AI alati za kodiranje, agentska AI, autonomno kodiranje, rangiranje alata za developere, usporedba AI asistenata, benchmarkovi AI kodiranja, SWE-bench rezultati, Claude vs Cursor vs GitHub Copilot"
+  },
+  "methodologyV8": {
+    "metaTitle": "Metodologija poretka (v{version}) - AI Power Rankings",
+    "metaDescription": "Kako AI Power Rankings rangira modele, alate za kodiranje i alate za produktivnost na zasebnim popisima, s profilom ocjenjivanja za svaku vrstu.",
+    "title": "Kako nastaju poretci",
+    "intro": "Verzija {version} AI Power Rankingsa rangira svaku vrstu alata na vlastitom popisu i ocjenjuje svaku vrstu vlastitim težinama.",
+    "listsHeading": "Tri popisa",
+    "listsBody": "Modeli, alati za kodiranje i alati za produktivnost rangiraju se na zasebnim popisima. Alat je rangiran na najviše jednom popisu, a njegov rang, razina i promjena računaju se unutar tog popisa. Rangovi se ne uspoređuju među popisima.",
+    "listsDefault": "Glavna stranica poretka prikazuje popis alata za kodiranje.",
+    "listsExcluded": "Modeli za slike i video nisu na popisu modela. Alati drugih vrsta nisu rangirani.",
+    "smallLists": "Popis s manje od {min} unosa koristi razine S, A i B po trećinama i tražilice ga ne indeksiraju.",
+    "profilesHeading": "Profili ocjenjivanja",
+    "profilesBody": "Svaki se popis ocjenjuje profilom svoje vrste. Svi profili koriste istih osam čimbenika, a težine im zajedno iznose 100 %, pa su svi bodovi na istoj ljestvici od 0 do 100.",
+    "factorHeader": "Čimbenik",
+    "weightHeader": "Težina",
+    "factors": {
+      "agenticCapability": "Agentska sposobnost",
+      "innovation": "Inovativnost",
+      "technicalPerformance": "Tehnička izvedba",
+      "developerAdoption": "Prihvaćenost među developerima",
+      "marketTraction": "Tržišni zamah",
+      "businessSentiment": "Poslovni ugled",
+      "developmentVelocity": "Brzina razvoja",
+      "platformResilience": "Otpornost platforme"
+    },
+    "provisionalNote": "Privremeno: popis alata za produktivnost koristi težine alata za kodiranje dok se ne odluči njegov vlastiti profil ocjenjivanja.",
+    "openWeight": "Jesu li težine modela otvorene nije čimbenik ocjenjivanja.",
+    "tiesHeading": "Izjednačenja",
+    "tiesBody": "Kad dva alata na popisu imaju jednak broj bodova, prvi je onaj koji je bio bolje rangiran u posljednjem poretku objavljenom prije verzije {version}. Alat koji tada nije bio rangiran dolazi nakon njih.",
+    "dataHeading": "Izvori podataka",
+    "dataBody": "Bodovi se temelje na pohranjenim pokazateljima svakog alata: rezultatima benchmarka, prihvaćenosti poput preuzimanja, zvjezdica i korisnika, financiranju i poslovnim vijestima te aktivnosti izdanja. Poretci se ponovno izračunavaju jednom mjesečno."
   }
 }

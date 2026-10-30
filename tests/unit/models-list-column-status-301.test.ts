@@ -11,6 +11,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *   in both directions: column `redirect` with data `active` is dropped and the ranks
  *   renumber; column `active` with data `redirect` or `inactive` is kept. When the status
  *   lookup rejects, the read rejects (fails closed).
+ *   #185: after v8 activation the combined board is never read, so the column-status
+ *   filter on it has nothing left to filter. The three cases now assert that a combined
+ *   row yields no board whatever the column and data statuses, and that no status
+ *   lookup is made, so a failing lookup cannot reject the read.
  * Test: `npx vitest run tests/unit/models-list-column-status-301.test.ts`. No network.
  */
 
@@ -92,33 +96,28 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("models list reads the tools.status column (#301)", () => {
-  it("drops a column-redirect row whose data.status is active, and renumbers", async () => {
+describe("models list ignores the combined board whatever the tools.status column says (#301, #185)", () => {
+  it("a column-redirect row whose data.status is active: no board", async () => {
     seed([
       tool(1, "alpha", "redirect", "active"),
       tool(2, "bravo", "active", "active"),
       tool(3, "charlie", "active", "active"),
     ]);
-    const board = (await loadCurrentRankings("model"))!;
-    expect(board.source).toBe("combined");
-    expect(board.rankings.map((r) => r.tool.slug)).toEqual(["bravo", "charlie"]);
-    expect(board.rankings.map((r) => r.rank)).toEqual([1, 2]);
+    expect(await loadCurrentRankings("model")).toBeNull();
   });
 
-  it("keeps a column-active row whose data.status is redirect or inactive", async () => {
+  it("a column-active row whose data.status is redirect or inactive: no board", async () => {
     seed([
       tool(1, "alpha", "active", "redirect"),
       tool(2, "bravo", "active", "inactive"),
       tool(3, "charlie", "inactive", "active"),
     ]);
-    const board = (await loadCurrentRankings("model"))!;
-    expect(board.rankings.map((r) => r.tool.slug)).toEqual(["alpha", "bravo"]);
-    expect(board.rankings.map((r) => r.rank)).toEqual([1, 2]);
+    expect(await loadCurrentRankings("model")).toBeNull();
   });
 
-  it("rejects when the status lookup rejects, and keeps no rows (fails closed)", async () => {
+  it("makes no status lookup, so a failing lookup does not reject the read", async () => {
     seed([tool(1, "alpha", "redirect", "active"), tool(2, "bravo", "active", "active")]);
     db.failStatusLookup = true;
-    await expect(loadCurrentRankings("model")).rejects.toThrow("status lookup failed");
+    await expect(loadCurrentRankings("model")).resolves.toBeNull();
   });
 });

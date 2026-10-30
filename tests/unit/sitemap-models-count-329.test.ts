@@ -9,10 +9,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * What: mocks the repository boundary with a models board whose tools carry a Vals TB 4.0
  *   metric. One row's column is `redirect` while its data copy says `active`; it must not
  *   count, so 9 genuine rows plus that row leave the page out, and 10 genuine rows list it.
+ *   A failed board read or `tools.status` lookup leaves only the models page out.
  * Test: `npx vitest run tests/unit/sitemap-models-count-329.test.ts`. No network, no database.
  */
 
-const current = vi.hoisted(() => ({ rows: {} as Record<string, unknown>, fail: false }));
+const current = vi.hoisted(() => ({ rows: {} as Record<string, unknown>, fail: false, failStatusLookup: false }));
 type Tool = { id: string; slug: string; name: string; kind: string; column: string } & Record<string, unknown>;
 const TOOLS = vi.hoisted(() => ({}) as Record<string, Tool>);
 
@@ -46,6 +47,7 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
       return null;
     }
     async findColumnStatuses(ids: string[]) {
+      if (current.failStatusLookup) throw new Error("status lookup failed");
       return new Map(ids.flatMap((id) => (TOOLS[id] ? [[id, TOOLS[id].column] as [string, string]] : [])));
     }
   }
@@ -79,11 +81,12 @@ function seed(genuine: number, withRedirectAlias: boolean, withNoise = false) {
     };
   }
   const stamp = new Date("2026-10-01T00:00:00Z");
+  // #185: the models list's own board; after v8 activation the combined board is never read.
   current.rows = {
-    combined: {
-      id: "combined-row",
+    model: {
+      id: "model-row",
       period: "2026-10",
-      list: "combined",
+      list: "model",
       algorithm_version: "7.10",
       is_current: true,
       published_at: stamp,
@@ -101,6 +104,7 @@ async function modelsListed(): Promise<number> {
 
 beforeEach(() => {
   current.fail = false;
+  current.failStatusLookup = false;
   vi.spyOn(console, "warn").mockImplementation(() => {});
 });
 afterEach(() => {
@@ -132,6 +136,15 @@ describe("sitemap /rankings/models count (#329, D63)", () => {
     current.fail = true;
     const entries = await buildSitemapEntries("https://example.test");
     current.fail = false;
+    expect(entries.some((e) => e.url.endsWith("/rankings/models"))).toBe(false);
+    expect(entries.length).toBeGreaterThan(0);
+  });
+
+  it("leaves only /rankings/models out when the tools.status lookup fails", async () => {
+    // The stale data.status says active for all 10 rows, so only a closed failure keeps the page out.
+    seed(10, false);
+    current.failStatusLookup = true;
+    const entries = await buildSitemapEntries("https://example.test");
     expect(entries.some((e) => e.url.endsWith("/rankings/models"))).toBe(false);
     expect(entries.length).toBeGreaterThan(0);
   });

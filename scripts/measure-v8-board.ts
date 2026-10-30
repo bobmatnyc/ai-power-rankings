@@ -9,7 +9,10 @@
  *   never run in GitHub Actions.
  * What: connects only through MEASURE_V8_DATABASE_URL as passed at launch
  *   (`lib/measure-launch-env.ts`, imported first, also stops env-file loading).
- *   Reads the active `tools` rows (with `kind`) and the one current `rankings` row in a single READ ONLY transaction, after a single-SELECT
+ *   Reads the active `tools` rows (with `kind`), every `tools` row's id, slug, status and
+ *   `data->>'redirect_to'` and `data->>'carriedFrom'` (to map published ids through
+ *   redirects and pick a merge's survivor, #185) and the one
+ *   current `rankings` row in a single READ ONLY transaction, after a single-SELECT
  *   check on each statement (`assertSelectOnly`, #93). Weights come from
  *   `config/scoring-profiles.json`: set v7.10 profile `all` (baseline) and set
  *   v8.0 routed by `tools.kind` (candidate, PR-2: each tool scored with the
@@ -64,6 +67,10 @@ const KIND_SHEET_PATH = "docs/refresh/tool-kind-mapping.csv";
 
 // Same rows `loadActiveTools()` scores, plus kind.
 const TOOLS_QUERY = "SELECT id, name, slug, category, status, kind, data FROM tools WHERE status = $1";
+// #185: every row, any status, so a published id retired by 0019 or the duplicate merge resolves to its canonical row.
+// #185: carriedFrom names the survivor 0019 copied onto a family row.
+const IDENTITY_QUERY =
+  "SELECT id, slug, status, data->>'redirect_to' AS redirect_to, data->>'carriedFrom' AS carried_from FROM tools";
 const CURRENT_QUERY =
   "SELECT period, algorithm_version, published_at, data FROM rankings WHERE is_current = $1 LIMIT 1";
 
@@ -79,16 +86,17 @@ function refuseUnderCi(): void {
   }
 }
 
-/** Both SELECTs in one READ ONLY transaction, so the tools and the snapshot are one view. */
-async function readBoard(connectionString: string): Promise<{ tools: Row[]; current: Row[] }> {
+/** All three SELECTs in one READ ONLY transaction, so the tools, redirects and snapshot are one view. */
+async function readBoard(connectionString: string): Promise<{ tools: Row[]; identities: Row[]; current: Row[] }> {
   assertSelectOnly(TOOLS_QUERY);
+  assertSelectOnly(IDENTITY_QUERY);
   assertSelectOnly(CURRENT_QUERY);
   const sql = neon(connectionString, { types: naiveUtcTypes } as never);
-  const [tools, current] = await sql.transaction(
-    [sql(TOOLS_QUERY, ["active"]), sql(CURRENT_QUERY, [true])],
+  const [tools, identities, current] = await sql.transaction(
+    [sql(TOOLS_QUERY, ["active"]), sql(IDENTITY_QUERY, []), sql(CURRENT_QUERY, [true])],
     { readOnly: true }
   );
-  return { tools: (tools ?? []) as Row[], current: (current ?? []) as Row[] };
+  return { tools: (tools ?? []) as Row[], identities: (identities ?? []) as Row[], current: (current ?? []) as Row[] };
 }
 
 async function main(): Promise<number> {
@@ -130,6 +138,13 @@ async function main(): Promise<number> {
     baseline,
     candidate,
     sheet,
+    toolIdentities: board.identities.map((row) => ({
+      id: String(row["id"]),
+      slug: String(row["slug"]),
+      status: String(row["status"]),
+      redirectTo: typeof row["redirect_to"] === "string" ? row["redirect_to"] : null,
+      carriedFrom: typeof row["carried_from"] === "string" ? row["carried_from"] : null,
+    })),
   });
   // D8b: private per-tool table for Bob's D4d sign-off
   const perTool = process.argv.slice(2).includes(PER_TOOL_FLAG);

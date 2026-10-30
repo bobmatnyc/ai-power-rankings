@@ -1851,5 +1851,36 @@
     "title": "AI 实力排行榜 - AI编码工具的权威月度排名",
     "description": "自主AI编码工具的权威月度排名和分析。比较Cursor、GitHub Copilot、Claude以及50多个深受全球开发者信赖的AI助手。",
     "keywords": "AI编码工具, 自主AI, 自动编码, 开发工具排名, AI助手对比, 编码AI基准测试, SWE-bench结果, Claude对Cursor对GitHub Copilot"
+  },
+  "methodologyV8": {
+    "metaTitle": "排名方法 (v{version}) - AI Power Rankings",
+    "metaDescription": "AI Power Rankings 如何在不同的列表中对模型、编程工具和生产力工具排名，并为每种类型使用评分方案。",
+    "title": "排名的工作方式",
+    "intro": "AI Power Rankings 第 {version} 版将每类工具放在各自的列表中排名，并为每一类使用各自的权重评分。",
+    "listsHeading": "三个列表",
+    "listsBody": "模型、编程工具和生产力工具在不同的列表中排名。一个工具最多出现在一个列表中，其名次、等级和变化都在该列表内计算。不同列表之间不比较名次。",
+    "listsDefault": "排名主页显示编程工具列表。",
+    "listsExcluded": "图像模型和视频模型不在模型列表中。其他类型的工具不参与排名。",
+    "smallLists": "条目少于 {min} 个的列表按三等分使用 S、A、B 等级，且不被搜索引擎收录。",
+    "profilesHeading": "评分方案",
+    "profilesBody": "每个列表使用对应类型的方案评分。所有方案都使用相同的八个因素，权重合计为 100%，因此所有分数都在同一个 0–100 的尺度上。",
+    "factorHeader": "因素",
+    "weightHeader": "权重",
+    "factors": {
+      "agenticCapability": "智能体能力",
+      "innovation": "创新",
+      "technicalPerformance": "技术性能",
+      "developerAdoption": "开发者采用",
+      "marketTraction": "市场牵引力",
+      "businessSentiment": "商业口碑",
+      "developmentVelocity": "开发速度",
+      "platformResilience": "平台韧性"
+    },
+    "provisionalNote": "暂定：在确定其专属评分方案之前，生产力工具列表使用编程工具的权重。",
+    "openWeight": "模型权重是否开放不是评分因素。",
+    "tiesHeading": "同分",
+    "tiesBody": "当同一列表中两个工具分数相同时，在第 {version} 版之前最后一次发布的排名中位置更高的工具排在前面。当时未上榜的工具排在其后。",
+    "dataHeading": "数据来源",
+    "dataBody": "分数基于每个工具已存储的指标：基准测试结果、下载量、星标数和用户数等采用情况、融资和商业新闻，以及发布活动。排名每月重新计算一次。"
   }
 }

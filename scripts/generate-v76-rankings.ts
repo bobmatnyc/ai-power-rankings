@@ -23,7 +23,13 @@
  *                            (data/extracted-rankings/2025-09.json) so it runs
  *                            locally with no NODE_ENV / Neon requirement. Useful
  *                            for previewing a backfilled month before the gated
- *                            prod run.
+ *                            prod run. #185: the offline roster has no
+ *                            tools.kind, so this preview stays the one v7.10
+ *                            table over the whole roster; it never publishes.
+ *
+ * #185 (v8 activation): a publish run calls `publishActiveRankings()`, as the cron
+ * does: one board per list, scored by the active set in
+ * config/scoring-profiles.json. It no longer writes the combined board.
  *
  * v7.6 combines:
  * 1. npm data quality fix (removed 15 incorrect mappings, 22.9M bogus downloads)
@@ -138,21 +144,26 @@ async function main() {
   const period = parsePeriodArg();
   const metricsOverridePath = parseMetricsSourceArg(period);
 
-  console.log("\n🚀 Generating Rankings with Algorithm v7.6 (Market-Validated + npm Fix)\n");
+  console.log("\n🚀 Generating Rankings\n");
   console.log("=".repeat(80));
   if (DRY_RUN) console.log("🧪 DRY-RUN: no database access, nothing will be persisted.");
   if (metricsOverridePath) {
     console.log(`📥 Historical override: ${metricsOverridePath.replace(ROOT + "/", "")}`);
   }
-  console.log("\n📊 Algorithm v7.6 Weights (Market-Validated):");
-  console.log(`   Agentic Capability:    ${ALGORITHM_V76_WEIGHTS.agenticCapability.toFixed(3)}`);
-  console.log(`   Innovation:            ${ALGORITHM_V76_WEIGHTS.innovation.toFixed(3)}`);
-  console.log(`   Technical Performance: ${ALGORITHM_V76_WEIGHTS.technicalPerformance.toFixed(3)}`);
-  console.log(`   Developer Adoption:    ${ALGORITHM_V76_WEIGHTS.developerAdoption.toFixed(3)} 🔥`);
-  console.log(`   Market Traction:       ${ALGORITHM_V76_WEIGHTS.marketTraction.toFixed(3)} 🔥`);
-  console.log(`   Business Sentiment:    ${ALGORITHM_V76_WEIGHTS.businessSentiment.toFixed(3)}`);
-  console.log(`   Development Velocity:  ${ALGORITHM_V76_WEIGHTS.developmentVelocity.toFixed(3)}`);
-  console.log(`   Platform Resilience:   ${ALGORITHM_V76_WEIGHTS.platformResilience.toFixed(3)}`);
+  // #185: the one-table weights describe only the offline dry-run preview.
+  if (!DRY_RUN) {
+    console.log("\n📊 Weights: the active set in config/scoring-profiles.json, one profile per list.");
+  } else {
+    console.log("\n📊 Dry-run preview weights (one v7.10 table):");
+    console.log(`   Agentic Capability:    ${ALGORITHM_V76_WEIGHTS.agenticCapability.toFixed(3)}`);
+    console.log(`   Innovation:            ${ALGORITHM_V76_WEIGHTS.innovation.toFixed(3)}`);
+    console.log(`   Technical Performance: ${ALGORITHM_V76_WEIGHTS.technicalPerformance.toFixed(3)}`);
+    console.log(`   Developer Adoption:    ${ALGORITHM_V76_WEIGHTS.developerAdoption.toFixed(3)} 🔥`);
+    console.log(`   Market Traction:       ${ALGORITHM_V76_WEIGHTS.marketTraction.toFixed(3)} 🔥`);
+    console.log(`   Business Sentiment:    ${ALGORITHM_V76_WEIGHTS.businessSentiment.toFixed(3)}`);
+    console.log(`   Development Velocity:  ${ALGORITHM_V76_WEIGHTS.developmentVelocity.toFixed(3)}`);
+    console.log(`   Platform Resilience:   ${ALGORITHM_V76_WEIGHTS.platformResilience.toFixed(3)}`);
+  }
 
   if (DRY_RUN) {
     const { persistence, rosterCount } = await buildDryRunPersistence();
@@ -187,19 +198,26 @@ async function main() {
     return;
   }
 
-  console.log("\n🧮 Scoring active tools and persisting snapshot...");
-  const result = await regenerateRankings({
+  // #185: the publish run writes one board per list, scored by the active profile set
+  // (config/scoring-profiles.json), the same call the cron makes. It never writes the
+  // combined board; a refused or invalid profile set throws before any write.
+  const { publishActiveRankings } = await import("@/lib/rankings/publish-active");
+  console.log("\n🧮 Scoring active tools per list and persisting one board per list...");
+  const result = await publishActiveRankings({
     ...(period ? { period } : {}),
     ...(metricsOverridePath ? { metricsOverridePath } : {}),
   });
 
   console.log("\n" + "=".repeat(80));
-  console.log("✅ Rankings Generated Successfully (v7.6)!");
+  console.log(`✅ Rankings Generated Successfully (v${result.algorithmVersion}, per list)!`);
   console.log("=".repeat(80));
   console.log("\n📊 Summary:");
   console.log(`   Period:            ${result.period}`);
   console.log(`   Algorithm Version: v${result.algorithmVersion}`);
   console.log(`   Total Tools:       ${result.toolCount}`);
+  for (const board of result.boards) {
+    console.log(`   List ${board.list.padEnd(13)} ${board.toolCount} tools`);
+  }
   console.log(`   Published At:      ${result.publishedAt}`);
 
   if (result.topMovers.length > 0) {
@@ -222,7 +240,8 @@ main()
       const { closeDb } = await import("@/lib/db/connection");
       await closeDb();
     }
-    console.log("\n✨ Done! Rankings are now live with Algorithm v7.6.\n");
+    // #185: a publish run is per list under the active profile set, no longer v7.6.
+    console.log(DRY_RUN ? "\n✨ Done!\n" : "\n✨ Done! The per-list rankings are now live.\n");
     process.exit(0);
   })
   .catch(async (error) => {

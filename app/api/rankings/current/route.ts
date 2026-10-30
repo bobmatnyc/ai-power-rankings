@@ -3,7 +3,8 @@ import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { getDb } from "@/lib/db/connection";
 import { loggers } from "@/lib/logger";
-import { getCachedOrFetch, CACHE_TTL } from "@/lib/memory-cache";
+import cacheInstance, { CACHE_TTL } from "@/lib/memory-cache";
+import { parseListQuery, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
 
 /**
  * Derives complete factor scores from partial data using the overall score as a baseline.
@@ -27,13 +28,37 @@ function deriveCompleteScores(partialScores: any, overallScore: number) {
   };
 }
 
-export async function GET() {
+/**
+ * `GET /api/rankings/current[?list=<list>]`: one list's current board (#185 H1).
+ *
+ * Why: #185 activation ends the legacy combined board as a public view. This route
+ *   served the combined board; it now serves one list's board, the default list
+ *   (coding harnesses) when no list is named, like `/api/rankings`.
+ * What: `list` (alias `kind`) is parsed by `parseListQuery()`; an unknown, empty or
+ *   conflicting value is 400. Reads only the list's `is_current` row
+ *   (`getCurrentRankings(list)`); with none it is 404, and a failed read is 500. It
+ *   never reads the combined row. The body keeps its shape and adds `data.list` and
+ *   `data.list_meta`. Cached in memory per list.
+ * Test: `tests/unit/rankings-current-trending-185.test.ts`.
+ */
+// #186: Next.js route exports require a non-optional Request
+export async function GET(request: Request) {
   const startTime = Date.now();
-  const cacheKey = "api:rankings:current";
+  // #185: one list's board, default; never the combined board.
+  const parsed = parseListQuery(new URL(request.url).searchParams);
+  if (!parsed.ok) {
+    return NextResponse.json(
+      { success: false, error: "Unknown list", message: parsed.error, lists: [...RANKING_LISTS] },
+      { status: 400 }
+    );
+  }
+  const { list } = parsed;
+  const cacheKey = `api:rankings:current:${list}`;
 
   try {
-    const response = await getCachedOrFetch(
-      cacheKey,
+    // #185: only a 200 body is held in the in-memory cache; a 404 or 503 is never replayed.
+    const cached = cacheInstance.get<Record<string, unknown>>(cacheKey);
+    const response = cached ?? await (
       async () => {
         // Get database connection
         const db = getDb();
@@ -55,9 +80,10 @@ export async function GET() {
         // Get current rankings from database
         let currentRankings;
         try {
-          currentRankings = await rankingsRepository.getCurrentRankings();
+          currentRankings = await rankingsRepository.getCurrentRankings(list);
         } catch (dbError) {
           loggers.api.error("Database query failed for getCurrentRankings", {
+            list,
             error: dbError instanceof Error ? dbError.message : "Unknown error",
             stack: dbError instanceof Error ? dbError.stack : undefined,
           });
@@ -65,11 +91,13 @@ export async function GET() {
         }
 
         if (!currentRankings) {
-          loggers.api.warn("No current rankings found in database");
+          // #185: a list with no current row has no board; the combined row is not read.
+          loggers.api.warn("No current rankings found in database", { list });
           return {
             success: false,
             error: "No current rankings available",
-            message: "No rankings data is currently marked as active. Please check back later.",
+            list,
+            message: "No rankings data is currently marked as active for this list. Please check back later.",
             timestamp: new Date().toISOString(),
             statusCode: 404,
           };
@@ -210,6 +238,9 @@ export async function GET() {
         return {
           success: true,
           data: {
+            // #185: the response names its list and carries the list rules.
+            list,
+            list_meta: rankingListMeta(list, validRankings.length),
             period: currentRankings.period,
             algorithm_version: currentRankings.algorithm_version,
             rankings: validRankings,
@@ -224,15 +255,15 @@ export async function GET() {
           timestamp: new Date().toISOString(),
           statusCode: 200,
         };
-      },
-      CACHE_TTL.rankings // 60 seconds
-    );
+      }
+    )();
 
     const processingTime = Date.now() - startTime;
 
     // Extract status code from response
     const statusCode = (response as any).statusCode || 200;
     const isSuccess = (response as any).success !== false;
+    if (!cached && statusCode === 200) cacheInstance.set(cacheKey, response, CACHE_TTL.rankings); // 60 seconds
 
     if (isSuccess) {
       loggers.api.info("Current rankings fetched successfully", {
@@ -248,7 +279,10 @@ export async function GET() {
       status: statusCode,
       headers: {
         "Content-Type": "application/json",
-        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        // #185: only a 200 may be cached by the CDN; a 404 (no list board yet) or 503
+        // must not outlive the publish that fixes it.
+        "Cache-Control":
+          statusCode === 200 ? "public, s-maxage=3600, stale-while-revalidate=86400" : "no-store",
         "X-Processing-Time": `${processingTime}ms`,
       },
     });
@@ -269,7 +303,7 @@ export async function GET() {
         message: error instanceof Error ? error.message : "An unexpected error occurred",
         timestamp: new Date().toISOString(),
       },
-      { status: 500 }
+      { status: 500, headers: { "Cache-Control": "no-store" } } // #185: never cache a failure
     );
   }
 }

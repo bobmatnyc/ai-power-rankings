@@ -881,5 +881,36 @@
     "title": "AI Power Rankings - La classifica mensile definitiva degli strumenti di codifica AI",
     "description": "La classifica mensile definitiva e l'analisi degli strumenti di codifica AI agentici. Confronta Cursor, GitHub Copilot, Claude e oltre 50 assistenti AI di cui si fidano gli sviluppatori di tutto il mondo.",
     "keywords": "strumenti di codifica AI, AI agentici, codifica autonoma, classifiche strumenti sviluppatori, confronto assistenti AI, benchmark AI di codifica, risultati SWE-bench, Claude vs Cursor vs GitHub Copilot"
+  },
+  "methodologyV8": {
+    "metaTitle": "Metodologia della classifica (v{version}) - AI Power Rankings",
+    "metaDescription": "Come AI Power Rankings classifica modelli, harness di programmazione e strumenti di produttività in liste separate, con un profilo di punteggio per ogni tipo.",
+    "title": "Come nascono le classifiche",
+    "intro": "La versione {version} di AI Power Rankings classifica ogni tipo di strumento in una lista propria e valuta ogni tipo con pesi propri.",
+    "listsHeading": "Tre liste",
+    "listsBody": "Modelli, harness di programmazione e strumenti di produttività sono classificati in liste separate. Uno strumento compare al massimo in una lista, e la sua posizione, il livello e la variazione sono calcolati all'interno di quella lista. Le posizioni non si confrontano tra liste diverse.",
+    "listsDefault": "La pagina principale delle classifiche mostra la lista degli harness di programmazione.",
+    "listsExcluded": "I modelli per immagini e video non sono nella lista dei modelli. Gli strumenti di altri tipi non sono classificati.",
+    "smallLists": "Una lista con meno di {min} voci usa i livelli S, A e B per terzi e non viene indicizzata dai motori di ricerca.",
+    "profilesHeading": "Profili di punteggio",
+    "profilesBody": "Ogni lista è valutata con il profilo del suo tipo. Tutti i profili usano gli stessi otto fattori e i loro pesi sommano al 100%, quindi ogni punteggio è sulla stessa scala da 0 a 100.",
+    "factorHeader": "Fattore",
+    "weightHeader": "Peso",
+    "factors": {
+      "agenticCapability": "Capacità agentica",
+      "innovation": "Innovazione",
+      "technicalPerformance": "Prestazioni tecniche",
+      "developerAdoption": "Adozione da parte degli sviluppatori",
+      "marketTraction": "Trazione di mercato",
+      "businessSentiment": "Percezione del mercato",
+      "developmentVelocity": "Velocità di sviluppo",
+      "platformResilience": "Resilienza della piattaforma"
+    },
+    "provisionalNote": "Provvisorio: la lista degli strumenti di produttività usa i pesi degli harness di programmazione finché non sarà deciso il suo profilo di punteggio.",
+    "openWeight": "Il fatto che i pesi di un modello siano aperti non è un fattore di punteggio.",
+    "tiesHeading": "Parità",
+    "tiesBody": "Quando due strumenti di una lista hanno lo stesso punteggio, viene prima quello che era più in alto nelle ultime classifiche pubblicate prima della versione {version}. Uno strumento che allora non era classificato viene dopo.",
+    "dataHeading": "Fonti dei dati",
+    "dataBody": "I punteggi usano le metriche salvate per ogni strumento: risultati dei benchmark, adozione come download, stelle e utenti, finanziamenti e notizie economiche, e attività di rilascio. Le classifiche vengono ricalcolate una volta al mese."
   }
 }

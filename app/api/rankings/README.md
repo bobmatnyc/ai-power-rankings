@@ -17,11 +17,11 @@ Returns one list's current board with resolved tool details (#186).
 
 An unknown list is a 400 whose body lists the valid ones. Every response
 names its `list` and carries `list_meta` (`entry_count`, `indexable`,
-`tier_scheme`, `provisional_note`) and `list_source` (`list` when the list
-has its own current row, `combined` when the legacy board was split by
-list). Ranks, `previousRank`, `rankChange` and `tier` are counted within the
-list; a list below 10 entries uses S/A/B tiers by thirds. Rules:
-`lib/rankings/lists.ts`.
+`tier_scheme`, `provisional_note`). Ranks, `previousRank`, `rankChange` and
+`tier` are counted within the list; a list below 10 entries uses S/A/B tiers
+by thirds. Rules: `lib/rankings/lists.ts`. #185: the board is the list's own
+current row; a list with no current row returns the empty board, never the
+legacy combined board.
 
 In `NODE_ENV=test`, this route returns mock data from
 `lib/test-utils/mock-rankings` instead of querying the database.
@@ -91,8 +91,11 @@ returns HTTP 503; on an unexpected error, HTTP 500.
 
 Source: `app/api/rankings/current/route.ts`
 
-No query parameters. Result is cached in-memory for 60 seconds
-(`CACHE_TTL.rankings`). Supports `OPTIONS` for CORS.
+#185: returns one list's current board, never the legacy combined board.
+`list` (alias `kind`) takes the same values as `/api/rankings`; absent means
+`harness`; an unknown, empty or conflicting value is 400. `data` also
+carries `list` and `list_meta`. Result is cached in-memory for 60 seconds per
+list (`CACHE_TTL.rankings`). Supports `OPTIONS` for CORS.
 
 Response body:
 
@@ -143,8 +146,11 @@ derived from the overall `score` using fixed multipliers (see
 present. `tool` is the full tool record from `tools.repository`, or `null` if
 it could not be resolved.
 
-When no rankings are marked current, the route returns
-`{ success: false, error, message, timestamp, statusCode: 404 }`. On a
+When the list has no current row, the route returns
+`{ success: false, error, list, message, timestamp, statusCode: 404 }`.
+#185: only a 200 is cached (in memory and with a public `s-maxage`); a 404,
+500 or 503 is `Cache-Control: no-store`. A per-list publish clears the
+in-memory entries and revalidates the `rankings` tag. On a
 database outage it returns `statusCode: 503`; on an unexpected error, HTTP
 500.
 
@@ -156,11 +162,14 @@ Query parameters:
 
 - `months` — `number | "all"`. Default `"all"`. Any value that does not parse
   as a positive integer is ignored and treated as `"all"`.
+- `list` (alias `kind`) — #185, as for `/api/rankings`; default `harness`.
 
-Reads every stored ranking period (`rankingsRepository.findAll()`) and
-analyzes movement in and out of the top 10 via
-`lib/trending-analyzer.ts`. Result is cached in-memory for 1 hour, keyed by
-`months`. Supports `OPTIONS` for CORS.
+Reads every stored board of the list (`rankingsRepository.findAllForList()`)
+and analyzes movement in and out of the top 10 via
+`lib/trending-analyzer.ts`. A list's history starts at its first per-list
+publish; the legacy combined rows are not read. Result is cached in-memory
+for 1 hour, keyed by list and `months`. The body also names its `list`.
+Supports `OPTIONS` for CORS.
 
 Response body:
 
@@ -187,9 +196,9 @@ Response body:
 }
 ```
 
-If no historical rankings exist (or they fail to read), the route returns
-HTTP 200 with empty `periods`/`tools`/`chart_data` arrays and a `warning`
-string, rather than an error.
+If the list has no stored boards, the route returns HTTP 200 with empty
+`periods`/`tools`/`chart_data` arrays and a `warning` string. #185: a failed
+read is HTTP 500, never an empty 200.
 
 ## Testing
 
