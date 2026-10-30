@@ -92,8 +92,8 @@ if (!useTavily && !useBrave) {
 
 ### `.env.production.local` (production snapshot pulled via Vercel CLI):
 - `TAVILY_API_KEY`: **SET** — `tvly-REDACTED`
-- `BRAVE_SEARCH_API_KEY`: **SET** — `BSAQQh-MpVe_EZlRV8yQgiw88BfCZms`
-- `CRON_SECRET`: **SET** — `cron-secret-aipowerranking-2026-v2-a65HfuSHbwxkXkhn`
+- `BRAVE_SEARCH_API_KEY`: **SET** — `[REDACTED]`
+- `CRON_SECRET`: **SET** — `[REDACTED]`
 - `OPENROUTER_API_KEY`: Set
 - `DATABASE_URL`: **EMPTY STRING** in this snapshot (likely populated from Doppler/secrets in actual deploy)
 
@@ -179,7 +179,7 @@ The cron route sets `maxDuration = 800` (800 seconds = ~13 min). Vercel Pro plan
 1. Open Vercel dashboard → Project settings → Environment Variables.
 2. Confirm `CRON_SECRET` is set for the **Production** environment.
 3. The value must match what the cron scheduler sends. Per Vercel docs, Vercel automatically sends the value of `CRON_SECRET` as a Bearer token when it invokes a cron route.
-4. If it is not set, add it: `CRON_SECRET=cron-secret-aipowerranking-2026-v2-a65HfuSHbwxkXkhn` (value from `.env.production.local`).
+4. If it is not set, add it: `CRON_SECRET=[REDACTED]` (value from `.env.production.local`).
 5. Redeploy after adding the variable (env var changes require a new deployment to take effect on serverless functions).
 
 ### Verify TAVILY_API_KEY quota
@@ -199,7 +199,7 @@ TAVILY_API_KEY=tvly-prod-... DATABASE_URL=postgresql://... npx tsx scripts/trigg
 
 ```bash
 curl -i -X GET \
-  -H "Authorization: Bearer cron-secret-aipowerranking-2026-v2-a65HfuSHbwxkXkhn" \
+  -H "Authorization: Bearer [REDACTED]" \
   https://aipowerranking.com/api/cron/daily-news
 ```
 

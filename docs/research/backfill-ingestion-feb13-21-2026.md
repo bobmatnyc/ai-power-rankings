@@ -89,7 +89,7 @@ Requires admin authentication cookie/session.
 ### Method 3: Cron Endpoint (Requires CRON_SECRET)
 
 ```bash
-curl -H "Authorization: Bearer cron-secret-aipowerranking-2026" \
+curl -H "Authorization: Bearer [REDACTED]" \
   https://aipowerranking.com/api/cron/daily-news
 ```
 Note: Does not accept a date parameter, always uses current date search.

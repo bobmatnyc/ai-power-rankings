@@ -77,7 +77,7 @@ Vercel's cron job documentation states:
 
 From `.env.production.local` (pulled from Vercel via CLI), `CRON_SECRET` is present:
 ```
-CRON_SECRET="cron-secret-aipowerranking-2026"
+CRON_SECRET="[REDACTED]"
 ```
 
 However, there are two potential sub-issues:
@@ -110,7 +110,7 @@ if (authHeader === `Bearer ${cronSecret}`) {  // strict equality
 
 The value in `.env.production.local` is:
 ```
-CRON_SECRET="cron-secret-aipowerranking-2026"
+CRON_SECRET="[REDACTED]"
 ```
 
 Note: `BRAVE_SEARCH_API_KEY` has `\n` embedded in the value (literal backslash-n, not newline). If `CRON_SECRET` had a similar issue in Vercel's configuration, the comparison would fail silently.
@@ -165,7 +165,7 @@ Look for:
 ```bash
 # Test with the current CRON_SECRET value
 curl -X GET https://aipowerranking.vercel.app/api/cron/daily-news \
-  -H "Authorization: Bearer cron-secret-aipowerranking-2026"
+  -H "Authorization: Bearer [REDACTED]"
 ```
 
 Expected: `{"success": true, ...}` if CRON_SECRET matches.
@@ -181,7 +181,7 @@ From `.env.production.local` (local Vercel snapshot):
 
 | Variable | Status | Notes |
 |----------|--------|-------|
-| `CRON_SECRET` | Present | `"cron-secret-aipowerranking-2026"` |
+| `CRON_SECRET` | Present | `"[REDACTED]"` |
 | `TAVILY_API_KEY` | Present | Production key configured |
 | `BRAVE_SEARCH_API_KEY` | Present | Has `\n` suffix (may cause issues) |
 | `OPENROUTER_API_KEY` | Present | Required for LLM analysis |
@@ -196,12 +196,12 @@ From `.env.production.local` (local Vercel snapshot):
 ### Action 1: Verify CRON_SECRET in Vercel Dashboard (IMMEDIATE)
 1. Log into Vercel Dashboard
 2. Navigate to aipowerranking project → Settings → Environment Variables
-3. Confirm `CRON_SECRET` = `cron-secret-aipowerranking-2026` (or whatever value is configured)
+3. Confirm `CRON_SECRET` = `[REDACTED]` (or whatever value is configured)
 4. If missing or wrong: Add/fix it
 5. If changed: Redeploy the production deployment
 
 ### Action 2: Verify BRAVE_SEARCH_API_KEY Does Not Have `\n` Suffix
-The local pull shows `BRAVE_SEARCH_API_KEY="BSAQQh-MpVe_EZlRV8yQgiw88BfCZms\n"`. The `\n` may be a Vercel CLI artifact or a real issue. Verify the key in Vercel dashboard has no trailing characters.
+The local pull shows `BRAVE_SEARCH_API_KEY="[REDACTED]\n"`. The `\n` may be a Vercel CLI artifact or a real issue. Verify the key in Vercel dashboard has no trailing characters.
 
 ### Action 3: Force a Redeploy
 After confirming env vars:
