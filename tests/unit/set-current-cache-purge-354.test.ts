@@ -1,3 +1,8 @@
+// The Next server's own first import: installs AsyncLocalStorage, which the work store below needs.
+import "next/dist/server/node-environment-baseline";
+import type { WorkStore } from "next/dist/server/app-render/work-async-storage.external";
+import { workAsyncStorage } from "next/dist/server/app-render/work-async-storage.external";
+import { getImplicitTags } from "next/dist/server/lib/implicit-tags";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -12,9 +17,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  *   carried no tag for `revalidateTag('rankings')` to reach.
  * What: over the in-memory rankings DB stand-in, both set-current routes purge
  *   after the write commits, purge nothing when the write fails, and report a
- *   failed purge in a 200 body as `cache_purge`. The purge revalidates
- *   `/<lang>`, `/<lang>/rankings` and `/<lang>/tools` for every locale, and the
- *   rankings page fetch carries the `rankings` tag.
+ *   failed purge in a 200 body as `cache_purge`. Without the `'/'` layout
+ *   call, the purge still marks stale a tag that Next's own `getImplicitTags`
+ *   gives the home, rankings and tool pages in every locale, and the rankings
+ *   page fetch carries the `rankings` tag.
  * Test: `npx vitest run tests/unit/set-current-cache-purge-354.test.ts`.
  */
 
@@ -95,7 +101,7 @@ describe.each(Object.entries(routes))("%s (#354)", (_name, setCurrent) => {
     expect(nextCache.revalidateTag).toHaveBeenCalledWith("rankings");
     expect(seenAtPurge.length).toBeGreaterThan(0);
     expect(seenAtPurge.every((periods) => periods.join() === "2026-08")).toBe(true);
-    expect(nextCache.revalidatePath).toHaveBeenCalledWith("/en", "page");
+    expect(nextCache.revalidatePath).toHaveBeenCalledWith("/[lang]", "page");
     expect(body.cache_purge).toEqual({ success: true, errors: [] });
   });
 
@@ -133,17 +139,51 @@ describe.each(Object.entries(routes))("%s (#354)", (_name, setCurrent) => {
 });
 
 describe("invalidateRankingsCache paths (#354)", () => {
-  it("revalidates the /[lang] ranking pages for every locale and no bare /rankings or /tools", async () => {
-    const result = await invalidateRankingsCache();
-    const calls = nextCache.revalidatePath.mock.calls.map(([path, type]) => `${path} ${type}`);
+  /** Each ranking page's route and a URL under it; `<lang>` is filled per locale. */
+  const pages = [
+    { page: "/[lang]/page", url: "/<lang>" },
+    { page: "/[lang]/rankings/page", url: "/<lang>/rankings" },
+    { page: "/[lang]/rankings/[list]/page", url: "/<lang>/rankings/coding-agents" },
+    { page: "/[lang]/tools/[slug]/page", url: "/<lang>/tools/cursor" },
+  ];
 
-    for (const lang of locales) {
-      expect(calls).toContain(`/${lang} page`);
-      expect(calls).toContain(`/${lang}/rankings layout`);
-      expect(calls).toContain(`/${lang}/tools layout`);
+  /**
+   * The tags the purge's `revalidatePath` calls mark stale, other than the
+   * `'/'` layout call. Each call is replayed through Next's own
+   * `revalidatePath` in a work store, which collects the tags it computes.
+   */
+  async function purgedTags(): Promise<string[]> {
+    const real = await vi.importActual<typeof import("next/cache")>("next/cache");
+    const store = { route: "/api/admin/rankings", incrementalCache: {} } as unknown as WorkStore;
+    workAsyncStorage.run(store, () => {
+      for (const [path, type] of nextCache.revalidatePath.mock.calls) {
+        if (path === "/" && type === "layout") continue;
+        real.revalidatePath(path, type);
+      }
+    });
+    return store.pendingRevalidatedTags ?? [];
+  }
+
+  it("purges a tag every ranking page carries in every locale, without the '/' layout call", async () => {
+    const result = await invalidateRankingsCache();
+    const purged = await purgedTags();
+
+    for (const { page, url } of pages) {
+      for (const lang of locales) {
+        const pathname = url.replace("<lang>", lang);
+        // #354: the tags Next itself attaches to this page's cache entry.
+        const { tags } = await getImplicitTags(page, { pathname }, null);
+        expect(purged.filter((tag) => tags.includes(tag)), `${pathname} (${page}) tags ${tags.join(" ")}`).not.toEqual([]);
+      }
     }
-    expect(calls.filter((c) => c.startsWith("/rankings ") || c.startsWith("/tools "))).toEqual([]);
     expect(result.success).toBe(true);
+  });
+
+  it("names no bare /rankings or /tools path", async () => {
+    await invalidateRankingsCache();
+    const paths = nextCache.revalidatePath.mock.calls.map(([path]) => path);
+
+    expect(paths.filter((p) => p === "/rankings" || p === "/tools")).toEqual([]);
   });
 });
 

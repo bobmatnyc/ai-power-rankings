@@ -164,8 +164,12 @@ publish has already committed. Test:
 #354: the admin set-current action (`POST /api/admin/rankings` with
 `set-current`, and `POST /api/admin/rankings/set-current`) calls the same
 purge after its write commits and reports it as `cache_purge` in the same way.
-The purge revalidates `/<lang>`, `/<lang>/rankings` and `/<lang>/tools` for
-every locale in `i18n/config.ts`, and the `/api/rankings` fetch on
+Besides the `/` layout, which every page sits under, the purge revalidates the
+route patterns `/[lang]` (page), `/[lang]/rankings` (layout) and
+`/[lang]/tools` (layout). Next tags each cached page with its route pattern
+(`_N_T_/[lang]/rankings/layout`) and its bare URL (`_N_T_/en/rankings`), so a
+concrete path with a type, such as `revalidatePath('/en', 'page')`, matches no
+page. The `/api/rankings` fetch on
 `/<lang>/rankings` carries the `rankings` tag that `revalidateTag('rankings')`
 clears. Test: `tests/unit/set-current-cache-purge-354.test.ts`.
 

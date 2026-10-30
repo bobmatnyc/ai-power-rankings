@@ -99,14 +99,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-d6419a269bdb",
+    "id": "unreleased-0bf3ed505857",
     "version": "Unreleased",
-    "date": "2026-10-30T09:13:28.800Z",
+    "date": "2026-10-30T09:24:27.809Z",
     "dateSource": "build",
     "section": "Fixed",
     "scope": "rankings",
     "title": "changing the current board from the admin set-current action (POST /api/admin/rankings with set-current, and POST…",
-    "description": "changing the current board from the admin set-current action (`POST /api/admin/rankings` with `set-current`, and `POST /api/admin/rankings/set-current`) now purges the public ranking caches, so the home page and `/<lang>/rankings` no longer show the previous board for up to 5 minutes. The purge runs after the write commits; a failed write purges nothing. The response reports the purge outcome as `cache_purge` (`success` and `errors`) and stays a 200 when the purge fails. `invalidateRankingsCache()` now revalidates `/<lang>`, `/<lang>/rankings` and `/<lang>/tools` for every supported locale in place of the bare `/rankings` and `/tools` paths, which matched no page, and the `/api/rankings` fetch on `/<lang>/rankings` carries the `rankings` tag so the purge reaches it. Tests: `tests/unit/set-current-cache-purge-354.test.ts` (#354)",
+    "description": "changing the current board from the admin set-current action (`POST /api/admin/rankings` with `set-current`, and `POST /api/admin/rankings/set-current`) now purges the public ranking caches, so the home page and `/<lang>/rankings` no longer show the previous board for up to 5 minutes. The purge runs after the write commits; a failed write purges nothing. The response reports the purge outcome as `cache_purge` (`success` and `errors`) and stays a 200 when the purge fails. `invalidateRankingsCache()` now revalidates the route patterns `/[lang]` (page), `/[lang]/rankings` (layout) and `/[lang]/tools` (layout), which are the tags Next gives those pages in every locale, in place of the bare `/rankings` and `/tools` paths, which matched no page; its `/` layout call still purges every page as well, and the `/api/rankings` fetch on `/<lang>/rankings` carries the `rankings` tag so the purge reaches it. Tests: `tests/unit/set-current-cache-purge-354.test.ts` (#354)",
     "changeType": "fix"
   },
   {

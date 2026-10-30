@@ -12,7 +12,6 @@
  */
 
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { locales } from '@/i18n/config';
 import { invalidateCachePattern } from '@/lib/memory-cache';
 
 /**
@@ -38,22 +37,27 @@ export const CACHE_PATHS = {
 } as const;
 
 /**
- * The public pages that show the current board, per supported locale.
+ * The public pages that show the current board, as route patterns.
  *
  * Why: pages live under `app/[lang]/`, so `revalidatePath('/rankings')` and
- *   `'/tools'` match no page and left the ISR home page and the rankings list
- *   serving the previous board.
- * What: `/<lang>` (the home page, ISR), and `/<lang>/rankings` and
- *   `/<lang>/tools` as layouts, so their `[list]` and `[slug]` children go too.
+ *   `'/tools'` match no page. A concrete path with a type (`'/en', 'page'`)
+ *   matches none either: Next tags a cached page with its route pattern plus
+ *   the segment type (`_N_T_/[lang]/page`) and with its bare URL
+ *   (`_N_T_/en`), never with the URL plus a type.
+ * What: `/[lang]` as a page (the ISR home page in every locale), and
+ *   `/[lang]/rankings` and `/[lang]/tools` as layouts, so their `[list]` and
+ *   `[slug]` children go too. The `'/'` layout call in
+ *   `invalidateRankingsCache` also reaches these pages; these calls keep the
+ *   ranking pages purged if that call is ever narrowed.
  * Test: `tests/unit/set-current-cache-purge-354.test.ts`.
  */
 export function rankingsPagePaths(): { path: string; type: 'page' | 'layout' }[] {
-  // #354: one entry per locale from the project's list, not the bare `/rankings`.
-  return locales.flatMap((lang) => [
-    { path: `/${lang}`, type: 'page' as const },
-    { path: `/${lang}/rankings`, type: 'layout' as const },
-    { path: `/${lang}/tools`, type: 'layout' as const },
-  ]);
+  // #354: route patterns, which the pages carry as tags; concrete `/<lang>` paths match none.
+  return [
+    { path: '/[lang]', type: 'page' },
+    { path: '/[lang]/rankings', type: 'layout' },
+    { path: '/[lang]/tools', type: 'layout' },
+  ];
 }
 
 export type CacheTag = typeof CACHE_TAGS[keyof typeof CACHE_TAGS];
@@ -198,7 +202,7 @@ export async function invalidateRankingsCache(): Promise<InvalidationResult> {
   };
 
   try {
-    // #354: `/rankings` and `/tools` matched no page; purge the real `/[lang]` pages.
+    // #354: `/rankings` and `/tools` matched no page; purge the `/[lang]` route patterns.
     const pathsToRevalidate = [{ path: CACHE_PATHS.HOME, type: 'layout' as const }, ...rankingsPagePaths()];
 
     for (const { path, type } of pathsToRevalidate) {
