@@ -625,7 +625,33 @@ async function createNeonDb(): Promise<MigrationDb> {
   };
 }
 
-async function applyMigrations(argv: string[] = process.argv.slice(2)): Promise<number> {
+/** #355: the only ref a GitHub Actions run may apply a migration from. */
+export const APPLY_REF = "refs/heads/main";
+
+/**
+ * #355: Refuses a real apply that runs in GitHub Actions from any ref but main.
+ *
+ * Why: the apply-migration workflow is dispatchable on any ref and carries the production
+ * DATABASE_URL, so a branch's migration files could be applied to production.
+ * What: returns an error message when `env.GITHUB_ACTIONS` is exactly "true" (the runner
+ * sets it on every Actions job; it is unset on a laptop), the run is not a dry run, and
+ * `env.GITHUB_REF` is not refs/heads/main. Returns null otherwise, so a dry run from any
+ * ref and every run outside Actions proceed as before.
+ * Test: `tests/unit/apply-migrations-main-only-355.test.ts`
+ */
+export function refuseApplyOutsideMain(env: NodeJS.ProcessEnv, options: CliOptions): string | null {
+  if (options.dryRun || env["GITHUB_ACTIONS"] !== "true") return null;
+  const ref = env["GITHUB_REF"] ?? "";
+  if (ref === APPLY_REF) return null;
+  return `refusing to apply migrations from ref '${ref || "(unset)"}': in GitHub Actions a real apply runs only from ${APPLY_REF}. A --dry-run may run from any ref.`;
+}
+
+async function applyMigrations(
+  argv: string[] = process.argv.slice(2),
+  // #355: injectable so a test can prove the ref refusal happens before any connection.
+  env: NodeJS.ProcessEnv = process.env,
+  connect: () => Promise<MigrationDb> = createNeonDb
+): Promise<number> {
   const { options, errors } = parseArgs(argv);
   if (errors.length > 0) {
     for (const error of errors) {
@@ -637,9 +663,16 @@ async function applyMigrations(argv: string[] = process.argv.slice(2)): Promise<
     return 1;
   }
 
+  // #355: checked before connect(), so a refused apply opens no database connection.
+  const refusal = refuseApplyOutsideMain(env, options);
+  if (refusal) {
+    console.error(`ERROR: ${refusal}`);
+    return 1;
+  }
+
   try {
-    const db = await createNeonDb();
-    const preflight = { fingerprint: databaseFingerprint(process.env["DATABASE_URL"]), reports: createReportSource() };
+    const db = await connect();
+    const preflight = { fingerprint: databaseFingerprint(env["DATABASE_URL"]), reports: createReportSource() };
     const result = await runMigrations({ db, files: createFileSource(), preflight }, options);
     return result.exitCode;
   } catch (error) {
