@@ -1,24 +1,55 @@
 /**
- * What's New Summary Service
- * Generates LLM-powered monthly summaries using OpenRouter API
+ * The monthly report generator (#182).
+ *
+ * Why: #182 merges the two monthly generators into this one. It used to write
+ *   a ~1,500-word summary into `monthly_summaries`, while
+ *   `state-of-ai-summary.service.ts` wrote a 400-600-word editorial into
+ *   `state_of_ai_summaries`. Every caller of either (the daily-news cron, the
+ *   monthly cron, the admin routes, the CLI script) now reaches this class.
+ * What: Generates one 300-450-word report per `YYYY-MM` period through
+ *   OpenRouter, rejects a reply outside that length, and appends it as the
+ *   period's next version in `monthly_report_versions` (#114). The read
+ *   functions are re-exported from `monthly-report.repository.ts` so the pages
+ *   keep one import.
+ * Test: `tests/unit/whats-new-auto-regenerate.test.ts`,
+ *   `tests/unit/monthly-report-182.test.ts`.
  */
 
-import { getDb } from "@/lib/db/connection";
-import { monthlySummaries } from "@/lib/db/schema";
-import type { MonthlySummary, NewMonthlySummary } from "@/lib/db/schema";
-import { desc, eq } from "drizzle-orm";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 import { readCompletion } from "@/lib/services/llm-completion";
 import { loggers } from "@/lib/logger";
 import { OPENROUTER_USAGE_REQUEST, recordOpenRouterUsage } from "@/lib/services/provider-usage"; // #325
 import {
+  MONTHLY_REPORT_MAX_WORDS,
+  MONTHLY_REPORT_MIN_WORDS,
+  assertReportWordCount,
+} from "@/lib/services/monthly-report-words";
+import {
+  type StoredMonthlyReport,
+  appendReportVersion,
+  getLatestStoredSummary,
+  getStoredSummary,
+} from "@/lib/services/monthly-report.repository";
+import {
   WhatsNewAggregationService,
   type MonthlyDataSources,
 } from "./whats-new-aggregation.service";
 
+// #54/#182: the page readers need no OpenRouter key; they live in the repository.
+export {
+  getLatestStoredSummary,
+  getStoredSummary,
+  getStoredSummaryVersion,
+  listPeriods,
+  listReportVersions,
+  type StoredMonthlyReport,
+  type StoredReportVersionInfo,
+  type StoredSummaryPeriod,
+} from "@/lib/services/monthly-report.repository";
+
 export interface SummaryGenerationResult {
-  summary: MonthlySummary;
+  summary: StoredMonthlyReport;
   isNew: boolean;
   generationTimeMs: number;
 }
@@ -46,70 +77,16 @@ export type AutoRegenerationOutcome =
  */
 export const MIN_GENERATION_BUDGET_MS = 60_000;
 
-/** Completion budget for the ~1,500-word summary (~2,000 tokens); unchanged by #172. */
+/**
+ * Completion ceiling. #182: the report is ~600 tokens, but the ceiling stays
+ * where #172 left it so a reasoning-heavy reply is not cut off; tokens are
+ * billed as used, not as allowed.
+ */
 const WHATS_NEW_MAX_TOKENS = 16000;
 
-/** One stored summary period and when its row last changed (#54). */
-export interface StoredSummaryPeriod {
-  period: string;
-  updatedAt: Date;
-}
-
-// #54: the read functions below need no OpenRouter key, so rendering a page
-// never depends on the LLM credential the class constructor requires.
-function requireDb(): NonNullable<ReturnType<typeof getDb>> {
-  const db = getDb();
-  if (!db) {
-    throw new Error("Database connection not available");
-  }
-  return db;
-}
-
-/**
- * The stored summary for `period` (`YYYY-MM`), or null when no row exists.
- *
- * Why: #54: the `/whats-new` pages read rows directly. The old index fetched
- * a relative `/api` URL from a server component, which rejects on the server,
- * so it always rendered the empty state.
- * What: One exact-period read. Never falls back to another period and never
- * generates. Throws when the database is unavailable or the read fails.
- * Test: `tests/unit/whats-new-permalink.test.ts`.
- */
-export async function getStoredSummary(period: string): Promise<MonthlySummary | null> {
-  const rows = await requireDb()
-    .select()
-    .from(monthlySummaries)
-    .where(eq(monthlySummaries.period, period))
-    .limit(1);
-  return rows[0] ?? null;
-}
-
-/** Most recent stored summary by period, or null; throws on a failed read (#54). */
-export async function getLatestStoredSummary(): Promise<MonthlySummary | null> {
-  const rows = await requireDb()
-    .select()
-    .from(monthlySummaries)
-    .orderBy(desc(monthlySummaries.period))
-    .limit(1);
-  return rows[0] ?? null;
-}
-
-/**
- * Every stored summary period, newest first, with its row's `updatedAt`.
- *
- * Why: #54: the sitemap lists one permalink per stored report, and the
- * permalink page lists past reports. A sitemap must not silently drop them
- * (#162), so a failed read throws instead of returning an empty list.
- * What: Reads `period` and `updatedAt` from `monthly_summaries`, ordered by
- * period descending (`YYYY-MM` sorts chronologically).
- * Test: `tests/unit/whats-new-permalink.test.ts`, `tests/unit/sitemap-route.test.ts`.
- */
-export async function listPeriods(): Promise<StoredSummaryPeriod[]> {
-  return requireDb()
-    .select({ period: monthlySummaries.period, updatedAt: monthlySummaries.updatedAt })
-    .from(monthlySummaries)
-    .orderBy(desc(monthlySummaries.period));
-}
+/** Who started a generation, recorded on the stored version. */
+export const GENERATED_BY_DAILY_CRON = "cron-daily-news";
+export const GENERATED_BY_MONTHLY_CRON = "cron-monthly-summary";
 
 export class WhatsNewSummaryService {
   private apiKey: string;
@@ -231,7 +208,7 @@ export class WhatsNewSummaryService {
    * Returns cached summary instantly if it exists, null otherwise
    * Use this for quick reads where stale data is acceptable
    */
-  async getCachedSummary(period?: string): Promise<MonthlySummary | null> {
+  async getCachedSummary(period?: string): Promise<StoredMonthlyReport | null> {
     // #54: shares the key-free read the /whats-new pages use.
     return getStoredSummary(period || new Date().toISOString().slice(0, 7));
   }
@@ -240,64 +217,43 @@ export class WhatsNewSummaryService {
    * Most recent stored summary by period (`YYYY-MM` sorts chronologically),
    * or null when none is stored. Reads only; never generates.
    */
-  async getLatestSummary(): Promise<MonthlySummary | null> {
+  async getLatestSummary(): Promise<StoredMonthlyReport | null> {
     return getLatestStoredSummary(); // #54: shared key-free read
   }
 
   /**
-   * Generate monthly summary using Claude Sonnet 4.5
+   * Why: #182: the one entry point every non-cron-daily caller uses: the
+   * admin regenerate POST, the admin "State of AI" route, the monthly cron and
+   * the CLI script.
+   * What: Without `forceRegenerate`, returns the newest stored report
+   * unchanged (`isNew: false`, no LLM call) when its `dataHash` matches the
+   * period's current data. Otherwise generates and appends a new version,
+   * recording `generatedBy`. Throws on any failure; nothing is stored then.
+   * Test: `tests/unit/monthly-report-182.test.ts`.
    */
-  async generateMonthlySummary(period?: string, forceRegenerate = false): Promise<SummaryGenerationResult> {
+  async generateMonthlySummary(
+    period?: string,
+    forceRegenerate = false,
+    generatedBy = "admin"
+  ): Promise<SummaryGenerationResult> {
     const startTime = Date.now();
-    const db = getDb();
-    if (!db) {
-      throw new Error("Database connection not available");
-    }
-
     const targetPeriod = period || new Date().toISOString().slice(0, 7); // YYYY-MM
 
     loggers.api.info(`Generating monthly summary for period: ${targetPeriod}`);
 
-    // 1. Check for existing summary
-    if (!forceRegenerate) {
-      const existing = await db
-        .select()
-        .from(monthlySummaries)
-        .where(eq(monthlySummaries.period, targetPeriod))
-        .limit(1);
-
-      if (existing.length > 0) {
-        const summary = existing[0];
-        const generationTimeMs = Date.now() - startTime;
-
-        // Check if data has changed
-        const { month, year } = this.parsePeriod(targetPeriod);
-        const aggregatedData = await this.aggregationService.getMonthlyData(month, year);
-        const currentHash = this.aggregationService.calculateDataHash(aggregatedData);
-
-        if (currentHash === summary.dataHash) {
-          loggers.api.info("Returning cached summary (data unchanged)", { period: targetPeriod });
-          return {
-            summary,
-            isNew: false,
-            generationTimeMs,
-          };
-        } else {
-          loggers.api.info("Data changed, regenerating summary", {
-            period: targetPeriod,
-            oldHash: summary.dataHash.slice(0, 8),
-            newHash: currentHash.slice(0, 8),
-          });
-        }
-      }
-    }
-
-    // 2. Aggregate data from all sources
     const { month, year } = this.parsePeriod(targetPeriod);
     const aggregatedData = await this.aggregationService.getMonthlyData(month, year);
     const dataHash = this.aggregationService.calculateDataHash(aggregatedData);
 
-    return this.generateAndStore(targetPeriod, aggregatedData, dataHash, startTime);
+    if (!forceRegenerate) {
+      const existing = await getStoredSummary(targetPeriod);
+      if (existing && existing.dataHash === dataHash) {
+        loggers.api.info("Returning cached summary (data unchanged)", { period: targetPeriod });
+        return { summary: existing, isNew: false, generationTimeMs: Date.now() - startTime };
+      }
+    }
+
+    return this.generateAndStore(targetPeriod, aggregatedData, dataHash, startTime, generatedBy);
   }
 
   /**
@@ -306,15 +262,19 @@ export class WhatsNewSummaryService {
    * daily-news cron calls this, once per run.
    * What: Skips at once when `timeBudgetMs` is under
    * `MIN_GENERATION_BUDGET_MS`. Otherwise aggregates `period`'s data and
-   * hashes it the same way the stored row's `dataHash` was computed, and
-   * skips when the hash matches the stored row or when the month has no
-   * active articles yet. Otherwise makes one LLM call, aborted after
-   * `timeBudgetMs`, and upserts only `period`'s row. Throws on any failure
-   * before the upsert, so no row is changed; callers wrap it
-   * (`autoRegenerateMonthlySummary`).
+   * hashes it the same way the stored report's `dataHash` was computed, and
+   * skips when the hash matches the newest stored report or when the month
+   * has no active articles yet. Otherwise makes one LLM call, aborted after
+   * `timeBudgetMs`, and appends the period's next version (#182); earlier
+   * versions are never changed. Throws on any failure before the insert, so
+   * nothing is stored; callers wrap it (`autoRegenerateMonthlySummary`).
    * Test: `tests/unit/whats-new-auto-regenerate.test.ts`.
    */
-  async regenerateIfChanged(period: string, timeBudgetMs: number): Promise<AutoRegenerationOutcome> {
+  async regenerateIfChanged(
+    period: string,
+    timeBudgetMs: number,
+    generatedBy = GENERATED_BY_DAILY_CRON
+  ): Promise<AutoRegenerationOutcome> {
     // #160: checked before any database read, so a run that used most of the
     // function limit on ingestion spends none of the rest here.
     if (timeBudgetMs < MIN_GENERATION_BUDGET_MS) {
@@ -341,65 +301,51 @@ export class WhatsNewSummaryService {
       aggregatedData,
       dataHash,
       startTime,
+      generatedBy,
       AbortSignal.timeout(timeBudgetMs)
     );
     return { status: "generated", period, generationTimeMs: result.generationTimeMs };
   }
 
   /**
-   * One LLM call for `targetPeriod`, then an upsert of that period's row. The
-   * row is written only after non-empty content comes back, so any failure
-   * leaves the stored summary untouched.
+   * One LLM call for `targetPeriod`, then an append of that period's next
+   * version. The version is written only after the reply is complete,
+   * non-empty and 300-450 words, so any failure stores nothing.
    */
   private async generateAndStore(
     targetPeriod: string,
     aggregatedData: MonthlyDataSources,
     dataHash: string,
     startTime: number,
+    generatedBy: string,
     signal?: AbortSignal
   ): Promise<SummaryGenerationResult> {
-    const db = getDb();
-    if (!db) {
-      throw new Error("Database connection not available");
-    }
-
-    // 3. Format data for LLM prompt
     const dataPrompt = this.formatDataForPrompt(aggregatedData);
 
-    // 4. Generate summary using Claude Sonnet 4.5
-    const systemPrompt = `You are an expert AI industry analyst creating a comprehensive monthly "What's New" summary for AI Power Rankings.
+    // #182: one prompt for the one monthly report, replacing the ~1,500-word
+    // summary prompt here and the 400-600-word editorial prompt.
+    const systemPrompt = `You write the monthly "What's New" report for AI Power Rankings (aipowerranking.com), read by developers choosing AI coding tools.
 
-Your task is to synthesize news articles, ranking changes, new tools, and site updates into a cohesive narrative that helps readers understand the month's key developments in AI coding tools.
+Synthesize the month's news articles, new tools, ranking updates and site changes into one short report.
 
-Structure your response as a professional article with 4 main paragraphs (~1500 words total):
+Length: ${MONTHLY_REPORT_MIN_WORDS}-${MONTHLY_REPORT_MAX_WORDS} words in total. A reply outside that range is discarded.
 
-1. **Market Overview** (150-200 words): Synthesize the most significant trends and events
-2. **Key Developments** (150-200 words): Highlight major news, funding, product launches
-3. **Ranking & Tool Changes** (150-200 words): Discuss new tools and significant ranking movements
-4. **Looking Ahead** (150-200 words): Identify emerging trends and implications
+Structure, in markdown:
+1. A one-line "# " title naming the month.
+2. **The month in brief** (2-3 sentences): the most significant developments.
+3. **Key developments**: the major news, launches and funding, with inline markdown links to the source articles in the form [link text](url).
+4. **New tools and ranking updates**: new tools as a short bullet list (bold tool names, no links to /tools/ pages), then any ranking update.
+5. **What to watch** (1-2 sentences).
 
-Important guidelines:
-- Write in a professional, journalistic tone
-- Use specific data points, tool names, and figures from the source material
-- Include inline markdown links to relevant articles and tools using format: [link text](url)
-- Focus on what matters most to developers evaluating AI coding tools
-- Be analytical, not just descriptive - explain why things matter
-- Maintain objectivity while highlighting significant developments
+Tone: factual and specific. Use tool names, counts and dates from the source material. Do not invent facts. Avoid filler such as "the landscape continues to evolve rapidly", and avoid "delve" and "robust".
 
-Format your response as clean markdown that's ready to display.`;
+Return only the report markdown.`;
 
-    const userPrompt = `Create a comprehensive monthly summary based on this data:
+    const userPrompt = `Write the monthly report from this data:
 
 ${dataPrompt}
 
-Remember to:
-- Write approximately 1500 words across 4 paragraphs
-- Include specific links to articles and tools
-- Focus on significant developments
-- Explain implications for the AI coding tool landscape
-- Use markdown formatting for readability
-
-Generate the summary now:`;
+Remember: ${MONTHLY_REPORT_MIN_WORDS}-${MONTHLY_REPORT_MAX_WORDS} words, markdown, links only to the source article URLs given above.`;
 
     // #172: anthropic/claude-sonnet-4 was retired on OpenRouter; resolve the shared id once
     // so the call and the stored metadata name the same model.
@@ -448,10 +394,11 @@ Generate the summary now:`;
       if (typeof content !== "string" || content.trim() === "") {
         throw new Error("No content in OpenRouter response");
       }
+      // #182: the one monthly report is 300-450 words; anything else is not stored.
+      const wordCount = assertReportWordCount(content);
 
       const llmDuration = Date.now() - llmStartTime;
 
-      // 5. Save or update summary in database
       const metadata = {
         model: modelName,
         generation_time_ms: llmDuration,
@@ -461,49 +408,32 @@ Generate the summary now:`;
         site_change_count: aggregatedData.metadata.totalSiteChanges,
         data_period_start: aggregatedData.metadata.startDate.toISOString(),
         data_period_end: aggregatedData.metadata.endDate.toISOString(),
+        word_count: wordCount,
       };
 
-      const summaryData: NewMonthlySummary = {
+      // #114/#182: append the next version; prior versions stay readable.
+      const summary = await appendReportVersion({
         period: targetPeriod,
         content,
         dataHash,
         metadata,
+        generatedBy,
         generatedAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      // Upsert: insert or update if exists
-      const result = await db
-        .insert(monthlySummaries)
-        .values(summaryData)
-        .onConflictDoUpdate({
-          target: monthlySummaries.period,
-          set: {
-            content,
-            dataHash,
-            metadata,
-            generatedAt: new Date(),
-            updatedAt: new Date(),
-          },
-        })
-        .returning();
+      });
 
       const generationTimeMs = Date.now() - startTime;
 
       loggers.api.info("Monthly summary generated successfully", {
         period: targetPeriod,
+        version: summary.version,
+        generatedBy,
         generationTimeMs,
         llmDuration,
-        contentLength: content.length,
+        wordCount,
         articleCount: aggregatedData.metadata.totalArticles,
       });
 
-      return {
-        summary: result[0],
-        isNew: true,
-        generationTimeMs,
-      };
+      return { summary, isNew: true, generationTimeMs };
     } catch (error) {
       loggers.api.error("Failed to generate monthly summary", {
         error: error instanceof Error ? error.message : "Unknown error",

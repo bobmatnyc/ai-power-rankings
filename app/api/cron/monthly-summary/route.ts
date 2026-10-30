@@ -1,14 +1,22 @@
 /**
- * Cron API: Monthly State of AI Summary Generation
+ * Cron API: Monthly report for the closed month
  *
  * GET /api/cron/monthly-summary
  * - Runs on 1st of month at 8 AM UTC (configured in vercel.json)
- * - Generates State of AI editorial summary for the previous month
- * - Requires CRON_SECRET authentication via Bearer token OR Vercel cron authentication
+ * - #182: generates the previous month's report through the one monthly
+ *   generator (`WhatsNewSummaryService`), which appends a version to
+ *   `monthly_report_versions`. It no longer writes `state_of_ai_summaries`.
+ *   When the month's data is unchanged since the newest stored version, no
+ *   LLM call is made and nothing is written.
+ * - Requires CRON_SECRET authentication via Bearer token
  */
 
 import { NextResponse } from "next/server";
-import { StateOfAiSummaryService } from "@/lib/services/state-of-ai-summary.service";
+import {
+  GENERATED_BY_MONTHLY_CRON,
+  WhatsNewSummaryService,
+} from "@/lib/services/whats-new-summary.service";
+import { monthYearToPeriod } from "@/lib/services/monthly-report.repository";
 import { loggers } from "@/lib/logger";
 
 
@@ -79,7 +87,7 @@ function isAuthorizedCronRequest(request: Request): boolean {
 
 /**
  * GET /api/cron/monthly-summary
- * Vercel Cron endpoint for generating monthly State of AI summary
+ * Vercel Cron endpoint for generating the closed month's report
  */
 export async function GET(request: Request) {
   const startTime = Date.now();
@@ -96,7 +104,7 @@ export async function GET(request: Request) {
       // Alert: 401 means CRON_SECRET is misconfigured — this month's report will be skipped
       await sendCronAlert("/api/cron/monthly-summary", "401 Unauthorized — CRON_SECRET mismatch or not set", {
         hasAuthHeader: !!request.headers.get("authorization"),
-        impact: "Monthly State of AI report will not be generated for this month",
+        impact: "The closed month's report will not be generated",
       });
 
       return NextResponse.json(
@@ -120,26 +128,22 @@ export async function GET(request: Request) {
       targetYear -= 1;
     }
 
-    loggers.api.info("Cron: Starting monthly State of AI generation", {
-      targetMonth,
-      targetYear,
+    const period = monthYearToPeriod(targetMonth, targetYear);
+
+    loggers.api.info("Cron: Starting monthly report generation", {
+      period,
       triggerDate: now.toISOString(),
     });
 
-    // 3. Generate State of AI summary
-    const service = new StateOfAiSummaryService();
-    const result = await service.generateStateOfAi(
-      targetMonth,
-      targetYear,
-      "cron-monthly-summary",
-      false // Don't force regenerate if already exists
-    );
+    // 3. #182: the one monthly generator; unchanged data returns the stored version.
+    const service = new WhatsNewSummaryService();
+    const result = await service.generateMonthlySummary(period, false, GENERATED_BY_MONTHLY_CRON);
 
     const duration = Date.now() - startTime;
 
-    loggers.api.info("Cron: Monthly State of AI generation complete", {
-      targetMonth,
-      targetYear,
+    loggers.api.info("Cron: Monthly report generation complete", {
+      period,
+      version: result.summary.version,
       isNew: result.isNew,
       durationMs: duration,
       contentLength: result.summary.content.length,
@@ -151,13 +155,15 @@ export async function GET(request: Request) {
       {
         success: true,
         message: result.isNew
-          ? `State of AI summary generated for ${targetMonth}/${targetYear}`
-          : `State of AI summary already exists for ${targetMonth}/${targetYear}`,
+          ? `Monthly report version ${result.summary.version} generated for ${period}`
+          : `Monthly report for ${period} is unchanged`,
         summaryGenerated: result.isNew,
         summary: {
           id: result.summary.id,
-          month: result.summary.month,
-          year: result.summary.year,
+          period: result.summary.period,
+          version: result.summary.version,
+          month: targetMonth,
+          year: targetYear,
           generatedAt: result.summary.generatedAt.toISOString(),
           contentLength: result.summary.content.length,
         },
@@ -169,7 +175,7 @@ export async function GET(request: Request) {
     const duration = Date.now() - startTime;
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
 
-    loggers.api.error("Cron: Failed to generate monthly State of AI summary", {
+    loggers.api.error("Cron: Failed to generate the monthly report", {
       error: errorMessage,
       stack: error instanceof Error ? error.stack : undefined,
       durationMs: duration,
@@ -179,7 +185,7 @@ export async function GET(request: Request) {
     await sendCronAlert("/api/cron/monthly-summary", errorMessage, {
       durationMs: duration,
       stack: error instanceof Error ? error.stack?.split("\n").slice(0, 5).join(" | ") : undefined,
-      impact: "Monthly State of AI report may not have been generated — check state_of_ai_summaries table",
+      impact: "The closed month's report may not have been generated — check monthly_report_versions",
     });
 
     return NextResponse.json(
