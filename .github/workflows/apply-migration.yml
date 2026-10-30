@@ -15,6 +15,14 @@ name: Apply database migration
 # summary, so the pending list and the before/after columns are readable without opening
 # the log. The script redacts anything URL-shaped out of its error messages; this repo is
 # public and the driver can put the connection string into one.
+#
+# #355: a real apply (dry_run: false) runs only from refs/heads/main. The "Refuse an apply
+# from any ref but main" step fails the job before any step connects to the database, and
+# scripts/apply-migrations.ts refuses the same way when GITHUB_REF is not main. A dry run
+# still runs from any ref. Known limit: workflow_dispatch runs the workflow file from the
+# dispatched ref and DATABASE_URL is a repository secret, so a branch cut before this guard
+# still carries the unguarded workflow and script until DATABASE_URL moves to an
+# environment restricted to main.
 
 on:
   workflow_dispatch:
@@ -87,6 +95,22 @@ jobs:
           fi
 
           echo "migration_file=${MIGRATION_FILE} show_columns_table=${SHOW_COLUMNS_TABLE}"
+
+      # #355: an apply dispatched on any ref but main fails here, before the dry run below
+      # opens a database connection. It fails the job rather than skipping the apply, so the
+      # run shows red; the later steps carry no always(), so they are skipped after it.
+      - name: Refuse an apply from any ref but main
+        id: apply-ref-guard
+        if: ${{ inputs.dry_run == false }}
+        env:
+          RUN_REF: ${{ github.ref }}
+        run: |
+          set -uo pipefail
+          if [ "$RUN_REF" != "refs/heads/main" ]; then
+            echo "::error::Refusing to apply a migration from ref '${RUN_REF}'. A real apply runs only from refs/heads/main; re-dispatch on main, or use dry_run: true on this ref."
+            exit 1
+          fi
+          echo "Apply dispatched on ${RUN_REF}."
 
       # Always runs, including on an apply dispatch, so the apply is preceded by a recorded
       # snapshot of what was pending and what the table looked like beforehand.

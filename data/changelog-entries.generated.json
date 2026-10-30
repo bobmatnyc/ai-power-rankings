@@ -101,8 +101,8 @@
   {
     "id": "unreleased-0bf3ed505857",
     "version": "Unreleased",
-    "date": "2026-10-30T09:24:27.809Z",
-    "dateSource": "build",
+    "date": "2026-10-30T09:29:05.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "rankings",
     "title": "changing the current board from the admin set-current action (POST /api/admin/rankings with set-current, and POST…",
