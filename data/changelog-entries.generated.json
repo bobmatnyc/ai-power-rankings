@@ -1089,14 +1089,14 @@
     "changeType": "feature"
   },
   {
-    "id": "unreleased-e26abe4ba8a5",
+    "id": "unreleased-6e58a7af1a59",
     "version": "Unreleased",
-    "date": "2026-10-12T11:44:37.000Z",
+    "date": "2026-10-30T10:47:01.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "whats-new",
     "title": "the daily-news cron (/api/cron/daily-news, CRON_SECRET-gated) regenerates the current month's what's-new summary after…",
-    "description": "the daily-news cron (`/api/cron/daily-news`, `CRON_SECRET`-gated) regenerates the current month's what's-new summary after ingestion, so the page no longer shows an old month until an admin regenerates it. Each run makes at most one LLM call, and skips it when the month's data hash matches the stored summary, when the month has no articles yet (the previous month's summary stays served), when under 60 s of the run's time budget remains, or when the ingestion run failed (`reason: \"ingestion-failed\"`, so a failed run spends no LLM credit). An LLM or database failure leaves every stored summary unchanged; the run still succeeds and reports it in `data.whatsNewSummary`. Whitespace-only LLM output is now rejected instead of stored. The public GET still never generates, and the admin POST is unchanged. The ingestion pipeline timeout drops from 10 minutes to 265 s, inside the cron's 300 s function limit: a run that exceeds it is marked failed and returns a result instead of being killed by Vercel with its run row left \"running\". Ingestion has priority: the summary step runs only when at least 60 s remain, and otherwise skips before any database read and retries the next day. The timeout path's failed-run write is limited to 10 s; a write that fails or hangs is reported in the run's `errors`. The admin summary POST's `maxDuration` rises from 60 s to 300 s, matching `/api/cron/monthly-summary`. Tests: `tests/unit/whats-new-auto-regenerate.test.ts`, `tests/unit/cron-daily-news-summary.test.ts`, `tests/unit/cron-daily-news-timeout.test.ts` (#160).",
+    "description": "the daily-news cron (`/api/cron/daily-news`, `CRON_SECRET`-gated) regenerates the current month's what's-new summary after ingestion, so the page no longer shows an old month until an admin regenerates it. Each run makes at most one LLM call, and skips it when the month's data hash matches the stored summary, when the month has no articles yet (the previous month's summary stays served), when under 60 s of the run's time budget remains, or when the ingestion run failed (`reason: \"ingestion-failed\"`, so a failed run spends no LLM credit). An LLM or database failure leaves every stored summary unchanged; the run still succeeds and reports it in `data.whatsNewSummary`. Whitespace-only LLM output is now rejected instead of stored. The public GET still never generates, and the admin POST is unchanged. The ingestion pipeline timeout drops from 10 minutes to 265 s, inside the cron's 300 s function limit: a run that exceeds it is marked failed and returns a result instead of being killed by Vercel with its run row left \"running\". Ingestion has priority: the summary step runs only when at least 60 s remain, and otherwise skips before any database read and retries the next day. The timeout path's failed-run write is limited to 10 s; a write that fails or hangs is reported in the run's `errors`. The admin summary POST's `maxDuration` rises from 60 s to 300 s, matching `/api/cron/monthly-summary`. Tests: `tests/unit/whats-new-auto-regenerate.test.ts`, `tests/unit/cron-daily-news-summary.test.ts`, `tests/unit/cron-daily-news-timeout.test.ts` (#160). Superseded by #182: the daily-news cron no longer generates a monthly report; see the #182 entry under Changed.",
     "changeType": "feature"
   },
   {
@@ -1111,14 +1111,14 @@
     "changeType": "feature"
   },
   {
-    "id": "unreleased-7ea3740992e5",
+    "id": "unreleased-acb291e345f2",
     "version": "Unreleased",
-    "date": "2026-10-30T10:09:16.000Z",
+    "date": "2026-10-30T10:47:01.000Z",
     "dateSource": "commit",
     "section": "Changed",
     "scope": "whats-new",
     "title": "one monthly report generator",
-    "description": "one monthly report generator. The What's New summary and the State of AI editorial were two generators writing two tables; every caller (the daily-news cron, the monthly cron, the admin regenerate and State of AI routes, `scripts/generate-state-of-ai.ts`) now runs `WhatsNewSummaryService`, which asks for 300-450 words and stores no reply outside that range. Each generation appends the month's next version to the new `monthly_report_versions` table, so regenerating a month keeps every earlier version; `GET /api/whats-new/summary?period=YYYY-MM&version=N` returns one (0 is the pre-merge row). `monthly_summaries` and `state_of_ai_summaries` are read-only: no code writes them, and their rows are still served while a month has no version. `/api/state-of-ai/current` serves the merged report once one exists. Migration `0031_create_monthly_report_versions.sql` must be applied before this deploys, because the What's New pages, the sitemap and `/api/state-of-ai/current` read the new table. Tests: `tests/unit/monthly-report-182.test.ts`, `tests/unit/whats-new-auto-regenerate.test.ts`, `tests/unit/monthly-report-versions-migration-182.test.ts` (#182)",
+    "description": "one monthly report generator. The What's New summary and the State of AI editorial were two generators writing two tables; every caller (the monthly cron, the admin regenerate and State of AI routes, `scripts/generate-state-of-ai.ts`) now runs `WhatsNewSummaryService`, which asks for 300-450 words and stores no reply outside that range. Each generation appends the month's next version to the new `monthly_report_versions` table, so regenerating a month keeps every earlier version; `GET /api/whats-new/summary?period=YYYY-MM&version=N` returns one (0 is the pre-merge row). `monthly_summaries` and `state_of_ai_summaries` are read-only: no code writes them, and their rows are still served while a month has no version. `/api/state-of-ai/current` serves the merged report once one exists. Migration `0031_create_monthly_report_versions.sql` must be applied before this deploys, because the What's New pages, the sitemap and `/api/state-of-ai/current` read the new table. The daily-news cron no longer regenerates the current month after ingestion, and its response no longer carries `data.whatsNewSummary`; only the 1st-of-month cron (`/api/cron/monthly-summary`) writes a month's report, once the month has closed, and the admin routes still generate on request. Tests: `tests/unit/monthly-report-182.test.ts`, `tests/unit/monthly-report-generator-182.test.ts`, `tests/unit/cron-daily-news-summary.test.ts`, `tests/unit/monthly-report-versions-migration-182.test.ts` (#182)",
     "changeType": "improvement"
   },
   {
