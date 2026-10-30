@@ -171,6 +171,11 @@ describe("load-model-seed workflow step scripts (#329)", () => {
     ["set_status with seed all", { SEED: "all", SET_STATUS: "true", DRY_RUN: "true", CONFIRM: "" }, 0, "set_status=true"],
     ["set_status with one seed", { SEED: "closed", SET_STATUS: "true", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
     ["a malformed set_status", { SEED: "all", SET_STATUS: "yes", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
+    // #334: the overwrite input takes slug:column pairs of curated columns only.
+    ["an overwrite list", { SEED: "all", OVERWRITE: "glm:licence,deepseek-pro:hf_repo", DRY_RUN: "true", CONFIRM: "" }, 0, "overwrite=glm:licence,deepseek-pro:hf_repo"],
+    ["an overwrite of a non-curated column", { SEED: "all", OVERWRITE: "glm:status", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
+    ["an overwrite with shell text", { SEED: "all", OVERWRITE: "glm:licence --apply", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
+    ["an overwrite with a trailing comma", { SEED: "all", OVERWRITE: "glm:licence,", DRY_RUN: "true", CONFIRM: "" }, 1, ""],
   ])("mode selection on %s", (_name, env, code, mode) => {
     const res = runStep("mode", env);
     expect(res.code).toBe(code);
@@ -199,5 +204,28 @@ describe("load-model-seed workflow step scripts (#329)", () => {
     expect(res.code).toBe(0);
     expect(res.read("npx.log").trim()).toBe("tsx scripts/load-model-seeds.ts --seed all --dry-run --set-status");
     expect(res.read("seed-counts-dry-run.txt")).toContain("status: 2 row(s), 1 set active, 1 set deprecated, 0 unchanged, 0 refused");
+  });
+
+  // #334: the owner's opt-in reaches both the dry run and the write as one --overwrite argument.
+  it.each([
+    ["dryrun", "--dry-run"],
+    ["write", "--apply"],
+  ])("the %s step passes the overwrite list", (stepId, mode) => {
+    const res = runStep(stepId, { SEED: "all", OVERWRITE: "glm:licence,kimi:hf_repo", STUB_OUTPUT: "totals: 1 row(s)" });
+    expect(res.code).toBe(0);
+    expect(res.read("npx.log").trim()).toBe(`tsx scripts/load-model-seeds.ts --seed all ${mode} --overwrite glm:licence,kimi:hf_repo`);
+  });
+});
+
+describe("load-model-seed workflow header (#334)", () => {
+  const header = () => load().split("\non:\n")[0]!;
+
+  it("states which fields the seed owns, which it only fills when empty, and the overwrite input", () => {
+    const text = header().replace(/\n# ?/g, " ");
+    expect(text).toContain("The seed owns data.modelSeed");
+    expect(text).toContain("hf_repo, licence, parameters_b, active_parameters_b and release_date are curated");
+    expect(text).toContain("fills each one only when it is empty");
+    expect(text).toContain("The `overwrite` input");
+    expect(text).toMatch(/open_weight is filled when empty; a stored value that disagrees refuses the row/);
   });
 });

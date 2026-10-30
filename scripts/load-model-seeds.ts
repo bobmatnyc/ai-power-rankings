@@ -13,11 +13,14 @@
  *   validates `docs/refresh/model-lifecycle.json` and plans, and with `--apply` writes in the
  *   same transaction, each row's lifecycle status (active or deprecated) and `data.modelLifecycle`,
  *   then re-points the listed redirect aliases (`MODEL_REDIRECT_REPOINTS`). D0c: a lifecycle
- *   activation needs no benchmark figure.
+ *   activation needs no benchmark figure. #334: a curated column (`CURATED_COLUMNS`) whose stored
+ *   non-null value differs from the seed refuses the row; `--overwrite slug:column[,...]`
+ *   (repeatable) lets the owner replace exactly the named values, each shown in the diff.
  *   The connection string is never printed.
- * Test: `tests/unit/load-model-seeds-329.test.ts`
+ * Test: `tests/unit/load-model-seeds-329.test.ts`, `tests/unit/model-seed-curated-334.test.ts`
  *
  * Usage: tsx scripts/load-model-seeds.ts [--seed all|closed|open-weight|majors] [--dry-run | --apply] [--set-status]
+ *   [--overwrite slug:column[,slug:column...]]
  */
 
 import fs from "node:fs";
@@ -45,10 +48,13 @@ import {
 } from "../lib/db/repositories/model-redirect-repoint";
 import {
   applyModelSeedPlans,
+  CURATED_COLUMNS,
+  type CuratedColumn,
   type ModelSeedDb,
   type ModelSeedEntry,
   type ModelSeedPlan,
   planModelSeedRows,
+  type SeedOverwrite,
 } from "../lib/db/repositories/model-seed-writer";
 import { redactConnectionString } from "./apply-migrations";
 import { databaseFingerprint } from "./migration-preflight";
@@ -67,6 +73,24 @@ export interface LoaderArgs {
   apply: boolean;
   /** #329: also set each row's lifecycle status; omitted when false. */
   setStatus?: true;
+  /** #334: curated values the owner allows the seed to replace; omitted when none. */
+  overwrites?: SeedOverwrite[];
+}
+
+const USAGE =
+  "Usage: tsx scripts/load-model-seeds.ts [--seed all|closed|open-weight|majors] [--dry-run | --apply] [--set-status] [--overwrite slug:column[,slug:column...]]";
+
+/** #334: parses `slug:column[,slug:column...]`; returns the error text for a malformed list. */
+export function parseOverwrites(value: string): SeedOverwrite[] | string {
+  const out: SeedOverwrite[] = [];
+  for (const item of value.split(",")) {
+    const m = /^([a-z0-9][a-z0-9.-]*):([a-z_]+)$/.exec(item);
+    if (!m || !(CURATED_COLUMNS as readonly string[]).includes(m[2]!)) {
+      return `--overwrite takes slug:column pairs, column one of ${CURATED_COLUMNS.join(", ")}; got "${item}"`;
+    }
+    out.push({ slug: m[1]!, column: m[2] as CuratedColumn });
+  }
+  return out;
 }
 
 /** Reads and validates the selected seed files; throws on any bad row or a slug used twice. */
@@ -99,7 +123,9 @@ function formatPlan(plan: ModelSeedPlan, verb: "would" | "will"): string[] {
   if (plan.outcome === "unchanged") return [`unchanged: ${label}`];
   return [
     `${verb} ${plan.outcome}: ${label}`,
-    ...plan.changes.map((c) => `  ${c.column}: ${c.from === null ? "(null)" : String(c.from)} -> ${String(c.to)}`),
+    ...plan.changes.map(
+      (c) => `  ${c.column}: ${c.from === null ? "(null)" : String(c.from)} -> ${String(c.to)}${c.overwrite ? " (overwrite)" : ""}`
+    ),
   ];
 }
 
@@ -111,8 +137,9 @@ function formatPlan(plan: ModelSeedPlan, verb: "would" | "will"): string[] {
  *   status is refused). `apply` true writes nothing and returns 1 when anything is refused;
  *   otherwise it writes every seed plan, then every status plan, then every redirect re-point
  *   (`repoints`, planned with a `redirects:` line), in one transaction; a guard that matches
- *   no row throws and the transaction rolls back.
- * Test: `tests/unit/load-model-seeds-329.test.ts`
+ *   no row throws and the transaction rolls back. #334: `overwrites` reaches the planner; one
+ *   naming a slug outside `entries` returns 1 before any query.
+ * Test: `tests/unit/load-model-seeds-329.test.ts`, `tests/unit/model-seed-curated-334.test.ts`
  */
 export async function loadModelSeeds(
   db: ModelSeedDb,
@@ -120,9 +147,17 @@ export async function loadModelSeeds(
   apply: boolean,
   log: (line: string) => void = console.log,
   lifecycle: ModelLifecycle | null = null,
-  repoints: readonly RedirectRepoint[] = []
+  repoints: readonly RedirectRepoint[] = [],
+  overwrites: readonly SeedOverwrite[] = []
 ): Promise<number> {
-  const plans = await planModelSeedRows(db, entries);
+  const slugs = new Set(entries.map((e) => e.row.slug));
+  const stray = overwrites.filter((o) => !slugs.has(o.slug));
+  if (stray.length > 0) {
+    for (const o of stray) log(`REFUSED overwrite: ${o.slug}:${o.column}: the slug is not in the selected seed`);
+    log("nothing planned or written");
+    return 1;
+  }
+  const plans = await planModelSeedRows(db, entries, overwrites);
   for (const plan of plans) for (const line of formatPlan(plan, apply ? "will" : "would")) log(line);
   const count = (o: ModelSeedPlan["outcome"]) => plans.filter((p) => p.outcome === o).length;
   let refused = count("refused");
@@ -187,6 +222,7 @@ export function parseArgs(argv: readonly string[]): LoaderArgs | { errors: strin
   let apply = false;
   let dryRun = false;
   let setStatus = false;
+  const overwrites: SeedOverwrite[] = [];
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i]!;
     if (arg === "--apply") apply = true;
@@ -196,20 +232,25 @@ export function parseArgs(argv: readonly string[]): LoaderArgs | { errors: strin
       const value = argv[++i];
       if (value === "all" || value === "closed" || value === "open-weight" || value === "majors") seed = value;
       else errors.push(`--seed must be all, closed, open-weight or majors`);
+    } else if (arg === "--overwrite") {
+      const parsed = parseOverwrites(argv[++i] ?? "");
+      if (typeof parsed === "string") errors.push(parsed);
+      else overwrites.push(...parsed);
     } else errors.push(`unknown argument ${arg}`);
   }
   if (apply && dryRun) errors.push("--dry-run and --apply are exclusive");
   // #329: the lifecycle covers every seed file, so the status step runs on the whole set.
   if (setStatus && seed !== "all") errors.push("--set-status needs --seed all");
   if (errors.length > 0) return { errors };
-  return setStatus ? { seed, apply, setStatus: true } : { seed, apply };
+  const args: LoaderArgs = setStatus ? { seed, apply, setStatus: true } : { seed, apply };
+  return overwrites.length > 0 ? { ...args, overwrites } : args;
 }
 
 async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
   const args = parseArgs(argv);
   if ("errors" in args) {
     for (const e of args.errors) console.error(`ERROR: ${e}`);
-    console.error("Usage: tsx scripts/load-model-seeds.ts [--seed all|closed|open-weight|majors] [--dry-run | --apply] [--set-status]");
+    console.error(USAGE);
     return 1;
   }
   let entries: ModelSeedEntry[];
@@ -251,7 +292,8 @@ async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
     },
   };
   try {
-    return await loadModelSeeds(db, entries, args.apply, console.log, lifecycle, lifecycle ? MODEL_REDIRECT_REPOINTS : []);
+    const repoints = lifecycle ? MODEL_REDIRECT_REPOINTS : [];
+    return await loadModelSeeds(db, entries, args.apply, console.log, lifecycle, repoints, args.overwrites ?? []);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`ERROR: load-model-seeds failed: ${redactConnectionString(message, url)}`);

@@ -137,9 +137,14 @@ describe("#329 loadModelSeeds", () => {
     const { db, calls, transactions } = boundary([deepseek]);
     const lines: string[] = [];
     const entries = ALL.filter((e) => e.row.slug === "deepseek");
-    expect(await loadModelSeeds(db, entries, true, (l) => lines.push(l))).toBe(0);
-    expect(lines).toContain("  hf_repo: deepseek-ai/DeepSeek-V3.2 -> deepseek-ai/DeepSeek-V4.1-Flash");
-    expect(lines).toContain("  parameters_b: 685.4 -> 552");
+    // #334: replacing a stored curated value needs the owner's overwrite.
+    const overwrites = [
+      { slug: "deepseek", column: "hf_repo" as const },
+      { slug: "deepseek", column: "parameters_b" as const },
+    ];
+    expect(await loadModelSeeds(db, entries, true, (l) => lines.push(l), null, [], overwrites)).toBe(0);
+    expect(lines).toContain("  hf_repo: deepseek-ai/DeepSeek-V3.2 -> deepseek-ai/DeepSeek-V4.1-Flash (overwrite)");
+    expect(lines).toContain("  parameters_b: 685.4 -> 552 (overwrite)");
     expect(transactions()).toBe(1);
     const writes = calls.filter((c) => c.inTransaction);
     expect(writes).toHaveLength(1);
