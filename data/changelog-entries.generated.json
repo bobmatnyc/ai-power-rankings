@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-e0432f760127",
+    "version": "Unreleased",
+    "date": "2026-10-30T06:27:54.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "models",
+    "title": "the model seed loader no longer overwrites curated model fields",
+    "description": "the model seed loader no longer overwrites curated model fields. On an existing model row it fills `hf_repo`, `licence`, `parameters_b`, `active_parameters_b` and `release_date` only when the stored value is empty, and an equal value is no change. A seed value that differs from a stored value refuses the row, and the dry run names each field with its stored and seed values. The owner can replace named values with `--overwrite slug:column[,slug:column...]` (the workflow's `overwrite` input); the dry run marks each one `(overwrite)` with its old and new value. The upsert's guard checks the same rule, so a value changed between the plan and the write rolls the whole write back. The workflow header states which fields the seed owns. Tests: `tests/unit/model-seed-curated-334.test.ts`, `tests/unit/model-seed-curated-pglite-334.test.ts`, `tests/unit/load-model-seed-workflow-329.test.ts` (#334)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-2f6d48605032",
     "version": "Unreleased",
     "date": "2026-10-30T06:07:13.000Z",
