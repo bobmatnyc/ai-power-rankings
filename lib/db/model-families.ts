@@ -7,7 +7,7 @@
  * What: `D91_FOLD_PAIRS` lists old -> family in the order 0019 settles clashes (the D90
  *   "earlier pair wins" rule): the four survivors first, then the three aliases.
  *   `D91_SURVIVORS` maps each family to the version whose data and scores it carries.
- *   `D91_FAMILY_ROWS` are the 0018 rows.
+ *   `D91_FAMILY_ROWS` are the 0018 rows, except glm's licence, which follows the model card (#329).
  * Test: `tests/unit/model-family-fold-d91.test.ts`.
  */
 
@@ -46,6 +46,8 @@ export interface FamilyRow {
 export const D91_FAMILY_ROWS: readonly FamilyRow[] = [
   { slug: "claude-opus", name: "Claude Opus", openWeight: false, licence: null },
   { slug: "claude-sonnet", name: "Claude Sonnet", openWeight: false, licence: null },
-  { slug: "glm", name: "GLM", openWeight: true, licence: "mit" },
+  // #329: glm licence follows the model card (custom glm-5.3 licence)
+  // 0018 inserted "mit"; the stored row is corrected by the seed loader's --overwrite glm:licence.
+  { slug: "glm", name: "GLM", openWeight: true, licence: "glm-5.3" },
   { slug: "kimi", name: "Kimi", openWeight: true, licence: "modified-mit" },
 ];
