@@ -20,9 +20,10 @@ name: Apply database migration
 # from any ref but main" step fails the job before any step connects to the database, and
 # scripts/apply-migrations.ts refuses the same way when GITHUB_REF is not main. A dry run
 # still runs from any ref. Known limit: workflow_dispatch runs the workflow file from the
-# dispatched ref and DATABASE_URL is a repository secret, so a branch cut before this guard
-# still carries the unguarded workflow and script until DATABASE_URL moves to an
-# environment restricted to main.
+# dispatched ref and DATABASE_URL is a repository secret, so any branch can carry a workflow
+# without this guard, whether cut before it or edited to remove it, until DATABASE_URL moves
+# to an environment restricted to main. The guard stops a mistaken apply, not a deliberate
+# one by someone with push access.
 
 on:
   workflow_dispatch:

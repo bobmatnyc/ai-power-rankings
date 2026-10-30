@@ -119,6 +119,12 @@ describe("apply-migration workflow ref guard (#355)", () => {
     expect(guard).toContain("if: ${{ inputs.dry_run == false }}");
     expect(guard).toContain("RUN_REF: ${{ github.ref }}");
     expect(guard).not.toMatch(/continue-on-error|always\(\)/);
+    // The guard and the apply must gate on the same condition, so they cannot disagree.
+    const apply = all.find((s) => s.startsWith("      - name: Apply migration\n"));
+    expect(apply, "Apply migration step").toBeDefined();
+    const ifOf = (s: string): string | undefined => s.match(/\n {8}if: (.*)\n/)?.[1];
+    expect(ifOf(apply!)).toBe("${{ inputs.dry_run == false }}");
+    expect(ifOf(apply!)).toBe(ifOf(guard));
     // No later step may run after the guard fails.
     for (const later of all.slice(guardAt + 1)) {
       expect(later).not.toMatch(/always\(\)|failure\(\)|continue-on-error/);
