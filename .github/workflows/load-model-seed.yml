@@ -15,7 +15,21 @@ name: Load model seed (#329)
 # `set_status: true` (with seed all) adds the lifecycle status step: the dry run then also plans,
 # and the write also sets in the same transaction, each row's status from
 # docs/refresh/model-lifecycle.json (active or deprecated, #329), then re-points the listed
-# Opus 4.x redirect aliases to claude-opus-4. The job runs only when dispatched from main, so no other
+# Opus 4.x redirect aliases to claude-opus-4.
+#
+# Field ownership (#334). On a new row the seed sets every field it states, with status inactive.
+# On an existing model row:
+# - The seed owns data.modelSeed (its provenance) and replaces it on every write.
+# - open_weight is filled when empty; a stored value that disagrees refuses the row, with no override.
+# - hf_repo, licence, parameters_b, active_parameters_b and release_date are curated: the seed
+#   fills each one only when it is empty, and an equal value is no change. A stored value that
+#   differs refuses the row; the dry run names each field with its stored and seed values.
+# - The `overwrite` input is the owner's opt-in to replace named curated values: a comma-separated
+#   list of slug:column pairs, such as glm:licence. The dry run marks each one "(overwrite)" with
+#   its old and new value, and the write still rolls back if that stored value changed since the plan.
+# The seed never writes status, name, category or data.metrics on an existing row.
+#
+# The job runs only when dispatched from main, so no other
 # ref reaches the secret-bearing steps. Any non-zero exit fails the job.
 # The job summary carries the mode, each step's outcome and the script's totals line only
 # (D19): no host, database fingerprint, role name, rank or score. The script redacts anything
@@ -53,6 +67,11 @@ on:
         description: 'Also plan (and, on a write, set) each row''s lifecycle status from docs/refresh/model-lifecycle.json. Needs seed all.'
         type: boolean
         default: false
+        required: false
+      overwrite:
+        description: 'Optional: curated values the seed may replace, as slug:column pairs separated by commas (for example glm:licence). Empty refuses every such change.'
+        type: string
+        default: ''
         required: false
       confirm:
         description: 'Write only: type load-model-seed (with dry_run false). Ignored on a dry run.'
@@ -97,6 +116,7 @@ jobs:
         env:
           SEED: ${{ inputs.seed }}
           SET_STATUS: ${{ inputs.set_status }}
+          OVERWRITE: ${{ inputs.overwrite }}
           DRY_RUN: ${{ inputs.dry_run }}
           CONFIRM: ${{ inputs.confirm }}
         run: |
@@ -112,6 +132,17 @@ jobs:
             false) echo "set_status=false" >> "$GITHUB_OUTPUT" ;;
             *) echo "::error::set_status must be true or false; nothing was run"; exit 1 ;;
           esac
+          # #334: slug:column pairs only, so the value is safe to pass as one argument.
+          pair='[a-z0-9][a-z0-9.-]*:(hf_repo|licence|parameters_b|active_parameters_b|release_date)'
+          # The whole string is matched, so a newline or carriage return cannot smuggle a second
+          # line into $GITHUB_OUTPUT.
+          nl=$'\n'
+          cr=$'\r'
+          if [ -n "${OVERWRITE:-}" ] && { [[ "$OVERWRITE" == *"$nl"* || "$OVERWRITE" == *"$cr"* ]] || ! [[ "$OVERWRITE" =~ ^${pair}(,${pair})*$ ]]; }; then
+            echo "::error::overwrite must be slug:column pairs separated by commas; nothing was run"
+            exit 1
+          fi
+          echo "overwrite=${OVERWRITE:-}" >> "$GITHUB_OUTPUT"
           if [ "$DRY_RUN" != "false" ]; then
             echo "mode=dry-run" >> "$GITHUB_OUTPUT"
             echo "Mode: dry run (writes nothing)"
@@ -131,6 +162,7 @@ jobs:
         env:
           SEED: ${{ steps.mode.outputs.seed }}
           SET_STATUS: ${{ steps.mode.outputs.set_status }}
+          OVERWRITE: ${{ steps.mode.outputs.overwrite }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: production
         run: |
@@ -138,7 +170,7 @@ jobs:
           status=0
           status_flag=""
           if [ "${SET_STATUS:-false}" = "true" ]; then status_flag="--set-status"; fi
-          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --dry-run ${status_flag:+"$status_flag"} > "$RUNNER_TEMP/seed-dry-run.raw" 2>&1 || status=$?
+          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --dry-run ${status_flag:+"$status_flag"} ${OVERWRITE:+--overwrite} ${OVERWRITE:+"$OVERWRITE"} > "$RUNNER_TEMP/seed-dry-run.raw" 2>&1 || status=$?
           grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/seed-dry-run.raw" > "$RUNNER_TEMP/seed-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/seed-dry-run.raw"
           cat "$RUNNER_TEMP/seed-dry-run.txt"
@@ -152,6 +184,7 @@ jobs:
         env:
           SEED: ${{ steps.mode.outputs.seed }}
           SET_STATUS: ${{ steps.mode.outputs.set_status }}
+          OVERWRITE: ${{ steps.mode.outputs.overwrite }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: production
         run: |
@@ -159,7 +192,7 @@ jobs:
           status=0
           status_flag=""
           if [ "${SET_STATUS:-false}" = "true" ]; then status_flag="--set-status"; fi
-          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --apply ${status_flag:+"$status_flag"} > "$RUNNER_TEMP/seed-write.raw" 2>&1 || status=$?
+          npx tsx scripts/load-model-seeds.ts --seed "$SEED" --apply ${status_flag:+"$status_flag"} ${OVERWRITE:+--overwrite} ${OVERWRITE:+"$OVERWRITE"} > "$RUNNER_TEMP/seed-write.raw" 2>&1 || status=$?
           grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/seed-write.raw" > "$RUNNER_TEMP/seed-write.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/seed-write.raw"
           cat "$RUNNER_TEMP/seed-write.txt"
@@ -175,6 +208,7 @@ jobs:
           MODE: ${{ steps.mode.outputs.mode }}
           SEED: ${{ steps.mode.outputs.seed }}
           SET_STATUS: ${{ steps.mode.outputs.set_status }}
+          OVERWRITE: ${{ steps.mode.outputs.overwrite }}
           DRY_RUN_OUTCOME: ${{ steps.dryrun.outcome }}
           WRITE_OUTCOME: ${{ steps.write.outcome }}
         run: |
@@ -189,6 +223,7 @@ jobs:
             echo ''
             echo "- Seed: ${SEED:-not selected}"
             echo "- Status step: ${SET_STATUS:-not selected}"
+            echo "- Overwrite: ${OVERWRITE:-none}"
             echo "- Mode: ${mode_label}"
             echo "- Dry run: ${DRY_RUN_OUTCOME:-not run}"
             echo "- Write: ${WRITE_OUTCOME:-not run}"

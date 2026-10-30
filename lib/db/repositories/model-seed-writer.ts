@@ -9,7 +9,8 @@
  *   `MODEL_SEED_UPSERT_SQL`, inside the caller's transaction. The statement is an upsert keyed
  *   on slug: a new row is created `inactive`, kind `model`, category `other`; on an existing
  *   model row it sets only the seed-owned columns and the `data.modelSeed` provenance key. It
- *   never names `status` or `data.metrics` in its update clause.
+ *   never names `status` or `data.metrics` in its update clause. A curated column (#334) is
+ *   filled when stored null and never overwritten unless the caller names it in `overwrites`.
  * Test: `tests/unit/load-model-seeds-329.test.ts`
  */
 
@@ -42,10 +43,26 @@ export const SEED_COLUMNS = [
 type SeedColumn = (typeof SEED_COLUMNS)[number];
 type ColumnValue = string | boolean | null;
 
+/**
+ * #334: seed columns the seed fills only when the stored value is null. A stored non-null value
+ * that differs from the seed is refused unless an owner names that slug and column in
+ * `overwrites`. `open_weight` is guarded separately and has no override.
+ */
+export const CURATED_COLUMNS = ["hf_repo", "licence", "parameters_b", "active_parameters_b", "release_date"] as const;
+export type CuratedColumn = (typeof CURATED_COLUMNS)[number];
+
+/** #334: an owner's explicit opt-in to replace one stored curated value with the seed's. */
+export interface SeedOverwrite {
+  slug: string;
+  column: CuratedColumn;
+}
+
 export interface ColumnChange {
   column: SeedColumn | "data.modelSeed";
   from: ColumnValue;
   to: ColumnValue;
+  /** #334: replaces a stored non-null value, allowed only by an overwrite. */
+  overwrite?: true;
 }
 
 export type ModelSeedPlan =
@@ -63,7 +80,10 @@ FROM tools WHERE slug = ANY($1::text[])`;
 // only seed-owned columns (COALESCE keeps a column the seed does not state) and replaces only the
 // top-level data.modelSeed key, so data.metrics and status are never written on an existing row.
 // The WHERE refuses a non-model row, a redirect alias (#329) or one whose open_weight disagrees;
-// it then returns no row and the caller rolls back.
+// it then returns no row and the caller rolls back. #334: each curated column also needs the seed
+// silent, the stored value null or equal, or the stored value still the one an overwrite named in
+// $10 (a jsonb object of column -> planned stored value), so a value changed after planning is
+// never overwritten.
 export const MODEL_SEED_UPSERT_SQL = `INSERT INTO tools
   (slug, name, category, status, kind, open_weight, hf_repo, licence, parameters_b, active_parameters_b, release_date, data)
 VALUES ($1, $2, 'other', 'inactive', 'model', $3, $4, $5, $6::numeric, $7::numeric, $8::date, $9::jsonb)
@@ -78,6 +98,17 @@ ON CONFLICT (slug) DO UPDATE SET
   updated_at = now()
 WHERE tools.kind = 'model' AND tools.status <> 'redirect'
   AND (tools.open_weight IS NULL OR tools.open_weight = EXCLUDED.open_weight)
+  AND (EXCLUDED.hf_repo IS NULL OR tools.hf_repo IS NULL OR tools.hf_repo = EXCLUDED.hf_repo
+    OR tools.hf_repo = $10::jsonb->>'hf_repo')
+  AND (EXCLUDED.licence IS NULL OR tools.licence IS NULL OR tools.licence = EXCLUDED.licence
+    OR tools.licence = $10::jsonb->>'licence')
+  AND (EXCLUDED.parameters_b IS NULL OR tools.parameters_b IS NULL OR tools.parameters_b = EXCLUDED.parameters_b
+    OR tools.parameters_b = ($10::jsonb->>'parameters_b')::numeric)
+  AND (EXCLUDED.active_parameters_b IS NULL OR tools.active_parameters_b IS NULL
+    OR tools.active_parameters_b = EXCLUDED.active_parameters_b
+    OR tools.active_parameters_b = ($10::jsonb->>'active_parameters_b')::numeric)
+  AND (EXCLUDED.release_date IS NULL OR tools.release_date IS NULL OR tools.release_date = EXCLUDED.release_date
+    OR tools.release_date = ($10::jsonb->>'release_date')::date)
 RETURNING slug`;
 
 interface ExistingRow {
@@ -144,7 +175,12 @@ function sameValue(column: SeedColumn, from: ColumnValue, to: ColumnValue): bool
   return from === to;
 }
 
-function upsertParams(entry: ModelSeedEntry, values: Record<SeedColumn, ColumnValue>, provenance: unknown): unknown[] {
+function upsertParams(
+  entry: ModelSeedEntry,
+  values: Record<SeedColumn, ColumnValue>,
+  provenance: unknown,
+  overwriteFrom: Partial<Record<CuratedColumn, ColumnValue>> = {}
+): unknown[] {
   const { row } = entry;
   const data = { info: { description: row.description, company: row.company }, modality: row.modality, modelSeed: provenance };
   return [
@@ -157,6 +193,7 @@ function upsertParams(entry: ModelSeedEntry, values: Record<SeedColumn, ColumnVa
     values.active_parameters_b,
     values.release_date,
     JSON.stringify(data),
+    JSON.stringify(overwriteFrom),
   ];
 }
 
@@ -164,11 +201,19 @@ function upsertParams(entry: ModelSeedEntry, values: Record<SeedColumn, ColumnVa
  * Why: the dry run is the review step, so it must show every column a write would change.
  * What: one SELECT for all seed slugs, then a pure per-row plan. Refuses a slug held by a row
  *   whose kind is not `model`, a `status = 'redirect'` alias (naming its `data.redirect_to`), and
- *   a row whose stored `open_weight` disagrees with the seed.
- *   Writes nothing.
- * Test: `tests/unit/load-model-seeds-329.test.ts`
+ *   a row whose stored `open_weight` disagrees with the seed. #334: refuses a row where a curated
+ *   column's stored non-null value differs from the seed's, one reason per column, unless
+ *   `overwrites` names that slug and column; the change is then marked `overwrite` and its
+ *   planned stored value goes to the upsert guard. A stored null is filled; an equal value is no
+ *   change. Writes nothing.
+ * Test: `tests/unit/load-model-seeds-329.test.ts`, `tests/unit/model-seed-curated-334.test.ts`,
+ *   `tests/unit/model-seed-curated-pglite-334.test.ts`
  */
-export async function planModelSeedRows(db: ModelSeedQueryable, entries: readonly ModelSeedEntry[]): Promise<ModelSeedPlan[]> {
+export async function planModelSeedRows(
+  db: ModelSeedQueryable,
+  entries: readonly ModelSeedEntry[],
+  overwrites: readonly SeedOverwrite[] = []
+): Promise<ModelSeedPlan[]> {
   const { rows } = await db.query(MODEL_SEED_SELECT_SQL, [entries.map((e) => e.row.slug)]);
   const bySlug = new Map((rows as ExistingRow[]).map((r) => [r.slug, r]));
   return entries.map((entry): ModelSeedPlan => {
@@ -176,11 +221,10 @@ export async function planModelSeedRows(db: ModelSeedQueryable, entries: readonl
     const base = { slug, seedFile: entry.seedFile };
     const values = seedValues(entry.row);
     const provenance = modelSeedProvenance(entry);
-    const params = upsertParams(entry, values, provenance);
     const existing = bySlug.get(slug);
     if (!existing) {
       const changes = SEED_COLUMNS.filter((c) => values[c] !== null).map((c) => ({ column: c, from: null, to: values[c] }));
-      return { ...base, outcome: "insert", changes, params };
+      return { ...base, outcome: "insert", changes, params: upsertParams(entry, values, provenance) };
     }
     if (existing.kind !== "model") return { ...base, outcome: "refused", reason: `slug is held by a ${existing.kind} row, not a model` };
     // #329: a redirect alias is hidden; seed facts belong on the row it redirects to.
@@ -190,11 +234,21 @@ export async function planModelSeedRows(db: ModelSeedQueryable, entries: readonl
     if (existing.open_weight !== null && existing.open_weight !== entry.row.openWeight) {
       return { ...base, outcome: "refused", reason: `stored open_weight is ${existing.open_weight}; the seed says ${entry.row.openWeight}` };
     }
-    const changes: ColumnChange[] = SEED_COLUMNS.filter((c) => !sameValue(c, existing[c], values[c])).map((c) => ({
-      column: c,
-      from: existing[c],
-      to: values[c],
-    }));
+    // #334: a curated column the seed would change from one non-null value to another.
+    const conflicts = CURATED_COLUMNS.filter((c) => existing[c] !== null && !sameValue(c, existing[c], values[c]));
+    const allowed = new Set(overwrites.filter((o) => o.slug === slug).map((o) => o.column));
+    const blocked = conflicts.filter((c) => !allowed.has(c));
+    if (blocked.length > 0) {
+      const fields = blocked.map((c) => `stored ${c} is ${existing[c]}; the seed says ${values[c]}`).join("; ");
+      const hint = blocked.map((c) => `${slug}:${c}`).join(",");
+      return { ...base, outcome: "refused", reason: `${fields} (to replace, pass --overwrite ${hint})` };
+    }
+    const overwriteFrom = Object.fromEntries(conflicts.map((c) => [c, existing[c]]));
+    const params = upsertParams(entry, values, provenance, overwriteFrom);
+    const changes: ColumnChange[] = SEED_COLUMNS.filter((c) => !sameValue(c, existing[c], values[c])).map((c) => {
+      const change: ColumnChange = { column: c, from: existing[c], to: values[c] };
+      return (conflicts as readonly string[]).includes(c) ? { ...change, overwrite: true } : change;
+    });
     if (stableJson(existing.model_seed ?? null) !== stableJson(provenance)) {
       changes.push({ column: "data.modelSeed", from: existing.model_seed == null ? null : "(set)", to: "(seed provenance)" });
     }
@@ -208,7 +262,7 @@ export async function applyModelSeedPlans(tx: ModelSeedQueryable, plans: readonl
   for (const plan of plans) {
     if (plan.outcome !== "insert" && plan.outcome !== "update") continue;
     const { rows } = await tx.query(MODEL_SEED_UPSERT_SQL, plan.params);
-    if (rows.length !== 1) throw new Error(`${plan.slug}: row changed since planning and is no longer an eligible model row`);
+    if (rows.length !== 1) throw new Error(`${plan.slug}: row changed since planning and is no longer an eligible model row, or a curated value changed`);
     written++;
   }
   return written;
