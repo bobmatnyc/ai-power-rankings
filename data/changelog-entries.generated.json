@@ -99,14 +99,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-deb0075b6464",
+    "id": "unreleased-e230e24bb7d3",
     "version": "Unreleased",
-    "date": "2026-10-30T08:46:50.948Z",
+    "date": "2026-10-30T08:50:19.039Z",
     "dateSource": "build",
     "section": "Fixed",
     "scope": "rankings",
     "title": "/api/rankings/current returns the new month right after a publish",
-    "description": "`/api/rankings/current` returns the new month right after a publish. The monthly publish (`GET /api/cron/regenerate-rankings`) now calls `invalidateRankingsCache()` after the write commits, and that function also clears the route's in-memory key (`api:rankings:*`); a failed publish clears nothing, so the cached board stays until it expires. Every response of the route, including 404, 503 and 500, is `Cache-Control: no-store`, so the edge no longer keeps a board for an hour past a publish. Tests: `tests/unit/rankings-current-publish-purge-311.test.ts` (#311)",
+    "description": "`/api/rankings/current` returns the new month right after a publish. The monthly publish (`GET /api/cron/regenerate-rankings`) now calls `invalidateRankingsCache()` after the write commits, and that function also clears the route's in-memory key (`api:rankings:*`); a failed publish clears nothing, so the cached board stays until it expires. Every response of the route, including 404, 503 and 500, is `Cache-Control: no-store`, so the edge no longer keeps a board for an hour past a publish. `/api/rankings` also sends `no-store` on its 200, 500 and 503, where its 200 used to stay at the edge for 5 minutes plus a 10-minute stale window. Tests: `tests/unit/rankings-current-publish-purge-311.test.ts` (#311)",
     "changeType": "fix"
   },
   {
