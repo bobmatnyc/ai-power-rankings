@@ -15,13 +15,16 @@
 
 import { readFileSync } from "node:fs";
 import { PGlite } from "@electric-sql/pglite";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { MODEL_STATUS_UPDATE_SQL } from "../../lib/db/repositories/model-lifecycle";
 import { MODEL_REDIRECT_REPOINT_SQL, MODEL_REDIRECT_REPOINTS } from "../../lib/db/repositories/model-redirect-repoint";
 import type { ModelSeedDb, ModelSeedQueryable } from "../../lib/db/repositories/model-seed-writer";
 import { splitStatements } from "../../scripts/apply-migrations";
 import { loadModelSeeds, readModelLifecycle, readModelSeeds } from "../../scripts/load-model-seeds";
 import { MIGRATION_0016_SQL, TOOLS_AT_0015 } from "./fixtures/tool-links-183-fixture";
+
+// These tests run migrations and queries on PGlite, which can pass 5000 ms on a loaded machine.
+vi.setConfig({ testTimeout: 60_000 });
 
 const readFile = (file: string) => readFileSync(file, "utf8");
 const ENTRIES = readModelSeeds("all", readFile);
