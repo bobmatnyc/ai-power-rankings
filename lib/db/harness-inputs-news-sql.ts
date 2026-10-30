@@ -1,7 +1,7 @@
 /**
  * The group c SQL of migration 0024: news_mentions from the articles table (#313).
  *
- * Why: De4 (c) sets `news_mentions` to the site's own news corpus over the last 12 months,
+ * Why: the news-mentions rule (#313) sets `news_mentions` to the site's own news corpus over the last 12 months,
  *   recomputed at apply time. The corpus is what `GET /api/news` serves: active articles, each
  *   tagged to tools by `articleToolTags`. That rule is TypeScript; this file is a line-by-line
  *   plpgsql port of it, so the migration counts exactly what the API lists.

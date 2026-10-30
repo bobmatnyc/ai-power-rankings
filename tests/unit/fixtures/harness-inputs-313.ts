@@ -35,7 +35,7 @@ export const ROWS: HarnessInputRow[] = parseHarnessInputs(
   readFileSync(path.join(REPO_ROOT, "docs/refresh/harness-inputs-2026-10.json"), "utf8")
 ).rows;
 
-/** Tools that De4 (d) leaves alone even though they carry parent-level-looking figures. */
+/** Tools that the product-level-figures rule (#313) leaves alone even though they carry parent-level-looking figures. */
 export const KEPT_TOOLS = ["replit-agent", "devin", "sourcegraph-cody"] as const;
 
 function setPath(target: Record<string, unknown>, keys: readonly string[], value: unknown): void {

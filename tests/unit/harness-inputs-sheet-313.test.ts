@@ -1,7 +1,7 @@
 /**
  * #313, #312: the harness input source file, its validator and the generated migration 0024.
  *
- * Why: the De4 corrections are 61 reviewed data changes. The file must hold every one with a
+ * Why: the #313 corrections are 61 reviewed data changes. The file must hold every one with a
  *   source, touch only input fields on tools in the kind sheet, and the committed SQL must be
  *   exactly what the generator renders, with every group on. A group can be left out at
  *   generation time and that removes exactly its rows.
@@ -35,7 +35,7 @@ const row = (id: number): HarnessInputRow => structuredClone(FILE.rows.find((r) 
 const problems = (r: HarnessInputRow) => validateHarnessInputs([r], KIND_SLUGS).join("\n");
 
 describe("#313 the source file", () => {
-  it("parses, validates and holds the De4 counts", () => {
+  it("parses, validates and holds the #313 counts", () => {
     expect(FILE.errors).toEqual([]);
     expect(validateHarnessInputs(FILE.rows, KIND_SLUGS)).toEqual([]);
     expect(FILE.rows).toHaveLength(100);
