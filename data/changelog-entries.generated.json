@@ -99,10 +99,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-d6419a269bdb",
+    "version": "Unreleased",
+    "date": "2026-10-30T09:13:28.800Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "rankings",
+    "title": "changing the current board from the admin set-current action (POST /api/admin/rankings with set-current, and POST…",
+    "description": "changing the current board from the admin set-current action (`POST /api/admin/rankings` with `set-current`, and `POST /api/admin/rankings/set-current`) now purges the public ranking caches, so the home page and `/<lang>/rankings` no longer show the previous board for up to 5 minutes. The purge runs after the write commits; a failed write purges nothing. The response reports the purge outcome as `cache_purge` (`success` and `errors`) and stays a 200 when the purge fails. `invalidateRankingsCache()` now revalidates `/<lang>`, `/<lang>/rankings` and `/<lang>/tools` for every supported locale in place of the bare `/rankings` and `/tools` paths, which matched no page, and the `/api/rankings` fetch on `/<lang>/rankings` carries the `rankings` tag so the purge reaches it. Tests: `tests/unit/set-current-cache-purge-354.test.ts` (#354)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-bc271a0ebd98",
     "version": "Unreleased",
-    "date": "2026-10-30T08:59:29.833Z",
-    "dateSource": "build",
+    "date": "2026-10-30T09:04:45.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "rankings",
     "title": "/api/rankings/current returns the new month within 60 seconds of a publish",

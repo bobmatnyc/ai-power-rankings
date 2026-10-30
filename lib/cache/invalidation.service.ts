@@ -12,6 +12,7 @@
  */
 
 import { revalidatePath, revalidateTag } from 'next/cache';
+import { locales } from '@/i18n/config';
 import { invalidateCachePattern } from '@/lib/memory-cache';
 
 /**
@@ -35,6 +36,25 @@ export const CACHE_PATHS = {
   NEWS: '/news',
   WHATS_NEW: '/whats-new',
 } as const;
+
+/**
+ * The public pages that show the current board, per supported locale.
+ *
+ * Why: pages live under `app/[lang]/`, so `revalidatePath('/rankings')` and
+ *   `'/tools'` match no page and left the ISR home page and the rankings list
+ *   serving the previous board.
+ * What: `/<lang>` (the home page, ISR), and `/<lang>/rankings` and
+ *   `/<lang>/tools` as layouts, so their `[list]` and `[slug]` children go too.
+ * Test: `tests/unit/set-current-cache-purge-354.test.ts`.
+ */
+export function rankingsPagePaths(): { path: string; type: 'page' | 'layout' }[] {
+  // #354: one entry per locale from the project's list, not the bare `/rankings`.
+  return locales.flatMap((lang) => [
+    { path: `/${lang}`, type: 'page' as const },
+    { path: `/${lang}/rankings`, type: 'layout' as const },
+    { path: `/${lang}/tools`, type: 'layout' as const },
+  ]);
+}
 
 export type CacheTag = typeof CACHE_TAGS[keyof typeof CACHE_TAGS];
 export type CachePath = typeof CACHE_PATHS[keyof typeof CACHE_PATHS];
@@ -178,16 +198,12 @@ export async function invalidateRankingsCache(): Promise<InvalidationResult> {
   };
 
   try {
-    // Revalidate all language variants of affected paths
-    const pathsToRevalidate = [
-      CACHE_PATHS.HOME,
-      CACHE_PATHS.RANKINGS,
-      CACHE_PATHS.TOOLS,
-    ];
+    // #354: `/rankings` and `/tools` matched no page; purge the real `/[lang]` pages.
+    const pathsToRevalidate = [{ path: CACHE_PATHS.HOME, type: 'layout' as const }, ...rankingsPagePaths()];
 
-    for (const path of pathsToRevalidate) {
+    for (const { path, type } of pathsToRevalidate) {
       try {
-        revalidatePath(path, 'layout');
+        revalidatePath(path, type);
         result.pathsRevalidated.push(path);
       } catch (error) {
         const message = `Failed to revalidate path ${path}: ${error instanceof Error ? error.message : String(error)}`;
