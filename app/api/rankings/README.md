@@ -153,8 +153,13 @@ database outage it returns `statusCode: 503`; on an unexpected error, HTTP
 
 #311: every response is `Cache-Control: no-store`, so no edge cache keeps a
 board after a publish. A committed publish (`GET /api/cron/regenerate-rankings`)
-clears the in-memory entry through `invalidateRankingsCache()`; a failed one
-leaves it. Test: `tests/unit/rankings-current-publish-purge-311.test.ts`.
+clears the in-memory entry through `invalidateRankingsCache()` on the server
+instance that ran it, so that instance returns the new month at once; other
+instances return it within the 60-second entry lifetime. A failed publish
+clears nothing. The publish response carries the purge outcome as
+`cache_purge: { success, errors }`; a failed purge keeps the 200, because the
+publish has already committed. Test:
+`tests/unit/rankings-current-publish-purge-311.test.ts`.
 
 ## `GET /api/rankings/trending`
 
