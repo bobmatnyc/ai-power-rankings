@@ -259,6 +259,35 @@ export const monthlySummaries = pgTable(
 );
 
 /**
+ * Monthly Report Versions table
+ * #182: the one monthly report, append-only. Each generation inserts the next
+ * `version` for its `YYYY-MM` period and never updates a row, so every prior
+ * version stays readable. `monthly_summaries` and `state_of_ai_summaries` are
+ * the read-only predecessors.
+ */
+export const monthlyReportVersions = pgTable(
+  "monthly_report_versions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    period: text("period").notNull(), // Format: YYYY-MM
+    version: integer("version").notNull(), // 1, 2, ... per period
+    content: text("content").notNull(), // markdown, 300-450 words
+    dataHash: text("data_hash").notNull(), // SHA-256 of the month's aggregated inputs
+    metadata: jsonb("metadata").default("{}"), // model, counts, word_count, token usage
+    generatedBy: text("generated_by").notNull(), // cron name, admin user id or cli
+    generatedAt: timestamp("generated_at", { withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    periodVersionIdx: uniqueIndex("monthly_report_versions_period_version_idx").on(
+      table.period,
+      table.version
+    ),
+    generatedAtIdx: index("monthly_report_versions_generated_at_idx").on(table.generatedAt),
+  })
+);
+
+/**
  * Weekly Digests table
  * #181: one LLM-generated digest per closed ISO week, keyed `YYYY-Www`.
  * Kept apart from `monthly_summaries`: a `W` key would sort after every `YYYY-MM`
@@ -527,6 +556,8 @@ export type Migration = typeof migrations.$inferSelect;
 export type NewMigration = typeof migrations.$inferInsert;
 export type MonthlySummary = typeof monthlySummaries.$inferSelect;
 export type NewMonthlySummary = typeof monthlySummaries.$inferInsert;
+export type MonthlyReportVersion = typeof monthlyReportVersions.$inferSelect;
+export type NewMonthlyReportVersion = typeof monthlyReportVersions.$inferInsert;
 export type WeeklyDigest = typeof weeklyDigests.$inferSelect;
 export type NewWeeklyDigest = typeof weeklyDigests.$inferInsert;
 export type StateOfAiSummary = typeof stateOfAiSummaries.$inferSelect;

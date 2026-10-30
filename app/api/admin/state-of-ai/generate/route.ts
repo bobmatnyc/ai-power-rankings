@@ -1,15 +1,19 @@
 /**
- * Admin API: Generate State of AI Editorial Summary
+ * Admin API: Generate the monthly report (the former State of AI editorial)
  *
  * POST /api/admin/state-of-ai/generate
- * - Generates State of AI editorial for specified month/year
+ * - #182: delegates to the one monthly generator (`WhatsNewSummaryService`),
+ *   which appends a version to `monthly_report_versions`. It no longer writes
+ *   `state_of_ai_summaries`. The response keeps its month/year shape for the
+ *   admin page.
  * - Defaults to current month if not specified
  * - Requires admin authentication
  */
 
 import { type NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
-import { StateOfAiSummaryService } from "@/lib/services/state-of-ai-summary.service";
+import { WhatsNewSummaryService } from "@/lib/services/whats-new-summary.service";
+import { monthYearToPeriod, periodToMonthYear } from "@/lib/services/monthly-report.repository";
 import { loggers } from "@/lib/logger";
 
 export const runtime = "nodejs";
@@ -74,30 +78,27 @@ export async function POST(req: NextRequest) {
       loggers.api.debug("No request body, using defaults", { error });
     }
 
-    // 3. Generate State of AI summary
-    const service = new StateOfAiSummaryService();
+    // 3. #182: generate through the one monthly generator
+    const service = new WhatsNewSummaryService();
     const startTime = Date.now();
+    const period =
+      month !== undefined && year !== undefined ? monthYearToPeriod(month, year) : undefined;
 
-    loggers.api.info("Admin generating State of AI editorial", {
+    loggers.api.info("Admin generating the monthly report", {
       userId,
-      month,
-      year,
+      period: period ?? "current",
       forceRegenerate,
     });
 
-    const result = await service.generateStateOfAi(
-      month,
-      year,
-      userId,
-      forceRegenerate
-    );
+    const result = await service.generateMonthlySummary(period, forceRegenerate, userId);
+    const reportMonth = periodToMonthYear(result.summary.period);
 
     const duration = Date.now() - startTime;
 
-    loggers.api.info("State of AI editorial generation complete", {
+    loggers.api.info("Monthly report generation complete", {
       userId,
-      month: result.summary.month,
-      year: result.summary.year,
+      period: result.summary.period,
+      version: result.summary.version,
       isNew: result.isNew,
       durationMs: duration,
       contentLength: result.summary.content.length,
@@ -109,8 +110,10 @@ export async function POST(req: NextRequest) {
         success: true,
         summary: {
           id: result.summary.id,
-          month: result.summary.month,
-          year: result.summary.year,
+          period: result.summary.period,
+          version: result.summary.version,
+          month: reportMonth.month,
+          year: reportMonth.year,
           content: result.summary.content,
           generatedAt: result.summary.generatedAt.toISOString(),
           generatedBy: result.summary.generatedBy,
