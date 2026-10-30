@@ -148,6 +148,11 @@ When no rankings are marked current, the route returns
 database outage it returns `statusCode: 503`; on an unexpected error, HTTP
 500.
 
+#311: every response is `Cache-Control: no-store`, so no edge cache keeps a
+board after a publish. A committed publish (`GET /api/cron/regenerate-rankings`)
+clears the in-memory entry through `invalidateRankingsCache()`; a failed one
+leaves it. Test: `tests/unit/rankings-current-publish-purge-311.test.ts`.
+
 ## `GET /api/rankings/trending`
 
 Source: `app/api/rankings/trending/route.ts`

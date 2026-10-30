@@ -10,6 +10,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { invalidateRankingsCache } from "@/lib/cache/invalidation.service";
 import { loggers } from "@/lib/logger";
 import {
   RankingGenerationInProgressError,
@@ -117,6 +118,9 @@ export async function GET(request: Request) {
       publishedAt: result.publishedAt,
       durationMs: duration,
     });
+
+    // #311: only a committed publish gets here, so purge the cached current board; a failed one threw above.
+    await invalidateRankingsCache();
 
     // 3. Return JSON summary
     return NextResponse.json(
