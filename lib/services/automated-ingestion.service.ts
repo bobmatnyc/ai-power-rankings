@@ -688,10 +688,9 @@ export class AutomatedIngestionService {
    * #160: ingestion gets as much of the cron route's 300 s `maxDuration` as
    * is safe, while still firing before Vercel kills the function (which
    * would leave the run row "running"). 265 s = 300 s − 20 s route margin
-   * (`SUMMARY_SAFETY_MARGIN_MS`) − 10 s bounded failed-run write
-   * (`FAILED_RUN_WRITE_TIMEOUT_MS`) − 5 s for the response. The what's-new
-   * summary step runs only when 60 s remain, so after a run this long it is
-   * skipped for budget and retried by the next daily run.
+   * (cache invalidation) − 10 s bounded failed-run write
+   * (`FAILED_RUN_WRITE_TIMEOUT_MS`) − 5 s for the response. #182: the route
+   * no longer runs a summary step after ingestion.
    */
   private static readonly PIPELINE_TIMEOUT_MS = 265 * 1000;
 

@@ -24,12 +24,13 @@ export const maxDuration = 300;
  *
  * Why: This route is public, and generating a summary spends LLM credits, so
  * an anonymous request must never start generation. Generation happens only
- * through the admin POST below and the CRON_SECRET-gated daily-news cron.
+ * through the admin POST below and the CRON_SECRET-gated 1st-of-month cron
+ * (`/api/cron/monthly-summary`), which writes the closed month (#182).
  * What: Returns the stored summary for `?period=YYYY-MM`, or 404 when none is
  * stored. Without a period it returns the current month's stored summary,
- * else the most recent stored one, else 404. #160: the daily-news cron
- * (re)generates the current month's row, so the fallback covers the days
- * before a new month has any articles. #182: `&version=N` with a period returns
+ * else the most recent stored one, else 404. #182: the current month has no
+ * report until it closes, so the fallback serves the latest closed month.
+ * #182: `&version=N` with a period returns
  * that stored version (0 = the pre-merge row), so regenerating keeps every
  * earlier version reachable; a malformed version is 400.
  * Test: `tests/unit/auth-hardening.test.ts`, `tests/unit/monthly-report-182.test.ts`.

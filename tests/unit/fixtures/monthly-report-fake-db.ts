@@ -12,7 +12,7 @@
  *   a duplicate `(period, version)` insert into `monthly_report_versions`
  *   throws like the unique index would. The caller must mock drizzle-orm's
  *   `eq` and `desc` as `fakeEq` and `fakeDesc` below.
- * Test: used by `tests/unit/whats-new-auto-regenerate.test.ts` and
+ * Test: used by `tests/unit/monthly-report-generator-182.test.ts` and
  *   `tests/unit/monthly-report-182.test.ts`.
  */
 

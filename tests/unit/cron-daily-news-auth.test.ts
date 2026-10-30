@@ -24,12 +24,16 @@ const mocks = vi.hoisted(() => ({
   /** Called once per `new AutomatedIngestionService()` — the ordering probe. */
   constructed: vi.fn(),
   runDailyDiscovery: vi.fn(),
-  /** #160: the what's-new summary regeneration, which spends LLM credits. */
-  regenerate: vi.fn(async () => ({ status: "skipped", period: "2026-09", reason: "unchanged" })),
+  /** #182: construction of the monthly report generator, which spends LLM credits. */
+  regenerate: vi.fn(),
 }));
 
-vi.mock("../../lib/services/whats-new-auto-regenerate", () => ({
-  autoRegenerateMonthlySummary: mocks.regenerate,
+vi.mock("../../lib/services/whats-new-summary.service", () => ({
+  WhatsNewSummaryService: class {
+    constructor() {
+      mocks.regenerate();
+    }
+  },
 }));
 
 vi.mock("../../lib/services/automated-ingestion.service", () => ({
@@ -153,7 +157,8 @@ describe("GET /api/cron/daily-news — cron auth gate", () => {
     expect(response.status).toBe(200);
     expect(mocks.constructed).toHaveBeenCalledTimes(1);
     expect(mocks.runDailyDiscovery).toHaveBeenCalledTimes(1);
-    expect(mocks.regenerate).toHaveBeenCalledTimes(1);
+    // #182: an authorized run ingests but generates no monthly report.
+    expect(mocks.regenerate).not.toHaveBeenCalled();
 
     const payload = (await response.json()) as {
       success: boolean;

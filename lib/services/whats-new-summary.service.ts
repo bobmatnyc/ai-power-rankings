@@ -4,14 +4,16 @@
  * Why: #182 merges the two monthly generators into this one. It used to write
  *   a ~1,500-word summary into `monthly_summaries`, while
  *   `state-of-ai-summary.service.ts` wrote a 400-600-word editorial into
- *   `state_of_ai_summaries`. Every caller of either (the daily-news cron, the
- *   monthly cron, the admin routes, the CLI script) now reaches this class.
+ *   `state_of_ai_summaries`. Every caller of either (the monthly cron, the
+ *   admin routes, the CLI script) now reaches this class. The daily-news cron
+ *   no longer generates a report; only the 1st-of-month cron writes the
+ *   closed month.
  * What: Generates one 300-450-word report per `YYYY-MM` period through
  *   OpenRouter, rejects a reply outside that length, and appends it as the
  *   period's next version in `monthly_report_versions` (#114). The read
  *   functions are re-exported from `monthly-report.repository.ts` so the pages
  *   keep one import.
- * Test: `tests/unit/whats-new-auto-regenerate.test.ts`,
+ * Test: `tests/unit/monthly-report-generator-182.test.ts`,
  *   `tests/unit/monthly-report-182.test.ts`.
  */
 
@@ -55,29 +57,6 @@ export interface SummaryGenerationResult {
 }
 
 /**
- * Result of one cron-driven regeneration attempt (#160). "skipped" and
- * "failed" both leave every stored summary row exactly as it was.
- */
-export type AutoRegenerationOutcome =
-  | { status: "generated"; period: string; generationTimeMs: number }
-  | {
-      status: "skipped";
-      period: string;
-      reason:
-        | "unchanged"
-        | "no-articles-this-month"
-        | "insufficient-time-budget"
-        | "ingestion-failed";
-    }
-  | { status: "failed"; period: string; error: string };
-
-/**
- * #160: below this remaining budget the cron skips the LLM call instead of
- * risking Vercel killing the whole ingestion run at `maxDuration`.
- */
-export const MIN_GENERATION_BUDGET_MS = 60_000;
-
-/**
  * Completion ceiling. #182: the report is ~600 tokens, but the ceiling stays
  * where #172 left it so a reasoning-heavy reply is not cut off; tokens are
  * billed as used, not as allowed.
@@ -85,7 +64,6 @@ export const MIN_GENERATION_BUDGET_MS = 60_000;
 const WHATS_NEW_MAX_TOKENS = 16000;
 
 /** Who started a generation, recorded on the stored version. */
-export const GENERATED_BY_DAILY_CRON = "cron-daily-news";
 export const GENERATED_BY_MONTHLY_CRON = "cron-monthly-summary";
 
 export class WhatsNewSummaryService {
@@ -222,9 +200,8 @@ export class WhatsNewSummaryService {
   }
 
   /**
-   * Why: #182: the one entry point every non-cron-daily caller uses: the
-   * admin regenerate POST, the admin "State of AI" route, the monthly cron and
-   * the CLI script.
+   * Why: #182: the one entry point every caller uses: the admin regenerate
+   * POST, the admin "State of AI" route, the monthly cron and the CLI script.
    * What: Without `forceRegenerate`, returns the newest stored report
    * unchanged (`isNew: false`, no LLM call) when its `dataHash` matches the
    * period's current data. Otherwise generates and appends a new version,
@@ -257,57 +234,6 @@ export class WhatsNewSummaryService {
   }
 
   /**
-   * Why: #160 — the summary must follow the month's news without an admin,
-   * but each generation is a paid LLM call, so only the CRON_SECRET-gated
-   * daily-news cron calls this, once per run.
-   * What: Skips at once when `timeBudgetMs` is under
-   * `MIN_GENERATION_BUDGET_MS`. Otherwise aggregates `period`'s data and
-   * hashes it the same way the stored report's `dataHash` was computed, and
-   * skips when the hash matches the newest stored report or when the month
-   * has no active articles yet. Otherwise makes one LLM call, aborted after
-   * `timeBudgetMs`, and appends the period's next version (#182); earlier
-   * versions are never changed. Throws on any failure before the insert, so
-   * nothing is stored; callers wrap it (`autoRegenerateMonthlySummary`).
-   * Test: `tests/unit/whats-new-auto-regenerate.test.ts`.
-   */
-  async regenerateIfChanged(
-    period: string,
-    timeBudgetMs: number,
-    generatedBy = GENERATED_BY_DAILY_CRON
-  ): Promise<AutoRegenerationOutcome> {
-    // #160: checked before any database read, so a run that used most of the
-    // function limit on ingestion spends none of the rest here.
-    if (timeBudgetMs < MIN_GENERATION_BUDGET_MS) {
-      return { status: "skipped", period, reason: "insufficient-time-budget" };
-    }
-    const startTime = Date.now();
-    const stored = await this.getCachedSummary(period);
-
-    const { month, year } = this.parsePeriod(period);
-    const aggregatedData = await this.aggregationService.getMonthlyData(month, year);
-    const dataHash = this.aggregationService.calculateDataHash(aggregatedData);
-
-    if (stored && stored.dataHash === dataHash) {
-      return { status: "skipped", period, reason: "unchanged" };
-    }
-    // #160: an empty new month would replace last month's summary with a
-    // vacuous one; the public GET keeps serving the latest stored row instead.
-    if (aggregatedData.newsArticles.length === 0) {
-      return { status: "skipped", period, reason: "no-articles-this-month" };
-    }
-
-    const result = await this.generateAndStore(
-      period,
-      aggregatedData,
-      dataHash,
-      startTime,
-      generatedBy,
-      AbortSignal.timeout(timeBudgetMs)
-    );
-    return { status: "generated", period, generationTimeMs: result.generationTimeMs };
-  }
-
-  /**
    * One LLM call for `targetPeriod`, then an append of that period's next
    * version. The version is written only after the reply is complete,
    * non-empty and 300-450 words, so any failure stores nothing.
@@ -317,8 +243,7 @@ export class WhatsNewSummaryService {
     aggregatedData: MonthlyDataSources,
     dataHash: string,
     startTime: number,
-    generatedBy: string,
-    signal?: AbortSignal
+    generatedBy: string
   ): Promise<SummaryGenerationResult> {
     const dataPrompt = this.formatDataForPrompt(aggregatedData);
 
@@ -370,7 +295,6 @@ Remember: ${MONTHLY_REPORT_MIN_WORDS}-${MONTHLY_REPORT_MAX_WORDS} words, markdow
           max_tokens: WHATS_NEW_MAX_TOKENS,
           ...OPENROUTER_USAGE_REQUEST, // #325: ask for usage.cost
         }),
-        signal,
       });
 
       if (!response.ok) {
