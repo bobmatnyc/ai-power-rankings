@@ -1,21 +1,20 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
- * Cron-driven what's-new summary regeneration (#160).
+ * The one monthly report generator (#182).
  *
- * Why: The summary regenerates without an admin, and each generation is a
- * paid LLM call. It must run only when the month's data changed, generate the
- * new month on rollover, and never damage the stored summary when the LLM or
- * the database fails.
- * #182: a generation appends the period's next version to
+ * Why: each generation is a paid LLM call. It must run only when the month's
+ * data changed and never damage a stored report when the LLM or the database
+ * fails. A generation appends the period's next version to
  * `monthly_report_versions`, keeps every earlier version and the pre-merge
  * `monthly_summaries` row readable, writes nothing else, and stores no reply
  * outside 300-450 words.
- * What: Runs the real `autoRegenerateMonthlySummary`, `WhatsNewSummaryService`
- * and monthly report repository against in-memory `monthly_report_versions`
- * and `monthly_summaries` tables (`fixtures/monthly-report-fake-db.ts`), a
- * stubbed LLM `fetch`, and the real `calculateDataHash` over fixture articles.
- * Test: `npx vitest run tests/unit/whats-new-auto-regenerate.test.ts`. No
+ * What: Runs the real `WhatsNewSummaryService.generateMonthlySummary` as the
+ * 1st-of-month cron calls it, with the real monthly report repository over
+ * in-memory `monthly_report_versions` and `monthly_summaries` tables
+ * (`fixtures/monthly-report-fake-db.ts`), a stubbed LLM `fetch`, and the real
+ * `calculateDataHash` over fixture articles.
+ * Test: `npx vitest run tests/unit/monthly-report-generator-182.test.ts`. No
  * database access, no network.
  */
 
@@ -90,7 +89,10 @@ vi.mock("../../lib/services/whats-new-aggregation.service", async (importOrigina
 });
 
 import { WhatsNewAggregationService } from "../../lib/services/whats-new-aggregation.service";
-import { autoRegenerateMonthlySummary } from "../../lib/services/whats-new-auto-regenerate";
+import {
+  GENERATED_BY_MONTHLY_CRON,
+  WhatsNewSummaryService,
+} from "../../lib/services/whats-new-summary.service";
 import {
   getStoredSummary,
   getStoredSummaryVersion,
@@ -99,9 +101,6 @@ import {
 
 const llm = vi.fn();
 vi.stubGlobal("fetch", llm);
-
-const BUDGET_MS = 200_000;
-const MID_SEPTEMBER = new Date("2026-09-15T06:05:00Z");
 
 const LEGACY = "monthly_summaries";
 const VERSIONS = "monthly_report_versions";
@@ -139,6 +138,11 @@ function snapshot(): Record<string, Record<string, unknown>[]> {
   return structuredClone(state.db.tables);
 }
 
+/** The monthly cron's call: the closed month, not forced. */
+async function generate(period: string) {
+  return new WhatsNewSummaryService().generateMonthlySummary(period, false, GENERATED_BY_MONTHLY_CRON);
+}
+
 beforeEach(() => {
   state.db.tables = {};
   state.db.writes = [];
@@ -150,72 +154,44 @@ beforeEach(() => {
   llm.mockImplementation(async () => llmReply(SEPTEMBER_REPORT));
 });
 
-describe("autoRegenerateMonthlySummary", () => {
-  it("regenerates the current month when articles were added since the stored summary", async () => {
+describe("WhatsNewSummaryService.generateMonthlySummary", () => {
+  it("generates a version when the month's data changed since the stored summary", async () => {
     await storeSummary("2026-09", ["a1"], "old September summary");
     const legacy = structuredClone(state.db.tables[LEGACY]);
     state.articlesByPeriod.set("2026-09", ["a1", "a2"]);
 
-    const outcome = await autoRegenerateMonthlySummary({ now: MID_SEPTEMBER, timeBudgetMs: BUDGET_MS });
+    const result = await generate("2026-09");
 
-    expect(outcome).toEqual({ status: "generated", period: "2026-09", generationTimeMs: expect.any(Number) });
+    expect(result.isNew).toBe(true);
     expect(llm).toHaveBeenCalledTimes(1);
-    expect(llm.mock.calls[0][1].signal).toBeInstanceOf(AbortSignal);
     // #182: the new content is version 1 of the merged report; the pre-merge row is untouched.
     const [row] = versionsOf("2026-09");
-    expect(row).toMatchObject({ version: 1, content: SEPTEMBER_REPORT, generatedBy: "cron-daily-news" });
+    expect(row).toMatchObject({ version: 1, content: SEPTEMBER_REPORT, generatedBy: "cron-monthly-summary" });
     expect(row?.dataHash).toBe(await hashFor("2026-09", ["a1", "a2"]));
     expect(state.db.tables[LEGACY]).toEqual(legacy);
     expect((await getStoredSummary("2026-09"))?.content).toBe(SEPTEMBER_REPORT);
   });
 
-  it("skips without an LLM call when the month's data hash matches the stored summary", async () => {
+  it("returns the stored summary without an LLM call when the month's data hash matches", async () => {
     await storeSummary("2026-09", ["a1", "a2"], "current September summary");
     const before = snapshot();
 
-    const outcome = await autoRegenerateMonthlySummary({ now: MID_SEPTEMBER, timeBudgetMs: BUDGET_MS });
+    const result = await generate("2026-09");
 
-    expect(outcome).toEqual({ status: "skipped", period: "2026-09", reason: "unchanged" });
+    expect(result).toMatchObject({ isNew: false, summary: { content: "current September summary", version: 0 } });
     expect(llm).not.toHaveBeenCalled();
     expect(snapshot()).toEqual(before);
   });
 
-  it("generates the new month on the first run after rollover and keeps last month's summary", async () => {
+  it("generates a month with no stored report and leaves other months untouched", async () => {
     await storeSummary("2026-08", ["aug-1", "aug-2"], "August summary");
     const before = snapshot();
     state.articlesByPeriod.set("2026-09", ["sep-1"]);
 
-    const outcome = await autoRegenerateMonthlySummary({
-      now: new Date("2026-09-01T06:05:00Z"),
-      timeBudgetMs: BUDGET_MS,
-    });
+    await generate("2026-09");
 
-    expect(outcome).toEqual({ status: "generated", period: "2026-09", generationTimeMs: expect.any(Number) });
     expect(versionsOf("2026-09").map((row) => row.content)).toEqual([SEPTEMBER_REPORT]);
     expect(state.db.tables[LEGACY]).toEqual(before[LEGACY]);
-  });
-
-  it("does not generate an empty new month; last month's summary stays the one served", async () => {
-    await storeSummary("2026-08", ["aug-1"], "August summary");
-    const before = snapshot();
-
-    const outcome = await autoRegenerateMonthlySummary({
-      now: new Date("2026-09-01T06:05:00Z"),
-      timeBudgetMs: BUDGET_MS,
-    });
-
-    expect(outcome).toEqual({ status: "skipped", period: "2026-09", reason: "no-articles-this-month" });
-    expect(llm).not.toHaveBeenCalled();
-    expect(snapshot()).toEqual(before);
-  });
-
-  it("skips the LLM call when the cron run has too little time left", async () => {
-    state.articlesByPeriod.set("2026-09", ["a1"]);
-
-    const outcome = await autoRegenerateMonthlySummary({ now: MID_SEPTEMBER, timeBudgetMs: 30_000 });
-
-    expect(outcome).toEqual({ status: "skipped", period: "2026-09", reason: "insufficient-time-budget" });
-    expect(llm).not.toHaveBeenCalled();
   });
 
   it("#182: regenerating a month appends a version and keeps every earlier one retrievable", async () => {
@@ -225,13 +201,13 @@ describe("autoRegenerateMonthlySummary", () => {
 
     state.articlesByPeriod.set("2026-09", ["a1", "a2"]);
     llm.mockImplementationOnce(async () => llmReply(first));
-    await autoRegenerateMonthlySummary({ now: MID_SEPTEMBER, timeBudgetMs: BUDGET_MS });
+    await generate("2026-09");
     state.articlesByPeriod.set("2026-09", ["a1", "a2", "a3"]);
     llm.mockImplementationOnce(async () => llmReply(second));
-    const outcome = await autoRegenerateMonthlySummary({ now: MID_SEPTEMBER, timeBudgetMs: BUDGET_MS });
+    const result = await generate("2026-09");
 
-    expect(outcome.status).toBe("generated");
-    expect((await getStoredSummary("2026-09"))).toMatchObject({ version: 2, content: second });
+    expect(result.isNew).toBe(true);
+    expect(await getStoredSummary("2026-09")).toMatchObject({ version: 2, content: second });
     expect((await getStoredSummaryVersion("2026-09", 1))?.content).toBe(first);
     expect((await getStoredSummaryVersion("2026-09", 0))?.content).toBe("pre-merge September summary");
     expect((await listReportVersions("2026-09")).map((v) => [v.version, v.source])).toEqual([
@@ -281,16 +257,14 @@ describe("autoRegenerateMonthlySummary", () => {
     { label: "a database write error", error: /database write failed/, arrange: () => (state.db.failInsert = true) },
     { label: "a database read error", error: /database read failed/, arrange: () => (state.failAggregate = true) },
     { label: "a missing OpenRouter key", error: /API key is not configured/, arrange: () => (state.noApiKey = true) },
-  ])("reports failure and leaves the stored summary untouched on $label", async ({ arrange, error }) => {
+  ])("throws and leaves the stored summaries untouched on $label", async ({ arrange, error }) => {
     await storeSummary("2026-08", ["aug-1"], "August summary");
     await storeSummary("2026-09", ["a1"], "old September summary");
     state.articlesByPeriod.set("2026-09", ["a1", "a2"]);
     const before = snapshot();
     arrange();
 
-    const outcome = await autoRegenerateMonthlySummary({ now: MID_SEPTEMBER, timeBudgetMs: BUDGET_MS });
-
-    expect(outcome).toEqual({ status: "failed", period: "2026-09", error: expect.stringMatching(error) });
+    await expect(generate("2026-09")).rejects.toThrow(error);
     expect(snapshot()).toEqual(before);
   });
 });

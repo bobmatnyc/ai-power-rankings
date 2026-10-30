@@ -21,7 +21,7 @@
  *   key (#54).
  * Test: `tests/unit/monthly-report-182.test.ts`,
  *   `tests/unit/monthly-report-missing-table-182.test.ts`,
- *   `tests/unit/whats-new-auto-regenerate.test.ts`,
+ *   `tests/unit/monthly-report-generator-182.test.ts`,
  *   `tests/unit/whats-new-permalink.test.ts`.
  */
 

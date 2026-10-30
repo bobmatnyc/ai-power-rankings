@@ -1,16 +1,15 @@
 /**
- * Ingestion and the what's-new summary share the cron function limit (#160).
+ * Ingestion fits the cron function limit (#160).
  *
  * Why: Vercel kills GET /api/cron/daily-news at `maxDuration` (300 s). The
  * pipeline timeout used to be 10 minutes, so a slow run was killed with its
- * run row left "running". Ingestion has priority over the summary, which
- * retries daily: a slow run must still finish, the summary step is the one
- * that yields, and a hung failed-run write must not hold the function.
- * What: Drives the real GET handler, the real `runDailyDiscovery` timeout
- * guard and the real summary budget check under fake timers. Only the
- * pipeline body, `updateRun`, the cache and the database are replaced, and
- * `fetch` fails the test if the LLM is called. Also pins the admin summary
- * POST's `maxDuration`.
+ * run row left "running". A slow run must still finish, and a hung failed-run
+ * write must not hold the function. #182: the route no longer generates a
+ * monthly report after ingestion, so no run, fast or slow, calls the generator.
+ * What: Drives the real GET handler and the real `runDailyDiscovery` timeout
+ * guard under fake timers. Only the pipeline body, `updateRun`, the cache and
+ * the database are replaced, and `fetch` fails the test if the LLM is called.
+ * Also pins the admin summary POST's `maxDuration`.
  * Test: `npx vitest run tests/unit/cron-daily-news-timeout.test.ts`. No
  * network, no database.
  */
@@ -37,10 +36,7 @@ import {
 import { TavilySearchService } from "../../lib/services/tavily-search.service";
 import { RUN_SUMMARY_MSG } from "../../lib/services/ingestion-run-summary";
 import { loggers } from "../../lib/logger";
-import {
-  MIN_GENERATION_BUDGET_MS,
-  WhatsNewSummaryService,
-} from "../../lib/services/whats-new-summary.service";
+import { WhatsNewSummaryService } from "../../lib/services/whats-new-summary.service";
 
 const SECRET = "cron-secret-fixture-value";
 const RUN_ID = "run-timeout-fixture";
@@ -49,7 +45,7 @@ const originalCronSecret = process.env["CRON_SECRET"];
 
 type Payload = {
   success: boolean;
-  data: { runId: string; status: string; errors: string[]; whatsNewSummary: unknown };
+  data: { runId: string; status: string; errors: string[] };
 };
 
 const llm = vi.fn(async () => {
@@ -140,14 +136,11 @@ describe("GET /api/cron/daily-news — ingestion and summary inside maxDuration"
       RUN_ID,
       expect.objectContaining({ status: "failed", errors: payload.data.errors })
     );
-    expect(payload.data.whatsNewSummary).toMatchObject({
-      status: "skipped",
-      reason: "ingestion-failed",
-    });
+    expect(payload.data).not.toHaveProperty("whatsNewSummary");
     expect(llm).not.toHaveBeenCalled();
   });
 
-  it("lets a 250 s run succeed and skips the summary for budget without an LLM call", async () => {
+  it("lets a 250 s run succeed without an LLM call", async () => {
     pipelineTakes(250_000);
     const summaryReads = vi.spyOn(WhatsNewSummaryService.prototype, "getCachedSummary");
 
@@ -158,28 +151,23 @@ describe("GET /api/cron/daily-news — ingestion and summary inside maxDuration"
     expect(payload.success).toBe(true);
     expect(payload.data).toMatchObject({ runId: RUN_ID, status: "completed", errors: [] });
     expect(updateRun).not.toHaveBeenCalledWith(RUN_ID, expect.objectContaining({ status: "failed" }));
-    expect(payload.data.whatsNewSummary).toMatchObject({
-      status: "skipped",
-      reason: "insufficient-time-budget",
-    });
+    expect(payload.data).not.toHaveProperty("whatsNewSummary");
     expect(summaryReads).not.toHaveBeenCalled();
     expect(llm).not.toHaveBeenCalled();
   });
 
-  it("gives an early-finishing run's summary step at least the minimum budget", async () => {
+  it("#182: an early-finishing run, with budget left, still generates no monthly report", async () => {
     pipelineTakes(30_000);
-    const regenerate = vi
-      .spyOn(WhatsNewSummaryService.prototype, "regenerateIfChanged")
-      .mockImplementation(async (period) => ({ status: "generated", period, generationTimeMs: 1 }));
+    const generate = vi.spyOn(WhatsNewSummaryService.prototype, "generateMonthlySummary");
 
     const { settled, response } = await runCronFor(LIMIT_MS);
     expect(settled).toBe(true);
 
     const payload = (await (await response).json()) as Payload;
     expect(payload.data).toMatchObject({ status: "completed" });
-    expect(payload.data.whatsNewSummary).toMatchObject({ status: "generated" });
-    expect(regenerate).toHaveBeenCalledTimes(1);
-    expect(regenerate.mock.calls[0][1]).toBeGreaterThanOrEqual(MIN_GENERATION_BUDGET_MS);
+    expect(payload.data).not.toHaveProperty("whatsNewSummary");
+    expect(generate).not.toHaveBeenCalled();
+    expect(llm).not.toHaveBeenCalled();
   });
 
   it("returns before the limit when the failed-run write hangs, and reports the unpersisted row", async () => {
