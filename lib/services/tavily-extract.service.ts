@@ -9,6 +9,7 @@
  */
 
 import { loggers } from '@/lib/logger';
+import { ProviderApiError } from './provider-api-error'; // #367
 
 /**
  * Result from Tavily Extract API for a single URL
@@ -142,7 +143,13 @@ export class TavilyExtractService {
 
         if (!response.ok) {
           const errorText = await response.text();
-          throw new Error(`Tavily Extract API error: ${response.status} - ${errorText}`);
+          // #367: Tavily's own HTTP status, typed so it never auto-blocks the article's
+          // domain. A per-URL "Extraction failed" below is the site's error and stays plain.
+          throw new ProviderApiError(
+            'tavily',
+            response.status,
+            `Tavily Extract API error: ${response.status} - ${errorText}`
+          );
         }
 
         const data: TavilyExtractResponse = await response.json();
@@ -184,6 +191,13 @@ export class TavilyExtractService {
           maxRetries: this.maxRetries,
           error: errorMessage,
         });
+
+        // #367: Tavily's own 401/403 is an auth failure. Rethrow it before the text
+        // checks below, which would turn a body saying "api key" or "404" into a silent
+        // null; retrying a rejected key cannot succeed either.
+        if (lastError instanceof ProviderApiError && (lastError.status === 401 || lastError.status === 403)) {
+          throw lastError;
+        }
 
         // Don't retry on certain errors
         if (

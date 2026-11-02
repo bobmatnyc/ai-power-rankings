@@ -29,6 +29,8 @@ describe("classifyRunFailure (#172)", () => {
     [["Quality assessment failed for all 2 candidates: network down"], "assessment_failed"],
     [["Pipeline timeout: exceeded 270s"], "pipeline_timeout"],
     [["Failed to ingest https://example.org/a: boom"], "ingest_failed"],
+    [["Provider auth error [tavily]: HTTP 401 Unauthorized — x"], "provider_auth"], // #367
+    [["Content fetch failed for 1 of 5 candidates: blocked_domain=1"], "fetch_failed"], // #367
     [["something new"], "other"],
   ] as const)("%j -> %s", (errors, expected) => {
     expect(classifyRunFailure(errors)).toBe(expected);

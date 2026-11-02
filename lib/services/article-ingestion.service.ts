@@ -10,6 +10,7 @@ import { rankings } from "@/lib/db/schema";
 import { getDb } from "@/lib/db/connection";
 import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { getOpenRouterModel } from "@/lib/services/openrouter-model";
+import { ProviderApiError } from "@/lib/services/provider-api-error"; // #367
 // #122: post-processes the model's Related Links block against what it was
 // actually shown — see the call site in AIAnalyzer.analyzeContent.
 import { sanitizeRelatedLinksBlock } from "@/lib/article-content-links";
@@ -776,8 +777,13 @@ Return ONLY the JSON object above with actual data. No additional text or explan
         console.error("[AIAnalyzer] OpenRouter API error:", response.status, errorText);
 
         // Check for common error patterns
-        if (response.status === 401) {
-          throw new Error("OpenRouter authentication failed. Please check your API key.");
+        if (response.status === 401 || response.status === 403) {
+          // #367: typed, so the run's auth gate reads OpenRouter's status, not this text.
+          throw new ProviderApiError(
+            "openrouter",
+            response.status,
+            `OpenRouter authentication failed (${response.status}). Please check your API key.`
+          );
         } else if (response.status === 429) {
           throw new Error("OpenRouter rate limit exceeded. Please try again later.");
         } else if (response.status === 402) {
@@ -898,7 +904,8 @@ Return ONLY the JSON object above with actual data. No additional text or explan
       }
 
       throw new Error(
-        `AI analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`
+        `AI analysis failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        { cause: error } // #367: keep a provider status reachable
       );
     }
   }
