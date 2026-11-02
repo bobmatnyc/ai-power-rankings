@@ -147,10 +147,16 @@ describe("list page metadata (#186)", () => {
   describe("an unknown list size is noindex", () => {
     const NOINDEX = { index: false, follow: true };
     // #368: the read is the database now; "no current snapshot" replaces the non-OK response.
+    // A thrown read no longer renders a noindex page: it fails the render (tested below).
     const arms: Array<[string, () => void]> = [
       ["no current snapshot", () => loadCurrentRankings.mockResolvedValueOnce(null)],
-      ["a thrown read", () => loadCurrentRankings.mockRejectedValueOnce(new TypeError("connection failed"))],
     ];
+
+    it("a thrown read fails the render instead of caching a page (#368)", async () => {
+      const failure = new TypeError("connection failed");
+      loadCurrentRankings.mockRejectedValueOnce(failure);
+      await expect(listMetadata("en", "models")).rejects.toBe(failure);
+    });
 
     it.each(arms)("on /rankings/models after %s", async (_label, arrange) => {
       counts["model"] = 3;

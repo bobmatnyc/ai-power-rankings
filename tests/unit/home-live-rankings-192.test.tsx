@@ -13,7 +13,8 @@ import { selectMovers } from "../../lib/rankings/select-movers";
  * What: mocks the rankings and tools repositories, renders the `Home` server
  * component, takes the props it gives the rankings component, and renders that
  * component to static HTML as the server does. Checks the empty state when the
- * snapshot read throws or finds no snapshot (no tool from the old list), and
+ * snapshot read finds no snapshot (no tool from the old list), that a thrown read
+ * fails the render (#368), and
  * that snapshot rows, their movers and the snapshot date reach the HTML in the
  * rows `/api/rankings` returns for the same snapshot.
  * Test: `npx vitest run tests/unit/home-live-rankings-192.test.tsx`. No network.
@@ -110,8 +111,15 @@ afterEach(() => {
 });
 
 describe("home page live rankings (#192)", () => {
+  // #368: a thrown snapshot read now fails the render (ISR keeps the last good page),
+  // so it no longer renders the empty state; see tests/unit/isr-read-errors-368.test.tsx.
+  it("fails the render when the snapshot read throws", async () => {
+    const failure = new Error("read failed");
+    getCurrentRankings.mockRejectedValue(failure);
+    await expect(renderHome()).rejects.toBe(failure);
+  });
+
   it.each([
-    ["the snapshot read throws", () => getCurrentRankings.mockRejectedValue(new Error("read failed"))],
     ["no snapshot is current", () => getCurrentRankings.mockResolvedValue(null)],
   ])("renders the empty state and no hardcoded tool when %s", async (_label, arrange) => {
     arrange();

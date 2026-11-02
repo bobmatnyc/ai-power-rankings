@@ -116,9 +116,10 @@ const ARTICLE_DETAIL = {
   tool: null,
   tools: null,
 };
-/** The home page's call (no list) fails as an unreachable database would; a list read gets one row. */
+/** The home page's call (no list) finds no snapshot, so home renders its empty state; a list read gets one row. */
 async function currentRankingsStub(list?: string) {
-  if (list === undefined) throw new Error("no database in this suite");
+  // #368: null, not a throw; a thrown read now fails the home render.
+  if (list === undefined) return null;
   return {
     list,
     source: "list",
