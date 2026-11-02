@@ -3,7 +3,8 @@
 import { Filter, List } from "lucide-react";
 // Note: Using native <img> instead of next/image to avoid Next.js generating invalid preload tags
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { SearchParamsBoundary } from "@/components/search-params-boundary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -18,9 +19,14 @@ import { cn } from "@/lib/utils";
 
 // Tag filters will be built dynamically with i18n
 
-function SidebarContent({ categories }: { categories: Category[] }): React.JSX.Element {
+function SidebarContent({
+  categories,
+  searchParams,
+}: {
+  categories: Category[];
+  searchParams: URLSearchParams;
+}): React.JSX.Element {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const router = useRouter();
   const { isMobile, setOpenMobile } = useSidebar();
   const currentCategory = searchParams.get("category") || "all";
@@ -259,5 +265,10 @@ function SidebarContent({ categories }: { categories: Category[] }): React.JSX.E
 }
 
 export function AppSidebar({ categories }: { categories: Category[] }): React.JSX.Element {
-  return <SidebarContent categories={categories} />;
+  // #368: every public page is static now; the boundary keeps the sidebar in the HTML.
+  return (
+    <SearchParamsBoundary
+      render={(searchParams) => <SidebarContent categories={categories} searchParams={searchParams} />}
+    />
+  );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 // Newsletter modal removed - using Clerk authentication
 import type { Locale } from "@/i18n/config";
@@ -69,17 +68,18 @@ export function MarkdownAboutContent({
   lang,
   content,
 }: MarkdownAboutContentProps): React.JSX.Element {
-  const searchParams = useSearchParams();
   // Newsletter functionality removed - using Clerk for authentication
 
+  // #368: reads the URL in the effect, not useSearchParams(), which would leave a static
+  // about page's HTML without its content.
   useEffect(() => {
     // Clean up any legacy subscribe params
-    if (searchParams.get("subscribe") === "true") {
-      const url = new URL(window.location.href);
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("subscribe") === "true") {
       url.searchParams.delete("subscribe");
       window.history.replaceState({}, "", url.pathname);
     }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     // Add event listeners for custom buttons after content loads
