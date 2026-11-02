@@ -9,7 +9,7 @@ import { currentBoard } from "./helpers/current-board";
  * What: stubs `loadCurrentRankings()` and checks `loadListBoard()` returns what
  *   the page used to read from the API body: rows with ISO-string dates, the
  *   list's `list_meta`, and the header; the API's empty board when no snapshot
- *   is current; no rows and a null `meta` (noindex) when the read throws.
+ *   is current; the read's error, rethrown, when it throws.
  * Test: `npx vitest run tests/unit/rankings-list-board-368.test.ts`.
  */
 
@@ -57,12 +57,10 @@ describe("loadListBoard (#368)", () => {
     });
   });
 
-  it("gives no rows and a null meta when the read throws", async () => {
-    loadCurrentRankings.mockRejectedValueOnce(new Error("connection refused"));
-    expect(await loadListBoard("harness")).toEqual({
-      rankings: [],
-      meta: null,
-      header: { version: null, publishedAt: null },
-    });
+  // #368 fix round: an empty board would be cached by ISR; the read error propagates instead.
+  it("rethrows when the read throws", async () => {
+    const failure = new Error("connection refused");
+    loadCurrentRankings.mockRejectedValueOnce(failure);
+    await expect(loadListBoard("harness")).rejects.toBe(failure);
   });
 });

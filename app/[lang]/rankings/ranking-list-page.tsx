@@ -34,9 +34,9 @@ import { siteOrigin } from "@/lib/site-origin";
  *   the localized canonical and hreflang for the list's canonical path
  *   (`rankingListPath()`), and adds `robots: noindex` when the board's `list_meta` reports the
  *   list not indexable: below 10 entries (D53), or the models list with fewer than 10 active
- *   rows carrying metrics (#329, D63; it then also shows the metrics-pending note). An unknown entry count (a thrown read)
- *   is noindex as well, on every list including
- *   `/rankings`: a thin list must never render indexable. `RankingListPage`
+ *   rows carrying metrics (#329, D63; it then also shows the metrics-pending note). A missing metric count
+ *   is noindex as well, on every list including `/rankings`: a thin list must never
+ *   render indexable. #368: a thrown read fails the render, so ISR keeps the last good page. `RankingListPage`
  *   renders the list navigation (D6e: without the models link while it is hidden), the D54 provisional note for productivity, the
  *   D53 short-list note, and the grid seeded with the list's rows.
  *   #368: both read the board through `loadListBoard()` (the database, as
@@ -126,8 +126,8 @@ export async function rankingListMetadata(lang: string, list: RankingList): Prom
     // #155: the helper also keeps the RSS link that replacing the layout's alternates drops.
     // #156: each locale is its own canonical; hreflang lists every locale plus x-default.
     alternates,
-    // #186: D53 — a list below 10 entries is noindex. An unknown count (failed or
-    // thrown read, or no list_meta) is noindex too: fail closed, for every list.
+    // #186: D53 — a list below 10 entries is noindex; no current snapshot counts 0.
+    // #368: a thrown read never reaches here; it fails the render.
     // #329: D63 — a metric-gated list (models) is indexed only when the API also reports 10+
     // active rows with metrics; a missing count fails closed, whatever `indexable` says.
     ...(meta?.indexable === true && !listHasMetricsPendingNote(list, metricRowsOf(meta))
