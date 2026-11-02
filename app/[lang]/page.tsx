@@ -131,27 +131,27 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
  * strip was always empty and the list went stale.
  * What: reads the current snapshot through `loadCurrentRankings`, the function
  * `/api/rankings` uses, and returns its rows with the snapshot's
- * `published_at` (else `created_at`) as an ISO string. When the read throws or
- * no snapshot is current, logs a warning and returns no rows, so the page
- * renders its empty state.
- * Test: `tests/unit/home-live-rankings-192.test.tsx`.
+ * `published_at` (else `created_at`) as an ISO string. When no snapshot is
+ * current, logs a warning and returns no rows, so the page renders its empty
+ * state. #368: a thrown read propagates and fails the render, so ISR keeps the
+ * last good page.
+ * Test: `tests/unit/home-live-rankings-192.test.tsx`, `tests/unit/isr-read-errors-368.test.tsx`.
  */
 async function readHomeRankings(): Promise<{ rankings: CurrentRankingRow[]; snapshotDate?: string }> {
-  try {
-    const current = await loadCurrentRankings();
-    if (!current) {
-      console.warn("[Page] Home: No current rankings snapshot; rendering the empty state");
-      return { rankings: [] };
-    }
-    const { snapshot, rankings } = current;
-    return { rankings, snapshotDate: (snapshot.published_at ?? snapshot.created_at).toISOString() };
-  } catch (error) {
-    console.warn("[Page] Home: Could not read current rankings; rendering the empty state:", error);
+  // #368: a thrown read propagates (ISR keeps the last good page); only "no snapshot" is empty.
+  const current = await loadCurrentRankings();
+  if (!current) {
+    console.warn("[Page] Home: No current rankings snapshot; rendering the empty state");
     return { rankings: [] };
   }
+  const { snapshot, rankings } = current;
+  return { rankings, snapshotDate: (snapshot.published_at ?? snapshot.created_at).toISOString() };
 }
 
 export default async function Home({ params }: PageProps): Promise<React.JSX.Element> {
+  // #368: read before the render's catch-all below, so a failed read fails the render and
+  // ISR keeps serving the last good page instead of caching an error or empty page.
+  const { rankings: serverRankings, snapshotDate } = await readHomeRankings();
   try {
     console.log("[Page] Home: Starting page render");
     console.log("[Page] Home: Environment:", {
@@ -195,8 +195,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
     // #153: JSON-LD names the production origin, never the VERCEL_URL host.
     const baseUrl = siteOrigin();
 
-    // See #192: the current published snapshot, read as /api/rankings reads it.
-    const { rankings: serverRankings, snapshotDate } = await readHomeRankings();
+    // See #192: `serverRankings` is the current published snapshot, read above as /api/rankings reads it.
 
     // Create structured data for SEO
     let structuredData = null;
