@@ -1,8 +1,9 @@
 "use client";
 
 import { ArrowUpDown, Grid, List, Star, TrendingUp } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { SearchParamsBoundary } from "@/components/search-params-boundary";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -98,8 +99,8 @@ function RankingsGridContent({
   initialRankings = [],
   list = DEFAULT_RANKING_LIST,
   header,
-}: RankingsGridProps): React.JSX.Element {
-  const searchParams = useSearchParams();
+  searchParams,
+}: RankingsGridProps & { searchParams: URLSearchParams }): React.JSX.Element {
   const router = useRouter();
   const [rankings, setRankings] = useState<RankingData[]>(initialRankings);
   const [loading, setLoading] = useState(initialRankings.length === 0);
@@ -390,15 +391,19 @@ export default function RankingsGrid({
   list,
   header,
 }: RankingsGridProps): React.JSX.Element {
+  // #368: the rankings page is ISR; the boundary keeps the board, not a loading line, in its HTML.
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center h-64">
-          <p className="text-muted-foreground">{dict.common.loading}</p>
-        </div>
-      }
-    >
-      <RankingsGridContent lang={lang} dict={dict} initialRankings={initialRankings} list={list} header={header} />
-    </Suspense>
+    <SearchParamsBoundary
+      render={(searchParams) => (
+        <RankingsGridContent
+          lang={lang}
+          dict={dict}
+          initialRankings={initialRankings}
+          list={list}
+          header={header}
+          searchParams={searchParams}
+        />
+      )}
+    />
   );
 }
