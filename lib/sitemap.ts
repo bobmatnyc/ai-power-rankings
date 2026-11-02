@@ -53,7 +53,7 @@ const staticPages = [
   { path: "tools", changeFrequency: "daily" as const, priority: 0.9, englishOnly: false },
   { path: "news", changeFrequency: "daily" as const, priority: 0.9, englishOnly: true },
   { path: "trending", changeFrequency: "daily" as const, priority: 0.9, englishOnly: false },
-  { path: "methodology", changeFrequency: "monthly" as const, priority: 0.7, englishOnly: true },
+  { path: "methodology", changeFrequency: "monthly" as const, priority: 0.7, englishOnly: false }, // #185: translated v8 page
   { path: "about", changeFrequency: "monthly" as const, priority: 0.7, englishOnly: true },
   { path: "privacy", changeFrequency: "yearly" as const, priority: 0.3, englishOnly: true },
   { path: "terms", changeFrequency: "yearly" as const, priority: 0.3, englishOnly: true },

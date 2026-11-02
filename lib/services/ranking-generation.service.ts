@@ -25,7 +25,11 @@
  *   one-board row (`rankings.list = 'combined'`). "per-list" writes one row per
  *   (period, list), each ranking only the tools of its list (`listOfTool()`), with
  *   ranks and D53 tiers counted within the list. Both layouts score through the
- *   same `computeRankings()` call with no scoring argument.
+ *   same `computeRankings()` call.
+ * - #185 (v8 activation): `scoring` hands a per-list run the active profile set's
+ *   kind routing and stored version. Each list's tools then reach the engine in the
+ *   tie order (published v7.10 position, from the combined board). The cron and
+ *   the CLI publish only this way, through `lib/rankings/publish-active.ts`.
  */
 
 import { existsSync, readFileSync } from "node:fs";
@@ -46,6 +50,7 @@ import {
   type RankingList,
   type StoredRankingList,
 } from "@/lib/rankings/lists";
+import { v8TieOrder } from "@/lib/v8-tie-order";
 
 /**
  * The version persisted on `rankings` rows. Derived from the engine's
@@ -123,6 +128,17 @@ export type RankingLayout = "combined" | "per-list";
 
 const RANKING_LAYOUTS: readonly RankingLayout[] = ["combined", "per-list"];
 
+/**
+ * #185: the scoring a per-list run uses instead of the one v7.10 table: one profile
+ * set's kind routing, and the version stored on the rows it writes (e.g. "8.0").
+ * Built by `resolvePublishScoring()` in `lib/rankings/publish-active.ts`.
+ */
+export interface PerListScoring {
+  setId: string;
+  algorithmVersion: string;
+  routing: KindWeightRouting;
+}
+
 /** Summary returned to callers (cron route surfaces this as JSON). */
 export interface RankingGenerationResult {
   period: string;
@@ -190,8 +206,10 @@ export interface RegenerateRankingsOptions {
   metricsOverridePath?: string;
   /** #93: what to write. Defaults to "publish", the cron and CLI behaviour. */
   mode?: RegenerateMode;
-  /** #186: which boards to compute. Defaults to "combined", the cron and CLI behaviour. */
+  /** #186: which boards to compute. Defaults to "combined"; the cron and CLI pass "per-list" (#185). */
   layout?: RankingLayout;
+  /** #185: the profile set a per-list run scores with; absent keeps the v7.10 table. Per-list only. */
+  scoring?: PerListScoring;
 }
 
 /** Raised when a regeneration for the same period is already in flight. */
@@ -323,13 +341,14 @@ async function listBoards(
  *
  * #185: `scoring` is one weight table for every tool, or a `KindWeightRouting`
  * that picks each tool's table by `tool.kind` (and throws for a kind it cannot
- * route). Every publish caller omits it, so they score with
- * `ALGORITHM_V76_WEIGHTS` exactly as before. Per-kind scores are combined
+ * route). Omitted, it scores with `ALGORITHM_V76_WEIGHTS` (the combined layout,
+ * admin drafts and previews); #185: the per-list publish passes the active set's
+ * routing, one list at a time. Per-kind scores are combined
  * without rescaling: each profile sums to its declared total (1.00 for v8), so
  * every score is on the same 0-100 scale, and one sort over all tools gives one
  * global rank (equal scores keep input order).
  * Test: `lib/services/ranking-generation.golden.test.ts`,
- *   `lib/scoring-profiles.inert-185.test.ts`, `lib/scoring-kind-routing.test.ts`
+ *   `lib/scoring-profiles.activation-185.test.ts`, `lib/scoring-kind-routing.test.ts`
  */
 export function computeRankings(
   sourceTools: RankingSourceTool[],
@@ -644,6 +663,9 @@ export function createDbPersistence(): RankingPersistencePort {
  * neither blocks a publish run. All modes compute rows with the same function and inputs.
  * #186: `layout` "per-list" publishes one current row per list through
  * `saveListSnapshots` (dry-run writes nothing; draft is refused).
+ * #185: `scoring` (per-list only) scores with a profile set's kind routing in the
+ * tie order and stores its version. Callers resolve it before this call, so a
+ * profile error writes nothing.
  * Test: `lib/services/ranking-generation.golden.test.ts` (publish unchanged),
  * `lib/services/ranking-generation.modes.test.ts` (draft, dry-run),
  * `tests/unit/ranking-generation-per-list-186.test.ts` (per-list layout).
@@ -674,6 +696,12 @@ export async function regenerateRankings(
   if (layout === "per-list" && mode === "publish" && !persistence.saveListSnapshots) {
     throw new Error("Per-list publish needs a persistence port with saveListSnapshots");
   }
+  // #185: a profile set scores per-list boards only; the combined board stays v7.10.
+  const scoring = options.scoring;
+  if (scoring && layout !== "per-list") {
+    throw new Error("A scoring profile set applies to the per-list layout only (#185)");
+  }
+  const algorithmVersion = scoring?.algorithmVersion ?? RANKING_ALGORITHM_VERSION;
   // #93: a dry-run writes nothing, so it takes no slot in either guard.
   const guard = mode === "publish" ? inFlightPeriods : mode === "draft" ? inFlightDrafts : null;
   // #186: a per-list run writes other rows than a combined run of the same period.
@@ -712,12 +740,16 @@ export async function regenerateRankings(
         ? [{ sourceTools: scoredTools, previousRankMap: buildPreviousRankMap(prevSnapshot?.data ?? null) }]
         : await listBoards(scoredTools, prevSnapshot?.data ?? null, persistence);
 
+    // #185: v8 ties follow the published v7.10 position, read from the combined board.
+    const v710Positions = buildPreviousRankMap(prevSnapshot?.data ?? null);
     const snapshots: RankingSnapshotInput[] = boards.map(({ list, sourceTools, previousRankMap }) => {
-      const data = computeRankings(sourceTools, previousRankMap, publishedAt);
+      const data = scoring
+        ? computeRankings(v8TieOrder(sourceTools, v710Positions), previousRankMap, publishedAt, scoring.routing)
+        : computeRankings(sourceTools, previousRankMap, publishedAt);
       // #186: a list board's ranks are already within the list; its tiers follow D53.
       return list
-        ? { period, algorithmVersion: RANKING_ALGORITHM_VERSION, publishedAt, data: withListTiers(data), list }
-        : { period, algorithmVersion: RANKING_ALGORITHM_VERSION, publishedAt, data };
+        ? { period, algorithmVersion, publishedAt, data: withListTiers(data), list }
+        : { period, algorithmVersion, publishedAt, data };
     });
 
     if (mode === "publish") {
@@ -744,7 +776,7 @@ export async function regenerateRankings(
 
     return {
       period,
-      algorithmVersion: RANKING_ALGORITHM_VERSION,
+      algorithmVersion,
       toolCount: data.length,
       publishedAt: publishedAt.toISOString(),
       topMovers,

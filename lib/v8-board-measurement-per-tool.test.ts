@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 import {
+  activeIdentities,
   FIXTURE_DATE,
   harnessBoard,
   mixedBoard,
@@ -55,7 +56,7 @@ function measure(tools: MeasuredTool[], candidate = v8) {
     const published = publishedFor(tools, v710);
     const sheet = { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set<string>() };
     const harnessFloor = tools.filter((t) => t.kind === "harness").length;
-    return measureBoard({ tools, published, baseline: v710, candidate, sheet, harnessFloor });
+    return measureBoard({ tools, published, baseline: v710, candidate, sheet, harnessFloor, toolIdentities: activeIdentities(tools) });
   } finally {
     warn.mockRestore();
   }
@@ -65,10 +66,14 @@ const sha256 = (text: string) => createHash("sha256").update(text).digest("hex")
 
 describe("per-tool table (#185, D8b)", () => {
   // Digests of `${formatMeasurementReport(result)}\n` at base commit 9daf1d27.
+  // #185: the mixed-board digest is re-pinned after its `other` tool became a productivity
+  // tool (v8.0 has no other profile); the one changed line is the kind count.
+  // #185: re-pinned again for the added redirect-count line and the 1c v8 board scope section,
+  // and again for the retired and unexplained counts on that line.
   it.each([
-    ["harness board, v8.0", () => measure(harnessBoard()), "799999d19c52779062b7b0fa24f393daa1aba8f77094743aea29f2423d54f8da"],
-    ["harness board, negative control", () => measure(harnessBoard(), wrong), "4ac8abc66aa52fe0ec3dec90a4be81d7c459ccdd668d849c6df516498c60b1f5"],
-    ["mixed board, v8.0", () => measure(mixedBoard()), "dac9b29809df957425cbf27486a0ae2c7ca95a6f8a31a4a751a8ce16eba0655e"],
+    ["harness board, v8.0", () => measure(harnessBoard()), "a64fba1b8537123b0cd6862ade4ecf31ebc5aa1b1e7c3c127e12c94c03080ca3"],
+    ["harness board, negative control", () => measure(harnessBoard(), wrong), "46ba7bb6436485247c5b3015d2b49393f5588f838e06e8965bb5d82b1b50289f"],
+    ["mixed board, v8.0", () => measure(mixedBoard()), "c3ee3a198c3e02bad5abffeb5f18ee36b9c92b1bccdb336615a6b3c5a72209f3"],
   ])("without the flag the output is byte-for-byte the base report (%s)", (_label, run, digest) => {
     const result = run();
     const output = formatScriptOutput(result, { perTool: false });
@@ -132,6 +137,7 @@ describe("per-tool table (#185, D8b)", () => {
       candidate: v8,
       sheet: { slugs: new Set(tools.map((t) => t.slug)), retiredSlugs: new Set() },
       harnessFloor: 1,
+      toolIdentities: activeIdentities(tools),
     });
     expect(result.candidate).toBeUndefined();
     expect(formatPerToolTable(result)).toBe(`${PER_TOOL_SECTION_HEADER}\nno per-tool table: no candidate measurement`);

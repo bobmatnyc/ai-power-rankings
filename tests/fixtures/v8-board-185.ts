@@ -18,6 +18,7 @@
 import type { RankingWeightsV76 } from "../../lib/ranking-algorithm-v76";
 import { computeRankings } from "../../lib/services/ranking-generation.service";
 import type { MeasuredTool, PublishedSnapshot } from "../../lib/v8-board-measurement";
+import type { ToolIdentity } from "../../lib/v8-published-id-resolution";
 
 export const SENTINEL = "Qzsentinel";
 export const FIXTURE_DATE = new Date("2026-10-01T09:00:00.000Z");
@@ -73,9 +74,10 @@ export function mixedBoard(): MeasuredTool[] {
     return tool(`m-m${String(i).padStart(2, "0")}`, "model", Math.round(5_000 + t * 90_000), Math.round(900_000 * Math.pow(0.01, t)));
   });
   // An unusable company type makes the engine warn with the tool id (#241).
-  const other = tool("m-o0", "other", 30_000, 50_000);
-  other.data = { ...other.data, company: 42 };
-  return [...harness, ...models, other];
+  // #185: a productivity tool, not `other`: v8.0 has no `other` profile (the v8.0 set drops it).
+  const productivity = tool("m-p0", "productivity", 30_000, 50_000);
+  productivity.data = { ...productivity.data, company: 42 };
+  return [...harness, ...models, productivity];
 }
 
 /**
@@ -98,6 +100,11 @@ export function tiedHarnessBoard(): MeasuredTool[] {
  */
 export function retiredMoverBoard(): MeasuredTool[] {
   return [...mixedBoard(), tool("r0", "harness", 95_000, 60_000)];
+}
+
+/** #185: the `tools` identity rows of a board with no redirects: every tool active under its own id. */
+export function activeIdentities(tools: MeasuredTool[]): ToolIdentity[] {
+  return tools.map((t) => ({ id: t.id, slug: t.slug, status: "active", redirectTo: null }));
 }
 
 /** The snapshot `computeRankings()` would have published for `tools` with `weights`. */

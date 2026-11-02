@@ -875,5 +875,36 @@
     "title": "Classement IA Power - Le classement mensuel définitif des outils de codage IA",
     "description": "Le classement mensuel définitif et l'analyse des outils de codage IA agentiques. Comparez Cursor, GitHub Copilot, Claude et plus de 50 assistants IA approuvés par les développeurs du monde entier.",
     "keywords": "outils de codage IA, IA agentique, codage autonome, classements d'outils de développement, comparaison d'assistants IA, benchmarks IA de codage, résultats SWE-bench, Claude vs Cursor vs GitHub Copilot"
+  },
+  "methodologyV8": {
+    "metaTitle": "Méthodologie du classement (v{version}) - AI Power Rankings",
+    "metaDescription": "Comment les AI Power Rankings classent les modèles, les harnais de code et les outils de productivité dans des listes distinctes, avec un profil de notation pour chaque type.",
+    "title": "Comment les classements sont établis",
+    "intro": "La version {version} des AI Power Rankings classe chaque type d'outil dans sa propre liste et note chaque type avec ses propres pondérations.",
+    "listsHeading": "Trois listes",
+    "listsBody": "Les modèles, les harnais de code et les outils de productivité sont classés dans des listes distinctes. Un outil figure dans une liste au plus, et son rang, son niveau et son évolution sont calculés dans cette liste. Les rangs ne se comparent pas d'une liste à l'autre.",
+    "listsDefault": "La page principale des classements affiche la liste des harnais de code.",
+    "listsExcluded": "Les modèles d'image et de vidéo ne figurent pas dans la liste des modèles. Les outils d'autres types ne sont pas classés.",
+    "smallLists": "Une liste de moins de {min} entrées utilise les niveaux S, A et B par tiers et n'est pas indexée par les moteurs de recherche.",
+    "profilesHeading": "Profils de notation",
+    "profilesBody": "Chaque liste est notée avec le profil de son type. Tous les profils utilisent les mêmes huit facteurs et leurs pondérations totalisent 100 %, donc chaque score est sur la même échelle de 0 à 100.",
+    "factorHeader": "Facteur",
+    "weightHeader": "Pondération",
+    "factors": {
+      "agenticCapability": "Capacité agentique",
+      "innovation": "Innovation",
+      "technicalPerformance": "Performance technique",
+      "developerAdoption": "Adoption par les développeurs",
+      "marketTraction": "Traction commerciale",
+      "businessSentiment": "Perception du marché",
+      "developmentVelocity": "Vitesse de développement",
+      "platformResilience": "Résilience de la plateforme"
+    },
+    "provisionalNote": "Provisoire : la liste des outils de productivité utilise les pondérations des harnais de code jusqu'à ce que son propre profil de notation soit décidé.",
+    "openWeight": "Le fait que les poids d'un modèle soient ouverts n'est pas un facteur de notation.",
+    "tiesHeading": "Égalités",
+    "tiesBody": "Quand deux outils d'une liste ont le même score, celui qui était le mieux classé dans les derniers classements publiés avant la version {version} passe en premier. Un outil qui n'était pas classé alors vient ensuite.",
+    "dataHeading": "Sources de données",
+    "dataBody": "Les scores utilisent les indicateurs enregistrés pour chaque outil : résultats de benchmarks, adoption comme les téléchargements, les étoiles et les utilisateurs, financements et actualités économiques, et rythme des versions. Les classements sont recalculés une fois par mois."
   }
 }

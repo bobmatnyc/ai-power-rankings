@@ -34,6 +34,8 @@ vi.mock("../../lib/services/ranking-generation.service", () => ({
   },
   regenerateRankings: () => publish.impl(),
 }));
+// #185: the cron route publishes through publishActiveRankings(), so the stub sits there.
+vi.mock("../../lib/rankings/publish-active", () => ({ publishActiveRankings: () => publish.impl() }));
 
 import { GET as cronPublish } from "../../app/api/cron/regenerate-rankings/route";
 import { GET as readCurrent } from "../../app/api/rankings/current/route";
@@ -45,10 +47,13 @@ let fake: ReturnType<typeof createFakeRankingsDb>;
 
 const board = (period: string) => [{ tool_id: `tool-${period}`, tool_name: `Tool ${period}`, rank: 1, score: 80 }];
 
-/** Demote the current combined row and make `period` current, as a committed publish does. */
+/**
+ * Demote the current row of the default list and make `period` current, as a committed publish does.
+ * #185: /api/rankings/current serves the default list (harness), never the combined row.
+ */
 function writeCurrent(period: string, data: unknown = board(period)) {
-  for (const row of fake.state.rankings) row.isCurrent = false;
-  fake.state.rankings.push(rankingRow({ period, isCurrent: true, data, publishedAt: new Date() }));
+  for (const row of fake.state.rankings) if (row.list === "harness") row.isCurrent = false;
+  fake.state.rankings.push(rankingRow({ period, list: "harness", isCurrent: true, data, publishedAt: new Date() }));
 }
 
 function publishOk(period: string) {
@@ -64,7 +69,7 @@ const cronRequest = () =>
   });
 
 async function current(): Promise<{ status: number; period: string | undefined; cacheControl: string | null }> {
-  const res = await readCurrent();
+  const res = await readCurrent(new Request("http://localhost/api/rankings/current")); // #185: Request required
   const body = (await res.json()) as { data?: { period?: string } };
   return { status: res.status, period: body.data?.period, cacheControl: res.headers.get("Cache-Control") };
 }
