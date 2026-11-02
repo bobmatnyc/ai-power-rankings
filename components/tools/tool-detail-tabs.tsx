@@ -394,8 +394,9 @@ export function ToolDetailTabs({
           {ranking ? (
             <Card>
               <CardHeader>
-                <CardTitle>Algorithm v7.1 Scores</CardTitle>
-                <CardDescription>Detailed scoring breakdown across all factors (v7.1-september-update)</CardDescription>
+                {/* #280: the scores come from the tool's own list board, not a fixed v7.1 run. */}
+                <CardTitle>Factor Scores</CardTitle>
+                <CardDescription>Detailed scoring breakdown across all factors</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">

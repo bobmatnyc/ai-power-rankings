@@ -177,16 +177,15 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
       readFull: "",
       readMoreButton: "",
     },
+    // #280: `description` (unread v7.6 copy) removed here and in `footer`.
     footer: {
       tagline: "",
-      description: "",
       quickLinks: "",
       categories: "",
       copyright: "",
     },
   },
   footer: {
-    description: "",
     quickLinks: "",
     categories: "",
     copyright: "",
@@ -221,33 +220,8 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
       modelsMetricsPendingNote: "",
       empty: "",
     },
+    // #280: the card's v7.6 copy is gone; it renders `methodologyV8` text and keeps this link label.
     algorithm: {
-      title: "",
-      subtitle: "",
-      tabs: {
-        factors: "",
-        modifiers: "",
-        methodology: "",
-      },
-      primaryFactors: "",
-      secondaryFactors: "",
-      description: "",
-      factors: {
-        agentic: "",
-        innovation: "",
-        performance: "",
-        adoption: "",
-        traction: "",
-        sentiment: "",
-        velocity: "",
-        resilience: "",
-      },
-      modifiers: {
-        decay: "",
-        risk: "",
-        revenue: "",
-      },
-      methodologyText: "",
       viewMethodology: "",
     },
   },
@@ -470,136 +444,7 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
       subscribeAgain: "",
     },
   },
-  methodology: {
-    title: "",
-    subtitle: "",
-    lastUpdated: "",
-    intro: "",
-    algorithm: {
-      title: "",
-      description: "",
-      keyFeatures: "",
-      features: {
-        innovationDecay: "",
-        platformRisk: "",
-        revenueQuality: "",
-        technicalWeighting: "",
-        dataValidation: "",
-        logarithmicScaling: "",
-      },
-    },
-    factors: {
-      title: "",
-      description: "",
-      primary: "",
-      secondary: "",
-      agentic: {
-        details: "",
-      },
-      innovation: {
-        details: "",
-      },
-      performance: {
-        details: "",
-      },
-      adoption: {
-        details: "",
-      },
-      traction: {
-        details: "",
-      },
-      sentiment: {
-        details: "",
-      },
-      velocity: {
-        details: "",
-      },
-      resilience: {
-        details: "",
-      },
-    },
-    modifiers: {
-      title: "",
-      description: "",
-      innovationDecay: {
-        description: "",
-      },
-      platformRisk: {
-        description: "",
-        penalties: "",
-        bonuses: "",
-        penaltyList: {
-          acquired: "",
-          exclusive: "",
-          competitor: "",
-          regulatory: "",
-          funding: "",
-        },
-        bonusList: {
-          multiLLM: "",
-          openSource: "",
-          selfHosted: "",
-        },
-      },
-      revenueQuality: {
-        description: "",
-        models: {
-          enterpriseHigh: "",
-          enterpriseStandard: "",
-          smbSaas: "",
-          consumerPremium: "",
-          freemium: "",
-          openSource: "",
-        },
-      },
-    },
-    dataSources: {
-      title: "",
-      description: "",
-      collection: {
-        title: "",
-        sources: {
-          api: "",
-          research: "",
-          announcements: "",
-          community: "",
-          benchmarks: "",
-        },
-      },
-      validation: {
-        title: "",
-        requirements: {
-          completeness: "",
-          reliability: "",
-          outlier: "",
-          crossValidation: "",
-        },
-      },
-      updateFrequency: {
-        title: "",
-        description: "",
-      },
-    },
-    sections: {
-      scoringFactors: {
-        title: "",
-        intro: "",
-      },
-      modifiers: {
-        title: "",
-        intro: "",
-      },
-      dataCollection: {
-        title: "",
-        intro: "",
-        sources: [],
-      },
-      updateFrequency: {
-        title: "",
-        content: "",
-      },
-    },
-  },
+  // #280: the unread v7.6 `methodology` block is removed; the page reads `methodologyV8`.
   // #185: the v8 methodology page (per-list ranking and scoring profiles)
   methodologyV8: {
     metaTitle: "",
