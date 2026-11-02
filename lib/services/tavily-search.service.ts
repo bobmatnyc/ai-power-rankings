@@ -9,6 +9,7 @@
  */
 
 import { loggers } from '@/lib/logger';
+import { ProviderApiError } from './provider-api-error'; // #367
 
 /**
  * Which discovery pass produced a result.
@@ -327,7 +328,8 @@ export class TavilySearchService {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Tavily API error: ${response.status} - ${errorText}`);
+      // #367: typed, so a key/auth failure is never read as a news-site refusal.
+      throw new ProviderApiError('tavily', response.status, `Tavily API error: ${response.status} - ${errorText}`);
     }
 
     const data: TavilyApiResponse = await response.json();

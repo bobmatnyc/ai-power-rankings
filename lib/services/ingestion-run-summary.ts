@@ -165,8 +165,13 @@ export function emptyRunCounts(): IngestionRunCounts {
   };
 }
 
+/** #367: leads the run's content-fetch failure line (summarizeFailedFetches). */
+export const FETCH_FAILURE_PREFIX = "Content fetch failed for";
+
 export type RunFailureCause =
   | "provider_billing"
+  | "provider_auth"
+  | "fetch_failed"
   | "assessment_truncated"
   | "assessment_unparseable"
   | "assessment_failed"
@@ -186,6 +191,8 @@ export function classifyRunFailure(errors: readonly string[]): RunFailureCause |
   const first = errors[0];
   if (first === undefined) return null;
   if (first.startsWith("Provider billing error")) return "provider_billing";
+  if (first.startsWith("Provider auth error")) return "provider_auth"; // #367
+  if (first.startsWith(FETCH_FAILURE_PREFIX)) return "fetch_failed"; // #367
   if (first.startsWith("Quality assessment failed for all")) {
     if (/truncated/i.test(first)) return "assessment_truncated";
     if (/unparseable|no numeric score/i.test(first)) return "assessment_unparseable";
