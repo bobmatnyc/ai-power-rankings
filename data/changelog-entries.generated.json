@@ -1212,12 +1212,23 @@
   {
     "id": "unreleased-c0b44017e023",
     "version": "Unreleased",
-    "date": "2026-11-09T14:05:51.564Z",
-    "dateSource": "build",
+    "date": "2026-11-09T14:16:33.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "rankings",
     "title": "the models board page is hidden until model metrics land (owner ruling D6e)",
     "description": "the models board page is hidden until model metrics land (owner ruling D6e). While `/api/rankings?list=model` reports a `metric_row_count` of 0, `/[lang]/rankings/models` is a 404 in every locale and the list switcher on the rankings pages and the list links on `/methodology` omit it. The check reads the count through the list page's cached fetch of that API (300 s, tag `rankings`), so the page and links return by themselves once a model metric row is published. A failed read or a missing count hides them and logs the error. The harness and productivity pages, the API and the sitemap are unchanged (`lib/rankings/model-page-visibility.ts`). Tests: `tests/unit/model-page-visibility-d6e.test.tsx` (D6e)",
+    "changeType": "improvement"
+  },
+  {
+    "id": "unreleased-aaafc0baef0d",
+    "version": "Unreleased",
+    "date": "2026-11-09T14:17:57.448Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "ranking",
+    "title": "a tool's company name no longer adds to its score",
+    "description": "a tool's company name no longer adds to its score. The ranking engine gave a bonus to tools whose company field named a short list of large vendors; the bonus is removed and the company name is not a score input. A tool still earns the data-completeness points for having any company on file. Weights, curves and other factors are unchanged. Tests: `lib/ranking-algorithm-v76.company-name.test.ts` (#313)",
     "changeType": "improvement"
   },
   {
