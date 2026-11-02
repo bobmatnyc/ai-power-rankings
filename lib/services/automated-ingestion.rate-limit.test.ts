@@ -3,6 +3,7 @@ import { AutomatedIngestionService, isAutoBlockableError, classifyAutoBlockReaso
 import { tavilyExtractService } from "./tavily-extract.service";
 import { jinaReaderService } from "./jina-reader.service";
 import { isDomainBlocked, AUTO_BLOCK_TTL_MS } from "./blocked-domains.config";
+import { ProviderApiError } from "./provider-api-error";
 
 /**
  * Regression tests for #125 Task 2.
@@ -62,14 +63,13 @@ describe("isAutoBlockableError", () => {
 describe("classifyAutoBlockReason", () => {
   it.each([
     ["429 Too Many Requests", "transient"],
-    ["401 Unauthorized", "permanent"],
-    ["403 Forbidden", "permanent"],
+    // #367: a 401/403 block carries the same TTL as a 429; it used to be permanent.
+    ["401 Unauthorized", "transient"],
+    ["403 Forbidden", "transient"],
+    ["Extraction failed: 403 Forbidden - blocked by Cloudflare", "transient"],
+    ["429 then upstream returned 401 on retry", "transient"],
+    // Only a refusal with no status code stays permanent.
     ["Access blocked by robots.txt", "permanent"],
-    // A permanent signal alongside a 429 in the same message must still
-    // classify as permanent — the source explicitly refused, not just
-    // rate-limited.
-    ["Tavily Extract API error: 403 - Forbidden (retried into a 429)", "permanent"],
-    ["429 then upstream returned 401 on retry", "permanent"],
   ])('classifies "%s" as %s', (errorMsg, expected) => {
     expect(classifyAutoBlockReason(errorMsg)).toBe(expected);
   });
@@ -127,53 +127,73 @@ describe("AutomatedIngestionService - 429 auto-block (extraction chain)", () => 
     expect(isDomainBlocked(url)).toBe(false);
   });
 
-  it("auto-blocks the domain when Jina Reader is blocked with a 403", async () => {
+  // #367: Jina's own 403 is the provider refusing our key, not the site refusing the page.
+  it("does not auto-block the domain when Jina Reader's own API answers 403", async () => {
     const url = "https://devin-ai-test-403.example/article-1";
     expect(isDomainBlocked(url)).toBe(false);
 
     vi.spyOn(tavilyExtractService, "isAvailable").mockReturnValue(false);
     vi.spyOn(jinaReaderService, "isAvailable").mockReturnValue(true);
+    const jina403 = new ProviderApiError("jina", 403, "Jina.ai API error (403): Forbidden");
     vi.spyOn(jinaReaderService, "fetchArticle").mockRejectedValue(
-      new Error("Jina.ai blocked by source (403): Forbidden")
+      new Error(`Failed to fetch article with Jina.ai: ${jina403.message}`, { cause: jina403 })
     );
     vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network disabled in test"));
 
     await callFetchArticleContent(service, url);
 
-    expect(isDomainBlocked(url)).toBe(true);
+    expect(isDomainBlocked(url)).toBe(false);
   });
 
-  /**
-   * Code-critic regression: the real production sequence a single
-   * fetchArticleContent call can produce — Tavily Extract fails with a
-   * permanent 403, falls through to Jina Reader, which fails with a
-   * transient 429, for the SAME domain. The domain must end up permanently
-   * blocked (from the 403), not demoted to a 4-hour TTL by the later 429.
-   */
-  it("keeps the domain permanently blocked when Tavily 403s and Jina 429s in the same call", async () => {
-    const url = "https://devin-ai-test-403-then-429.example/article-1";
+  // #367: Tavily's own 429 still blocks for the #125 TTL; the status, not the text, decides.
+  it("blocks for the TTL only when Tavily Extract's own API answers 429", async () => {
+    const url = "https://devin-ai-test-provider-429.example/article-1";
     expect(isDomainBlocked(url)).toBe(false);
 
     vi.useFakeTimers();
     try {
       vi.spyOn(tavilyExtractService, "isAvailable").mockReturnValue(true);
       vi.spyOn(tavilyExtractService, "extractContent").mockRejectedValue(
-        new Error("Tavily Extract API error: 403 - Forbidden")
+        new ProviderApiError("tavily", 429, "Tavily Extract API error: 429 - Too Many Requests")
       );
-      vi.spyOn(jinaReaderService, "isAvailable").mockReturnValue(true);
-      vi.spyOn(jinaReaderService, "fetchArticle").mockRejectedValue(
-        new Error("Jina.ai rate limited (429): Too Many Requests")
-      );
+      vi.spyOn(jinaReaderService, "isAvailable").mockReturnValue(false);
       vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network disabled in test"));
 
       await callFetchArticleContent(service, url);
 
       expect(isDomainBlocked(url)).toBe(true);
+      vi.advanceTimersByTime(AUTO_BLOCK_TTL_MS + 1000);
+      expect(isDomainBlocked(url)).toBe(false);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 
-      // Past what would have been the 429 TTL: still blocked, because the
-      // 403's permanent block must not have been demoted by the later 429.
-      vi.advanceTimersByTime(AUTO_BLOCK_TTL_MS + 60 * 60 * 1000);
+  /**
+   * #367: a site's own 403 (Tavily Extract relays it as a per-URL "Extraction
+   * failed" in a 200 response) still blocks the domain, but only for
+   * AUTO_BLOCK_TTL_MS. Before #367 this block was permanent for the process.
+   */
+  it("blocks a site 403 for the TTL only, then unblocks the domain", async () => {
+    const url = "https://devin-ai-test-site-403.example/article-1";
+    expect(isDomainBlocked(url)).toBe(false);
+
+    vi.useFakeTimers();
+    try {
+      vi.spyOn(tavilyExtractService, "isAvailable").mockReturnValue(true);
+      vi.spyOn(tavilyExtractService, "extractContent").mockRejectedValue(
+        new Error("Extraction failed: 403 Forbidden")
+      );
+      vi.spyOn(jinaReaderService, "isAvailable").mockReturnValue(false);
+      vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("network disabled in test"));
+
+      await callFetchArticleContent(service, url);
+
       expect(isDomainBlocked(url)).toBe(true);
+      vi.advanceTimersByTime(AUTO_BLOCK_TTL_MS - 1000);
+      expect(isDomainBlocked(url)).toBe(true);
+      vi.advanceTimersByTime(2000);
+      expect(isDomainBlocked(url)).toBe(false);
     } finally {
       vi.useRealTimers();
     }

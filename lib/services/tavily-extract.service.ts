@@ -9,6 +9,7 @@
  */
 
 import { loggers } from '@/lib/logger';
+import { ProviderApiError } from './provider-api-error'; // #367
 
 /**
  * Result from Tavily Extract API for a single URL
@@ -142,7 +143,13 @@ export class TavilyExtractService {
 
         if (!response.ok) {
           const errorText = await response.text();
-          throw new Error(`Tavily Extract API error: ${response.status} - ${errorText}`);
+          // #367: Tavily's own HTTP status, typed so it never auto-blocks the article's
+          // domain. A per-URL "Extraction failed" below is the site's error and stays plain.
+          throw new ProviderApiError(
+            'tavily',
+            response.status,
+            `Tavily Extract API error: ${response.status} - ${errorText}`
+          );
         }
 
         const data: TavilyExtractResponse = await response.json();

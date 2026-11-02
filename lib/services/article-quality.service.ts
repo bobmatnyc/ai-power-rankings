@@ -9,6 +9,7 @@ import { getOpenRouterModel } from '@/lib/services/openrouter-model';
 // rejected inside OpenRouterService.generate via readCompletion.
 import { extractJsonObject } from '@/lib/services/llm-completion';
 import { loggers } from '@/lib/logger';
+import { providerApiStatusOf } from '@/lib/services/provider-api-error'; // #367
 
 /**
  * Quality assessment result from LLM evaluation
@@ -24,6 +25,9 @@ export interface QualityAssessment {
   // #167: the provider error when the LLM call itself failed, so the caller can tell
   // "assessment never ran" (e.g. OpenRouter out of credits) from a quality rejection.
   error?: string;
+  // #367: the provider's own HTTP status when `error` came from its API (401 = bad key),
+  // so the run can fail on an auth error without parsing `error` text.
+  errorStatus?: number;
 }
 
 /**
@@ -168,6 +172,7 @@ export class ArticleQualityService {
         ...DEFAULT_ASSESSMENT,
         estimatedCost: 0,
         error: message, // #167: keep the provider error for the run's failure reason
+        errorStatus: providerApiStatusOf(error), // #367
       };
     }
   }
@@ -236,6 +241,7 @@ export class ArticleQualityService {
               ...DEFAULT_ASSESSMENT,
               estimatedCost: 0,
               error: message, // #167: see assessArticle's catch
+              errorStatus: providerApiStatusOf(error), // #367
             } as QualityAssessment;
           })
         )

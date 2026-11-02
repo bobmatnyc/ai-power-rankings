@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-771a1b56978d",
+    "version": "Unreleased",
+    "date": "2026-11-02T18:32:54.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "ingestion",
+    "title": "a provider's own 401 or 403 no longer blocks a news site, and it fails the daily-news run",
+    "description": "a provider's own 401 or 403 no longer blocks a news site, and it fails the daily-news run. On 2026-11-01 every Tavily call answered 401 (invalid key); the run blocked techcrunch.com, wired.com and arstechnica.com for the life of the process, skipped their later candidates as `blocked_domain`, and ended `completed` with 0 errors. Tavily Search, Tavily Extract, Jina Reader and OpenRouter now throw a typed `ProviderApiError` carrying the provider's HTTP status, and the auto-block reads that type and status, not the error text: a provider error never blocks a domain unless it is a 429 (unchanged since #125). A 401/403 from the provider's own API adds a `Provider auth error [<provider>]` reason through the #167 billing path, so the run ends `failed`, the cron route answers 500 and sends its failure alert. A news site's own 401/403 (for example a Tavily Extract per-URL failure) still blocks its domain, now for the 4-hour TTL a 429 gets (`AUTO_BLOCK_TTL_MS`) instead of permanently; only a \"blocked\" refusal with no status code stays permanent. Failed content fetches add one line to the run's errors (`Content fetch failed for N of M candidates: <reason>=<count>`), so the cron route's error count and `error_log` show them; that line is added after the run's status is set and does not change it. Jina's 401/403 message now reads `Jina.ai API error (<status>)` in place of \"blocked by source\". Tests: `tests/unit/cron-daily-news-provider-auth-367.test.ts`, `lib/services/provider-api-error.test.ts`, `lib/services/automated-ingestion.rate-limit.test.ts` (#367)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-0bf3ed505857",
     "version": "Unreleased",
     "date": "2026-10-30T09:29:05.000Z",
@@ -233,7 +244,7 @@
   {
     "id": "unreleased-1a607fffeb7a",
     "version": "Unreleased",
-    "date": "2026-10-29T23:46:21.000Z",
+    "date": "2026-11-02T15:35:24.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "rankings",
@@ -827,7 +838,7 @@
   {
     "id": "unreleased-34a6bdfa9c0e",
     "version": "Unreleased",
-    "date": "2026-10-30T00:07:39.000Z",
+    "date": "2026-11-02T15:35:24.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
@@ -893,7 +904,7 @@
   {
     "id": "unreleased-ccbf67ab4dfb",
     "version": "Unreleased",
-    "date": "2026-10-30T00:07:39.000Z",
+    "date": "2026-11-02T15:35:24.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
@@ -1124,7 +1135,7 @@
   {
     "id": "unreleased-6e58a7af1a59",
     "version": "Unreleased",
-    "date": "2026-10-30T10:47:01.000Z",
+    "date": "2026-10-30T10:52:30.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "whats-new",
@@ -1146,7 +1157,7 @@
   {
     "id": "unreleased-acb291e345f2",
     "version": "Unreleased",
-    "date": "2026-10-30T10:47:01.000Z",
+    "date": "2026-10-30T10:52:30.000Z",
     "dateSource": "commit",
     "section": "Changed",
     "scope": "whats-new",
