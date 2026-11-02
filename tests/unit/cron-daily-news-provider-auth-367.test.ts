@@ -108,7 +108,14 @@ const SECRET = "cron-secret-fixture-value";
 const originalCronSecret = process.env["CRON_SECRET"];
 
 const TAVILY_401_BODY = '{"detail":{"error":"Unauthorized: missing or invalid API key."}}';
-const ARTICLE_TEXT = "Editors and agents compete on latency and price in this fixture story. ".repeat(8);
+// Bodies r.jina.ai returned on 2026-11-02: a bad key, and a refusal about the target domain.
+const JINA_BAD_KEY_BODY =
+  '{"data":null,"code":401,"name":"AuthenticationFailedError","status":40102,' +
+  '"message":"Invalid API key, please get a new one from https://jina.ai"}';
+const JINA_SITE_REFUSAL_BODY =
+  '{"data":null,"code":403,"name":"AbuseAlleviationError","status":40305,' +
+  '"message":"Anonymous access to domain jina-site-403.example.com blocked"}';
+const ARTICLE_TEXT ="Editors and agents compete on latency and price in this fixture story. ".repeat(8);
 
 type Answer = { status: number; body: string };
 type FetchRoutes = { tavilySearch?: Answer; tavilyExtract?: Answer; jina?: Answer; site?: Answer };
@@ -244,13 +251,13 @@ describe("GET /api/cron/daily-news — provider auth errors (#367)", () => {
     expect(payload.data?.errors[0]).toMatch(/^Provider auth error \[tavily\]: HTTP 401 Unauthorized/);
   });
 
-  it("a Jina 401 blocks no domain and fails the run", async () => {
+  it("a Jina 401 naming Jina's own auth error blocks no domain and fails the run", async () => {
     const hosts = ["jina-auth-a.example.com", "jina-auth-b.example.com"];
     stubFetch({
       tavilySearch: { status: 200, body: tavilySearchBody(hosts) },
       // Tavily Extract answers 200 with nothing extracted, so the chain falls to Jina.
       tavilyExtract: { status: 200, body: json({ results: [], failed_results: [] }) },
-      jina: { status: 401, body: json({ code: 401, message: "Invalid API key" }) },
+      jina: { status: 401, body: JINA_BAD_KEY_BODY },
     });
     const blockedBefore = getBlockedDomainsStats().domains;
 
@@ -260,6 +267,48 @@ describe("GET /api/cron/daily-news — provider auth errors (#367)", () => {
     expect(payload.data?.status).toBe("failed");
     expect(status).toBe(500);
     expect(payload.data?.errors[0]).toMatch(/^Provider auth error \[jina\]: HTTP 401 Unauthorized/);
+  });
+
+  // #367 review: r.jina.ai also answers 401/403 when the TARGET site refuses (the Reuters
+  // case in docs/troubleshooting/content-extraction-401-fix.md). That is a site refusal.
+  it("a Jina 403 relaying a site refusal blocks the domain for the TTL and does not fail the run", async () => {
+    const host = "jina-site-403.example.com";
+    stubFetch({
+      tavilySearch: { status: 200, body: tavilySearchBody([host]) },
+      tavilyExtract: { status: 200, body: json({ results: [], failed_results: [] }) },
+      jina: { status: 403, body: JINA_SITE_REFUSAL_BODY },
+    });
+
+    const { status, payload } = await runCron();
+
+    expect(payload.data?.status).toBe("completed");
+    expect(status).toBe(200);
+    expect(payload.data?.errors.some((e) => e.startsWith("Provider auth error"))).toBe(false);
+    expect(isDomainBlocked(`https://${host}/later`)).toBe(true);
+    vi.advanceTimersByTime(AUTO_BLOCK_TTL_MS + 1000);
+    expect(isDomainBlocked(`https://${host}/later`)).toBe(false);
+  });
+
+  // #367 review: Tavily's 401 body can contain "api key" and "404", which the extract
+  // client's no-retry text check used to turn into a silent null.
+  it("a Tavily Extract 401 whose body says 'api key' and '404' still fails the run", async () => {
+    const hosts = ["tavily-extract-401-a.example.com", "tavily-extract-401-b.example.com"];
+    stubFetch({
+      tavilySearch: { status: 200, body: tavilySearchBody(hosts) },
+      tavilyExtract: {
+        status: 401,
+        body: '{"detail":{"error":"Unauthorized: missing or invalid api key (see /docs/errors#404)"}}',
+      },
+      jina: { status: 200, body: json({ data: { content: ARTICLE_TEXT, title: "Fixture" } }) },
+    });
+    const blockedBefore = getBlockedDomainsStats().domains;
+
+    const { status, payload } = await runCron();
+
+    expect(getBlockedDomainsStats().domains).toEqual(blockedBefore);
+    expect(payload.data?.status).toBe("failed");
+    expect(status).toBe(500);
+    expect(payload.data?.errors[0]).toMatch(/^Provider auth error \[tavily\]: HTTP 401 Unauthorized/);
   });
 
   it("an OpenRouter 401 fails the run with an auth reason and blocks no domain", async () => {

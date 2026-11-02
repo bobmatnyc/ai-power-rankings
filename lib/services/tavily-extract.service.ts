@@ -192,6 +192,13 @@ export class TavilyExtractService {
           error: errorMessage,
         });
 
+        // #367: Tavily's own 401/403 is an auth failure. Rethrow it before the text
+        // checks below, which would turn a body saying "api key" or "404" into a silent
+        // null; retrying a rejected key cannot succeed either.
+        if (lastError instanceof ProviderApiError && (lastError.status === 401 || lastError.status === 403)) {
+          throw lastError;
+        }
+
         // Don't retry on certain errors
         if (
           errorMessage.includes('404') ||

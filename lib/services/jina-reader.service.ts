@@ -16,6 +16,26 @@
 
 import { ProviderApiError } from "./provider-api-error"; // #367
 
+/**
+ * #367: the `name` r.jina.ai puts in its JSON error body when OUR key is rejected.
+ * Recorded 2026-11-02 with a bad key: HTTP 401
+ * `{"code":401,"name":"AuthenticationFailedError","status":40102,"message":"Invalid API key, ..."}`.
+ * AuthenticationRequiredError is the same family for a missing key. A 401/403 with any
+ * other name (e.g. 403 AbuseAlleviationError, "Anonymous access to domain ... blocked")
+ * concerns the target site.
+ */
+const JINA_AUTH_ERROR_NAMES = new Set(["AuthenticationFailedError", "AuthenticationRequiredError"]);
+
+/** The `name` field of a Jina JSON error body, or undefined when the body is not one. */
+function jinaErrorName(body: string): string | undefined {
+  try {
+    const name = (JSON.parse(body) as { name?: unknown }).name;
+    return typeof name === "string" ? name : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export interface JinaReaderMetadata {
   title?: string;
   author?: string;
@@ -94,6 +114,17 @@ export class JinaReaderService {
         if (response.status === 401 || response.status === 403) {
           const errorText = await response.text();
           console.error(`[JinaReader] API blocked (${response.status}):`, errorText);
+          const errorName = jinaErrorName(errorText);
+
+          // #367: only Jina's own auth error names our key; it is the provider's failure,
+          // so it is typed and not retried. Any other 401/403 is the target site refusing.
+          if (errorName && JINA_AUTH_ERROR_NAMES.has(errorName)) {
+            throw new ProviderApiError(
+              "jina",
+              response.status,
+              `Jina.ai API error (${response.status}): ${errorName}`
+            );
+          }
 
           // Retry up to 2 times with exponential backoff
           if (retryCount < 2) {
@@ -103,11 +134,10 @@ export class JinaReaderService {
             return this.fetchArticle(url, retryCount + 1);
           }
 
-          // #367: this is r.jina.ai's own status (401 = invalid key), not the news site's.
-          throw new ProviderApiError(
-            "jina",
-            response.status,
-            `Jina.ai API error (${response.status}): ${response.statusText}`
+          // #367: a site refusal relayed by Jina — plain Error, so it may block the
+          // domain for the TTL and does not fail the run.
+          throw new Error(
+            `Jina.ai blocked by source (${response.status}): ${errorName ?? response.statusText}`
           );
         }
 
