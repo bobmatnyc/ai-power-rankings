@@ -7,7 +7,8 @@
  * What: renders the grid with `renderToString` (no effects run, as in the server
  *   HTML) and checks the count, the `v<digits>` version and the dates; checks the
  *   version and date helpers; checks every locale's `subtitle`/`asOf` take placeholders;
- *   checks the page hands the API's version and date to the grid.
+ *   checks the page hands the current snapshot's version and date to the grid
+ *   (#368: read through a stubbed `loadCurrentRankings()`).
  * Test: `npx vitest run tests/unit/rankings-header-305.test.tsx`. Made-up tools, no network.
  */
 import { readdirSync } from "node:fs";
@@ -31,9 +32,13 @@ vi.mock("../../contexts/ranking-changes-context", () => ({
   useRankingChanges: () => ({ changes: null }),
 }));
 vi.mock("../../i18n/client", () => ({ useI18n: () => ({ dict: en, lang: "en" }) }));
+// #368: the list page reads the board from loadCurrentRankings(), no longer from /api/rankings.
+const { loadCurrentRankings } = vi.hoisted(() => ({ loadCurrentRankings: vi.fn() }));
+vi.mock("../../lib/rankings/current-rankings", () => ({ loadCurrentRankings }));
 
 import { RankingListPage } from "../../app/[lang]/rankings/ranking-list-page";
 import RankingsGrid from "../../components/ranking/rankings-grid";
+import { currentBoard } from "./helpers/current-board";
 import { RankingsStatsCards } from "../../components/ranking/rankings-stats-cards";
 import {
   formatAlgorithmVersion,
@@ -140,18 +145,11 @@ describe("locale dictionaries (#305)", () => {
 });
 
 describe("the list page (#305)", () => {
-  it("hands the API's algorithm.version and published_at to the grid", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () =>
-        Response.json({
-          rankings: rows(2),
-          list_meta: { list: "harness", entry_count: 2, indexable: false, tier_scheme: "thirds" },
-          published_at: "2026-10-21T12:00:00.000Z",
-          algorithm: { version: "7.10" },
-        })
-      )
-    );
+  it("hands the snapshot's algorithm version and published_at to the grid", async () => {
+    loadCurrentRankings.mockResolvedValueOnce({
+      ...currentBoard("harness", 0, { version: "7.10", publishedAt: "2026-10-21T12:00:00.000Z" }),
+      rankings: rows(2),
+    });
     const page = await RankingListPage({ lang: "en", list: "harness" });
     const found: ReactElement[] = [];
     const walk = (node: ReactNode): void => {

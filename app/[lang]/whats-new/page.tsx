@@ -10,6 +10,10 @@ import { reportPath, whatsNewPageMetadata } from './page-metadata';
 // #54: rendered on request and cached for 30 minutes, the window the old
 // summary fetch revalidated on.
 export const revalidate = 1800;
+// #368: without static params the route was dynamic and never cached; each locale renders on first request.
+export function generateStaticParams(): Array<{ lang: string }> {
+  return [];
+}
 
 // #181: how many weekly digests the index lists.
 const WEEKLY_LIST_SIZE = 8;

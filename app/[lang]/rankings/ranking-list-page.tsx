@@ -7,10 +7,8 @@ import { FAQSection, QuickAnswerBox } from "@/components/seo";
 import { generalFAQs } from "@/data/seo-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
-import { CACHE_TAGS } from "@/lib/cache/invalidation.service";
-import { getUrl } from "@/lib/get-url";
-import { loggers } from "@/lib/logger";
 import { generateRankingOGImageUrl } from "@/lib/og-utils";
+import { loadListBoard } from "@/lib/rankings/list-board";
 import {
   DEFAULT_RANKING_LIST,
   INDEX_MIN_ENTRIES,
@@ -34,63 +32,23 @@ import { siteOrigin } from "@/lib/site-origin";
  *   board (D51); `/rankings/models` and `/rankings/productivity-tools` the others.
  * What: `rankingListMetadata()` builds the title, description, Open Graph image and
  *   the localized canonical and hreflang for the list's canonical path
- *   (`rankingListPath()`), and adds `robots: noindex` when `/api/rankings` reports the
+ *   (`rankingListPath()`), and adds `robots: noindex` when the board's `list_meta` reports the
  *   list not indexable: below 10 entries (D53), or the models list with fewer than 10 active
- *   rows carrying metrics (#329, D63; it then also shows the metrics-pending note). An unknown entry count (a non-OK or thrown read,
- *   or a response without `list_meta`) is noindex as well, on every list including
+ *   rows carrying metrics (#329, D63; it then also shows the metrics-pending note). An unknown entry count (a thrown read)
+ *   is noindex as well, on every list including
  *   `/rankings`: a thin list must never render indexable. `RankingListPage`
  *   renders the list navigation (D6e: without the models link while it is hidden), the D54 provisional note for productivity, the
  *   D53 short-list note, and the grid seeded with the list's rows.
- *   The rankings fetch keeps `getUrl()`, which must reach this deployment's own API
- *   on previews (#153); the default list keeps the unqualified `/api/rankings` URL.
+ *   #368: both read the board through `loadListBoard()` (the database, as
+ *   `/api/rankings` does), so the page is ISR with no self-fetch.
  * Test: `tests/unit/ranking-list-pages-186.test.tsx`,
  *   `tests/unit/seo-canonical-origin.test.ts` (the `/rankings` page).
  */
 
-interface ListBoardResponse {
-  rankings: Array<{ tool?: { name?: string }; name?: string; updated_at?: string }>;
-  meta: RankingListMeta | null;
-  /** #305: the published ranking's `algorithm.version` and `published_at`. */
-  header: { version: string | null; publishedAt: string | null };
-}
-
-const NO_HEADER = { version: null, publishedAt: null };
-
-/** #329: the API's count of active rows with metrics; 0 (fail closed) when absent or malformed. */
+/** #329: the board's count of active rows with metrics; 0 (fail closed) when absent or malformed. */
 function metricRowsOf(meta: RankingListMeta | null): number {
   const n = meta?.metric_row_count;
   return typeof n === "number" && Number.isInteger(n) && n >= 0 ? n : 0;
-}
-
-/** #186: `/api/rankings` for a list on this deployment; the default list keeps the bare URL. */
-function rankingsApiUrl(list: RankingList, devTimestamp?: number): string {
-  const params = new URLSearchParams();
-  if (list !== DEFAULT_RANKING_LIST) params.set("list", list);
-  if (devTimestamp !== undefined) params.set("_t", String(devTimestamp));
-  const query = params.toString();
-  return `${getUrl()}/api/rankings${query ? `?${query}` : ""}`;
-}
-
-async function fetchListBoard(list: RankingList, purpose: "metadata" | "page"): Promise<ListBoardResponse> {
-  const isDev = process.env["NODE_ENV"] === "development";
-  try {
-    const url = rankingsApiUrl(list, purpose === "page" && isDev ? Date.now() : undefined);
-    const response = await fetch(url, {
-      // #354: tagged so the rankings purge's `revalidateTag('rankings')` reaches this entry.
-      next: { revalidate: isDev ? 0 : 300, tags: [CACHE_TAGS.RANKINGS] },
-      ...(purpose === "page" ? { cache: isDev ? ("no-store" as const) : ("default" as const) } : {}),
-    });
-    if (!response.ok) return { rankings: [], meta: null, header: NO_HEADER };
-    const data = await response.json();
-    return {
-      rankings: data.rankings || [],
-      meta: data.list_meta ?? null,
-      header: { version: data.algorithm?.version ?? null, publishedAt: data.published_at ?? null },
-    };
-  } catch (error) {
-    loggers.ranking.error("Failed to fetch rankings on server", { error, list });
-    return { rankings: [], meta: null, header: NO_HEADER };
-  }
 }
 
 const LIST_SEO: Record<RankingList, { heading: string; ogTitle: string; fallbackDescription: string; keywords: string[] }> = {
@@ -117,8 +75,8 @@ const LIST_SEO: Record<RankingList, { heading: string; ogTitle: string; fallback
 
 /** The metadata of one list's page (#186). */
 export async function rankingListMetadata(lang: string, list: RankingList): Promise<Metadata> {
-  // #153: the rankings fetch keeps getUrl(); SEO URLs come from localizedAlternates().
-  const { rankings, meta } = await fetchListBoard(list, "metadata");
+  // #368: the board comes from the database, not a self-fetch; SEO URLs come from localizedAlternates().
+  const { rankings, meta } = await loadListBoard(list);
   const seo = LIST_SEO[list];
 
   const topTools = rankings.slice(0, 3).map((tool) => tool.name ?? tool.tool?.name ?? "").filter(Boolean);
@@ -181,8 +139,9 @@ export async function rankingListMetadata(lang: string, list: RankingList): Prom
 /** One list's ranking page body (#186). */
 export async function RankingListPage({ lang, list }: { lang: string; list: RankingList }): Promise<React.JSX.Element> {
   const dict = await getDictionary(lang as Locale);
+  // #368: read directly, replacing the /api/rankings self-fetch.
   const [{ rankings: initialRankings, meta, header }, navLists] = await Promise.all([
-    fetchListBoard(list, "page"),
+    loadListBoard(list),
     // D6e: hide model page until model metrics land
     visibleRankingLists(),
   ]);

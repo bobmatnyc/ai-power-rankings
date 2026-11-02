@@ -44,6 +44,11 @@ const WhatsNewModalClient = NextDynamic(() => import("@/components/ui/whats-new-
 // See #192: each revalidation re-reads the current rankings snapshot
 // With static categories, layout is now static and ISR works automatically
 export const revalidate = 300; // Revalidate every 5 minutes
+// #368: without static params the route was dynamic and never cached. Empty, so each locale
+// renders on first request: at build getDb() is null and the cached page would be empty.
+export function generateStaticParams(): Array<{ lang: string }> {
+  return [];
+}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   try {
