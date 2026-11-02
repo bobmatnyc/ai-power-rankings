@@ -47,6 +47,30 @@ const PAGES: Array<[string, number | null]> = [
   ].map((p): [string, number] => [`${p}/page.tsx`, 86400]),
 ];
 
+/**
+ * Pages that read the database. `getDb()` is null during `next build`, and their reads
+ * now throw on it (#368 fix round), so none may be prerendered: each returns no static params.
+ */
+const DB_PAGES = [
+  "page.tsx",
+  "rankings/page.tsx",
+  "rankings/[list]/page.tsx",
+  "tools/page.tsx",
+  "tools/[slug]/page.tsx",
+  "news/page.tsx",
+  "news/[slug]/page.tsx",
+  "whats-new/page.tsx",
+  "whats-new/[period]/page.tsx",
+  "whats-new/weekly/[week]/page.tsx",
+];
+
+describe("#368: database pages are never prerendered at build", () => {
+  it.each(DB_PAGES)("%s returns no static params", (file) => {
+    const src = readFileSync(path.join(APP, file), "utf8");
+    expect(src).toMatch(/export function generateStaticParams\(\)[^\n]* \{\n\s*return \[\];\n\}/);
+  });
+});
+
 describe("#368: public pages render statically", () => {
   it.each(PAGES)("%s is static or ISR", (file, revalidate) => {
     const src = readFileSync(path.join(APP, file), "utf8");
