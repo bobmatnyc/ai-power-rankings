@@ -77,9 +77,9 @@ describe("RankingEngineV76", () => {
   const engine = new RankingEngineV76(ALGORITHM_V76_WEIGHTS);
 
   describe("getAlgorithmInfo", () => {
-    it("reports the current v7.10 methodology and weights", () => {
+    it("reports the current v7.11 methodology and weights", () => {
       const info = RankingEngineV76.getAlgorithmInfo();
-      expect(info.version).toBe("v7.10");
+      expect(info.version).toBe("v7.11");
       expect(info.weights).toEqual(ALGORITHM_V76_WEIGHTS);
     });
 
@@ -102,7 +102,7 @@ describe("RankingEngineV76", () => {
       const score = engine.calculateToolScore(richTool, FIXED_DATE);
       expect(score.tool_id).toBe("t-rich");
       expect(score.tool_slug).toBe("alpha-copilot");
-      expect(score.algorithm_version).toBe("v7.10");
+      expect(score.algorithm_version).toBe("v7.11");
     });
 
     it("keeps every factor score within the [0,100] range", () => {

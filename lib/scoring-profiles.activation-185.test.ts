@@ -44,8 +44,8 @@ const IMPORTS_ROUTING = /(from|import\()\s*["'][^"']*scoring-kind-routing["']/;
 
 describe("combined layout still v7.10 (#185, kept from PR-1)", () => {
   it("default computeRankings still produces the recorded v7.10 rows and version", () => {
-    expect(RANKING_ALGORITHM_VERSION).toBe("7.10");
-    expect(golden.saveSnapshotCalls[0]!.algorithmVersion).toBe("7.10");
+    expect(RANKING_ALGORITHM_VERSION).toBe("7.11");
+    expect(golden.saveSnapshotCalls[0]!.algorithmVersion).toBe("7.11");
     expect(computeRankings(GOLDEN_TOOLS, previous(), new Date(GOLDEN_NOW))).toEqual(goldenRows);
   });
 
