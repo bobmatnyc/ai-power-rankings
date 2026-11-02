@@ -881,5 +881,36 @@
     "title": "AI 파워 랭킹 - AI 코딩 툴의 결정적인 월간 랭킹",
     "description": "에이전틱 AI 코딩 툴의 결정적인 월간 랭킹 및 분석. 전 세계 개발자들이 신뢰하는 Cursor, GitHub Copilot, Claude 및 50개 이상의 AI 어시스턴트를 비교하세요.",
     "keywords": "AI 코딩 툴, 에이전틱 AI, 자율 코딩, 개발자 툴 랭킹, AI 어시스턴트 비교, 코딩 AI 벤치마크, SWE-bench 결과, Claude vs Cursor vs GitHub Copilot"
+  },
+  "methodologyV8": {
+    "metaTitle": "순위 산정 방법론 (v{version}) - AI Power Rankings",
+    "metaDescription": "AI Power Rankings가 모델, 코딩 하네스, 생산성 도구를 별도의 목록에서 순위를 매기고 종류별 채점 프로필을 사용하는 방법.",
+    "title": "순위 산정 방식",
+    "intro": "AI Power Rankings 버전 {version}은 도구 종류마다 별도의 목록에서 순위를 매기고, 종류마다 고유한 가중치로 채점합니다.",
+    "listsHeading": "세 가지 목록",
+    "listsBody": "모델, 코딩 하네스, 생산성 도구는 별도의 목록에서 순위가 매겨집니다. 한 도구는 최대 한 목록에만 오르며, 순위·티어·변동은 그 목록 안에서 계산됩니다. 목록 간에는 순위를 비교하지 않습니다.",
+    "listsDefault": "순위 메인 페이지에는 코딩 하네스 목록이 표시됩니다.",
+    "listsExcluded": "이미지 모델과 동영상 모델은 모델 목록에 포함되지 않습니다. 그 밖의 종류의 도구는 순위를 매기지 않습니다.",
+    "smallLists": "항목이 {min}개 미만인 목록은 티어를 3등분하여 S, A, B로 나누며 검색 엔진에 색인되지 않습니다.",
+    "profilesHeading": "채점 프로필",
+    "profilesBody": "각 목록은 해당 종류의 프로필로 채점됩니다. 모든 프로필은 같은 8가지 요소를 사용하고 가중치의 합은 100%이므로, 모든 점수는 같은 0~100 척도에 있습니다.",
+    "factorHeader": "요소",
+    "weightHeader": "가중치",
+    "factors": {
+      "agenticCapability": "에이전트 능력",
+      "innovation": "혁신성",
+      "technicalPerformance": "기술 성능",
+      "developerAdoption": "개발자 채택",
+      "marketTraction": "시장 견인력",
+      "businessSentiment": "비즈니스 평판",
+      "developmentVelocity": "개발 속도",
+      "platformResilience": "플랫폼 안정성"
+    },
+    "provisionalNote": "잠정: 생산성 도구 목록은 자체 채점 프로필이 정해질 때까지 코딩 하네스 가중치를 사용합니다.",
+    "openWeight": "모델의 가중치 공개 여부는 채점 요소가 아닙니다.",
+    "tiesHeading": "동점",
+    "tiesBody": "한 목록에서 두 도구의 점수가 같으면, 버전 {version} 이전에 마지막으로 발표된 순위에서 더 높았던 도구가 앞섭니다. 당시 순위에 없던 도구는 그 뒤에 옵니다.",
+    "dataHeading": "데이터 출처",
+    "dataBody": "점수는 각 도구에 대해 저장된 지표를 사용합니다: 벤치마크 결과, 다운로드·스타·사용자 수 같은 채택 지표, 투자 및 비즈니스 뉴스, 릴리스 활동. 순위는 한 달에 한 번 다시 계산됩니다."
   }
 }

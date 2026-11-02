@@ -6,22 +6,29 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * Why: each list has its own board and API response, a tool is ranked in at most one
  *   list, and the owner rulings fix the default list (D51), the image/video exclusion
  *   (D52), the 10-entry threshold (D53) and the productivity note flag (D54).
- * What: mocks the rankings repository (one current row per stored list) and the tools
- *   repository (kind and data.modality per tool), then reads each list through the
- *   loader and the route. The fixture's combined board interleaves every kind; the
- *   boards read from it must partition its list tools, renumber ranks and previous
- *   ranks within each list, and set D53 tiers. A list's own row wins over the combined
- *   board.
+ *   #185: after activation a list's board is its own current row only; the combined
+ *   board is never read, even when a list has no row or its read fails.
+ * What: mocks the rankings repository (one current row per stored list, and a log of
+ *   the lists read) and the tools repository (kind and data.modality per tool), then
+ *   reads each list through the loader and the route. The fixture keeps a current
+ *   combined row that interleaves every kind, so a read of it would show.
+ *   #185 updated the tests that read the combined board split by list (the #186
+ *   pre-activation path): each now asserts the same rule on a list row, or that the
+ *   combined row is not read.
  * Test: `npx vitest run tests/unit/rankings-per-list-read-186.test.ts`. No network.
  */
 
-const current = vi.hoisted(() => ({ rows: {} as Record<string, unknown> }));
+const current = vi.hoisted(() => ({ rows: {} as Record<string, unknown>, reads: [] as string[], failing: null as string | null }));
 
 vi.mock("server-only", () => ({}));
 vi.mock("../../lib/db/connection", () => ({ getDb: () => ({}) }));
 vi.mock("../../lib/db/repositories/rankings.repository", () => ({
   rankingsRepository: {
-    getCurrentRankings: async (list = "combined") => current.rows[list] ?? null,
+    getCurrentRankings: async (list = "combined") => {
+      current.reads.push(list);
+      if (current.failing === list) throw new Error(`fixture: ${list} read failed`);
+      return current.rows[list] ?? null;
+    },
   },
 }));
 
@@ -83,6 +90,23 @@ function combinedRow(tools: FixtureTool[]) {
   };
 }
 
+/** #185: a list's own board as the per-list publish writes it; previous ranks within the list, reversed. */
+function listRow(list: string, tools: FixtureTool[]) {
+  return {
+    ...combinedRow(tools),
+    id: `${list}-row`,
+    list,
+    algorithm_version: "8.0",
+    data: tools.map((t, i) => ({
+      tool_id: t.id,
+      rank: i + 1,
+      score: 100 - i,
+      tier: "S",
+      movement: { previous_position: tools.length - i, change: tools.length - i - (i + 1) },
+    })),
+  };
+}
+
 const ALL = [
   HARNESS[0]!, MODELS[0]!, IMAGE, HARNESS[1]!, OTHER, MODELS[1]!, PRODUCTIVITY[0]!, VIDEO,
   ...HARNESS.slice(2), ...MODELS.slice(2), PRODUCTIVITY[1]!,
@@ -90,8 +114,19 @@ const ALL = [
 
 const slugsOf = (rows: Array<{ tool: { slug: string } }>) => rows.map((r) => r.tool.slug);
 
+function allRows(models: FixtureTool[] = MODELS) {
+  return {
+    combined: combinedRow(ALL),
+    harness: listRow("harness", HARNESS),
+    model: listRow("model", models),
+    productivity: listRow("productivity", PRODUCTIVITY),
+  };
+}
+
 beforeEach(() => {
-  current.rows = { combined: combinedRow(ALL) };
+  current.rows = allRows();
+  current.reads = [];
+  current.failing = null;
   vi.spyOn(console, "warn").mockImplementation(() => {});
 });
 afterEach(() => {
@@ -99,35 +134,41 @@ afterEach(() => {
   vi.unstubAllEnvs();
 });
 
-describe("loadCurrentRankings(list) before any per-list row exists (#186)", () => {
-  it("splits the combined board: each list holds only its own tools, renumbered from 1", async () => {
+describe("loadCurrentRankings(list) after activation (#185; was: before any per-list row, #186)", () => {
+  // #185: was "splits the combined board"; activation ends that fallback (no public combined view).
+  it("with only the combined row current, no list has a board and the combined row is not read", async () => {
+    current.rows = { combined: combinedRow(ALL) };
+    for (const list of ["harness", "model", "productivity"] as const) {
+      expect(await loadCurrentRankings(list), list).toBeNull();
+    }
+    expect(current.reads).toEqual(["harness", "model", "productivity"]);
+  });
+
+  it("each list reads its own row: its own tools, 1..n, no tool in two lists, other in none", async () => {
     const boards = await Promise.all((["harness", "model", "productivity"] as const).map((l) => loadCurrentRankings(l)));
     const [harness, model, productivity] = boards.map((b) => b!);
-
-    expect(harness.source).toBe("combined");
     expect(slugsOf(harness.rankings)).toEqual(HARNESS.map((t) => t.slug));
     expect(slugsOf(model.rankings)).toEqual(MODELS.map((t) => t.slug));
     expect(slugsOf(productivity.rankings)).toEqual(PRODUCTIVITY.map((t) => t.slug));
     for (const board of boards) {
       expect(board!.rankings.map((r) => r.rank)).toEqual(board!.rankings.map((_, i) => i + 1));
     }
-
-    // A tool in one list never appears ranked in another; `other` is in none.
     const all = boards.flatMap((b) => slugsOf(b!.rankings));
     expect(new Set(all).size).toBe(all.length);
     expect(all).not.toContain(OTHER.slug);
+    expect(current.reads).not.toContain("combined");
   });
 
-  it("D52: the image and video models are in no list", async () => {
-    const boards = await Promise.all((["harness", "model", "productivity"] as const).map((l) => loadCurrentRankings(l)));
-    const all = boards.flatMap((b) => slugsOf(b!.rankings));
-    expect(all).not.toContain(IMAGE.slug);
-    expect(all).not.toContain(VIDEO.slug);
-  });
-
-  it("renumbers the global previous positions within the list", async () => {
+  // #185: was "the image and video models are in no list" on the combined split; same rule on a list row.
+  it("an image or video model found in the model row is dropped", async () => {
+    current.rows["model"] = listRow("model", [MODELS[0]!, IMAGE, MODELS[1]!, VIDEO]);
     const model = (await loadCurrentRankings("model"))!;
-    // Previous positions run in reverse, so the last model was first among models.
+    expect(slugsOf(model.rankings)).toEqual([MODELS[0]!.slug, MODELS[1]!.slug]);
+  });
+
+  // #185: was "renumbers the global previous positions"; a list row already stores them within the list.
+  it("keeps the list row's stored previous positions", async () => {
+    const model = (await loadCurrentRankings("model"))!;
     expect(model.rankings.map((r) => r.previousRank)).toEqual([9, 8, 7, 6, 5, 4, 3, 2, 1]);
     expect(model.rankings[0]!.rankChange).toBe(9 - 1);
   });
@@ -136,7 +177,7 @@ describe("loadCurrentRankings(list) before any per-list row exists (#186)", () =
     const nine = (await loadCurrentRankings("model"))!;
     expect(nine.rankings.map((r) => r.tier)).toEqual(["S", "S", "S", "A", "A", "A", "B", "B", "B"]);
 
-    current.rows = { combined: combinedRow([...ALL, EXTRA_MODEL]) };
+    current.rows = allRows([...MODELS, EXTRA_MODEL]);
     const ten = (await loadCurrentRankings("model"))!;
     expect(ten.rankings).toHaveLength(10);
     expect(ten.rankings.map((r) => r.tier)).toEqual(["S", "S", "S", "S", "S", "A", "A", "A", "A", "A"]);
@@ -145,6 +186,12 @@ describe("loadCurrentRankings(list) before any per-list row exists (#186)", () =
   it("returns null when neither a list row nor a combined row is current", async () => {
     current.rows = {};
     expect(await loadCurrentRankings("harness")).toBeNull();
+  });
+
+  it("a failed list read throws; the combined row is not read instead", async () => {
+    current.failing = "harness";
+    await expect(loadCurrentRankings("harness")).rejects.toThrow(/harness read failed/);
+    expect(current.reads).toEqual(["harness"]);
   });
 });
 
@@ -160,7 +207,6 @@ describe("loadCurrentRankings(list) with a per-list row (#186)", () => {
       ],
     };
     const model = (await loadCurrentRankings("model"))!;
-    expect(model.source).toBe("list");
     expect(model.snapshot.id).toBe("model-row");
     expect(slugsOf(model.rankings)).toEqual(["m2-slug", "m1-slug"]);
     expect(model.rankings.map((r) => [r.previousRank, r.rankChange])).toEqual([
@@ -186,14 +232,15 @@ describe("loadCurrentRankings(list) with a per-list row (#186)", () => {
 });
 
 describe("rankWithinList (#186)", () => {
-  it("leaves a tool with no previous rank as new, with no change", () => {
+  // #185: was the combined-source renumbering; only list rows remain, whose movement is kept as stored.
+  it("ranks 1..n with tiers and keeps the stored movement", () => {
     const rows = [
-      { rank: 4, previousRank: null, rankChange: 3 },
-      { rank: 7, previousRank: 12, rankChange: 5 },
+      { rank: 4, previousRank: null, rankChange: 0 },
+      { rank: 7, previousRank: 1, rankChange: -1 },
     ] as never[];
-    expect(rankWithinList(rows, "combined").map((r: any) => [r.rank, r.previousRank, r.rankChange])).toEqual([
-      [1, null, 0],
-      [2, 1, -1],
+    expect(rankWithinList(rows).map((r: any) => [r.rank, r.tier, r.previousRank, r.rankChange])).toEqual([
+      [1, "S", null, 0],
+      [2, "A", 1, -1],
     ]);
   });
 });
@@ -250,7 +297,7 @@ describe("GET /api/rankings (#186)", () => {
 
   it("D53: list_meta reports 9 models by thirds and 10 with the normal tiers; the models list is noindex at both sizes", async () => {
     expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 9, indexable: false, tier_scheme: "thirds" });
-    current.rows = { combined: combinedRow([...ALL, EXTRA_MODEL]) };
+    current.rows = allRows([...MODELS, EXTRA_MODEL]);
     expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 10, indexable: false, tier_scheme: "standard" });
   });
 
@@ -258,6 +305,14 @@ describe("GET /api/rankings (#186)", () => {
     expect((await get("?list=productivity")).body.list_meta.provisional_note).toBe(true);
     expect((await get("?list=model")).body.list_meta.provisional_note).toBe(false);
     expect((await get()).body.list_meta.provisional_note).toBe(false);
+  });
+
+  it("a failed list read is a 500 with no rows, and the combined row is not read", async () => {
+    current.failing = "model";
+    const { status, body } = await get("?list=model");
+    expect(status).toBe(500);
+    expect(body.rankings).toBeUndefined();
+    expect(current.reads).toEqual(["model"]);
   });
 
   it("an empty read still names the list", async () => {

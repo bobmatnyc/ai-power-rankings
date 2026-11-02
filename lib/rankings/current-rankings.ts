@@ -2,7 +2,6 @@ import { type RankingData, rankingsRepository } from "@/lib/db/repositories/rank
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { loggers } from "@/lib/logger";
 import {
-  COMBINED_LIST,
   DEFAULT_RANKING_LIST,
   hasCodingMetric,
   isMetricGatedList,
@@ -12,12 +11,8 @@ import {
 } from "@/lib/rankings/lists";
 import { modelVersion } from "@/lib/rankings/model-version";
 
-/** #186: where a list's rows came from: its own current row, or the combined board split by list. */
-export type ListBoardSource = "list" | "combined";
-
 export interface CurrentListBoard {
   list: RankingList;
-  source: ListBoardSource;
   snapshot: RankingData;
   rankings: CurrentRankingRow[];
   /** #329: active board rows with a coding metric (`hasCodingMetric`); 0 for a list that is not metric-gated. */
@@ -25,33 +20,30 @@ export interface CurrentListBoard {
 }
 
 /**
- * Reads one list's current board as display rows (#192, #186).
+ * Reads one list's current board as display rows (#192, #186, #185).
  *
  * Why: `/api/rankings` and the home page must show the same rows, ranks and
  * rank changes, so both read the snapshot through this one function. #186: each
  * list has its own board, ranked within the list (D2e), and a tool is ranked in
- * at most one list.
- * What: reads the list's `is_current` row. When the list has none yet (before
- * the per-list publish runs), reads the current legacy combined row instead and
- * keeps only the tools `listOfTool()` puts in this list (`source: "combined"`).
+ * at most one list. #185: after v8 activation the combined board is no public
+ * view, so a list with no current row has no board; it is never the combined
+ * board split by list.
+ * What: reads the list's `is_current` row only; null when there is none.
  * Takes the snapshot's rankings array (an array, or one under `rankings` or
  * `data`), joins each entry to its tool by id then slug, drops entries whose tool
- * is missing (one warning each) or belongs to another list (or none), drops a
- * combined board's rows whose tool's `tools.status` column is not `active` now, sorts by stored rank
- * and renumbers 1..n with D53 tiers. A combined row's movement is a global move, so its previous rank is renumbered within the list too.
- * #329: for a metric-gated list (models) `metricRowCount` counts the board rows whose `tools.status`
- * column is `active` and whose tool carries a coding metric (`hasCodingMetric`), for the D63 index rule. Returns
- * null when neither row exists. Throws when a database read throws.
+ * is missing (one warning each) or whose kind now maps to another list (or none),
+ * sorts by stored rank and renumbers 1..n with tiers, keeping the stored
+ * movement. #329: for a metric-gated list (models) `metricRowCount` counts the
+ * board rows whose `tools.status` column is `active` and whose tool carries a
+ * coding metric (`hasCodingMetric`), for the index rule. Throws when a
+ * database read throws.
  * Test: `tests/unit/home-live-rankings-192.test.tsx`,
- *   `tests/unit/rankings-per-list-read-186.test.ts`,
- *   `tests/unit/models-list-inactive-rows.test.ts`,
- *   `tests/unit/models-list-column-status-301.test.ts`.
+ *   `tests/unit/rankings-per-list-read-186.test.ts`.
  */
 export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LIST): Promise<CurrentListBoard | null> {
-  const listRow = await rankingsRepository.getCurrentRankings(list);
-  const snapshot = listRow ?? (await rankingsRepository.getCurrentRankings(COMBINED_LIST));
+  // #185: the list's own row or nothing; no fallback to the combined board.
+  const snapshot = await rankingsRepository.getCurrentRankings(list);
   if (!snapshot) return null;
-  const source: ListBoardSource = listRow ? "list" : "combined";
 
   const rankingsData = snapshot.data;
   let rankings = [];
@@ -72,23 +64,20 @@ export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LI
 
   // Filter out null values (tools that weren't found), then the tools of other lists.
   const joined = formatted.filter((r): r is FormattedRanking => r !== null);
-  // #301: a combined board keeps a tool only while its `tools.status` COLUMN is `active`.
-  // The joined tool's `status` can be a stale JSONB copy, so the column is read on its own;
-  // a failed read rejects here (fails closed) and a row with no column status is dropped.
-  // #329: a metric-gated list (models) also needs the column status of a list row, because only
-  // ACTIVE rows with a coding metric count toward the D63 index threshold.
-  const columnStatus =
-    source === "combined" || isMetricGatedList(list)
-      ? await toolsRepo.findColumnStatuses(joined.flatMap((r) => (r.dbId ? [r.dbId] : [])))
-      : new Map<string, string>();
+  // #329: only ACTIVE rows with a coding metric count toward the index threshold, so a
+  // metric-gated list (models) reads the `tools.status` COLUMN (the joined tool's `status`
+  // can be a stale JSONB copy); a failed read rejects here (fails closed).
+  const columnStatus = isMetricGatedList(list)
+    ? await toolsRepo.findColumnStatuses(joined.flatMap((r) => (r.dbId ? [r.dbId] : [])))
+    : new Map<string, string>();
   const statusOf = (r: FormattedRanking) => (r.dbId ? columnStatus.get(r.dbId) : undefined);
-  const members = joined.filter((r) => inList(r, list, source, statusOf(r)));
+  const members = joined.filter((r) => inList(r, list));
 
   // Sort by rank to ensure proper ordering
   members.sort((a, b) => (a.row.rank || 999) - (b.row.rank || 999));
 
   const metricRowCount = isMetricGatedList(list) ? countMetricRows(members.map((m) => ({ status: statusOf(m), codingMetric: m.codingMetric }))) : 0;
-  return { list, source, snapshot, rankings: rankWithinList(members.map((m) => m.row), source), metricRowCount };
+  return { list, snapshot, rankings: rankWithinList(members.map((m) => m.row)), metricRowCount };
 }
 
 /** #329 PURE: rows that count toward the D63 index threshold: `tools.status` column active AND a coding metric. */
@@ -97,43 +86,22 @@ export function countMetricRows(rows: ReadonlyArray<{ status: string | undefined
 }
 
 /**
- * #186: whether a joined row belongs on `list`'s board. A combined row needs the tool's
- * list to be `list` and the tool's `tools.status` column to be `active` now: the stored board can still hold a
- * tool that was retired (for example `redirect`) after the board was published, and the
- * stored data is left as written; this read drops it. A list row was written for this list; it drops only a tool whose
- * kind is known and now maps elsewhere (a row read without a kind is kept as written).
+ * #186: whether a joined row belongs on `list`'s board. A list row was written for this
+ * list; it drops only a tool whose kind is known and now maps elsewhere (a row read
+ * without a kind is kept as written).
  */
-function inList(
-  entry: FormattedRanking,
-  list: RankingList,
-  source: ListBoardSource,
-  columnStatus: string | undefined
-): boolean {
-  if (source === "combined") return entry.toolList === list && columnStatus === "active";
+function inList(entry: FormattedRanking, list: RankingList): boolean {
   return entry.kind === undefined || entry.toolList === list;
 }
 
 /**
- * #186 PURE: ranks 1..n and D53 tiers for one list's rows, in the given order.
- * For a combined source the stored previous ranks are global, so each is replaced by
- * the tool's position among this list's tools that have one (D2e); a tool that left
- * the list since then is not counted.
+ * #186 PURE: ranks 1..n and tiers for one list's rows, in the given order. The
+ * stored movement is kept: a list row's previous rank is already within the list.
  */
-export function rankWithinList(rows: CurrentRankingRow[], source: ListBoardSource): CurrentRankingRow[] {
-  const previousWithin = new Map<number, number>();
-  if (source === "combined") {
-    const previous = rows
-      .map((row, index) => ({ index, previous: row.previousRank }))
-      .filter((p): p is { index: number; previous: number } => typeof p.previous === "number" && p.previous > 0)
-      .sort((a, b) => a.previous - b.previous);
-    previous.forEach((p, position) => previousWithin.set(p.index, position + 1));
-  }
+export function rankWithinList(rows: CurrentRankingRow[]): CurrentRankingRow[] {
   return rows.map((row, index) => {
     const rank = index + 1;
-    const tier = listTier(rank, rows.length);
-    if (source === "list") return { ...row, rank, tier };
-    const previousRank = previousWithin.get(index) ?? null;
-    return { ...row, rank, tier, previousRank, rankChange: previousRank === null ? 0 : previousRank - rank };
+    return { ...row, rank, tier: listTier(rank, rows.length) };
   });
 }
 
@@ -143,7 +111,7 @@ type FormattedRanking = {
   row: CurrentRankingRow;
   kind: unknown;
   toolList: RankingList | null;
-  /** The tool's row UUID (`db_id`), the key for the `tools.status` column lookup (#301). */
+  /** The tool's row UUID (`db_id`), the key for the `tools.status` column lookup (#301, #329). */
   dbId: string | undefined;
   /** #329: the joined tool carries a coding metric with provenance (`hasCodingMetric`). */
   codingMetric: boolean;

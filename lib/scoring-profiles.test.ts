@@ -66,8 +66,10 @@ const harness = (c: Json) => c["profileSets"]["v8.0"]["profiles"]["harness"];
 describe("checked-in config/scoring-profiles.json (#185)", () => {
   const config = loadCheckedInScoringProfiles();
 
-  it("keeps v7.10 as the active set, so nothing selects v8 yet", () => {
-    expect(config.activeProfileSet).toBe("v7.10");
+  it("selects v8.0 as the active set, marked active, with no other profile (#185)", () => {
+    expect(config.activeProfileSet).toBe("v8.0");
+    expect(config.profileSets["v8.0"]!.status).toBe("active");
+    expect(Object.hasOwn(config.profileSets["v8.0"]!.profiles, "other")).toBe(false);
   });
 
   it("freezes v7.10 as legacy with the published weights and their real 1.02 sum", () => {

@@ -254,14 +254,14 @@ const params = <T extends Record<string, string>>(p: T) => ({ params: Promise.re
 
 // Pages with per-locale body content that build canonical + hreflang from a
 // single path under /[lang].
-const LOCALIZED_PAGES = ["tools"] as const;
+// #185: methodology moved here from ENGLISH_ONLY_PAGES; the v8 page is translated.
+const LOCALIZED_PAGES = ["tools", "methodology"] as const;
 
 // #156: single-path pages whose body is English in every locale: markdown
 // from lib/content-loader (only src/content/en exists), English literals in
 // the component, or an English-only API.
 const ENGLISH_ONLY_PAGES = [
   "about",
-  "methodology",
   "terms",
   "privacy",
   "whats-new",
@@ -515,7 +515,8 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     // /{lang}/contact only redirects to /{lang}/contact/default.
     expect(listedLocales("/contact"), "sitemap /contact").toEqual([]);
     // A per-locale page keeps one URL per locale.
-    for (const path of ["", "/rankings", "/tools", "/trending", "/tools/cursor"]) {
+    // #185: /methodology is translated, so it is listed in every locale.
+    for (const path of ["", "/rankings", "/tools", "/trending", "/tools/cursor", "/methodology"]) {
       expect(listedLocales(path), `sitemap ${path || "home"}`).toEqual([...locales].sort());
     }
   });

@@ -875,5 +875,36 @@
     "title": "AI Power Rankings - The Definitive Monthly Rankings of AI Coding Tools",
     "description": "The definitive monthly rankings and analysis of agentic AI coding tools. Compare Cursor, GitHub Copilot, Claude, and 50+ AI assistants trusted by developers worldwide.",
     "keywords": "AI coding tools, agentic AI, autonomous coding, developer tools rankings, AI assistants comparison, coding AI benchmarks, SWE-bench results, Claude vs Cursor vs GitHub Copilot"
+  },
+  "methodologyV8": {
+    "metaTitle": "Ranking methodology (v{version}) - AI Power Rankings",
+    "metaDescription": "How the AI Power Rankings rank models, coding harnesses and productivity tools in separate lists, with a scoring profile for each kind.",
+    "title": "How the rankings work",
+    "intro": "Version {version} of the AI Power Rankings ranks each kind of tool in its own list and scores each kind with its own weights.",
+    "listsHeading": "Three lists",
+    "listsBody": "Models, coding harnesses and productivity tools are ranked in separate lists. A tool is ranked in one list at most, and its rank, tier and change are counted within that list. Ranks are not compared across lists.",
+    "listsDefault": "The main rankings page shows the coding harnesses list.",
+    "listsExcluded": "Image and video models are not in the models list. Tools of other kinds are not ranked.",
+    "smallLists": "A list with fewer than {min} entries uses the tiers S, A and B by thirds and is not indexed by search engines.",
+    "profilesHeading": "Scoring profiles",
+    "profilesBody": "Each list is scored with the profile for its kind. Every profile uses the same eight factors, and its weights add up to 100%, so every score is on the same 0-100 scale.",
+    "factorHeader": "Factor",
+    "weightHeader": "Weight",
+    "factors": {
+      "agenticCapability": "Agentic capability",
+      "innovation": "Innovation",
+      "technicalPerformance": "Technical performance",
+      "developerAdoption": "Developer adoption",
+      "marketTraction": "Market traction",
+      "businessSentiment": "Business sentiment",
+      "developmentVelocity": "Development velocity",
+      "platformResilience": "Platform resilience"
+    },
+    "provisionalNote": "Provisional: the productivity tools list uses the coding-harness weights until its own scoring profile is decided.",
+    "openWeight": "Whether a model's weights are open is not a scoring factor.",
+    "tiesHeading": "Ties",
+    "tiesBody": "When two tools in a list have the same score, the one ranked higher in the last rankings published before version {version} comes first. A tool that was not ranked then comes after them.",
+    "dataHeading": "Data sources",
+    "dataBody": "Scores use the metrics stored for each tool: benchmark results, adoption such as downloads, stars and users, funding and business news, and release activity. The rankings are recalculated once a month."
   }
 }

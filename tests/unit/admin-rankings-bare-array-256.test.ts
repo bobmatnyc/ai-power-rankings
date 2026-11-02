@@ -246,7 +246,8 @@ describe("article ingestion reads the current bare row's rankings (#256)", () =>
             const isTools = getTableName(table as never) === "tools";
             const rows = isTools
               ? [{ id: "tool-a", name: "Tool A" }, { id: "tool-b", name: "Tool B" }]
-              : [{ data: ROWS, isCurrent: true }];
+              : // #185: the reader now reads the current per-list boards; this one is the harness list's.
+                [{ data: ROWS, isCurrent: true, list: "harness" }];
             return Object.assign(Promise.resolve(rows), { limit: async () => rows });
           },
         }),

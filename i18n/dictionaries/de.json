@@ -881,5 +881,36 @@
     "quickLinks": "Schnelllinks",
     "categories": "Kategorien",
     "copyright": "© 2025 AI Power Rankings. Alle Rechte vorbehalten."
+  },
+  "methodologyV8": {
+    "metaTitle": "Ranking-Methodik (v{version}) - AI Power Rankings",
+    "metaDescription": "Wie die AI Power Rankings Modelle, Coding-Harnesses und Produktivitätstools in getrennten Listen ranken, mit einem Bewertungsprofil für jede Art.",
+    "title": "So entstehen die Rankings",
+    "intro": "Version {version} der AI Power Rankings rankt jede Art von Tool in einer eigenen Liste und bewertet jede Art mit eigenen Gewichten.",
+    "listsHeading": "Drei Listen",
+    "listsBody": "Modelle, Coding-Harnesses und Produktivitätstools werden in getrennten Listen gerankt. Ein Tool steht in höchstens einer Liste; Rang, Stufe und Veränderung werden innerhalb dieser Liste gezählt. Ränge werden nicht listenübergreifend verglichen.",
+    "listsDefault": "Die Hauptseite der Rankings zeigt die Liste der Coding-Harnesses.",
+    "listsExcluded": "Bild- und Videomodelle sind nicht in der Modellliste. Tools anderer Arten werden nicht gerankt.",
+    "smallLists": "Eine Liste mit weniger als {min} Einträgen verwendet die Stufen S, A und B nach Dritteln und wird von Suchmaschinen nicht indexiert.",
+    "profilesHeading": "Bewertungsprofile",
+    "profilesBody": "Jede Liste wird mit dem Profil ihrer Art bewertet. Jedes Profil verwendet dieselben acht Faktoren, und seine Gewichte ergeben zusammen 100 %, daher liegt jede Punktzahl auf derselben Skala von 0 bis 100.",
+    "factorHeader": "Faktor",
+    "weightHeader": "Gewicht",
+    "factors": {
+      "agenticCapability": "Agentische Fähigkeit",
+      "innovation": "Innovation",
+      "technicalPerformance": "Technische Leistung",
+      "developerAdoption": "Verbreitung bei Entwicklern",
+      "marketTraction": "Marktresonanz",
+      "businessSentiment": "Geschäftsstimmung",
+      "developmentVelocity": "Entwicklungstempo",
+      "platformResilience": "Plattformstabilität"
+    },
+    "provisionalNote": "Vorläufig: Die Liste der Produktivitätstools verwendet die Gewichte der Coding-Harnesses, bis ihr eigenes Bewertungsprofil feststeht.",
+    "openWeight": "Ob die Gewichte eines Modells offen sind, ist kein Bewertungsfaktor.",
+    "tiesHeading": "Gleichstände",
+    "tiesBody": "Haben zwei Tools einer Liste dieselbe Punktzahl, steht das Tool vorn, das in den letzten vor Version {version} veröffentlichten Rankings höher stand. Ein Tool, das damals nicht gerankt war, folgt danach.",
+    "dataHeading": "Datenquellen",
+    "dataBody": "Die Punktzahlen beruhen auf den für jedes Tool gespeicherten Kennzahlen: Benchmark-Ergebnisse, Verbreitung wie Downloads, Sterne und Nutzer, Finanzierung und Geschäftsnachrichten sowie Release-Aktivität. Die Rankings werden einmal im Monat neu berechnet."
   }
 }
