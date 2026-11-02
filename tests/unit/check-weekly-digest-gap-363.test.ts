@@ -10,8 +10,9 @@
  * Test: `npx vitest run tests/unit/check-weekly-digest-gap-363.test.ts`. No database.
  */
 
+import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { MAX_DIGEST_AGE_HOURS, evaluateWeeklyDigest } from "../../scripts/check-weekly-digest-gap.mjs";
 
@@ -106,4 +107,33 @@ describe("cron-gap-detector.yml weekly-digest job (#363)", () => {
     expect(job).not.toMatch(/continue-on-error|\|\|\s*true|needs:/);
     expect(jobBlock("check-ingestion-gap")).not.toContain("node scripts/check-weekly-digest-gap.mjs");
   });
+});
+
+describe("check-weekly-digest-gap.mjs failure exits (#363)", () => {
+  // Absolute path: the script only runs main() when argv[1] matches its own file URL.
+  const script = resolve(__dirname, "../../scripts/check-weekly-digest-gap.mjs");
+
+  function run(databaseUrl?: string) {
+    const env = { ...process.env };
+    delete env.DATABASE_URL;
+    if (databaseUrl !== undefined) env.DATABASE_URL = databaseUrl;
+    const result = spawnSync(process.execPath, [script], { env, encoding: "utf8", timeout: 20_000 });
+    return { status: result.status, output: `${result.stdout}${result.stderr}` };
+  }
+
+  it("exits 1 with ERROR: when DATABASE_URL is not set", () => {
+    const { status, output } = run();
+    expect(status).toBe(1);
+    expect(output).toContain("ERROR:");
+  });
+
+  it("exits non-zero and leaks no credentials when the database is unreachable", () => {
+    const url = "postgresql://user:fake-pw-123@127.0.0.1:1/db";
+    const { status, output } = run(url);
+    expect(status).not.toBeNull();
+    expect(status).not.toBe(0);
+    expect(output).toContain("ERROR:");
+    expect(output).not.toContain(url);
+    expect(output).not.toContain("fake-pw-123");
+  }, 30_000);
 });
