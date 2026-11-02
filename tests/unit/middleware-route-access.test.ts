@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
 import { config } from "../../middleware";
+import { runMiddleware } from "./helpers/clerk-middleware-harness";
 
 /**
  * Route-access tests for `middleware.ts`.
@@ -21,23 +22,15 @@ import { config } from "../../middleware";
 
 vi.mock("@clerk/nextjs/server", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@clerk/nextjs/server")>();
-  return {
-    ...actual,
-    // Expose the inner handler so the test can drive it with a fake `auth`.
-    clerkMiddleware: (handler: unknown) => handler,
-  };
+  // #368: the real middleware calls Clerk's wrapper only for needsClerk() paths.
+  const { fakeClerkMiddleware } = await import("./helpers/clerk-middleware-harness");
+  return { ...actual, clerkMiddleware: fakeClerkMiddleware };
 });
-
-type Handler = (
-  auth: () => Promise<{ userId: string | null; sessionId: string | null }>,
-  req: NextRequest
-) => Promise<Response>;
 
 const anonymousAuth = vi.fn(async () => ({ userId: null, sessionId: null }));
 
 async function run(path: string, method = "GET"): Promise<Response> {
-  const { default: middleware } = await import("../../middleware");
-  return (middleware as unknown as Handler)(
+  return runMiddleware(
     anonymousAuth,
     new NextRequest(`http://localhost${path}`, { method })
   );
