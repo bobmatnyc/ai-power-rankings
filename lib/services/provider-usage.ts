@@ -10,9 +10,10 @@
  *   the row is still written with no cost and flagged as estimated.
  *   `runWithUsageRun` scopes calls to an ingestion run through AsyncLocalStorage, so
  *   call sites do not thread a run id. Every write is awaited with a time bound and
- *   never throws: a failure or timeout logs "ledger row not written" and returns false.
+ *   never throws: a failure or timeout logs "ledger row not written" at error level,
+ *   alerts ALERT_WEBHOOK_URL at most hourly (#364), and returns false.
  * Test: `tests/unit/provider-usage-325.test.ts`,
- *   `tests/unit/provider-usage-fail-open-325.test.ts`.
+ *   `tests/unit/provider-usage-fail-open-325.test.ts`, `tests/unit/provider-usage-alert-364.test.ts`.
  */
 
 import { AsyncLocalStorage } from "node:async_hooks";
@@ -22,6 +23,10 @@ import { loggers } from "@/lib/logger";
 
 export const LEDGER_NOT_WRITTEN_MSG = "[ProviderUsage] ledger row not written";
 export const LEDGER_WRITE_TIMEOUT_MS = 2_000;
+// #364: a failed write alerts through ALERT_WEBHOOK_URL, throttled per process.
+export const LEDGER_ALERT_TEXT = "[LEDGER FAILURE] provider usage ledger row not written";
+export const LEDGER_ALERT_INTERVAL_MS = 60 * 60_000;
+export const LEDGER_ALERT_TIMEOUT_MS = 2_000;
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -141,15 +146,72 @@ export async function recordProviderUsage(row: NewProviderUsageEvent): Promise<b
     return true;
   } catch (error) {
     // #325: fail open — the provider call and the run continue without the row.
-    loggers.api.warn(LEDGER_NOT_WRITTEN_MSG, {
+    // #364: but loudly — an error-level log per dropped row, plus a webhook alert.
+    await reportLedgerWriteFailure({
       provider: row.provider,
       operation: row.operation,
       runId: row.runId ?? null,
-      error: error instanceof Error ? error.message.slice(0, 200) : String(error).slice(0, 200),
+      error: errorText(error),
     });
     return false;
   } finally {
     clearTimeout(timer);
+  }
+}
+
+function errorText(error: unknown): string {
+  return error instanceof Error ? error.message.slice(0, 200) : String(error).slice(0, 200);
+}
+
+let lastLedgerAlertAt: number | null = null;
+
+/** Test hook: forget the last alert time so the next failure alerts again. */
+export function resetLedgerAlertThrottle(): void {
+  lastLedgerAlertAt = null;
+}
+
+/**
+ * Why: a missing ledger table dropped every usage row in production with only a
+ *   warn-level log and no alert (#364).
+ * What: logs LEDGER_NOT_WRITTEN_MSG at error level, then POSTs one alert to
+ *   ALERT_WEBHOOK_URL (the cron routes' webhook and payload shape) at most once per
+ *   LEDGER_ALERT_INTERVAL_MS per process, bounded by LEDGER_ALERT_TIMEOUT_MS. Never
+ *   throws; with no webhook configured only the log is written.
+ * Test: `tests/unit/provider-usage-alert-364.test.ts`,
+ *   `tests/unit/provider-usage-fail-open-325.test.ts`.
+ */
+async function reportLedgerWriteFailure(details: {
+  provider: string;
+  operation: string;
+  runId: string | null;
+  error: string;
+}): Promise<void> {
+  loggers.api.error(LEDGER_NOT_WRITTEN_MSG, details);
+  const webhookUrl = process.env["ALERT_WEBHOOK_URL"]?.trim();
+  if (!webhookUrl) return;
+  const now = Date.now();
+  if (lastLedgerAlertAt !== null && now - lastLedgerAlertAt < LEDGER_ALERT_INTERVAL_MS) return;
+  lastLedgerAlertAt = now;
+  try {
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        text: LEDGER_ALERT_TEXT,
+        error: details.error,
+        provider: details.provider,
+        operation: details.operation,
+        runId: details.runId,
+        impact:
+          "Provider usage and cost rows are being dropped; the spend ledger is incomplete " +
+          `until the write succeeds. Further failures are not alerted for ${LEDGER_ALERT_INTERVAL_MS / 60_000} minutes.`,
+        timestamp: new Date(now).toISOString(),
+      }),
+      signal: AbortSignal.timeout(LEDGER_ALERT_TIMEOUT_MS),
+    });
+    if (!response.ok) throw new Error(`webhook answered ${response.status}`);
+  } catch (alertError) {
+    loggers.api.error("[ProviderUsage] ledger failure alert not sent", { error: errorText(alertError) });
   }
 }
 
@@ -163,10 +225,12 @@ export async function recordOpenRouterUsage(input: {
     return await recordProviderUsage(openRouterUsageRow(input));
   } catch (error) {
     // #325: building the row must not throw into a provider call either.
-    loggers.api.warn(LEDGER_NOT_WRITTEN_MSG, {
+    // #364: reported like a failed insert.
+    await reportLedgerWriteFailure({
       provider: "openrouter",
       operation: input.operation,
-      error: error instanceof Error ? error.message.slice(0, 200) : String(error).slice(0, 200),
+      runId: null,
+      error: errorText(error),
     });
     return false;
   }
