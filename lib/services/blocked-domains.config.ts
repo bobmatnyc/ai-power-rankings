@@ -17,8 +17,8 @@ export const BLOCKED_DOMAINS = new Set([
 
 /**
  * #126: expiry timestamps (ms epoch, from Date.now()) for domains that were
- * auto-blocked from a transient signal (a 429) rather than a permanent
- * refusal (401/403/"blocked"). A domain present in BLOCKED_DOMAINS but absent
+ * auto-blocked from a transient signal (a 429; since #367 also a site's
+ * 401/403) rather than a permanent refusal (a status-less "blocked"). A domain present in BLOCKED_DOMAINS but absent
  * from this map is a permanent block for the life of this process — the
  * pre-existing semantics, unchanged. A domain present in both is blocked only
  * until its recorded expiry; see isDomainBlocked().
@@ -38,6 +38,7 @@ const BLOCKED_DOMAIN_EXPIRY = new Map<string, number>();
  * carrying the block into the next day's run on a source that has likely
  * recovered.
  */
+// #367: also the TTL for a site 401/403 block, which was permanent before.
 export const AUTO_BLOCK_TTL_MS = 4 * 60 * 60 * 1000; // 4 hours
 
 /**

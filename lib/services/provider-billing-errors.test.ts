@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   ProviderBillingFailures,
+  providerAuthCondition,
   providerBillingCondition,
 } from "./provider-billing-errors";
 
@@ -58,5 +59,30 @@ describe("ProviderBillingFailures (#167)", () => {
 
     expect(failures.reasons()).toHaveLength(1);
     expect(failures.reasons()[0]).toMatch(/^Provider billing error \[jina\]: HTTP 402 Payment Required/);
+  });
+});
+
+describe("providerAuthCondition (#367)", () => {
+  it.each([
+    [401, "HTTP 401 Unauthorized"],
+    [403, "HTTP 403 Forbidden"],
+    [402, null],
+    [429, null],
+    [undefined, null],
+  ] as const)("status %s -> %s", (status, condition) => {
+    expect(providerAuthCondition(status)).toBe(condition);
+  });
+});
+
+describe("ProviderBillingFailures auth reasons (#367)", () => {
+  it("records an auth reason only from a provider status, never from message text", () => {
+    const failures = new ProviderBillingFailures();
+    // A site's 401 relayed as text, with no provider status: not an auth failure.
+    failures.note("tavily", "Extraction failed: 401 Unauthorized");
+    expect(failures.reasons()).toEqual([]);
+
+    failures.note("tavily", "Tavily API error: 401 - invalid API key", 401);
+    expect(failures.reasons()).toHaveLength(1);
+    expect(failures.reasons()[0]).toMatch(/^Provider auth error \[tavily\]: HTTP 401 Unauthorized — Tavily API error/);
   });
 });

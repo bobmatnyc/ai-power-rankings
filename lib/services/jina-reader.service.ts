@@ -14,6 +14,8 @@
  * @see https://jina.ai/reader
  */
 
+import { ProviderApiError } from "./provider-api-error"; // #367
+
 export interface JinaReaderMetadata {
   title?: string;
   author?: string;
@@ -101,8 +103,11 @@ export class JinaReaderService {
             return this.fetchArticle(url, retryCount + 1);
           }
 
-          throw new Error(
-            `Jina.ai blocked by source (${response.status}): ${response.statusText}`
+          // #367: this is r.jina.ai's own status (401 = invalid key), not the news site's.
+          throw new ProviderApiError(
+            "jina",
+            response.status,
+            `Jina.ai API error (${response.status}): ${response.statusText}`
           );
         }
 
@@ -110,9 +115,11 @@ export class JinaReaderService {
           const errorText = await response.text();
           console.error(`[JinaReader] API error (${response.status}):`, errorText);
 
-          throw new Error(
+          throw new ProviderApiError(
+            "jina",
+            response.status,
             `Jina.ai API error (${response.status}): ${response.statusText}`
-          );
+          ); // #367
         }
 
         const data = await response.json();
@@ -144,7 +151,8 @@ export class JinaReaderService {
       console.error("[JinaReader] Fetch error:", error);
 
       if (error instanceof Error) {
-        throw new Error(`Failed to fetch article with Jina.ai: ${error.message}`);
+        // #367: keep the provider status reachable through `cause`.
+        throw new Error(`Failed to fetch article with Jina.ai: ${error.message}`, { cause: error });
       }
 
       throw new Error("Failed to fetch article with Jina.ai: Unknown error");

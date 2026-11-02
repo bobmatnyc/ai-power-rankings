@@ -6,6 +6,7 @@
 
 import { getOpenRouterApiKey } from '@/lib/startup-validation';
 import { loggers } from '@/lib/logger';
+import { ProviderApiError } from '@/lib/services/provider-api-error'; // #367
 import { retryWithBackoff, RetryPredicates, type RetryResult } from '@/lib/utils/retry-with-backoff';
 import {
   validateOpenRouterResponse,
@@ -92,16 +93,18 @@ export function calculateOpenRouterCost(
 }
 
 /**
- * OpenRouter service error with enhanced context
+ * OpenRouter service error with enhanced context.
+ * #367: a ProviderApiError, so the ingestion pipeline reads OpenRouter's own HTTP
+ * status (`statusCode`, also exposed as `status`) instead of parsing message text.
  */
-export class OpenRouterError extends Error {
+export class OpenRouterError extends ProviderApiError {
   constructor(
     message: string,
     public statusCode?: number,
     public retryable: boolean = true,
     public originalError?: unknown
   ) {
-    super(message);
+    super('openrouter', statusCode, message);
     this.name = 'OpenRouterError';
   }
 }

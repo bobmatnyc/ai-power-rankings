@@ -37,11 +37,13 @@ import { jinaReaderService } from "./jina-reader.service";
 import { tavilyExtractService } from "./tavily-extract.service";
 import { isDomainBlocked, addBlockedDomain } from "./blocked-domains.config";
 import { ProviderBillingFailures } from "./provider-billing-errors";
+import { isProviderApiError, providerApiStatusOf } from "./provider-api-error"; // #367
 import { runWithUsageRun } from "./provider-usage"; // #325
 // #172: one counts-only summary line per run.
 import {
   classifyAssessments,
   emptyRunCounts,
+  FETCH_FAILURE_PREFIX, // #367
   logRunSummary,
   type IngestionRunCounts,
 } from "./ingestion-run-summary";
@@ -377,6 +379,9 @@ function missingColumnName(error: unknown): string | undefined {
  * What: Returns true when `errorMsg` indicates the source itself refused the
  * request (401, 403, 429, or the literal word "blocked"), as opposed to a
  * generic network/timeout/parse failure that says nothing about the source.
+ * #367: text only; it cannot tell a provider's own 401 from the site's.
+ * autoBlockDomainIfNeeded() judges a provider API error (ProviderApiError) by
+ * its type and status first and calls this for site errors only.
  * Test: `isAutoBlockableError` cases in automated-ingestion.rate-limit.test.ts.
  */
 export function isAutoBlockableError(errorMsg: string): boolean {
@@ -390,21 +395,47 @@ export function isAutoBlockableError(errorMsg: string): boolean {
 
 /**
  * Why: #126 — a 429 is a transient signal (the source's rate limiter cooling
- * down); 401/403/"blocked" are the source explicitly refusing this content.
- * Auto-blocking both the same way meant one rate-limited run could starve a
- * good source for the life of a warm serverless process. Callers must only
- * call this once isAutoBlockableError(errorMsg) is already true.
- * What: Returns "transient" when `errorMsg` carries no permanent-refusal
- * signal (no 401, 403, or "blocked") — i.e. it was classified auto-blockable
- * by the 429 branch alone. Returns "permanent" whenever a 401/403/"blocked"
- * signal is present, even alongside a 429, since a source that explicitly
- * refused should not be treated as merely rate-limiting.
+ * down), so it must not block a good source for the life of a warm serverless
+ * process. #367 — a 401/403 is no stronger: the 2026-11-01 incident blocked
+ * three news sites for good on a 401 that was Tavily's, and a site's own
+ * 401/403 can be a short-lived bot wall. Callers must only call this once
+ * isAutoBlockableError(errorMsg) is already true.
+ * What: Returns "transient" when `errorMsg` carries a status code (401, 403 or
+ * 429); the block then expires after AUTO_BLOCK_TTL_MS. Returns "permanent"
+ * only for a bare "blocked" refusal with no status code.
  * Test: `classifyAutoBlockReason` cases in automated-ingestion.rate-limit.test.ts.
  */
 export function classifyAutoBlockReason(errorMsg: string): "permanent" | "transient" {
-  const isPermanentSignal =
-    errorMsg.includes("401") || errorMsg.includes("403") || errorMsg.toLowerCase().includes("blocked");
-  return isPermanentSignal ? "permanent" : "transient";
+  // #367: 401/403 joined 429 as TTL-bounded; only a status-less "blocked" stays permanent.
+  const hasStatusSignal = ["401", "403", "429"].some((code) => errorMsg.includes(code));
+  return hasStatusSignal ? "transient" : "permanent";
+}
+
+/** Most distinct fetch-failure reasons named in the run's fetch summary line. */
+const FETCH_FAILURE_REASON_LIMIT = 5;
+
+/**
+ * Why: #367 — on 2026-11-01 every extraction failed on a provider 401 and later
+ * candidates were skipped as `blocked_domain`, yet `failedFetches` was only
+ * logged: `result.errors` stayed empty, so the cron route counted 0 errors.
+ * What: One error line naming how many of `attempted` candidates failed content
+ * fetch, with a count per reason (at most FETCH_FAILURE_REASON_LIMIT reasons),
+ * or undefined when none failed. The run adds it to `errors` after its status
+ * is decided, so it changes the error count and error_log, not the status.
+ * Test: `summarizeFailedFetches` cases in tests/unit/cron-daily-news-provider-auth-367.test.ts.
+ */
+export function summarizeFailedFetches(
+  failed: ReadonlyArray<{ reason: string }>,
+  attempted: number
+): string | undefined {
+  if (failed.length === 0) return undefined;
+  const byReason = new Map<string, number>();
+  for (const { reason } of failed) byReason.set(reason, (byReason.get(reason) ?? 0) + 1);
+  const reasons = [...byReason.entries()]
+    .slice(0, FETCH_FAILURE_REASON_LIMIT)
+    .map(([reason, count]) => `${reason}=${count}`);
+  const more = byReason.size > FETCH_FAILURE_REASON_LIMIT ? ", ..." : "";
+  return `${FETCH_FAILURE_PREFIX} ${failed.length} of ${attempted} candidates: ${reasons.join(", ")}${more}`;
 }
 
 /**
@@ -526,12 +557,25 @@ export class AutomatedIngestionService {
    * #126: a 429-only signal (no 401/403/"blocked" alongside it) is blocked
    * transiently — see classifyAutoBlockReason() and blocked-domains.config's
    * AUTO_BLOCK_TTL_MS — instead of for the life of the process.
+   * #367: `error` decides first. A provider's own API error (ProviderApiError
+   * anywhere in its chain) is judged by its status only: a 429 keeps the #125
+   * transient block, and any other status (401/403 from a bad key above all)
+   * never blocks the article's domain. Only a non-provider error — a site
+   * refusal relayed as text — reaches the text checks.
+   * Test: `automated-ingestion.rate-limit.test.ts` and
+   * tests/unit/cron-daily-news-provider-auth-367.test.ts.
    */
-  private autoBlockDomainIfNeeded(url: string, errorMsg: string): void {
-    if (!isAutoBlockableError(errorMsg)) return;
+  private autoBlockDomainIfNeeded(url: string, errorMsg: string, error?: unknown): void {
+    let reason: "permanent" | "transient";
+    if (isProviderApiError(error)) {
+      if (providerApiStatusOf(error) !== 429) return; // #367: the provider failed, not the site
+      reason = "transient";
+    } else {
+      if (!isAutoBlockableError(errorMsg)) return;
+      reason = classifyAutoBlockReason(errorMsg);
+    }
     try {
       const domain = new URL(url).hostname.replace(/^www\./, "");
-      const reason = classifyAutoBlockReason(errorMsg);
       addBlockedDomain(domain, { transient: reason === "transient" });
       loggers.api.warn("[AutomatedIngestion] Auto-blocked domain:", {
         domain,
@@ -587,8 +631,9 @@ export class AutomatedIngestionService {
         // is actually observable — check it here, not just in the outer
         // catch below, which this per-method try/catch never lets errors
         // reach.
-        this.autoBlockDomainIfNeeded(url, errorMsg);
-        billingFailures?.note("tavily", errorMsg); // #167: a 402 here fails the run
+        this.autoBlockDomainIfNeeded(url, errorMsg, error); // #367: pass the typed error
+        // #167: a 402 here fails the run; #367: so does Tavily's own 401/403.
+        billingFailures?.note("tavily", errorMsg, providerApiStatusOf(error));
         // Fall through to Jina Reader
       }
     }
@@ -618,8 +663,9 @@ export class AutomatedIngestionService {
           error: errorMsg,
         });
         // #125: see the matching comment in the Tavily Extract catch above.
-        this.autoBlockDomainIfNeeded(url, errorMsg);
-        billingFailures?.note("jina", errorMsg); // #167: a 402 here fails the run
+        this.autoBlockDomainIfNeeded(url, errorMsg, error); // #367: pass the typed error
+        // #167: a 402 here fails the run; #367: so does Jina's own 401/403.
+        billingFailures?.note("jina", errorMsg, providerApiStatusOf(error));
         // Fall through to basic fetch
       }
     }
@@ -826,6 +872,8 @@ export class AutomatedIngestionService {
     const candidateOutcomes: CandidateOutcome[] = [];
     // #167: provider billing errors seen anywhere in this run; any one fails it.
     const billingFailures = new ProviderBillingFailures();
+    // #367: the content-fetch failure line, added to `errors` in `finally`.
+    let fetchFailureSummary: string | undefined;
     let rankingChanges = 0;
     let estimatedCostUsd = 0;
     let runId = "";
@@ -1108,7 +1156,8 @@ export class AutomatedIngestionService {
         usedTavilySearchContent: 0,
       };
 
-      for (const article of newArticles.slice(0, maxArticles * 2)) {
+      const fetchCandidates = newArticles.slice(0, maxArticles * 2);
+      for (const article of fetchCandidates) {
         // Check if domain is known to block scrapers
         if (isDomainBlocked(article.url)) {
           loggers.api.warn("[AutomatedIngestion] Skipping blocked domain:", {
@@ -1179,7 +1228,7 @@ export class AutomatedIngestionService {
             // fetchArticleContent itself throws unexpectedly); the real fix
             // lives in fetchArticleContent's own Tavily Extract / Jina
             // catches above, which now actually observe the provider error.
-            this.autoBlockDomainIfNeeded(article.url, errorMsg);
+            this.autoBlockDomainIfNeeded(article.url, errorMsg, error); // #367
 
             failedFetches.push({ url: article.url, reason: errorMsg.substring(0, 100) });
             recordOutcome(article, "extraction_failed", errorMsg); // #132
@@ -1192,6 +1241,9 @@ export class AutomatedIngestionService {
       runCounts.fetched = articlesWithContent.length;
       runCounts.fetchFailed = failedFetches.length;
       runCounts.blockedDomain = failedFetches.filter((f) => f.reason === "blocked_domain").length;
+
+      // #367: failed fetches reach result.errors, so the cron route counts them.
+      fetchFailureSummary = summarizeFailedFetches(failedFetches, fetchCandidates.length);
 
       // Log failed fetches for monitoring
       if (failedFetches.length > 0) {
@@ -1277,7 +1329,8 @@ export class AutomatedIngestionService {
           // #167: an LLM call that failed is not a quality verdict; a credits error fails the run.
           const assessmentError = qualityResults[index]?.error;
           if (assessmentError) {
-            billingFailures.note("openrouter", assessmentError);
+            // #367: OpenRouter's own 401/403 (errorStatus) fails the run like a 402.
+            billingFailures.note("openrouter", assessmentError, qualityResults[index]?.errorStatus);
             recordOutcome(assessed, "assessment_failed", assessmentError);
             return;
           }
@@ -1413,7 +1466,12 @@ export class AutomatedIngestionService {
           errors.push(errorMsg);
           runCounts.ingestFailed++; // #172
           // #167: article analysis runs on OpenRouter; its credits error fails the run.
-          billingFailures.note(/openrouter/i.test(errorMsg) ? "openrouter" : "article_ingestion", errorMsg);
+          // #367: a provider 401/403 (typed, in the error's chain) fails the run too.
+          billingFailures.note(
+            /openrouter/i.test(errorMsg) ? "openrouter" : "article_ingestion",
+            errorMsg,
+            providerApiStatusOf(error)
+          );
           // #132: an insert failure is the case the run row could not express.
           recordOutcome(
             article,
@@ -1560,6 +1618,12 @@ export class AutomatedIngestionService {
       // zero-yield row would hide the cause. The reasons lead error_log so the run
       // row, the cron response and the gap detector all name the provider. Applied
       // here, the one exit every branch shares, so no early return can skip it.
+      // #367: the fetch-failure line is appended after every branch chose its
+      // status, so it raises the error count without changing the status.
+      if (pipelineResult && fetchFailureSummary) {
+        pipelineResult.errors.push(fetchFailureSummary);
+      }
+      // #367: billingFailures also holds provider auth (401/403) reasons; same fail path.
       const billingReasons = billingFailures.reasons();
       if (pipelineResult && billingReasons.length > 0) {
         pipelineResult.status = "failed";
@@ -1682,7 +1746,8 @@ export class AutomatedIngestionService {
         const message = error instanceof Error ? error.message : "Unknown error";
         failures.push(`${provider.name}: ${message}`);
         // #167: a billing error still fails the run even when the fallback answers.
-        billingFailures?.note(provider.name, message);
+        // #367: so does the provider's own 401/403 (a rejected API key).
+        billingFailures?.note(provider.name, message, providerApiStatusOf(error));
         // Clear, actionable warning so ops can see WHY we failed over.
         loggers.api.warn(
           `[AutomatedIngestion] ${provider.name} search failed (${message}), falling back to next provider`,

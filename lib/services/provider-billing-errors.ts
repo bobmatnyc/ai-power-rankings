@@ -1,5 +1,6 @@
 /**
- * Provider billing / credit error classification for the ingestion pipeline (#167).
+ * Provider billing / credit error classification for the ingestion pipeline (#167),
+ * and provider auth (401/403) classification on the same fail path (#367).
  *
  * Why: On 2026-10-12 Tavily and Jina answered HTTP 402 and OpenRouter answered
  * "requires more credits, or fewer max_tokens". Every one of those errors was caught
@@ -48,25 +49,48 @@ export function providerBillingCondition(message: string): string | null {
 }
 
 /**
+ * Why: #367 — on 2026-11-01 every Tavily call answered 401 (invalid key) and the run
+ * still ended `completed` with no error. A rejected key is like an empty balance: no
+ * call to that provider can succeed until an operator fixes the account.
+ * What: Returns the auth condition for the HTTP status a provider's OWN API answered
+ * with — "HTTP 401 Unauthorized" or "HTTP 403 Forbidden" — or null for any other
+ * status. Callers pass the status from a ProviderApiError (providerApiStatusOf), never
+ * a number read out of message text, so a news site's 401/403 is never counted here.
+ * Test: `providerAuthCondition` cases in lib/services/provider-billing-errors.test.ts.
+ */
+export function providerAuthCondition(providerStatus: number | undefined): string | null {
+  if (providerStatus === 401) return "HTTP 401 Unauthorized";
+  if (providerStatus === 403) return "HTTP 403 Forbidden";
+  return null;
+}
+
+/**
  * Why: #167 — one ingestion run can hit the same billing error once per candidate; the
  * run's error_log needs one line per provider that is out of credit, not twenty copies.
- * What: Collects at most one reason per provider. `note()` ignores any message that
- * providerBillingCondition() does not classify as billing. Each reason names the
- * provider and the condition, then quotes the provider's own text.
- * Test: `ProviderBillingFailures` case in lib/services/provider-billing-errors.test.ts;
- * end to end in tests/unit/cron-daily-news-billing.test.ts.
+ * #367: a provider auth failure (401/403 from its own API) fails the run the same way.
+ * What: Collects at most one reason per provider. `note()` records a billing reason
+ * when providerBillingCondition() classifies `message`, else an auth reason when
+ * providerAuthCondition() classifies `providerStatus`, else nothing. Each reason names
+ * the provider and the condition, then quotes the provider's own text.
+ * Test: `ProviderBillingFailures` cases in lib/services/provider-billing-errors.test.ts;
+ * end to end in tests/unit/cron-daily-news-billing.test.ts and
+ * tests/unit/cron-daily-news-provider-auth-367.test.ts.
  */
 export class ProviderBillingFailures {
   private readonly byProvider = new Map<string, string>();
 
-  note(provider: string, message: string): void {
+  note(provider: string, message: string, providerStatus?: number): void {
     if (this.byProvider.has(provider)) return;
+    const excerpt = message.substring(0, REASON_EXCERPT_CHARS);
     const condition = providerBillingCondition(message);
-    if (!condition) return;
-    this.byProvider.set(
-      provider,
-      `Provider billing error [${provider}]: ${condition} — ${message.substring(0, REASON_EXCERPT_CHARS)}`
-    );
+    if (condition) {
+      this.byProvider.set(provider, `Provider billing error [${provider}]: ${condition} — ${excerpt}`);
+      return;
+    }
+    const authCondition = providerAuthCondition(providerStatus); // #367
+    if (authCondition) {
+      this.byProvider.set(provider, `Provider auth error [${provider}]: ${authCondition} — ${excerpt}`);
+    }
   }
 
   reasons(): string[] {

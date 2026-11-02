@@ -59,13 +59,14 @@ describe("blocked-domains.config - 429 auto-block TTL (#126)", () => {
     expect(isDomainBlocked(url)).toBe(false);
   });
 
-  it("keeps a 403-triggered (permanent) domain blocked past the same elapsed time", () => {
+  // #367: a 403 now takes the transient path; a permanent block is a status-less "blocked".
+  it("keeps a permanently blocked domain blocked past the same elapsed time", () => {
     const domain = "ttl-403-test.example";
     const url = `https://${domain}/article-1`;
 
     expect(isDomainBlocked(url)).toBe(false);
 
-    // No `transient` option — the existing 401/403/"blocked" call shape.
+    // No `transient` option — the "blocked"-text (permanent) call shape.
     addBlockedDomain(domain);
     expect(isDomainBlocked(url)).toBe(true);
 

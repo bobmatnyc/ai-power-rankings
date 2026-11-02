@@ -527,7 +527,8 @@ describe("GET /api/cron/daily-news — run summary log line (#172)", () => {
     expect(fields).toMatchObject({
       runId: RUN_ID,
       status: "completed",
-      cause: null,
+      // #367: the reuters.com blocked_domain skip is now one error line; status is unchanged.
+      cause: "fetch_failed",
       dryRun: false,
       discovered: 7,
       stale: 1,
@@ -544,8 +545,9 @@ describe("GET /api/cron/daily-news — run summary log line (#172)", () => {
       passedQuality: 3,
       added: 3,
       ingestFailed: 0,
-      errorCount: 0,
+      errorCount: 1, // #367: "Content fetch failed for 1 of 5 candidates: blocked_domain=1"
     });
+    expect(payload.data?.errors).toEqual(["Content fetch failed for 1 of 5 candidates: blocked_domain=1"]);
     // The same numbers the run result reports.
     expect(fields["added"]).toBe(payload.data?.articlesIngested);
     expect(fields["discovered"]).toBe(payload.data?.articlesDiscovered);
