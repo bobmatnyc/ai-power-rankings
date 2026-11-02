@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { runMiddleware } from "./helpers/clerk-middleware-harness";
 
 /**
  * #233: search terms stay out of page URLs, so GA4 never sees them.
@@ -16,19 +17,15 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("@clerk/nextjs/server", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@clerk/nextjs/server")>();
-  return { ...actual, clerkMiddleware: (handler: unknown) => handler };
+  // #368: the real middleware calls Clerk's wrapper only for needsClerk() paths.
+  const { fakeClerkMiddleware } = await import("./helpers/clerk-middleware-harness");
+  return { ...actual, clerkMiddleware: fakeClerkMiddleware };
 });
-
-type Handler = (
-  auth: () => Promise<{ userId: string | null; sessionId: string | null }>,
-  req: NextRequest
-) => Promise<Response>;
 
 const anonymousAuth = vi.fn(async () => ({ userId: null, sessionId: null }));
 
 async function run(path: string, method = "GET"): Promise<Response> {
-  const { default: middleware } = await import("../../middleware");
-  return (middleware as unknown as Handler)(
+  return runMiddleware(
     anonymousAuth,
     new NextRequest(`http://localhost${path}`, { method })
   );
