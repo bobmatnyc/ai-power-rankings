@@ -21,6 +21,7 @@ import {
   RANKING_LISTS,
   rankingListPath,
 } from "@/lib/rankings/lists";
+import { rankingMethodAnswer } from "@/lib/rankings/method-answer";
 import { createJsonLdScript, generateBreadcrumbSchema, generateRankingFAQSchema } from "@/lib/schema";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
@@ -187,7 +188,8 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
   // Generate structured data
   // #153: JSON-LD names the production origin, never the VERCEL_URL host.
   const structuredDataBaseUrl = siteOrigin();
-  const faqSchema = generateRankingFAQSchema();
+  const methodAnswer = rankingMethodAnswer(header.version);
+  const faqSchema = generateRankingFAQSchema(methodAnswer);
   const breadcrumbs = [
     { name: "Home", url: "/" },
     { name: "Rankings", url: "/rankings" },
@@ -270,11 +272,8 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
         {/* SEO-Optimized Content Sections */}
         <aside className="mt-12 space-y-8" aria-label="Additional information">
           {/* Quick Answer about rankings */}
-          <QuickAnswerBox
-            question="How are AI tool rankings determined?"
-            answer="Our AI tool rankings use <strong>Algorithm v7.6</strong> which evaluates tools across 8 key factors: Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, Business Sentiment, Development Velocity, and Platform Resilience. Rankings are updated monthly with fresh data from multiple sources."
-            type="definition"
-          />
+          {/* #280: the v8 per-list answer, naming only the version this board was published with. */}
+          <QuickAnswerBox question={methodAnswer.question} answer={methodAnswer.html} type="definition" />
 
           {/* FAQ Section */}
           <FAQSection

@@ -175,7 +175,7 @@
     },
     "methodology": {
       "title": "私たちの手法",
-      "algorithmTitle": "アルゴリズム v7.6",
+      "algorithmTitle": "アルゴリズム",
       "algorithmDescription": "高度なランキングアルゴリズムが8つの主要因子と高度な修正器を考慮：",
       "keyModifiersTitle": "主要な修正器",
       "keyModifiersDescription": "三つの高度な修正器が公平で正確なランキングを保証：",
@@ -230,7 +230,6 @@
     },
     "footer": {
       "tagline": "AI革命のためのデータ駆動インサイト",
-      "description": "Algorithm v7.6を使用したAIコーディングツールの包括的ランキング。市場検証済みスコアリングで実世界の採用指標と技術的能力を組み合わせています。",
       "quickLinks": "クイックリンク",
       "categories": "カテゴリー",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
@@ -322,14 +321,11 @@
       "title": "データ主導のランキング",
       "subtitle": "私たちの方法論は透明で公正、継続的に改善されています",
       "methodology": "方法論を見る",
-      "algorithmVersion": "Algorithm v7.6",
       "lastUpdated": "最終更新"
     },
     "faq": {
       "title": "よくある質問",
       "subtitle": "AIコーディングツールとランキングに関する一般的な質問",
-      "question1": "ツールはどのようにランク付けされますか？",
-      "answer1": "私たちのAlgorithm v7.6を使用して、イノベーション、機能、使いやすさ、コミュニティフィードバックを評価します。",
       "question2": "ランキングはどのくらいの頻度で更新されますか？",
       "answer2": "新しいツール、機能更新、ユーザーフィードバックを反映して毎週更新されます。",
       "viewAll": "すべてのFAQを見る"
@@ -402,7 +398,6 @@
     "aboutDescription": "このチャートは、AIツールが時間の経過とともにトップ10ランキングにどのように出入りしてきたかを示しています。チャートの上位に表示されるツール（1位に近いツール）ほど、優れたパフォーマンスを示しています。"
   },
   "footer": {
-    "description": "Algorithm v7.6を使用したAIコーディングツールの包括的ランキング。市場検証済みスコアリングで実世界の採用指標と技術的能力を組み合わせています。",
     "quickLinks": "クイックリンク",
     "categories": "カテゴリー",
     "copyright": "© 2025 AI Power Ranking. All rights reserved."
@@ -429,32 +424,6 @@
       "category": "カテゴリ"
     },
     "algorithm": {
-      "title": "アルゴリズム v7.6について",
-      "subtitle": "イノベーション減衰、プラットフォームリスク修正器、収益品質調整を備えた強化ランキングシステム",
-      "tabs": {
-        "factors": "スコアリング要素",
-        "modifiers": "修正器",
-        "methodology": "手法"
-      },
-      "primaryFactors": "主要要素 (67.5%)",
-      "secondaryFactors": "副要素 (32.5%)",
-      "description": "私たちのランキングアルゴリズムは、定量的指標と定性的評価を組み合わせてAIコーディングツールの包括的な視点を提供します。新しいデータに基づいて週次でランキングを更新し、手法を継続的に改善しています。",
-      "factors": {
-        "agentic": "エージェント能力",
-        "innovation": "イノベーション",
-        "performance": "パフォーマンス",
-        "adoption": "採用率",
-        "traction": "牵引力",
-        "sentiment": "感情",
-        "velocity": "速度",
-        "resilience": "復元力"
-      },
-      "modifiers": {
-        "decay": "イノベーション減衰（6ヶ月半減期） - 最近のイノベーションをより重視",
-        "risk": "プラットフォームリスク修正器 - プラットフォーム依存とロックインに基づいてスコア調整",
-        "revenue": "収益品質調整 - 持続的収益と一時的収益を区別"
-      },
-      "methodologyText": "私たちの包括的な手法はAIコーディングツールを多角的に評価し、実世界のパフォーマンスと採用を反映した公平で正確なランキングを保証します。",
       "viewMethodology": "完全な手法を表示"
     },
     "filters": {
@@ -857,167 +826,6 @@
     "emailPlaceholder": "メールアドレスを入力",
     "subscribe": "購読",
     "subscribing": "購読中..."
-  },
-  "methodology": {
-    "title": "私たちの手法",
-    "subtitle": "AIコーディングツールのランク付け方法",
-    "lastUpdated": "最終更新：2025年1月",
-    "intro": "AI Power Ranking uses a sophisticated algorithm (v7.6) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
-    "algorithm": {
-      "title": "アルゴリズム v7.6",
-      "description": "Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
-      "keyFeatures": "主な特徴",
-      "features": {
-        "innovationDecay": "ツールの鮮度を反映するイノベーション減衰モデリング",
-        "platformRisk": "ベンダー依存性のプラットフォームリスク評価",
-        "revenueQuality": "ビジネスモデルに基づく収益品質調整",
-        "technicalWeighting": "ユースケース別の技術能力重み付け",
-        "dataValidation": "マルチソースデータ検証と正規化",
-        "logarithmicScaling": "バランスの取れた比較のための対数スケーリング",
-        "newsIntelligence": "リアルタイムニュース分析による動的ベロシティスコアリング",
-        "toolCapabilities": "サブプロセスとツールエコシステムの強化評価"
-      }
-    },
-    "factors": {
-      "title": "スコアリング要素",
-      "description": "ツールは特定の重み付けを持つ8つの主要指標で評価されます",
-      "primary": "主要要素（82.5%）",
-      "secondary": "副要素（17.5%）",
-      "agentic": {
-        "details": "マルチファイル編集、タスク計画、自律動作、サブプロセス管理、ツールエコシステムサポート"
-      },
-      "innovation": {
-        "details": "ブレークスルー機能、技術的進歩、市場差別化の評価",
-        "name": "イノベーション",
-        "description": "ユニークな機能と技術的進歩"
-      },
-      "performance": {
-        "details": "SWE-bench、HumanEval、実際のコーディングタスクでのベンチマーク",
-        "name": "パフォーマンス",
-        "description": "コード生成、補完、デバッグ機能"
-      },
-      "adoption": {
-        "details": "アクティブユーザー数、成長率、市場浸透率の指標",
-        "name": "普及度",
-        "description": "ユーザー受容とコミュニティエンゲージメント"
-      },
-      "traction": {
-        "details": "収益成長、資金調達ラウンド、ビジネスモメンタム指標"
-      },
-      "sentiment": {
-        "details": "開発者満足度、コミュニティフィードバック、推奨スコア"
-      },
-      "velocity": {
-        "details": "ニュースセンチメント、機能リリース、コミュニティ反応からの動的モメンタム（30日間ウィンドウ）"
-      },
-      "resilience": {
-        "details": "プラットフォームの安定性、バックアップオプション、ベンダー独立性"
-      },
-      "ecosystem": {
-        "name": "エコシステム",
-        "description": "統合と開発者サポート"
-      }
-    },
-    "modifiers": {
-      "title": "動的修正器",
-      "description": "市場状況とツールの成熟度を反映するリアルタイム調整",
-      "innovationDecay": {
-        "description": "継続的な改善を評価し停滞にペナルティを与えるため、イノベーションスコアは時間とともに減衰します"
-      },
-      "platformRisk": {
-        "description": "ベンダーロックイン、プラットフォーム依存、ビジネスリスクに基づく調整",
-        "penalties": "リスクペナルティ",
-        "penaltyList": {
-          "acquired": "競合他社に最近買収された",
-          "exclusive": "プラットフォーム専用（単一LLM）",
-          "competitor": "競合プラットフォームが所有",
-          "regulatory": "規制コンプライアンスの問題",
-          "funding": "資金調達または持続可能性への懸念"
-        },
-        "bonuses": "リスク軽減ボーナス",
-        "bonusList": {
-          "multiLLM": "複数のLLMプロバイダーに対応",
-          "openSource": "open sourceとして公開",
-          "selfHosted": "セルフホスティングオプションあり"
-        }
-      },
-      "revenueQuality": {
-        "description": "ビジネスモデルの持続可能性と成長ポテンシャルに基づく収益の重み付け",
-        "models": {
-          "enterpriseHigh": "エンタープライズ（ハイタッチ）",
-          "enterpriseStandard": "エンタープライズ（スタンダード）",
-          "smbSaas": "SMB SaaS",
-          "consumerPremium": "コンシューマープレミアム",
-          "freemium": "freemium",
-          "openSource": "open source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "データソースと検証",
-      "description": "データ収集と検証に厳格な基準を維持しています",
-      "collection": {
-        "title": "データ収集方法",
-        "sources": {
-          "api": "ツールプロバイダーとの直接API連携",
-          "research": "業界調査レポートとアナリストデータ",
-          "announcements": "公式企業発表とプレスリリース",
-          "community": "開発者アンケートとコミュニティフィードバック",
-          "benchmarks": "標準化されたパフォーマンスベンチマーク"
-        }
-      },
-      "validation": {
-        "title": "検証要件",
-        "requirements": {
-          "completeness": "必須指標がすべて揃っていること",
-          "reliability": "主要指標の複数ソースによる検証",
-          "outlier": "外れ値の検出と手動レビュー",
-          "crossValidation": "業界ベンチマークとのクロスバリデーション"
-        }
-      },
-      "updateFrequency": {
-        "title": "更新スケジュール",
-        "description": "ランキングはデータを継続的に収集しながら週次で再計算されます。主要なアルゴリズムの更新はバージョン管理されドキュメント化されます。"
-      }
-    },
-    "sections": {
-      "scoringFactors": {
-        "title": "スコアリング要素",
-        "intro": "私たちのアルゴリズムはツールを8つの主要指標で評価し、それぞれが開発者にとっての重要度に応じて重み付けされています："
-      },
-      "modifiers": {
-        "title": "動的修正器",
-        "intro": "ランキングが現在の市場実態を反映するよう、3つの高度な修正器を適用しています："
-      },
-      "dataCollection": {
-        "title": "データ収集",
-        "intro": "精度を確保するため、複数のソースからデータを収集しています：",
-        "sources": [
-          "ツールプロバイダーとの直接API連携",
-          "公開リポジトリと開発者統計",
-          "業界レポートと検証済みニュースソース",
-          "ユーザーアンケートとコミュニティフィードバック",
-          "パフォーマンスベンチマーク（SWE-bench、HumanEval）"
-        ]
-      },
-      "updateFrequency": {
-        "title": "更新頻度",
-        "content": "急速に進化するAIランドスケープを反映するため、ランキングは週次で再計算されます。主要な手法の更新はバージョン管理されドキュメント化されます。"
-      },
-      "overview": {
-        "title": "概要"
-      },
-      "algorithm": {
-        "title": "アルゴリズム"
-      },
-      "factors": {
-        "title": "要因"
-      }
-    },
-    "overview": {
-      "title": "評価概要",
-      "description": "AIコーディングツールを評価するためのデータ駆動アプローチ"
-    }
   },
   "about": {
     "title": "AI Power Rankingについて",

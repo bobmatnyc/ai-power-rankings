@@ -129,7 +129,7 @@
     },
     "methodology": {
       "title": "Naša metodologija",
-      "algorithmTitle": "Algoritam v7.6",
+      "algorithmTitle": "Algoritam",
       "algorithmDescription": "Naš napredni ranking algoritam uzima u obzir 8 ključnih faktora s sophisticated modifierima:",
       "keyModifiersTitle": "Ključni modifieri",
       "keyModifiersDescription": "Tri sophisticated modifiera osiguravaju fer i točna rangiranja:",
@@ -183,7 +183,6 @@
     },
     "footer": {
       "tagline": "Data-driven insights za AI revoluciju",
-      "description": "Sveobuhvatna rangiranja AI alata za kodiranje s algoritmom v7.6, dinamičkom inteligencijom vijesti, poboljšanim mogućnostima alata i bodovanjem brzine.",
       "quickLinks": "Brzi linkovi",
       "categories": "Kategorije",
       "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
@@ -196,7 +195,6 @@
     "aboutDescription": "Ovaj grafikon pokazuje kako su AI alati ulazili i izlazili iz top 10 rangiranja kroz vrijeme. Alati koji se pojavljuju više na grafikonu (bliže #1) performiraju bolje."
   },
   "footer": {
-    "description": "Sveobuhvatna rangiranja AI alata za kodiranje koristeći Algorithm v7.6 s propadanjem inovacije, modifikatorima rizika platforme i prilagodbama kvalitete prihoda.",
     "quickLinks": "Brzi linkovi",
     "categories": "Kategorije",
     "copyright": "© 2025 AI Power Rankings. Sva prava zadržana."
@@ -224,32 +222,6 @@
       "name": "Ime"
     },
     "algorithm": {
-      "title": "O algoritmu v7.6",
-      "subtitle": "Enhanced ranking sustav s innovation decay, platform risk modifierima i revenue quality adjustmentima",
-      "tabs": {
-        "factors": "Faktori bodovanja",
-        "modifiers": "Modifieri",
-        "methodology": "Metodologija"
-      },
-      "primaryFactors": "Primarni faktori (67.5%)",
-      "secondaryFactors": "Sekundarni faktori (32.5%)",
-      "description": "Naš ranking algoritam kombinira quantitative metrike s qualitative procjenama za comprehensive pogled na AI coding alate. Ažuriramo rangiranja tjedno na osnovu nove data i kontinuirano refiniramo našu metodologiju.",
-      "factors": {
-        "agentic": "Agentna sposobnost",
-        "innovation": "Inovacija",
-        "performance": "Performanse",
-        "adoption": "Prihvaćanje",
-        "traction": "Tržišna privlačnost",
-        "sentiment": "Poslovni sentiment",
-        "velocity": "Brzina razvoja",
-        "resilience": "Otpornost platforme"
-      },
-      "modifiers": {
-        "decay": "Opadanje inovacije",
-        "risk": "Rizik platforme",
-        "revenue": "Kvaliteta prihoda"
-      },
-      "methodologyText": "Temeljeno na našoj transparentnoj",
       "viewMethodology": "Pogledaj metodologiju"
     },
     "tierLegend": {
@@ -584,144 +556,6 @@
         "missingToken": "Verifikacijski link izgleda nepotpun.",
         "invalidToken": "Ovaj verifikacijski link je neispravan ili je istekao.",
         "verificationFailed": "Trenutno ne možemo potvrditi vaš email. Molimo pokušajte kasnije."
-      }
-    }
-  },
-  "methodology": {
-    "title": "Naša metodologija",
-    "subtitle": "Kako rangiramo AI coding alate",
-    "lastUpdated": "Zadnje ažuriranje: siječanj 2025",
-    "intro": "AI Power Rankings koristi napredni algoritam (v7.6) za evaluaciju i rangiranje AI alata za kodiranje na temelju višestrukih kvantitativnih i kvalitativnih faktora, analize vijesti u stvarnom vremenu i sveobuhvatnih mogućnosti alata. Naša metodologija je dizajnirana da pruži programerima objektivnu procjenu pejzaža AI alata zasnovanu na podacima.",
-    "sections": {
-      "scoringFactors": {
-        "title": "Faktori bodovanja",
-        "intro": "Naš algoritam evaluira alate kroz 8 ključnih dimenzija, svaku ponderiranu prema važnosti za developere:"
-      },
-      "modifiers": {
-        "title": "Dinamički modifieri",
-        "intro": "Da osiguramo da rangiranja reflektiraju trenutne tržišne realnosti, primjenjujemo tri napredna modifiera:"
-      },
-      "dataCollection": {
-        "title": "Prikupljanje podataka",
-        "intro": "Prikupljamo podatke iz više izvora za osiguravanje točnosti:",
-        "sources": [
-          "Direktne API integracije s tool providerima",
-          "Javni repositoriji i developer statistike",
-          "Industry reporti i verificirani news izvori",
-          "Korisničke ankete i community feedback",
-          "Performance benchmarki (SWE-bench, HumanEval)"
-        ]
-      },
-      "updateFrequency": {
-        "title": "Učestalost ažuriranja",
-        "content": "Rangiranja se prepočunavaju tjedno da reflektiraju brzo razvijajući AI landscape. Velika ažuriranja metodologije su verzionirana i dokumentirana."
-      }
-    },
-    "algorithm": {
-      "title": "Algoritam v7.6",
-      "description": "Naš najnoviji algoritam za rangiranje uključuje obrasce korištenja u stvarnom svijetu i tržišnu dinamiku",
-      "keyFeatures": "Ključne funkcionalnosti",
-      "features": {
-        "innovationDecay": "Modeliranje propadanja inovacije za odražavanje frešnosti alata",
-        "platformRisk": "Procjena rizika platforme za ovisnosti o dobavljaču",
-        "revenueQuality": "Prilagodbe kvalitete prihoda na osnovu poslovnog modela",
-        "technicalWeighting": "Ponderiranje tehničkih sposobnosti za različite slučajeve upotrebe",
-        "dataValidation": "Višeizvorska validacija i normalizacija podataka",
-        "logarithmicScaling": "Logaritamsko skaliranje za uravnotežene usporedbe",
-        "newsIntelligence": "Dinamično velocity bodovanje iz analize vijesti u stvarnom vremenu",
-        "toolCapabilities": "Poboljšana procjena subprocesa i ekosustava alata"
-      }
-    },
-    "factors": {
-      "title": "Faktori bodovanja",
-      "description": "Alati se evaluiraju kroz 8 ključnih dimenzija s specifičnim ponderiranjem",
-      "primary": "Primarni faktori (82.5%)",
-      "secondary": "Sekundarni faktori (17.5%)",
-      "agentic": {
-        "details": "Mjeri autonomne sposobnosti, višekoračno razmišljanje i završavanje složenih zadataka"
-      },
-      "innovation": {
-        "details": "Evaluira probojne funkcionalnosti, tehničke napretke i tržišnu diferencijaciju"
-      },
-      "performance": {
-        "details": "Benchmarkovi na SWE-bench, HumanEval i stvarnim zadacima kodiranja"
-      },
-      "adoption": {
-        "details": "Aktivni korisnici, stopa rasta i metrike prodora na tržište"
-      },
-      "traction": {
-        "details": "Rast prihoda, runde financiranja i indikatori poslovnog zamaha"
-      },
-      "sentiment": {
-        "details": "Zadovoljstvo developera, povratne informacije zajednice i ocjene preporuka"
-      },
-      "velocity": {
-        "details": "Ritam izdavanja funkcionalnosti, učestalost ažuriranja i brzina inovacije"
-      },
-      "resilience": {
-        "details": "Stabilnost platforme, opcije sigurnosnih kopija i neovisnost o dobavljaču"
-      }
-    },
-    "modifiers": {
-      "title": "Dinamički modifikatori",
-      "description": "Prilagodbe u stvarnom vremenu koje odražavaju tržišne uvjete i zrelost alata",
-      "innovationDecay": {
-        "description": "Ocjene inovacije opada tijekom vremena kako bi se nagradilo kontinuirano poboljšanje i kaznila stagnacija"
-      },
-      "platformRisk": {
-        "description": "Prilagodbe na osnovu vezivanja za dobavljača, ovisnosti o platformi i poslovnih rizika",
-        "penalties": "Rizik penali",
-        "penaltyList": {
-          "acquired": "Nedavno stekao konkurent",
-          "exclusive": "Ekskluzivnost platforme (jedan LLM)",
-          "competitor": "U vlasništvu konkurentske platforme",
-          "regulatory": "Problemi regulatorne sukladnosti",
-          "funding": "Brige oko financiranja ili održivosti"
-        },
-        "bonuses": "Bonusi za umanjenje rizika",
-        "bonusList": {
-          "multiLLM": "Podržava više LLM pružatelja",
-          "openSource": "Dostupnost otvorenog koda",
-          "selfHosted": "Opcije samo-hostiranja"
-        }
-      },
-      "revenueQuality": {
-        "description": "Ponderiranje prihoda na osnovu održivosti poslovnog modela i potencijala rasta",
-        "models": {
-          "enterpriseHigh": "Enterprise (Visoki dodir)",
-          "enterpriseStandard": "Enterprise (Standardno)",
-          "smbSaas": "SMB SaaS",
-          "consumerPremium": "Potrošački Premium",
-          "freemium": "Freemium",
-          "openSource": "Otvoreni kod"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "Izvori podataka i validacija",
-      "description": "Održavamo stroge standarde za prikupljanje i validaciju podataka",
-      "collection": {
-        "title": "Metode prikupljanja podataka",
-        "sources": {
-          "api": "Direktne API integracije s pružateljima alata",
-          "research": "Industrijsko istraživanje i analitički podaci",
-          "announcements": "Službene tvrtke objave i priopćenja za tisak",
-          "community": "Ankete developera i povratne informacije zajednice",
-          "benchmarks": "Standardizirani performance benchmarkovi"
-        }
-      },
-      "validation": {
-        "title": "Zahtjevi za validaciju",
-        "requirements": {
-          "completeness": "Sve potrebne metrike moraju biti prisutne",
-          "reliability": "Višeizvorska verifikacija za ključne metrike",
-          "outlier": "Otkrivanje odstupanja i ručni pregled",
-          "crossValidation": "Unakrsna validacija s industrijskim benchmarkovima"
-        }
-      },
-      "updateFrequency": {
-        "title": "Raspored ažuriranja",
-        "description": "Rangiranja se prepočunavaju tjedno s kontinuiranim prikupljanjem podataka. Velika ažuriranja algoritma su verzionirana i dokumentirana."
       }
     }
   },

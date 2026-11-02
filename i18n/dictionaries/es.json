@@ -129,7 +129,7 @@
     },
     "methodology": {
       "title": "Nuestra Metodología",
-      "algorithmTitle": "Algorithm v7.6",
+      "algorithmTitle": "Algorithm",
       "algorithmDescription": "Nuestro avanzado algoritmo de clasificación considera 8 factores clave con modificadores sofisticados:",
       "keyModifiersTitle": "Modificadores clave",
       "keyModifiersDescription": "Tres modificadores sofisticados garantizan clasificaciones justas y precisas:",
@@ -183,7 +183,6 @@
     },
     "footer": {
       "tagline": "Insights basados en datos para la revolución IA",
-      "description": "Clasificaciones exhaustivas de herramientas de codificación IA usando Algorithm v7.6 con decaimiento de innovación, modificadores de riesgo de plataforma y ajustes de calidad de ingresos.",
       "quickLinks": "Enlaces rápidos",
       "categories": "Categorías",
       "copyright": "© 2025 AI Power Ranking. Todos los derechos reservados."
@@ -196,7 +195,6 @@
     "aboutDescription": "Este gráfico muestra cómo las herramientas IA han entrado y salido del top 10 de clasificaciones a lo largo del tiempo. Las herramientas que aparecen más arriba en el gráfico (más cercanas al #1) tienen mejor rendimiento."
   },
   "footer": {
-    "description": "Clasificaciones exhaustivas de herramientas de codificación IA usando Algorithm v7.6 con decaimiento de innovación, modificadores de riesgo de plataforma y ajustes de calidad de ingresos.",
     "quickLinks": "Enlaces rápidos",
     "categories": "Categorías",
     "copyright": "© 2025 AI Power Ranking. Todos los derechos reservados."
@@ -261,32 +259,6 @@
       }
     },
     "algorithm": {
-      "title": "Acerca del Algorithm v7.6",
-      "subtitle": "Sistema de clasificación mejorado con decaimiento de innovación, modificadores de riesgo de plataforma y ajustes de calidad de ingresos",
-      "tabs": {
-        "factors": "Factores de puntuación",
-        "modifiers": "Modificadores",
-        "methodology": "Metodología"
-      },
-      "primaryFactors": "Factores primarios (67.5%)",
-      "secondaryFactors": "Factores secundarios (32.5%)",
-      "description": "Nuestro algoritmo de clasificación combina métricas cuantitativas con evaluaciones cualitativas para ofrecer una visión exhaustiva de las herramientas de codificación IA. Actualizamos las clasificaciones semanalmente con nuevos datos y refinamos continuamente nuestra metodología.",
-      "factors": {
-        "agentic": "Capacidad Agéntica",
-        "innovation": "Innovación",
-        "performance": "Rendimiento",
-        "adoption": "Adopción",
-        "traction": "Tracción",
-        "sentiment": "Sentimiento",
-        "velocity": "Velocidad",
-        "resilience": "Resiliencia"
-      },
-      "modifiers": {
-        "decay": "Decaimiento de Innovación (vida media de 6 meses) - Garantiza mayor peso a las innovaciones recientes",
-        "risk": "Modificador de Riesgo de Plataforma - Ajusta puntuaciones según dependencias de plataforma y lock-in",
-        "revenue": "Ajuste de Calidad de Ingresos - Diferencia entre ingresos sostenibles y puntuales"
-      },
-      "methodologyText": "Nuestra metodología exhaustiva evalúa las herramientas de codificación IA en múltiples dimensiones, garantizando clasificaciones justas y precisas que reflejan el rendimiento y la adopción en el mundo real.",
       "viewMethodology": "Ver metodología completa"
     },
     "lists": {
@@ -579,144 +551,6 @@
       },
       "resubscribe": "¿Cambiaste de opinión? Puedes suscribirte de nuevo en cualquier momento.",
       "subscribeAgain": "Suscribirse de nuevo"
-    }
-  },
-  "methodology": {
-    "title": "Nuestra Metodología",
-    "subtitle": "Cómo clasificamos las herramientas de codificación IA",
-    "lastUpdated": "Última actualización: enero de 2025",
-    "intro": "AI Power Ranking usa un algoritmo sofisticado (v7.6) para evaluar y clasificar herramientas de codificación IA basándose en múltiples factores cuantitativos y cualitativos. Nuestra metodología está diseñada para ofrecer a los desarrolladores una evaluación objetiva y basada en datos del panorama de herramientas IA.",
-    "algorithm": {
-      "title": "Algorithm v7.6",
-      "description": "Nuestro último algoritmo de clasificación incorpora patrones de uso reales y dinámicas del mercado",
-      "keyFeatures": "Características clave",
-      "features": {
-        "innovationDecay": "Modelado de decaimiento de innovación para reflejar la frescura de la herramienta",
-        "platformRisk": "Evaluación de riesgo de plataforma para dependencias de proveedores",
-        "revenueQuality": "Ajustes de calidad de ingresos basados en el modelo de negocio",
-        "technicalWeighting": "Ponderación de capacidades técnicas para diferentes casos de uso",
-        "dataValidation": "Validación y normalización de datos de múltiples fuentes",
-        "logarithmicScaling": "Escalado logarítmico para comparaciones equilibradas",
-        "newsIntelligence": "Puntuación de velocidad dinámica a partir del análisis de noticias en tiempo real",
-        "toolCapabilities": "Evaluación mejorada de subprocesos y ecosistema de herramientas"
-      }
-    },
-    "factors": {
-      "title": "Factores de puntuación",
-      "description": "Las herramientas se evalúan en 8 dimensiones clave con ponderaciones específicas",
-      "primary": "Factores primarios (82.5%)",
-      "secondary": "Factores secundarios (17.5%)",
-      "agentic": {
-        "details": "Mide capacidades autónomas, razonamiento de múltiples pasos y completación de tareas complejas"
-      },
-      "innovation": {
-        "details": "Evalúa funcionalidades innovadoras, avances técnicos y diferenciación de mercado"
-      },
-      "performance": {
-        "details": "Benchmarks en SWE-bench, HumanEval y tareas de codificación reales"
-      },
-      "adoption": {
-        "details": "Usuarios activos, tasa de crecimiento y métricas de penetración de mercado"
-      },
-      "traction": {
-        "details": "Crecimiento de ingresos, rondas de financiación e indicadores de momentum de negocio"
-      },
-      "sentiment": {
-        "details": "Satisfacción de desarrolladores, feedback de la comunidad y puntuaciones de recomendación"
-      },
-      "velocity": {
-        "details": "Cadencia de lanzamiento de funciones, frecuencia de actualizaciones y velocidad de innovación"
-      },
-      "resilience": {
-        "details": "Estabilidad de plataforma, opciones de respaldo e independencia de proveedor"
-      }
-    },
-    "modifiers": {
-      "title": "Modificadores Dinámicos",
-      "description": "Ajustes en tiempo real que reflejan las condiciones del mercado y la madurez de la herramienta",
-      "innovationDecay": {
-        "description": "Las puntuaciones de innovación decaen con el tiempo para recompensar la mejora continua y penalizar el estancamiento"
-      },
-      "platformRisk": {
-        "description": "Ajustes basados en vendor lock-in, dependencias de plataforma y riesgos de negocio",
-        "penalties": "Penalizaciones de riesgo",
-        "penaltyList": {
-          "acquired": "Recientemente adquirida por un competidor",
-          "exclusive": "Exclusivo de plataforma (LLM único)",
-          "competitor": "Propiedad de plataforma competidora",
-          "regulatory": "Problemas de cumplimiento regulatorio",
-          "funding": "Preocupaciones de financiación o sostenibilidad"
-        },
-        "bonuses": "Bonificaciones por mitigación de riesgos",
-        "bonusList": {
-          "multiLLM": "Soporta múltiples proveedores LLM",
-          "openSource": "Disponibilidad open source",
-          "selfHosted": "Opciones de self-hosting"
-        }
-      },
-      "revenueQuality": {
-        "description": "Ponderación de ingresos basada en la sostenibilidad del modelo de negocio y el potencial de crecimiento",
-        "models": {
-          "enterpriseHigh": "Enterprise (Alto contacto)",
-          "enterpriseStandard": "Enterprise (Estándar)",
-          "smbSaas": "SMB SaaS",
-          "consumerPremium": "Premium de consumidor",
-          "freemium": "Freemium",
-          "openSource": "Open Source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "Fuentes de datos y validación",
-      "description": "Mantenemos estándares rigurosos para la recopilación y validación de datos",
-      "collection": {
-        "title": "Métodos de recopilación de datos",
-        "sources": {
-          "api": "Integraciones directas via API con proveedores de herramientas",
-          "research": "Informes de investigación del sector y datos de analistas",
-          "announcements": "Anuncios oficiales de empresas y comunicados de prensa",
-          "community": "Encuestas a desarrolladores y feedback de la comunidad",
-          "benchmarks": "Benchmarks de rendimiento estandarizados"
-        }
-      },
-      "validation": {
-        "title": "Requisitos de validación",
-        "requirements": {
-          "completeness": "Todas las métricas requeridas deben estar presentes",
-          "reliability": "Verificación de múltiples fuentes para métricas clave",
-          "outlier": "Detección de valores atípicos y revisión manual",
-          "crossValidation": "Validación cruzada con benchmarks del sector"
-        }
-      },
-      "updateFrequency": {
-        "title": "Calendario de actualizaciones",
-        "description": "Las clasificaciones se recalculan semanalmente con recopilación continua de datos. Las actualizaciones principales del algoritmo se versionan y documentan."
-      }
-    },
-    "sections": {
-      "scoringFactors": {
-        "title": "Factores de puntuación",
-        "intro": "Nuestro algoritmo evalúa las herramientas en 8 dimensiones clave, cada una ponderada según su importancia para los desarrolladores:"
-      },
-      "modifiers": {
-        "title": "Modificadores Dinámicos",
-        "intro": "Para garantizar que las clasificaciones reflejen las realidades actuales del mercado, aplicamos tres modificadores sofisticados:"
-      },
-      "dataCollection": {
-        "title": "Recopilación de datos",
-        "intro": "Recopilamos datos de múltiples fuentes para garantizar la precisión:",
-        "sources": [
-          "Integraciones directas via API con proveedores de herramientas",
-          "Repositorios públicos y estadísticas de desarrolladores",
-          "Informes del sector y fuentes de noticias verificadas",
-          "Encuestas a usuarios y feedback de la comunidad",
-          "Benchmarks de rendimiento (SWE-bench, HumanEval)"
-        ]
-      },
-      "updateFrequency": {
-        "title": "Frecuencia de actualización",
-        "content": "Las clasificaciones se recalculan semanalmente para reflejar el dinámico panorama de la IA. Las actualizaciones metodológicas importantes se versionan y documentan."
-      }
     }
   },
   "about": {

@@ -182,20 +182,7 @@ export async function GET(request: NextRequest) {
             <div style={{ marginRight: "16px", fontSize: "36px" }}>🏆</div>
             AI Power Rankings
           </div>
-
-          {/* Algorithm version */}
-          <div
-            style={{
-              backgroundColor: "#374151", // gray-700
-              color: "#d1d5db", // gray-300
-              padding: "8px 16px",
-              borderRadius: "12px",
-              fontSize: "20px",
-              fontWeight: "500",
-            }}
-          >
-            Algorithm v7.6
-          </div>
+          {/* #280: the fixed "Algorithm v7.6" badge is removed; the image gets no version to show. */}
         </div>
       </div>,
       {

@@ -1,6 +1,7 @@
 /**
  * Schema markup utilities for SEO
  */
+import { RANKING_METHOD_QUESTION, type RankingMethodAnswer } from "@/lib/rankings/method-answer";
 
 export interface ToolSchemaData {
   name: string;
@@ -11,8 +12,12 @@ export interface ToolSchemaData {
   pricing?: string;
   logo?: string;
   github?: string;
+  /** #280: the rank on the tool's own per-list board, never a stored `current_rank`. */
   rank?: number;
+  /** #280: the score on that board (0-100). */
   score?: number;
+  /** #280: the board's display name, e.g. "Coding harnesses". */
+  rankingList?: string;
   users?: number;
   rating?: number;
   ratingCount?: number;
@@ -176,19 +181,20 @@ export function generateBreadcrumbSchema(items: BreadcrumbItem[], baseUrl: strin
 }
 
 /**
- * Generate FAQ Schema for rankings methodology
+ * Generate FAQ Schema for rankings methodology.
+ * #280: the first answer is the ranking page's own answer box text (`rankingMethodAnswer`).
  */
-export function generateRankingFAQSchema() {
+export function generateRankingFAQSchema(method: Pick<RankingMethodAnswer, "text">) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",
     mainEntity: [
       {
         "@type": "Question",
-        name: "How are AI tools ranked?",
+        name: RANKING_METHOD_QUESTION,
         acceptedAnswer: {
           "@type": "Answer",
-          text: "AI tools are ranked using our proprietary Algorithm v7.6, which evaluates 8 key factors: Agentic Capability, Innovation, Technical Performance, Developer Adoption, Market Traction, Business Sentiment, Development Velocity, and Platform Resilience.",
+          text: method.text,
         },
       },
       {
@@ -196,7 +202,7 @@ export function generateRankingFAQSchema() {
         name: "How often are rankings updated?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Rankings are updated monthly with fresh data from multiple sources including GitHub statistics, user metrics, funding announcements, and technical benchmarks.",
+          text: "Rankings are recalculated monthly with fresh data from multiple sources including GitHub statistics, user metrics, funding announcements, and technical benchmarks.",
         },
       },
       {
@@ -237,7 +243,8 @@ export function generateToolReviewSchema(tool: ToolSchemaData, baseUrl: string) 
       bestRating: 10,
       worstRating: 0,
     },
-    reviewBody: `${tool.name} ranks #${tool.rank} in our comprehensive AI tool rankings, with a score of ${tool.score}/100 based on our Algorithm v7.6 evaluation.`,
+    // #280: the rank is counted within one list, so the body names that list and no algorithm version.
+    reviewBody: `${tool.name} ranks #${tool.rank}${tool.rankingList ? ` in the ${tool.rankingList} list` : ""} of AI Power Rankings, with a score of ${Math.round(tool.score * 10) / 10}/100.`,
   };
 }
 

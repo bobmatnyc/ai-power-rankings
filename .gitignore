@@ -58,6 +58,10 @@ ecosystem.config.js
 /public/uploads/news/*
 !/public/uploads/news/.gitkeep
 
+# #280: admin routes write public/data/rankings.json locally; a committed copy goes stale
+/public/data/*
+!/public/data/.gitkeep
+
 # TypeScript
 *.tsbuildinfo
 

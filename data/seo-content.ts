@@ -22,14 +22,16 @@ export const generalFAQs: FAQItem[] = [
     id: "how-are-rankings-calculated",
     question: "How are AI tool rankings calculated?",
     answer:
-      "Our rankings use Algorithm v7.1, which evaluates 8 key factors: <strong>Agentic Capability</strong>, <strong>Innovation</strong>, <strong>Technical Performance</strong>, <strong>Developer Adoption</strong>, <strong>Market Traction</strong>, <strong>Business Sentiment</strong>, <strong>Development Velocity</strong>, and <strong>Platform Resilience</strong>. Each factor is weighted based on its importance to developers and businesses.",
+      // #280: v8 ranks each list on its own with a profile per kind; the v7.1 one-board text is gone.
+      "Models, coding harnesses and productivity tools are ranked in separate lists. Each list is scored with the profile for its kind, across 8 factors: <strong>Agentic Capability</strong>, <strong>Innovation</strong>, <strong>Technical Performance</strong>, <strong>Developer Adoption</strong>, <strong>Market Traction</strong>, <strong>Business Sentiment</strong>, <strong>Development Velocity</strong>, and <strong>Platform Resilience</strong>. Ranks are not compared across lists.",
     category: "methodology",
   },
   {
     id: "how-often-updated",
     question: "How often are the rankings updated?",
     answer:
-      "Rankings are updated <strong>weekly</strong> with fresh data from multiple sources including GitHub statistics, user metrics, funding announcements, and technical benchmarks. This ensures our rankings reflect the latest developments in the AI tool landscape.",
+      // #280: the v8 methodology recalculates monthly.
+      "Rankings are recalculated <strong>monthly</strong> with fresh data from multiple sources including GitHub statistics, user metrics, funding announcements, and technical benchmarks. This ensures our rankings reflect the latest developments in the AI tool landscape.",
     category: "updates",
   },
   {
