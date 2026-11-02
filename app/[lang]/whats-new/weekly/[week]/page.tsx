@@ -11,6 +11,10 @@ import { whatsNewDigestMetadata } from '../../page-metadata';
 
 // #181: rendered on request and cached for 30 minutes, like the monthly reports.
 export const revalidate = 1800;
+// #368: without static params the route was dynamic and never cached; weeks render on first request.
+export function generateStaticParams(): Array<{ lang: string; week: string }> {
+  return [];
+}
 
 type PageProps = { params: Promise<{ lang: string; week: string }> };
 

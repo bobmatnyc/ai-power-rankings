@@ -25,7 +25,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return rankingListMetadata(lang, list);
 }
 
-export const dynamic = "force-dynamic";
+// #368: ISR like /rankings; unknown slugs still 404 on demand.
+export const revalidate = 300;
+export function generateStaticParams(): Array<{ lang: string; list: string }> {
+  return [];
+}
 
 export default async function RankingListRoute({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang, list: slug } = await params;

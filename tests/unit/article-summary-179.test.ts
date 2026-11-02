@@ -21,6 +21,8 @@ import { AIAnalyzer } from "../../lib/services/article-ingestion.service";
 vi.mock("server-only", () => ({}));
 // generateMetadata needs none of the page's component tree.
 vi.mock("@/components/news/news-detail-content", () => ({ default: () => null }));
+const { loadNewsArticle } = vi.hoisted(() => ({ loadNewsArticle: vi.fn() }));
+vi.mock("../../lib/news-article", () => ({ loadNewsArticle }));
 
 /** The rule, written out so an edit to the constant also has to edit this test. */
 const PINNED_RULE =
@@ -178,25 +180,21 @@ describe("toMetaDescription (#179)", () => {
 
 describe("news article metadata (#179)", () => {
   it("derives a description of at most ~160 characters from a long summary", async () => {
-    vi.stubEnv("NEXT_PUBLIC_BASE_URL", "http://localhost:3007");
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () =>
-        Response.json({
-          article: {
-            id: "a1",
-            slug: "big-launch",
-            title: "Big launch",
-            content: "Body",
-            summary: `${LONG_SUMMARY} ${LONG_SUMMARY}`,
-            published_date: "2026-09-01",
-            created_at: "2026-09-01",
-            updated_at: "2026-09-02",
-          },
-          tool: null,
-        })
-      )
-    );
+    // #368: the page reads the article through loadNewsArticle(), no longer a fetch.
+    loadNewsArticle.mockResolvedValueOnce({
+      article: {
+        id: "a1",
+        slug: "big-launch",
+        title: "Big launch",
+        content: "Body",
+        summary: `${LONG_SUMMARY} ${LONG_SUMMARY}`,
+        published_date: "2026-09-01",
+        created_at: "2026-09-01",
+        updated_at: "2026-09-02",
+      },
+      tool: null,
+      tools: null,
+    });
     const { generateMetadata } = await import("../../app/[lang]/news/[slug]/page");
 
     const metadata = await generateMetadata({

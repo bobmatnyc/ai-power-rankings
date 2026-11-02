@@ -6,10 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResponsiveCrownIcon } from "@/components/ui/crown-icon-server";
 import { getCurrentYear } from "@/lib/get-current-year";
+import { locales } from "@/i18n/config";
 import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
-// Force dynamic rendering to avoid Clerk SSG issues
-export const dynamic = "force-dynamic";
+// #368: static per locale, not force-dynamic; the body is literals. Daily revalidation rolls the year in the title.
+export const revalidate = 86400;
+export function generateStaticParams(): Array<{ lang: string }> {
+  return locales.map((lang) => ({ lang }));
+}
 
 interface PageProps {
   params: Promise<{ lang: string }>;
