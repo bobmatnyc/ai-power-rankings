@@ -47,10 +47,16 @@ interface RankingVersion {
   previous_version_id?: string;
 }
 
-async function loadRankingsData(): Promise<RankingsData> {
+async function loadRankingsData(): Promise<RankingsData | null> {
   const rankingsPath = path.join(process.cwd(), "public", "data", "rankings.json");
-  const data = await fs.readFile(rankingsPath, "utf-8");
-  return JSON.parse(data) as RankingsData;
+  try {
+    const data = await fs.readFile(rankingsPath, "utf-8");
+    return JSON.parse(data) as RankingsData;
+  } catch (error) {
+    // #280: the file is no longer committed; until an admin route writes it there are no current rankings.
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
+    throw error;
+  }
 }
 
 async function saveRankingsData(data: RankingsData) {
@@ -99,7 +105,7 @@ export async function POST(_request: NextRequest, { params }: { params: Promise<
     const rankingsData = await loadRankingsData();
 
     // Handle flat rankings array structure
-    if (!rankingsData.rankings || !Array.isArray(rankingsData.rankings)) {
+    if (!rankingsData?.rankings || !Array.isArray(rankingsData.rankings)) {
       return NextResponse.json({ error: "No current rankings found" }, { status: 404 });
     }
 

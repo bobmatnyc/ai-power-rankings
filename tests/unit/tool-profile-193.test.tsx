@@ -371,6 +371,53 @@ describe("tool profile reads the tool's own list (#185)", () => {
   });
 });
 
+/** Every JSON-LD block on the page, parsed. */
+interface LdBlock {
+  "@type"?: string;
+  reviewBody?: string;
+  reviewRating?: { ratingValue?: number };
+  aggregateRating?: unknown;
+}
+const jsonLd = (html: string): LdBlock[] =>
+  [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)].map((m) => JSON.parse(m[1]!));
+
+describe("tool page JSON-LD rank comes from the tool's own list board (#280)", () => {
+  // A stale stored rank and score on the row, as `tools.data` carried before the per-list boards.
+  const withStaleRank = () => {
+    db.catalogue = CATALOGUE.map((row) =>
+      row.slug === "cursor" ? { ...row, current_rank: 1, current_score: 99 } : row
+    ) as typeof CATALOGUE;
+  };
+
+  it("the review and rating use the harness board's rank and score, not the stored current_rank", async () => {
+    withStaleRank();
+    const blocks = jsonLd(await renderPage("cursor"));
+    const review = blocks.find((b) => b["@type"] === "Review");
+    const app = blocks.find((b) => b["@type"] === "SoftwareApplication");
+    expect(review?.reviewBody).toBe(
+      "Cursor ranks #3 in the coding harnesses list of AI Power Rankings, with a score of 80/100."
+    );
+    expect(review?.reviewRating?.ratingValue).toBe(8);
+    expect(app?.aggregateRating).toMatchObject({ ratingValue: 8, ratingCount: 1 });
+    expect(JSON.stringify(blocks)).not.toMatch(/#1\b|v7\./);
+  });
+
+  it("a tool in no list asserts no rank or rating", async () => {
+    const blocks = jsonLd(await renderPage("other-thing"));
+    expect(blocks.find((b) => b["@type"] === "SoftwareApplication")).toBeDefined();
+    expect(blocks.find((b) => b["@type"] === "Review")).toBeUndefined();
+    expect(JSON.stringify(blocks)).not.toContain("aggregateRating");
+  });
+
+  it("a failed list read asserts no rank or rating, even with a stored current_rank", async () => {
+    withStaleRank();
+    db.rankingError = new Error("fixture: harness board down");
+    const blocks = jsonLd(await renderPage("cursor"));
+    expect(blocks.find((b) => b["@type"] === "Review")).toBeUndefined();
+    expect(JSON.stringify(blocks)).not.toContain("aggregateRating");
+  });
+});
+
 describe("pickVerdict and buildToolProfile (#193)", () => {
   it.each([
     [{ product: { tagline: "T", description: "D" }, summary: "S" }, "T"],

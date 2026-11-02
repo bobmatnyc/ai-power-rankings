@@ -110,6 +110,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-eb257b362814",
+    "version": "Unreleased",
+    "date": "2026-11-02T18:03:54.393Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "rankings",
+    "title": "public pages no longer describe v7.6 as the current algorithm after the v8 per-list activation",
+    "description": "public pages no longer describe v7.6 as the current algorithm after the v8 per-list activation. The ranking pages' \"How are AI tool rankings determined?\" answer and its FAQ JSON-LD say that models, coding harnesses and productivity tools are ranked in separate lists, each with the profile for its kind, and name only the version the shown board was published with (`lib/rankings/method-answer.ts`). The card below the grid shows the v8 methodology summary in place of \"About Algorithm v7.6\" and its v7 factor split. The tool page's Review and AggregateRating JSON-LD take the rank and score from the tool's own list board, as the profile block does, instead of the stored `current_rank`/`current_score`; an unranked tool or a failed read gets none, and the invented rating count of 100 is gone. The home page, the ranking OG image, the tool scores tab and the ranking FAQ no longer name v7.6 or v7.1, and the FAQ says monthly instead of weekly. The unread `methodology` dictionary block, the unread `footer.description` copy and the card's old keys are removed from every locale. The committed `public/data/rankings.json` (a five-tool 2025 board) is removed with its dead reader `app/[lang]/client-rankings.tsx`; the admin routes still write it, `public/data/` is kept and gitignored, and the rollback route answers 404 when the file is absent. Tests: `tests/unit/stale-v76-copy-280.test.tsx`, `tests/unit/tool-profile-193.test.tsx` (#280)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-0bf3ed505857",
     "version": "Unreleased",
     "date": "2026-10-30T09:29:05.000Z",

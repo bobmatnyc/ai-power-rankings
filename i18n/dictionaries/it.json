@@ -129,7 +129,7 @@
     },
     "methodology": {
       "title": "La Nostra Metodologia",
-      "algorithmTitle": "Algoritmo v7.6",
+      "algorithmTitle": "Algoritmo",
       "algorithmDescription": "Scoring validato dal mercato che combina metriche di adozione reali con capacità tecniche per valutazioni obiettive:",
       "keyModifiersTitle": "Qualità dei Dati e Scoring",
       "keyModifiersDescription": "Metodologia trasparente con moltiplicatori di confidenza per dati incompleti:",
@@ -183,7 +183,6 @@
     },
     "footer": {
       "tagline": "Insights data-driven per la rivoluzione AI",
-      "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.6 con scoring validato dal mercato che combina metriche di adozione reali con capacità tecniche.",
       "quickLinks": "Link Rapidi",
       "categories": "Categorie",
       "copyright": "© 2025 AI Power Ranking. Tutti i diritti riservati."
@@ -196,7 +195,6 @@
     "aboutDescription": "Questo grafico mostra come gli strumenti AI sono entrati e usciti dalla top 10 nel tempo. Gli strumenti che appaiono più in alto nel grafico (più vicini al #1) stanno performando meglio."
   },
   "footer": {
-    "description": "Classifiche complete di strumenti di codifica AI usando l'Algoritmo v7.6 con decadimento dell'innovazione, modificatori di rischio piattaforma e aggiustamenti della qualità dei ricavi.",
     "quickLinks": "Link Rapidi",
     "categories": "Categorie",
     "copyright": "© 2025 AI Power Ranking. Tutti i diritti riservati."
@@ -224,32 +222,6 @@
       "name": "Nome"
     },
     "algorithm": {
-      "title": "Informazioni sull'Algoritmo v7.6",
-      "subtitle": "Scoring validato dal mercato che combina metriche di adozione reali con capacità tecniche per valutazioni obiettive",
-      "tabs": {
-        "factors": "Fattori di Punteggio",
-        "modifiers": "Modificatori",
-        "methodology": "Metodologia"
-      },
-      "primaryFactors": "Fattori Primari (67.5%)",
-      "secondaryFactors": "Fattori Secondari (32.5%)",
-      "description": "Il nostro algoritmo di ranking combina metriche quantitative con valutazioni qualitative per fornire una visione completa degli strumenti di codifica AI. Aggiorniamo le classifiche settimanalmente basandoci su nuovi dati e raffiniamo continuamente la nostra metodologia.",
-      "factors": {
-        "agentic": "Capacità agentiche",
-        "innovation": "Innovazione",
-        "performance": "Prestazioni",
-        "adoption": "Adozione",
-        "traction": "Trazione di mercato",
-        "sentiment": "Sentiment aziendale",
-        "velocity": "Velocità di sviluppo",
-        "resilience": "Resilienza della piattaforma"
-      },
-      "modifiers": {
-        "decay": "Decadimento dell'innovazione",
-        "risk": "Rischio della piattaforma",
-        "revenue": "Qualità dei ricavi"
-      },
-      "methodologyText": "Basato sulla nostra trasparente",
       "viewMethodology": "Visualizza metodologia"
     },
     "tierLegend": {
@@ -584,144 +556,6 @@
         "missingToken": "Il link di verifica sembra incompleto.",
         "invalidToken": "Questo link di verifica non è valido o è scaduto.",
         "verificationFailed": "Non siamo riusciti a verificare la tua email in questo momento. Riprova più tardi."
-      }
-    }
-  },
-  "methodology": {
-    "title": "La Nostra Metodologia",
-    "subtitle": "Come classifichiamo gli strumenti di codifica AI",
-    "lastUpdated": "Ultimo aggiornamento: Gennaio 2025",
-    "intro": "AI Power Ranking utilizza l'Algoritmo v7.6, un sistema di scoring validato dal mercato che combina metriche di adozione reali (GitHub stars, installazioni VS Code, download npm/PyPI) con prestazioni tecniche (punteggi SWE-bench, finestre di contesto) e validazione di mercato (ARR, adozione enterprise) per valutazioni obiettive basate su 8 dimensioni chiave.",
-    "sections": {
-      "scoringFactors": {
-        "title": "Fattori di Punteggio",
-        "intro": "Il nostro algoritmo valuta gli strumenti attraverso 8 dimensioni chiave, ciascuna pesata secondo la sua importanza per gli sviluppatori:"
-      },
-      "modifiers": {
-        "title": "Modificatori Dinamici",
-        "intro": "Per garantire che le classifiche riflettano le realtà attuali del mercato, applichiamo tre modificatori sofisticati:"
-      },
-      "dataCollection": {
-        "title": "Raccolta Dati",
-        "intro": "Raccogliamo dati da molteplici fonti per garantire l'accuratezza:",
-        "sources": {
-          "0": "Integrazioni API dirette con i fornitori di strumenti",
-          "1": "Repository pubblici e statistiche degli sviluppatori",
-          "2": "Report del settore e fonti di notizie verificate",
-          "3": "Sondaggi degli utenti e feedback della community",
-          "4": "Benchmark delle prestazioni (SWE-bench, HumanEval)"
-        }
-      },
-      "updateFrequency": {
-        "title": "Frequenza di Aggiornamento",
-        "content": "Le classifiche vengono ricalcolate settimanalmente per riflettere il panorama AI in rapida evoluzione. I principali aggiornamenti della metodologia sono versionati e documentati."
-      }
-    },
-    "algorithm": {
-      "title": "Algoritmo v7.6",
-      "description": "Sistema di scoring validato dal mercato che combina metriche di adozione reali (GitHub stars, installazioni VS Code, download npm/PyPI) con prestazioni tecniche (punteggi SWE-bench, finestre di contesto) e validazione di mercato (ARR, adozione enterprise)",
-      "keyFeatures": "Caratteristiche Chiave",
-      "features": {
-        "innovationDecay": "Modellazione del decadimento dell'innovazione per riflettere la freschezza degli strumenti",
-        "platformRisk": "Valutazione del rischio piattaforma per le dipendenze dai fornitori",
-        "revenueQuality": "Aggiustamenti della qualità dei ricavi basati sul modello di business",
-        "technicalWeighting": "Pesatura delle capacità tecniche per diversi casi d'uso",
-        "dataValidation": "Validazione e normalizzazione dei dati multi-fonte",
-        "logarithmicScaling": "Scaling logaritmico per confronti bilanciati",
-        "newsIntelligence": "Scoring di velocità dinamico dall'analisi delle notizie in tempo reale",
-        "toolCapabilities": "Valutazione avanzata dei sottoprocessi e dell'ecosistema di strumenti"
-      }
-    },
-    "factors": {
-      "title": "Fattori di Punteggio",
-      "description": "Gli strumenti sono valutati attraverso 8 dimensioni chiave con pesature specifiche",
-      "primary": "Fattori Primari (82.5%)",
-      "secondary": "Fattori Secondari (17.5%)",
-      "agentic": {
-        "details": "Misura le capacità autonome, il ragionamento multi-step e il completamento di attività complesse"
-      },
-      "innovation": {
-        "details": "Valuta funzionalità breakthrough, avanzamenti tecnici e differenziazione di mercato"
-      },
-      "performance": {
-        "details": "Benchmark su SWE-bench, HumanEval e attività di codifica del mondo reale"
-      },
-      "adoption": {
-        "details": "Utenti attivi, tasso di crescita e metriche di penetrazione del mercato"
-      },
-      "traction": {
-        "details": "Crescita dei ricavi, round di finanziamento e indicatori di momentum del business"
-      },
-      "sentiment": {
-        "details": "Soddisfazione degli sviluppatori, feedback della community e punteggi di raccomandazione"
-      },
-      "velocity": {
-        "details": "Cadenza di rilascio delle funzionalità, frequenza di aggiornamento e velocità di innovazione"
-      },
-      "resilience": {
-        "details": "Stabilità della piattaforma, opzioni di backup e indipendenza dai fornitori"
-      }
-    },
-    "modifiers": {
-      "title": "Modificatori Dinamici",
-      "description": "Aggiustamenti in tempo reale che riflettono le condizioni di mercato e la maturità degli strumenti",
-      "innovationDecay": {
-        "description": "I punteggi di innovazione decadono nel tempo per premiare il miglioramento continuo e penalizzare la stagnazione"
-      },
-      "platformRisk": {
-        "description": "Aggiustamenti basati su vendor lock-in, dipendenze di piattaforma e rischi business",
-        "penalties": "Penalità di Rischio",
-        "penaltyList": {
-          "acquired": "Recentemente acquisito da un concorrente",
-          "exclusive": "Esclusivo di piattaforma (singolo LLM)",
-          "competitor": "Posseduto da piattaforma concorrente",
-          "regulatory": "Problemi di conformità normativa",
-          "funding": "Preoccupazioni di finanziamento o sostenibilità"
-        },
-        "bonuses": "Bonus di Mitigazione del Rischio",
-        "bonusList": {
-          "multiLLM": "Supporta provider LLM multipli",
-          "openSource": "Disponibilità open source",
-          "selfHosted": "Opzioni di self-hosting"
-        }
-      },
-      "revenueQuality": {
-        "description": "Pesatura dei ricavi basata sulla sostenibilità del modello di business e potenziale di crescita",
-        "models": {
-          "enterpriseHigh": "Enterprise (Alto coinvolgimento)",
-          "enterpriseStandard": "Enterprise (Standard)",
-          "smbSaas": "PMI SaaS",
-          "consumerPremium": "Consumer Premium",
-          "freemium": "Freemium",
-          "openSource": "Open Source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "Fonti Dati e Validazione",
-      "description": "Manteniamo standard rigorosi per la raccolta e validazione dei dati",
-      "collection": {
-        "title": "Metodi di Raccolta Dati",
-        "sources": {
-          "api": "Integrazioni API dirette con i fornitori di strumenti",
-          "research": "Report di ricerca del settore e dati di analisti",
-          "announcements": "Annunci ufficiali delle aziende e comunicati stampa",
-          "community": "Sondaggi degli sviluppatori e feedback della community",
-          "benchmarks": "Benchmark standardizzati delle prestazioni"
-        }
-      },
-      "validation": {
-        "title": "Requisiti di Validazione",
-        "requirements": {
-          "completeness": "Tutte le metriche richieste devono essere presenti",
-          "reliability": "Verifica da fonti multiple per le metriche chiave",
-          "outlier": "Rilevamento degli outlier e revisione manuale",
-          "crossValidation": "Cross-validation con benchmark del settore"
-        }
-      },
-      "updateFrequency": {
-        "title": "Programma di Aggiornamento",
-        "description": "Le classifiche vengono ricalcolate settimanalmente con raccolta dati continua. I principali aggiornamenti dell'algoritmo sono versionati e documentati."
       }
     }
   },

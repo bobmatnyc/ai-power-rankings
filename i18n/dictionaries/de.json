@@ -124,7 +124,7 @@
     },
     "methodology": {
       "title": "Unsere Methodik",
-      "algorithmTitle": "Algorithmus v7.6",
+      "algorithmTitle": "Algorithmus",
       "algorithmDescription": "Unser fortgeschrittener Ranking-Algorithmus berücksichtigt 8 Schlüsselfaktoren mit sophistizierten Modifikatoren:",
       "keyModifiersTitle": "Key Modifiers",
       "keyModifiersDescription": "Drei sophistizierte Modifikatoren gewährleisten faire und präzise Rankings:",
@@ -178,7 +178,6 @@
     },
     "footer": {
       "tagline": "Datengetriebene Einblicke für die KI-Revolution",
-      "description": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.6 einschließlich Innovationsverfall, Plattformrisiko-Modifikatoren und Umsatzqualitäts-Anpassungen.",
       "quickLinks": "Schnelllinks",
       "categories": "Kategorien",
       "copyright": "© 2025 AI Power Rankings. Alle Rechte vorbehalten."
@@ -218,32 +217,6 @@
       "name": "Name"
     },
     "algorithm": {
-      "title": "Über Algorithmus v7.6",
-      "subtitle": "Erweitertes Ranking-System mit Innovationsverfall, Plattformrisiko-Modifikatoren und Umsatzqualitäts-Anpassungen",
-      "tabs": {
-        "factors": "Scoring-Faktoren",
-        "modifiers": "Modifikatoren",
-        "methodology": "Methodik"
-      },
-      "primaryFactors": "Primäre Faktoren (67,5%)",
-      "secondaryFactors": "Sekundäre Faktoren (32,5%)",
-      "description": "Unser Ranking-Algorithmus kombiniert quantitative Metriken mit qualitativen Bewertungen, um einen umfassenden Überblick über KI-Coding-Tools zu bieten. Wir aktualisieren die Rankings wöchentlich auf Basis neuer Daten und verfeinern unsere Methodik kontinuierlich.",
-      "factors": {
-        "agentic": "Agentic-Fähigkeit",
-        "innovation": "Innovation",
-        "performance": "Leistung",
-        "adoption": "Akzeptanz",
-        "traction": "Marktzugkraft",
-        "sentiment": "Geschäftsstimmung",
-        "velocity": "Entwicklungsgeschwindigkeit",
-        "resilience": "Plattform-Resilienz"
-      },
-      "modifiers": {
-        "decay": "Innovationsverfall (6-Monate-Halbwertszeit) - Stellt sicher, dass aktuelle Innovationen stärker gewichtet werden",
-        "risk": "Plattformrisiko-Modifikator - Passt Scores basierend auf Plattformabhängigkeiten und Lock-in an",
-        "revenue": "Umsatzqualitäts-Anpassung - Unterscheidet zwischen nachhaltigem und einmaligem Umsatz"
-      },
-      "methodologyText": "Basierend auf unserer transparenten",
       "viewMethodology": "Methodik anzeigen"
     },
     "tierLegend": {
@@ -581,144 +554,6 @@
       }
     }
   },
-  "methodology": {
-    "title": "Unsere Methodik",
-    "subtitle": "Wie wir KI-Coding-Tools ranken",
-    "lastUpdated": "Zuletzt aktualisiert: Januar 2025",
-    "intro": "AI Power Rankings nutzt einen sophistizierten Algorithmus (v7.6) zur Bewertung und zum Ranking von KI-Coding-Tools basierend auf mehreren quantitativen und qualitativen Faktoren. Unsere Methodik ist darauf ausgelegt, Developern eine objektive, datengetriebene Bewertung der KI-Tools-Landschaft zu bieten.",
-    "sections": {
-      "scoringFactors": {
-        "title": "Scoring-Faktoren",
-        "intro": "Unser Algorithmus bewertet Tools in 8 Schlüsseldimensionen, jeweils gewichtet nach ihrer Bedeutung für Developer:"
-      },
-      "modifiers": {
-        "title": "Dynamische Modifikatoren",
-        "intro": "Um sicherzustellen, dass die Rankings die aktuellen Marktgegebenheiten widerspiegeln, wenden wir drei sophistizierte Modifikatoren an:"
-      },
-      "dataCollection": {
-        "title": "Datensammlung",
-        "intro": "Wir sammeln Daten aus mehreren Quellen, um Genauigkeit zu gewährleisten:",
-        "sources": {
-          "0": "Direkte API-Integrationen mit Tool-Anbietern",
-          "1": "Öffentliche Repositories und Developer-Statistiken",
-          "2": "Branchenberichte und verifizierte Nachrichtenquellen",
-          "3": "Nutzerumfragen und Community-Feedback",
-          "4": "Performance-Benchmarks (SWE-bench, HumanEval)"
-        }
-      },
-      "updateFrequency": {
-        "title": "Update-Häufigkeit",
-        "content": "Rankings werden wöchentlich neu berechnet, um die sich schnell entwickelnde KI-Landschaft widerzuspiegeln. Größere Methodik-Updates werden versioniert und dokumentiert."
-      }
-    },
-    "algorithm": {
-      "title": "Algorithmus v7.6",
-      "description": "Unser neuester Ranking-Algorithmus berücksichtigt reale Nutzungsmuster und Marktdynamiken",
-      "keyFeatures": "Hauptmerkmale",
-      "features": {
-        "innovationDecay": "Innovationsverfall-Modellierung für Tool-Aktualität",
-        "platformRisk": "Plattformrisiko-Bewertung für Anbieterabhängigkeiten",
-        "revenueQuality": "Umsatzqualitäts-Anpassungen basierend auf Geschäftsmodell",
-        "technicalWeighting": "Technische Fähigkeiten-Gewichtung für verschiedene Anwendungsfälle",
-        "dataValidation": "Multi-Source Datenvalidierung und Normalisierung",
-        "logarithmicScaling": "Logarithmische Skalierung für ausgewogene Vergleiche",
-        "newsIntelligence": "Dynamisches Velocity-Scoring aus Echtzeit-Nachrichtenanalyse",
-        "toolCapabilities": "Erweitertes Subprocess- und Tool-Ökosystem-Assessment"
-      }
-    },
-    "factors": {
-      "title": "Bewertungsfaktoren",
-      "description": "Tools werden anhand von 8 Schlüsseldimensionen mit spezifischen Gewichtungen bewertet",
-      "primary": "Primäre Faktoren (82,5%)",
-      "secondary": "Sekundäre Faktoren (17,5%)",
-      "agentic": {
-        "details": "Misst autonome Fähigkeiten, mehrstufiges Reasoning und komplexe Aufgabenerledigung"
-      },
-      "innovation": {
-        "details": "Bewertet bahnbrechende Features, technische Fortschritte und Marktdifferenzierung"
-      },
-      "performance": {
-        "details": "Benchmarks auf SWE-bench, HumanEval und realen Coding-Aufgaben"
-      },
-      "adoption": {
-        "details": "Aktive Nutzer, Wachstumsrate und Marktdurchdringungsmetriken"
-      },
-      "traction": {
-        "details": "Umsatzwachstum, Finanzierungsrunden und Geschäftsmomentum-Indikatoren"
-      },
-      "sentiment": {
-        "details": "Entwicklerzufriedenheit, Community-Feedback und Empfehlungsscores"
-      },
-      "velocity": {
-        "details": "Feature-Release-Kadenz, Update-Häufigkeit und Innovationsgeschwindigkeit"
-      },
-      "resilience": {
-        "details": "Plattformstabilität, Backup-Optionen und Anbieterunabhängigkeit"
-      }
-    },
-    "modifiers": {
-      "title": "Dynamische Modifikatoren",
-      "description": "Echtzeitanpassungen, die Marktbedingungen und Tool-Reife widerspiegeln",
-      "innovationDecay": {
-        "description": "Innovations-Scores verfallen über Zeit, um kontinuierliche Verbesserung zu belohnen und Stagnation zu bestrafen"
-      },
-      "platformRisk": {
-        "description": "Anpassungen basierend auf Vendor Lock-in, Plattformabhängigkeiten und Geschäftsrisiken",
-        "penalties": "Risiko-Strafen",
-        "penaltyList": {
-          "acquired": "Kürzlich von Konkurrent übernommen",
-          "exclusive": "Plattform-exklusiv (einzelner LLM)",
-          "competitor": "Im Besitz einer konkurrierenden Plattform",
-          "regulatory": "Compliance-Probleme",
-          "funding": "Finanzierungs- oder Nachhaltigkeitsbedenken"
-        },
-        "bonuses": "Risikominderungs-Boni",
-        "bonusList": {
-          "multiLLM": "Unterstützt mehrere LLM-Anbieter",
-          "openSource": "Open-Source-Verfügbarkeit",
-          "selfHosted": "Self-Hosting-Optionen"
-        }
-      },
-      "revenueQuality": {
-        "description": "Umsatzgewichtung basierend auf Geschäftsmodell-Nachhaltigkeit und Wachstumspotenzial",
-        "models": {
-          "enterpriseHigh": "Enterprise (High-touch)",
-          "enterpriseStandard": "Enterprise (Standard)",
-          "smbSaas": "SMB SaaS",
-          "consumerPremium": "Consumer Premium",
-          "freemium": "Freemium",
-          "openSource": "Open Source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "Datenquellen & Validierung",
-      "description": "Wir halten strenge Standards für Datensammlung und Validierung ein",
-      "collection": {
-        "title": "Datensammlungsmethoden",
-        "sources": {
-          "api": "Direkte API-Integrationen mit Tool-Anbietern",
-          "research": "Branchenforschungsberichte und Analystendaten",
-          "announcements": "Offizielle Unternehmensankündigungen und Pressemitteilungen",
-          "community": "Entwicklerumfragen und Community-Feedback",
-          "benchmarks": "Standardisierte Performance-Benchmarks"
-        }
-      },
-      "validation": {
-        "title": "Validierungsanforderungen",
-        "requirements": {
-          "completeness": "Alle erforderlichen Metriken müssen vorhanden sein",
-          "reliability": "Mehrfach-Quellen-Verifizierung für Schlüsselmetriken",
-          "outlier": "Ausreißer-Erkennung und manuelle Überprüfung",
-          "crossValidation": "Kreuzvalidierung mit Branchen-Benchmarks"
-        }
-      },
-      "updateFrequency": {
-        "title": "Update-Zeitplan",
-        "description": "Rankings werden wöchentlich mit kontinuierlicher Datensammlung neu berechnet. Große Algorithmus-Updates werden versioniert und dokumentiert."
-      }
-    }
-  },
   "about": {
     "title": "Über AI Power Rankings",
     "subtitle": "Developer mit datengetriebenen KI-Tool-Insights stärken",
@@ -877,7 +712,6 @@
     "keywords": "AI-Coding-Tools, agentische AI, autonomes Coding, Entwickler-Tools-Rankings, AI-Assistenten-Vergleich, Coding-AI-Benchmarks, SWE-Bench-Ergebnisse, Claude vs Cursor vs GitHub Copilot"
   },
   "footer": {
-    "description": "Umfassende Rankings von KI-Coding-Tools mit Algorithmus v7.6 einschließlich Innovationsverfall, Plattformrisiko-Modifikatoren und Umsatzqualitäts-Anpassungen.",
     "quickLinks": "Schnelllinks",
     "categories": "Kategorien",
     "copyright": "© 2025 AI Power Rankings. Alle Rechte vorbehalten."

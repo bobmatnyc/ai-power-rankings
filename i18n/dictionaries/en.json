@@ -129,7 +129,7 @@
     },
     "methodology": {
       "title": "Our Methodology",
-      "algorithmTitle": "Algorithm v7.6",
+      "algorithmTitle": "Algorithm",
       "algorithmDescription": "Market-validated scoring that combines real-world adoption metrics with technical capabilities for objective evaluations:",
       "keyModifiersTitle": "Data Quality & Scoring",
       "keyModifiersDescription": "Transparent methodology with confidence multipliers for incomplete data:",
@@ -183,7 +183,6 @@
     },
     "footer": {
       "tagline": "Data-driven insights for the AI revolution",
-      "description": "Comprehensive rankings of AI coding tools using Algorithm v7.6 with market-validated scoring that combines real-world adoption metrics with technical capabilities.",
       "quickLinks": "Quick Links",
       "categories": "Categories",
       "copyright": "© 2025 AI Power Ranking. All rights reserved."
@@ -196,7 +195,6 @@
     "aboutDescription": "This chart shows how AI tools have moved in and out of the top 10 rankings over time. Tools that appear higher on the chart (closer to #1) are performing better."
   },
   "footer": {
-    "description": "Comprehensive rankings of AI coding tools using Algorithm v7.6 with market-validated scoring that combines real-world adoption metrics with technical capabilities.",
     "quickLinks": "Quick Links",
     "categories": "Categories",
     "copyright": "© 2025 AI Power Ranking. All rights reserved."
@@ -261,32 +259,6 @@
       }
     },
     "algorithm": {
-      "title": "About Algorithm v7.6",
-      "subtitle": "Market-validated scoring combining real-world adoption metrics with technical capabilities for objective evaluations",
-      "tabs": {
-        "factors": "Scoring Factors",
-        "modifiers": "Modifiers",
-        "methodology": "Methodology"
-      },
-      "primaryFactors": "Primary Factors (67.5%)",
-      "secondaryFactors": "Secondary Factors (32.5%)",
-      "description": "Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
-      "factors": {
-        "agentic": "Agentic Capability",
-        "innovation": "Innovation",
-        "performance": "Performance",
-        "adoption": "Adoption",
-        "traction": "Traction",
-        "sentiment": "Sentiment",
-        "velocity": "Velocity",
-        "resilience": "Resilience"
-      },
-      "modifiers": {
-        "decay": "Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
-        "risk": "Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
-        "revenue": "Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
-      },
-      "methodologyText": "Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
       "viewMethodology": "View Full Methodology"
     },
     "lists": {
@@ -579,144 +551,6 @@
       },
       "resubscribe": "Changed your mind? You can subscribe again anytime.",
       "subscribeAgain": "Subscribe Again"
-    }
-  },
-  "methodology": {
-    "title": "Our Methodology",
-    "subtitle": "How we rank AI coding tools",
-    "lastUpdated": "Last updated: January 2025",
-    "intro": "AI Power Ranking uses Algorithm v7.6, a market-validated scoring system that combines real-world adoption metrics with technical capabilities to provide objective evaluations of AI coding tools based on 8 key dimensions with emphasis on proven results and developer adoption.",
-    "algorithm": {
-      "title": "Algorithm v7.6",
-      "description": "Market-validated scoring system combining real-world adoption metrics (GitHub stars, VS Code installs, npm/PyPI downloads) with technical performance (SWE-bench scores, context windows) and market validation (ARR, enterprise adoption)",
-      "keyFeatures": "Key Features",
-      "features": {
-        "innovationDecay": "Innovation decay modeling to reflect tool freshness",
-        "platformRisk": "Platform risk assessment for vendor dependencies",
-        "revenueQuality": "Revenue quality adjustments based on business model",
-        "technicalWeighting": "Technical capability weighting for different use cases",
-        "dataValidation": "Multi-source data validation and normalization",
-        "logarithmicScaling": "Logarithmic scaling for balanced comparisons",
-        "newsIntelligence": "Dynamic velocity scoring from real-time news analysis",
-        "toolCapabilities": "Enhanced subprocess and tool ecosystem assessment"
-      }
-    },
-    "factors": {
-      "title": "Scoring Factors",
-      "description": "Tools are evaluated across 8 key dimensions with specific weightings",
-      "primary": "Primary Factors (82.5%)",
-      "secondary": "Secondary Factors (17.5%)",
-      "agentic": {
-        "details": "Multi-file editing, task planning, autonomous operation, subprocess management, tool ecosystem support"
-      },
-      "innovation": {
-        "details": "Evaluates breakthrough features, technical advances, and market differentiation"
-      },
-      "performance": {
-        "details": "Benchmarks on SWE-bench, HumanEval, and real-world coding tasks"
-      },
-      "adoption": {
-        "details": "Active users, growth rate, and market penetration metrics"
-      },
-      "traction": {
-        "details": "Revenue growth, funding rounds, and business momentum indicators"
-      },
-      "sentiment": {
-        "details": "Developer satisfaction, community feedback, and recommendation scores"
-      },
-      "velocity": {
-        "details": "Dynamic momentum from news sentiment, feature releases, community response (30-day window)"
-      },
-      "resilience": {
-        "details": "Platform stability, backup options, and vendor independence"
-      }
-    },
-    "modifiers": {
-      "title": "Dynamic Modifiers",
-      "description": "Real-time adjustments that reflect market conditions and tool maturity",
-      "innovationDecay": {
-        "description": "Innovation scores decay over time to reward continuous improvement and penalize stagnation"
-      },
-      "platformRisk": {
-        "description": "Adjustments based on vendor lock-in, platform dependencies, and business risks",
-        "penalties": "Risk Penalties",
-        "penaltyList": {
-          "acquired": "Recently acquired by competitor",
-          "exclusive": "Platform exclusive (single LLM)",
-          "competitor": "Owned by competing platform",
-          "regulatory": "Regulatory compliance issues",
-          "funding": "Funding or sustainability concerns"
-        },
-        "bonuses": "Risk Mitigation Bonuses",
-        "bonusList": {
-          "multiLLM": "Supports multiple LLM providers",
-          "openSource": "Open source availability",
-          "selfHosted": "Self-hosting options"
-        }
-      },
-      "revenueQuality": {
-        "description": "Revenue weighting based on business model sustainability and growth potential",
-        "models": {
-          "enterpriseHigh": "Enterprise (High-touch)",
-          "enterpriseStandard": "Enterprise (Standard)",
-          "smbSaas": "SMB SaaS",
-          "consumerPremium": "Consumer Premium",
-          "freemium": "Freemium",
-          "openSource": "Open Source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "Data Sources & Validation",
-      "description": "We maintain rigorous standards for data collection and validation",
-      "collection": {
-        "title": "Data Collection Methods",
-        "sources": {
-          "api": "Direct API integrations with tool providers",
-          "research": "Industry research reports and analyst data",
-          "announcements": "Official company announcements and press releases",
-          "community": "Developer surveys and community feedback",
-          "benchmarks": "Standardized performance benchmarks"
-        }
-      },
-      "validation": {
-        "title": "Validation Requirements",
-        "requirements": {
-          "completeness": "All required metrics must be present",
-          "reliability": "Multiple source verification for key metrics",
-          "outlier": "Outlier detection and manual review",
-          "crossValidation": "Cross-validation with industry benchmarks"
-        }
-      },
-      "updateFrequency": {
-        "title": "Update Schedule",
-        "description": "Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
-      }
-    },
-    "sections": {
-      "scoringFactors": {
-        "title": "Scoring Factors",
-        "intro": "Our algorithm evaluates tools across 8 key dimensions, each weighted according to its importance to developers:"
-      },
-      "modifiers": {
-        "title": "Dynamic Modifiers",
-        "intro": "To ensure rankings reflect current market realities, we apply three sophisticated modifiers:"
-      },
-      "dataCollection": {
-        "title": "Data Collection",
-        "intro": "We gather data from multiple sources to ensure accuracy:",
-        "sources": [
-          "Direct API integrations with tool providers",
-          "Public repositories and developer statistics",
-          "Industry reports and verified news sources",
-          "User surveys and community feedback",
-          "Performance benchmarks (SWE-bench, HumanEval)"
-        ]
-      },
-      "updateFrequency": {
-        "title": "Update Frequency",
-        "content": "Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
-      }
     }
   },
   "about": {

@@ -4,7 +4,7 @@ import { generateToolMetadata } from "./metadata";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { ToolDetailClient } from "./tool-detail-client";
-import { listOfTool } from "@/lib/rankings/lists";
+import { LIST_SLUGS, listOfTool } from "@/lib/rankings/lists";
 import { canonicalLocale } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import { findToolBySlug } from "@/lib/tools/tool-page-request";
@@ -84,9 +84,17 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
       pricing: typeof jsonInfo?.business?.pricing_model === 'string' ? jsonInfo.business.pricing_model : undefined,
       logo: typeof tool.logo_url === 'string' ? tool.logo_url : undefined,
       github: typeof jsonInfo?.links?.github === 'string' ? jsonInfo.links.github : undefined,
-      rank: typeof tool.current_rank === 'number' ? tool.current_rank : undefined,
-      score: typeof tool.current_score === 'number' ? tool.current_score : undefined,
-      ratingCount: 100, // Default rating count for schema
+      // #280: rank and score come from the tool's own list board (the profile block's
+      // standing), never the stored `current_rank`/`current_score`, which predate the
+      // per-list boards. An unranked tool or a failed read asserts no rank. No
+      // `ratingCount`: the schema's default is the site's one rating, not an invented 100.
+      ...(profile.standing.kind === "ranked" && toolList
+        ? {
+            rank: profile.standing.rank,
+            score: profile.standing.score,
+            rankingList: LIST_SLUGS[toolList].replace(/-/g, " "),
+          }
+        : {}),
     };
 
     // Generate schemas only if toolSchemaData is valid
