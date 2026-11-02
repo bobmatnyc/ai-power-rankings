@@ -29,7 +29,9 @@ const { findToolBySlug, findAll, getPublishedSlugs, listPeriods, permanentRedire
 
 vi.mock("@clerk/nextjs/server", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@clerk/nextjs/server")>();
-  return { ...actual, clerkMiddleware: (handler: unknown) => handler };
+  // #368: the real middleware calls Clerk's wrapper only for needsClerk() paths.
+  const { fakeClerkMiddleware } = await import("./helpers/clerk-middleware-harness");
+  return { ...actual, clerkMiddleware: fakeClerkMiddleware };
 });
 vi.mock("../../lib/tools/tool-page-request", () => ({ findToolBySlug }));
 vi.mock("../../lib/services/whats-new-summary.service", () => ({ listPeriods }));
@@ -48,17 +50,12 @@ import {
   isPendingTarget,
   resolveTableRedirect,
 } from "../../lib/seo/url-table";
-
-type Handler = (
-  auth: () => Promise<{ userId: string | null; sessionId: string | null }>,
-  req: NextRequest
-) => Promise<Response>;
+import { runMiddleware } from "./helpers/clerk-middleware-harness";
 
 const anonymousAuth = vi.fn(async () => ({ userId: null, sessionId: null }));
 
 async function run(path: string, method = "GET"): Promise<Response> {
-  const { default: middleware } = await import("../../middleware");
-  return (middleware as unknown as Handler)(
+  return runMiddleware(
     anonymousAuth,
     new NextRequest(`http://localhost${path}`, { method })
   );

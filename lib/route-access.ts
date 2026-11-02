@@ -140,6 +140,56 @@ export function routeAccess(req: NextRequest): RouteAccess {
 }
 
 /**
+ * Page trees that need Clerk's middleware even though `routeAccess()` may
+ * class them public or default: every top-level folder of the
+ * `app/[lang]/(authenticated)/` route group, whose layout mounts ClerkProvider,
+ * plus the bare sign-in and sign-up paths.
+ */
+export const CLERK_PAGE_PATTERNS = [
+  "/sign-in(.*)",
+  "/sign-up(.*)",
+  "/:locale/admin(.*)",
+  "/:locale/dashboard(.*)",
+  "/:locale/sign-in(.*)",
+  "/:locale/sign-up(.*)",
+  "/:locale/clerk-debug(.*)",
+  "/:locale/unauthorized(.*)",
+];
+
+const isClerkPage = createRouteMatcher(CLERK_PAGE_PATTERNS);
+
+/**
+ * Whether a request must run through `clerkMiddleware`.
+ *
+ * Why: #368 — Clerk's middleware ran on every page, so public pages carried
+ *   `x-clerk-auth-status` and could not be served from the edge cache. Clerk's
+ *   server `auth()` only works on a request that went through the middleware.
+ * What: True for every API path (`/api/*`, `/trpc/*`; route handlers call
+ *   `auth()` and `requireAdmin()`), every `PROTECTED_ROUTE_PATTERNS` path,
+ *   and every `CLERK_PAGE_PATTERNS` page. It checks the raw path and up to
+ *   three successive decodes of it (more than `routeAccess()`'s one) and
+ *   answers true when any form matches, so an encoded admin-looking path
+ *   still runs Clerk: decoding can only add Clerk, never remove it.
+ *   Everything else, the public pages, skips Clerk.
+ * Test: `tests/unit/middleware-clerk-scope-368.test.ts`.
+ */
+export function needsClerk(req: NextRequest): boolean {
+  const forms = [req.nextUrl.pathname];
+  let current = req.nextUrl.pathname;
+  for (let i = 0; i < 3; i++) {
+    const decoded = pathForms(current)[1];
+    if (decoded === undefined) break;
+    forms.push(decoded);
+    current = decoded;
+  }
+  if (forms.some((pathname) => pathname.toLowerCase().startsWith("/api/"))) return true;
+  if (forms.some((pathname) => /^\/trpc(\/|$)/i.test(pathname))) return true;
+  return forms.some(
+    (pathname) => matchesPath(isProtectedRoute, pathname) || matchesPath(isClerkPage, pathname)
+  );
+}
+
+/**
  * #228: an anonymous protected request gets a 401 instead of a sign-in
  * redirect when the raw OR the once-decoded path is under `/api/`, matching
  * `routeAccess`. Case-insensitive, like the route matchers.

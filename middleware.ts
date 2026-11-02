@@ -1,14 +1,50 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { isApiPath, routeAccess } from "./lib/route-access";
+import type { NextFetchEvent, NextRequest } from "next/server";
+import { isApiPath, needsClerk, routeAccess } from "./lib/route-access";
 import { searchKeyRedirect } from "./lib/search-url-keys";
 import { heldSourceRewrite, urlTableRedirect } from "./lib/url-table-redirect";
 
 // Quick Win #4: Only log in development to save 10-30ms TTFB in production
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-export default clerkMiddleware(async (auth, req: NextRequest) => {
+/**
+ * The `NEXT_PUBLIC_DISABLE_AUTH` answer: a 403 in production, a pass-through
+ * elsewhere, or null when auth is enabled. Runs on every matched path, with or
+ * without Clerk, as it did when Clerk wrapped every path.
+ */
+function authDisabledResponse(): NextResponse | null {
+  if (process.env.NEXT_PUBLIC_DISABLE_AUTH !== "true") return null;
+  // SECURITY: Prevent auth bypass in production
+  if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
+    console.error("[SECURITY] Auth bypass attempted in production environment - BLOCKING");
+    return NextResponse.json(
+      { error: "Security violation: Authentication cannot be disabled in production" },
+      { status: 403 }
+    );
+  }
+
+  if (isDevelopment) {
+    console.log("[middleware] Auth disabled in development, skipping checks");
+  }
+  return NextResponse.next();
+}
+
+/**
+ * Request middleware: URL redirects for every matched path, then Clerk only
+ * where auth is used.
+ *
+ * Why: #368 — Clerk's middleware on a public page marks the response as
+ *   per-user, so no public page was served from the edge cache.
+ * What: Runs the #191 table redirect, the #233 search-key strip and the #340
+ *   held-source rewrite for every matched path, as before. A path that
+ *   `needsClerk()` (API, admin, dashboard, sign-in/up and the rest of the
+ *   `(authenticated)` group) then runs `clerkHandler`, unchanged. Any other
+ *   path gets the auth-disabled answer or passes through without Clerk.
+ * Test: `tests/unit/middleware-clerk-scope-368.test.ts`,
+ *   `tests/unit/middleware-route-access.test.ts`.
+ */
+export default function middleware(req: NextRequest, event: NextFetchEvent) {
   // #191: the signed URL table's 308s, first, so a table source never takes two hops.
   const moved = urlTableRedirect(req);
   if (moved) return moved;
@@ -21,22 +57,15 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   const held = heldSourceRewrite(req);
   if (held) return held;
 
-  // Check if auth is disabled for development/testing
-  if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
-    // SECURITY: Prevent auth bypass in production
-    if (process.env.NODE_ENV === "production" || process.env.VERCEL_ENV === "production") {
-      console.error("[SECURITY] Auth bypass attempted in production environment - BLOCKING");
-      return NextResponse.json(
-        { error: "Security violation: Authentication cannot be disabled in production" },
-        { status: 403 }
-      );
-    }
+  // #368: Clerk runs only where auth is used; public pages skip it so the edge can cache them.
+  if (needsClerk(req)) return clerkHandler(req, event);
+  return authDisabledResponse() ?? NextResponse.next();
+}
 
-    if (isDevelopment) {
-      console.log("[middleware] Auth disabled in development, skipping checks");
-    }
-    return NextResponse.next();
-  }
+const clerkHandler = clerkMiddleware(async (auth, req: NextRequest) => {
+  // Check if auth is disabled for development/testing
+  const disabled = authDisabledResponse();
+  if (disabled) return disabled;
 
   const pathname = req.nextUrl.pathname;
   if (isDevelopment) {
@@ -114,6 +143,7 @@ export default clerkMiddleware(async (auth, req: NextRequest) => {
   return NextResponse.next();
 });
 
+// #368: the matcher stays broad because the redirects above run for every page; needsClerk() scopes Clerk.
 export const config = {
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
