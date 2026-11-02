@@ -219,7 +219,10 @@ describe("cache revalidation on publish (#185 M3)", () => {
     cacheInstance.set("trending:harness:all", { stale: true }, 60_000);
     await publishActiveRankings({ now, loadProfiles: v8ActiveConfig });
     expect(revalidation.tags).toContain("rankings");
-    expect(revalidation.paths).toEqual(expect.arrayContaining(["/|layout", "/rankings|layout", "/tools|layout"]));
+    // #354: the purge revalidates the `/[lang]` route patterns; bare `/rankings` matched no page.
+    expect(revalidation.paths).toEqual(
+      expect.arrayContaining(["/|layout", "/[lang]|page", "/[lang]/rankings|layout", "/[lang]/tools|layout"])
+    );
     expect(cacheInstance.get("api:rankings:current:harness")).toBeNull();
     expect(cacheInstance.get("trending:harness:all")).toBeNull();
   });
