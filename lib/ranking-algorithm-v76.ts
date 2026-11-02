@@ -436,8 +436,6 @@ function extractCapabilityScore(text: string): number {
  * Helper function to calculate company backing score
  */
 function calculateCompanyBacking(metrics: ToolMetricsV76): number {
-  // #241: an object/number/`true` company threw on `.includes`; it reads as absent.
-  const company = readCompany(metrics.info);
   // Coerce at read time: these can arrive as human-written strings
   // (e.g. Devin's "$575M+ total raised"), which previously read as 0.
   const funding = parseNumericOr(metrics.info?.metrics?.funding);
@@ -446,11 +444,7 @@ function calculateCompanyBacking(metrics: ToolMetricsV76): number {
 
   let score = 0;
 
-  // Major tech companies
-  const majorCompanies = ["Google", "Microsoft", "Meta", "Amazon", "GitHub", "Anthropic", "OpenAI"];
-  if (majorCompanies.some((c) => company.includes(c))) {
-    score += 20;
-  }
+  // De4: no bonus for a big-name vendor or parent company; the company name is not a score input.
 
   // Funding indicates serious backing
   if (funding >= 100000000) score += 15; // $100M+
