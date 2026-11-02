@@ -175,9 +175,10 @@ route patterns `/[lang]` (page), `/[lang]/rankings` (layout) and
 `/[lang]/tools` (layout). Next tags each cached page with its route pattern
 (`_N_T_/[lang]/rankings/layout`) and its bare URL (`_N_T_/en/rankings`), so a
 concrete path with a type, such as `revalidatePath('/en', 'page')`, matches no
-page. The `/api/rankings` fetch on
-`/<lang>/rankings` carries the `rankings` tag that `revalidateTag('rankings')`
-clears. Test: `tests/unit/set-current-cache-purge-354.test.ts`.
+page. #368: `/<lang>/rankings` no longer fetches this API; it reads the board
+through `loadListBoard()` (`lib/rankings/list-board.ts`), so the page purge
+alone refreshes it. This API is unchanged for client callers.
+Test: `tests/unit/set-current-cache-purge-354.test.ts`.
 
 ## `GET /api/rankings/trending`
 
