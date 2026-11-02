@@ -10,7 +10,8 @@
  *   database and the search provider are faked, as in `cron-daily-news-billing.test.ts`.
  *   The same run is made with a working ledger and with one whose insert throws: the
  *   response, run status and candidate outcomes must be identical; only the ledger rows
- *   are missing, and each missing row logs "ledger row not written". A hung insert must
+ *   are missing, and each missing row logs "ledger row not written" at error level (#364)
+ *   and alerts ALERT_WEBHOOK_URL once. A hung insert must
  *   not hold `generate` past the write bound.
  * Test: `npx vitest run tests/unit/provider-usage-fail-open-325.test.ts`. No network, no
  *   database.
@@ -108,7 +109,12 @@ vi.mock("../../lib/cache/invalidation.service", () => ({
 import { GET } from "../../app/api/cron/daily-news/route";
 import { loggers } from "../../lib/logger";
 import { OpenRouterService } from "../../lib/services/openrouter.service";
-import { LEDGER_NOT_WRITTEN_MSG, LEDGER_WRITE_TIMEOUT_MS } from "../../lib/services/provider-usage";
+import {
+  LEDGER_ALERT_TEXT,
+  LEDGER_NOT_WRITTEN_MSG,
+  LEDGER_WRITE_TIMEOUT_MS,
+  resetLedgerAlertThrottle,
+} from "../../lib/services/provider-usage";
 
 const SECRET = "cron-secret-fixture-value";
 const MODEL = "anthropic/claude-sonnet-5.5";
@@ -185,7 +191,8 @@ async function runDailyNews(): Promise<RunObservation> {
   };
 }
 
-let warn: ReturnType<typeof vi.spyOn>;
+// #364: a dropped row logs at error level, not warn.
+let ledgerLog: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
   mocks.resetRow();
@@ -205,7 +212,8 @@ beforeEach(() => {
         : new Response("<html><body><p>fixture</p></body></html>", { status: 200 })
     )
   );
-  warn = vi.spyOn(loggers.api, "warn");
+  ledgerLog = vi.spyOn(loggers.api, "error");
+  resetLedgerAlertThrottle();
 });
 
 afterEach(() => {
@@ -215,7 +223,7 @@ afterEach(() => {
 });
 
 function ledgerWarnings() {
-  return warn.mock.calls.filter(([message]) => message === LEDGER_NOT_WRITTEN_MSG);
+  return ledgerLog.mock.calls.filter(([message]) => message === LEDGER_NOT_WRITTEN_MSG);
 }
 
 describe("#325 ledger writes fail open", () => {
@@ -242,7 +250,7 @@ describe("#325 ledger writes fail open", () => {
 
     mocks.resetRow();
     mocks.ledgerRows = [];
-    warn.mockClear();
+    ledgerLog.mockClear();
     mocks.ledgerMode.value = "throw";
     const failing = await runDailyNews();
 
@@ -259,6 +267,29 @@ describe("#325 ledger writes fail open", () => {
         error: expect.stringContaining("provider_usage_events"),
       });
     }
+  });
+
+  it("#364: an insert error alerts the webhook once and the run still completes unchanged", async () => {
+    const webhook = "https://hooks.example.com/alerts";
+    const baseline = await runDailyNews();
+
+    mocks.resetRow();
+    mocks.ledgerRows = [];
+    vi.stubEnv("ALERT_WEBHOOK_URL", webhook);
+    mocks.ledgerMode.value = "throw";
+    const fetchStub = vi.mocked(fetch);
+    fetchStub.mockClear();
+    const failing = await runDailyNews();
+
+    expect(failing).toEqual(baseline);
+    expect(failing).toMatchObject({ status: 200, success: true, runStatus: "completed" });
+    const alerts = fetchStub.mock.calls.filter(([url]) => String(url) === webhook);
+    expect(alerts).toHaveLength(1);
+    expect(JSON.parse(String((alerts[0]?.[1] as RequestInit).body))).toMatchObject({
+      text: LEDGER_ALERT_TEXT,
+      operation: "article_quality",
+      runId: RUN_ID,
+    });
   });
 
   it(
