@@ -12,7 +12,8 @@ export function CriticalResourceOptimizer() {
     // Optimize critical request chains
     const optimizeCriticalChains = () => {
       // Preload critical API endpoints
-      const criticalEndpoints = ["/api/rankings/latest", "/data/rankings.json"];
+      // #280: /data/rankings.json is no longer committed, so it is not prefetched.
+      const criticalEndpoints = ["/api/rankings/latest"];
 
       criticalEndpoints.forEach((endpoint) => {
         const link = document.createElement("link");

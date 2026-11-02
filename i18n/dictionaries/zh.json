@@ -182,7 +182,7 @@
     },
     "methodology": {
       "title": "[TRANSLATE] Our Methodology",
-      "algorithmTitle": "算法 v7.6",
+      "algorithmTitle": "算法",
       "algorithmDescription": "[TRANSLATE] Our advanced ranking algorithm considers 8 key factors with sophisticated modifiers:",
       "keyModifiersTitle": "[TRANSLATE] Key Modifiers",
       "keyModifiersDescription": "[TRANSLATE] Three sophisticated modifiers ensure fair and accurate rankings:",
@@ -244,7 +244,6 @@
     },
     "footer": {
       "tagline": "[TRANSLATE] Data-driven insights for the AI revolution",
-      "description": "使用算法 v7.6 的 AI 编程工具综合排名，包括动态新闻智能、增强工具能力和速度评分。",
       "quickLinks": "[TRANSLATE] Quick Links",
       "categories": "[TRANSLATE] Categories",
       "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved."
@@ -363,14 +362,11 @@
       "title": "数据驱动排名",
       "subtitle": "我们的方法论透明、公正且持续改进",
       "methodology": "查看方法论",
-      "algorithmVersion": "算法 v7.6",
       "lastUpdated": "最后更新"
     },
     "faq": {
       "title": "常见问题",
       "subtitle": "关于AI编码工具和排名的常见问题",
-      "question1": "工具是如何排名的？",
-      "answer1": "我们使用算法 v7.6 评估创新、功能、可用性、新闻动态和社区反馈。",
       "question2": "排名多久更新一次？",
       "answer2": "每周更新，反映新工具、功能更新和用户反馈。",
       "viewAll": "查看所有FAQ"
@@ -430,7 +426,6 @@
     "aboutDescription": "[TRANSLATE] This chart shows how AI tools have moved in and out of the top 10 rankings over time. Tools that appear higher on the chart (closer to #1) are performing better."
   },
   "footer": {
-    "description": "[TRANSLATE] Comprehensive rankings of AI coding tools using Algorithm v7.6 with innovation decay, platform risk modifiers, and revenue quality adjustments.",
     "quickLinks": "[TRANSLATE] Quick Links",
     "categories": "[TRANSLATE] Categories",
     "copyright": "[TRANSLATE] © 2025 AI Power Ranking. All rights reserved.",
@@ -478,32 +473,6 @@
       "category": "分类"
     },
     "algorithm": {
-      "title": "[TRANSLATE] About Algorithm v7.6",
-      "subtitle": "[TRANSLATE] Enhanced ranking system with innovation decay, platform risk modifiers, and revenue quality adjustments",
-      "tabs": {
-        "factors": "[TRANSLATE] Scoring Factors",
-        "modifiers": "[TRANSLATE] Modifiers",
-        "methodology": "[TRANSLATE] Methodology"
-      },
-      "primaryFactors": "[TRANSLATE] Primary Factors (67.5%)",
-      "secondaryFactors": "[TRANSLATE] Secondary Factors (32.5%)",
-      "description": "[TRANSLATE] Our ranking algorithm combines quantitative metrics with qualitative assessments to provide a comprehensive view of AI coding tools. We update rankings weekly based on new data and continuously refine our methodology.",
-      "factors": {
-        "agentic": "[TRANSLATE] Agentic Capability",
-        "innovation": "[TRANSLATE] Innovation",
-        "performance": "[TRANSLATE] Performance",
-        "adoption": "[TRANSLATE] Adoption",
-        "traction": "[TRANSLATE] Traction",
-        "sentiment": "[TRANSLATE] Sentiment",
-        "velocity": "[TRANSLATE] Velocity",
-        "resilience": "[TRANSLATE] Resilience"
-      },
-      "modifiers": {
-        "decay": "[TRANSLATE] Innovation Decay (6-month half-life) - Ensures recent innovations are weighted more heavily",
-        "risk": "[TRANSLATE] Platform Risk Modifier - Adjusts scores based on platform dependencies and lock-in",
-        "revenue": "[TRANSLATE] Revenue Quality Adjustment - Differentiates between sustainable and one-time revenue"
-      },
-      "methodologyText": "[TRANSLATE] Our comprehensive methodology evaluates AI coding tools across multiple dimensions, ensuring fair and accurate rankings that reflect real-world performance and adoption.",
       "viewMethodology": "[TRANSLATE] View Full Methodology"
     },
     "filters": {
@@ -1201,263 +1170,6 @@
       "bounceRate": "退信率",
       "unsubscribeRate": "退订率",
       "forwardRate": "转发率"
-    }
-  },
-  "methodology": {
-    "title": "[TRANSLATE] Our Methodology",
-    "subtitle": "[TRANSLATE] How we rank AI coding tools",
-    "lastUpdated": "[TRANSLATE] Last updated: January 2025",
-    "intro": "[TRANSLATE] AI Power Ranking uses a sophisticated algorithm (v7.6) to evaluate and rank AI coding tools based on multiple quantitative and qualitative factors. Our methodology is designed to provide developers with an objective, data-driven assessment of the AI tools landscape.",
-    "algorithm": {
-      "title": "[TRANSLATE] Algorithm v7.6",
-      "description": "[TRANSLATE] Our latest ranking algorithm incorporates real-world usage patterns and market dynamics",
-      "keyFeatures": "[TRANSLATE] Key Features",
-      "features": {
-        "innovationDecay": "[TRANSLATE] Innovation decay modeling to reflect tool freshness",
-        "platformRisk": "[TRANSLATE] Platform risk assessment for vendor dependencies",
-        "revenueQuality": "[TRANSLATE] Revenue quality adjustments based on business model",
-        "technicalWeighting": "[TRANSLATE] Technical capability weighting for different use cases",
-        "dataValidation": "[TRANSLATE] Multi-source data validation and normalization",
-        "logarithmicScaling": "[TRANSLATE] Logarithmic scaling for balanced comparisons",
-        "newsIntelligence": "[TRANSLATE] Dynamic velocity scoring from real-time news analysis",
-        "toolCapabilities": "[TRANSLATE] Enhanced subprocess and tool ecosystem assessment"
-      },
-      "version": "版本 6.0",
-      "updateFrequency": "算法每季度更新"
-    },
-    "factors": {
-      "title": "[TRANSLATE] Scoring Factors",
-      "description": "[TRANSLATE] Tools are evaluated across 8 key dimensions with specific weightings",
-      "primary": "[TRANSLATE] Primary Factors (82.5%)",
-      "secondary": "[TRANSLATE] Secondary Factors (17.5%)",
-      "agentic": {
-        "details": "[TRANSLATE] Measures autonomous capabilities, multi-step reasoning, and complex task completion"
-      },
-      "innovation": {
-        "details": "[TRANSLATE] Evaluates breakthrough features, technical advances, and market differentiation",
-        "name": "创新",
-        "description": "独特功能和技术进步",
-        "weight": "权重: 25%",
-        "metrics": {
-          "uniqueFeatures": "独特功能",
-          "technicalAdvancement": "技术先进性",
-          "researchBacking": "研究支持",
-          "futureReadiness": "未来准备"
-        }
-      },
-      "performance": {
-        "details": "[TRANSLATE] Benchmarks on SWE-bench, HumanEval, and real-world coding tasks",
-        "name": "性能",
-        "description": "代码生成、补全和调试能力",
-        "weight": "权重: 35%",
-        "metrics": {
-          "codeQuality": "代码质量",
-          "speed": "响应速度",
-          "accuracy": "准确性",
-          "contextUnderstanding": "上下文理解"
-        },
-        "title": "性能评估",
-        "overview": "技术性能综合评估",
-        "benchmarks": "标准化基准测试",
-        "realWorld": "实际使用场景测试"
-      },
-      "adoption": {
-        "details": "[TRANSLATE] Active users, growth rate, and market penetration metrics",
-        "name": "采用度",
-        "description": "用户接受度和社区参与度",
-        "weight": "权重: 25%",
-        "metrics": {
-          "userBase": "用户基数",
-          "growth": "增长率",
-          "retention": "留存率",
-          "satisfaction": "满意度"
-        }
-      },
-      "traction": {
-        "details": "[TRANSLATE] Revenue growth, funding rounds, and business momentum indicators"
-      },
-      "sentiment": {
-        "details": "[TRANSLATE] Developer satisfaction, community feedback, and recommendation scores"
-      },
-      "velocity": {
-        "details": "[TRANSLATE] Feature release cadence, update frequency, and innovation speed"
-      },
-      "resilience": {
-        "details": "[TRANSLATE] Platform stability, backup options, and vendor independence"
-      },
-      "ecosystem": {
-        "name": "生态系统",
-        "description": "集成和开发者支持",
-        "weight": "权重: 15%",
-        "metrics": {
-          "integrations": "集成数量",
-          "documentation": "文档质量",
-          "community": "社区活跃度",
-          "support": "技术支持"
-        }
-      },
-      "details": {
-        "title": "因子详解",
-        "overview": "评估因子概览",
-        "weighting": "权重说明",
-        "calculation": "计算方法"
-      }
-    },
-    "modifiers": {
-      "title": "[TRANSLATE] Dynamic Modifiers",
-      "description": "[TRANSLATE] Real-time adjustments that reflect market conditions and tool maturity",
-      "innovationDecay": {
-        "description": "[TRANSLATE] Innovation scores decay over time to reward continuous improvement and penalize stagnation"
-      },
-      "platformRisk": {
-        "description": "[TRANSLATE] Adjustments based on vendor lock-in, platform dependencies, and business risks",
-        "penalties": "[TRANSLATE] Risk Penalties",
-        "penaltyList": {
-          "acquired": "[TRANSLATE] Recently acquired by competitor",
-          "exclusive": "[TRANSLATE] Platform exclusive (single LLM)",
-          "competitor": "[TRANSLATE] Owned by competing platform",
-          "regulatory": "[TRANSLATE] Regulatory compliance issues",
-          "funding": "[TRANSLATE] Funding or sustainability concerns"
-        },
-        "bonuses": "[TRANSLATE] Risk Mitigation Bonuses",
-        "bonusList": {
-          "multiLLM": "[TRANSLATE] Supports multiple LLM providers",
-          "openSource": "[TRANSLATE] Open source availability",
-          "selfHosted": "[TRANSLATE] Self-hosting options"
-        }
-      },
-      "revenueQuality": {
-        "description": "[TRANSLATE] Revenue weighting based on business model sustainability and growth potential",
-        "models": {
-          "enterpriseHigh": "[TRANSLATE] Enterprise (High-touch)",
-          "enterpriseStandard": "[TRANSLATE] Enterprise (Standard)",
-          "smbSaas": "[TRANSLATE] SMB SaaS",
-          "consumerPremium": "[TRANSLATE] Consumer Premium",
-          "freemium": "[TRANSLATE] Freemium",
-          "openSource": "[TRANSLATE] Open Source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "[TRANSLATE] Data Sources & Validation",
-      "description": "[TRANSLATE] We maintain rigorous standards for data collection and validation",
-      "collection": {
-        "title": "[TRANSLATE] Data Collection Methods",
-        "sources": {
-          "api": "[TRANSLATE] Direct API integrations with tool providers",
-          "research": "[TRANSLATE] Industry research reports and analyst data",
-          "announcements": "[TRANSLATE] Official company announcements and press releases",
-          "community": "[TRANSLATE] Developer surveys and community feedback",
-          "benchmarks": "[TRANSLATE] Standardized performance benchmarks"
-        }
-      },
-      "validation": {
-        "title": "[TRANSLATE] Validation Requirements",
-        "requirements": {
-          "completeness": "[TRANSLATE] All required metrics must be present",
-          "reliability": "[TRANSLATE] Multiple source verification for key metrics",
-          "outlier": "[TRANSLATE] Outlier detection and manual review",
-          "crossValidation": "[TRANSLATE] Cross-validation with industry benchmarks"
-        }
-      },
-      "updateFrequency": {
-        "title": "[TRANSLATE] Update Schedule",
-        "description": "[TRANSLATE] Rankings are recalculated weekly with continuous data collection. Major algorithm updates are versioned and documented."
-      }
-    },
-    "sections": {
-      "scoringFactors": {
-        "title": "[TRANSLATE] Scoring Factors",
-        "intro": "[TRANSLATE] Our algorithm evaluates tools across 8 key dimensions, each weighted according to its importance to developers:"
-      },
-      "modifiers": {
-        "title": "[TRANSLATE] Dynamic Modifiers",
-        "intro": "[TRANSLATE] To ensure rankings reflect current market realities, we apply three sophisticated modifiers:"
-      },
-      "dataCollection": {
-        "title": "[TRANSLATE] Data Collection",
-        "intro": "[TRANSLATE] We gather data from multiple sources to ensure accuracy:",
-        "sources": [
-          "[TRANSLATE] Direct API integrations with tool providers",
-          "[TRANSLATE] Public repositories and developer statistics",
-          "[TRANSLATE] Industry reports and verified news sources",
-          "[TRANSLATE] User surveys and community feedback",
-          "[TRANSLATE] Performance benchmarks (SWE-bench, HumanEval)"
-        ]
-      },
-      "updateFrequency": {
-        "title": "[TRANSLATE] Update Frequency",
-        "content": "[TRANSLATE] Rankings are recalculated weekly to reflect the rapidly evolving AI landscape. Major methodology updates are versioned and documented."
-      }
-    },
-    "overview": {
-      "title": "评估概览",
-      "description": "我们基于数据的 AI 编程工具评估方法"
-    },
-    "process": {
-      "title": "评估流程",
-      "dataCollection": "数据收集",
-      "testing": "实际测试",
-      "analysis": "深度分析",
-      "scoring": "评分计算",
-      "validation": "结果验证",
-      "publication": "结果发布"
-    },
-    "scoring": {
-      "title": "评分系统",
-      "scale": "100 分制",
-      "precision": "精确到小数点后一位",
-      "normalization": "标准化处理",
-      "weighting": "权重分配"
-    },
-    "validation": {
-      "title": "验证流程",
-      "peerReview": "同行评议",
-      "expertPanel": "专家小组",
-      "communityFeedback": "社区反馈",
-      "dataAuditing": "数据审计"
-    },
-    "transparency": {
-      "title": "透明度承诺",
-      "openMethodology": "公开方法论",
-      "dataDisclosure": "数据披露",
-      "conflictOfInterest": "利益冲突声明",
-      "updateLog": "更新日志"
-    },
-    "dataCollection": {
-      "title": "数据收集",
-      "sources": "数据来源",
-      "frequency": "更新频率",
-      "quality": "质量控制",
-      "verification": "数据验证"
-    },
-    "evaluation": {
-      "title": "评估流程",
-      "criteria": "评估标准",
-      "methodology": "评估方法",
-      "scoring": "评分机制",
-      "weighting": "权重分配"
-    },
-    "benchmarks": {
-      "title": "基准测试",
-      "performance": "性能基准",
-      "accuracy": "准确性测试",
-      "speed": "速度测试",
-      "reliability": "可靠性验证"
-    },
-    "updates": {
-      "title": "更新机制",
-      "frequency": "更新频率",
-      "triggers": "更新触发器",
-      "process": "更新流程",
-      "validation": "更新验证"
-    },
-    "governance": {
-      "title": "治理框架",
-      "committee": "评估委员会",
-      "review": "定期审查",
-      "appeals": "申诉程序",
-      "transparency": "透明度原则"
     }
   },
   "about": {

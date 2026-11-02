@@ -129,7 +129,7 @@
     },
     "methodology": {
       "title": "Notre méthodologie",
-      "algorithmTitle": "Algorithme v7.6",
+      "algorithmTitle": "Algorithme",
       "algorithmDescription": "Scoring validé par le marché combinant métriques d'adoption réelles et capacités techniques pour des évaluations objectives :",
       "keyModifiersTitle": "Qualité des données et scoring",
       "keyModifiersDescription": "Méthodologie transparente avec multiplicateurs de confiance pour les données incomplètes :",
@@ -183,7 +183,6 @@
     },
     "footer": {
       "tagline": "Insights data-driven pour la révolution IA",
-      "description": "Classements complets des outils de codage IA utilisant l'Algorithme v7.6 avec scoring validé par le marché combinant métriques d'adoption réelles et capacités techniques.",
       "quickLinks": "Liens rapides",
       "categories": "Catégories",
       "copyright": "© 2025 Classement IA Power. Tous droits réservés."
@@ -196,7 +195,6 @@
     "aboutDescription": "Ce graphique montre comment les outils IA sont entrés et sortis du top 10 au fil du temps. Les outils apparaissant plus haut sur le graphique (plus proches du #1) performent mieux."
   },
   "footer": {
-    "description": "Classements complets des outils de codage IA utilisant l'Algorithme v7.6 avec déclin de l'innovation, modificateurs de risque de plateforme et ajustements de qualité des revenus.",
     "quickLinks": "Liens rapides",
     "categories": "Catégories",
     "copyright": "© 2025 Classement IA Power. Tous droits réservés."
@@ -261,32 +259,6 @@
       }
     },
     "algorithm": {
-      "title": "À propos de l'Algorithme v7.6",
-      "subtitle": "Scoring validé par le marché combinant métriques d'adoption réelles et capacités techniques pour des évaluations objectives",
-      "tabs": {
-        "factors": "Facteurs de score",
-        "modifiers": "Modificateurs",
-        "methodology": "Méthodologie"
-      },
-      "primaryFactors": "Facteurs primaires (67,5%)",
-      "secondaryFactors": "Facteurs secondaires (32,5%)",
-      "description": "Notre algorithme de classement combine des métriques quantitatives avec des évaluations qualitatives pour fournir une vue complète des outils de codage IA. Nous mettons à jour les classements chaque semaine basés sur de nouvelles données et affinons continuellement notre méthodologie.",
-      "factors": {
-        "agentic": "Capacité agentique",
-        "innovation": "Innovation",
-        "performance": "Performance",
-        "adoption": "Adoption",
-        "traction": "Traction du marché",
-        "sentiment": "Sentiment commercial",
-        "velocity": "Vélocité de développement",
-        "resilience": "Résilience de la plateforme"
-      },
-      "modifiers": {
-        "decay": "Déclin de l'innovation (demi-vie de 6 mois) - Assure que les innovations récentes sont pondérées plus fortement",
-        "risk": "Modificateur de risque de plateforme - Ajuste les scores basés sur les dépendances de plateforme et le verrouillage",
-        "revenue": "Ajustement de qualité des revenus - Différencie entre revenus durables et ponctuels"
-      },
-      "methodologyText": "Notre méthodologie complète évalue les outils de codage IA à travers de multiples dimensions, garantissant des classements équitables et précis qui reflètent les performances et l'adoption du monde réel.",
       "viewMethodology": "Voir la méthodologie complète"
     },
     "lists": {
@@ -579,144 +551,6 @@
       },
       "resubscribe": "Vous avez changé d'avis ? Vous pouvez vous réabonner à tout moment.",
       "subscribeAgain": "Se réabonner"
-    }
-  },
-  "methodology": {
-    "title": "Notre méthodologie",
-    "subtitle": "Comment nous classons les outils de codage IA",
-    "lastUpdated": "Dernière mise à jour : Janvier 2025",
-    "intro": "Classement IA Power utilise l'Algorithme v7.6, un système de scoring validé par le marché qui combine métriques d'adoption réelles (GitHub stars, installs VS Code, téléchargements npm/PyPI) avec la performance technique (scores SWE-bench, fenêtres de contexte) et la validation marché (ARR, adoption enterprise) pour des évaluations objectives basées sur 8 dimensions clés.",
-    "algorithm": {
-      "title": "Algorithme v7.6",
-      "description": "Système de scoring validé par le marché combinant métriques d'adoption réelles (GitHub stars, installs VS Code, téléchargements npm/PyPI) avec la performance technique (scores SWE-bench, fenêtres de contexte) et la validation marché (ARR, adoption enterprise)",
-      "keyFeatures": "Fonctionnalités clés",
-      "features": {
-        "innovationDecay": "Modélisation du déclin de l'innovation pour refléter la fraîcheur des outils",
-        "platformRisk": "Évaluation du risque de plateforme pour les dépendances de fournisseur",
-        "revenueQuality": "Ajustements de qualité des revenus basés sur le modèle d'affaires",
-        "technicalWeighting": "Pondération des capacités techniques pour différents cas d'usage",
-        "dataValidation": "Validation des données multi-sources et normalisation",
-        "logarithmicScaling": "Mise à l'échelle logarithmique pour des comparaisons équilibrées",
-        "newsIntelligence": "Scoring de vélocité dynamique depuis l'analyse d'actualités en temps réel",
-        "toolCapabilities": "Évaluation des sous-processus et de l'écosystème d'outils améliorée"
-      }
-    },
-    "factors": {
-      "title": "Facteurs de notation",
-      "description": "Les outils sont évalués à travers 8 dimensions clés avec des pondérations spécifiques",
-      "primary": "Facteurs primaires (82,5%)",
-      "secondary": "Facteurs secondaires (17,5%)",
-      "agentic": {
-        "details": "Mesure les capacités autonomes, le raisonnement multi-étapes et la completion de tâches complexes"
-      },
-      "innovation": {
-        "details": "Évalue les fonctionnalités révolutionnaires, les avancées techniques et la différenciation de marché"
-      },
-      "performance": {
-        "details": "Benchmarks sur SWE-bench, HumanEval et tâches de codage du monde réel"
-      },
-      "adoption": {
-        "details": "Utilisateurs actifs, taux de croissance et métriques de pénétration de marché"
-      },
-      "traction": {
-        "details": "Croissance des revenus, tours de financement et indicateurs de momentum business"
-      },
-      "sentiment": {
-        "details": "Satisfaction des développeurs, feedback de la communauté et scores de recommandation"
-      },
-      "velocity": {
-        "details": "Cadence de sortie de fonctionnalités, fréquence de mise à jour et vitesse d'innovation"
-      },
-      "resilience": {
-        "details": "Stabilité de plateforme, options de sauvegarde et indépendance de fournisseur"
-      }
-    },
-    "modifiers": {
-      "title": "Modificateurs dynamiques",
-      "description": "Ajustements en temps réel qui reflètent les conditions de marché et la maturité des outils",
-      "innovationDecay": {
-        "description": "Les scores d'innovation se dégradent avec le temps pour récompenser l'amélioration continue et pénaliser la stagnation"
-      },
-      "platformRisk": {
-        "description": "Ajustements basés sur le verrouillage de fournisseur, les dépendances de plateforme et les risques business",
-        "penalties": "Pénalités de risque",
-        "penaltyList": {
-          "acquired": "Récemment acquis par un concurrent",
-          "exclusive": "Exclusif à une plateforme (LLM unique)",
-          "competitor": "Détenu par une plateforme concurrente",
-          "regulatory": "Problèmes de conformité réglementaire",
-          "funding": "Préoccupations de financement ou de durabilité"
-        },
-        "bonuses": "Bonus d'atténuation des risques",
-        "bonusList": {
-          "multiLLM": "Support de multiples fournisseurs LLM",
-          "openSource": "Disponibilité open source",
-          "selfHosted": "Options d'auto-hébergement"
-        }
-      },
-      "revenueQuality": {
-        "description": "Pondération des revenus basée sur la durabilité du modèle d'affaires et le potentiel de croissance",
-        "models": {
-          "enterpriseHigh": "Enterprise (Haut niveau)",
-          "enterpriseStandard": "Enterprise (Standard)",
-          "smbSaas": "PME SaaS",
-          "consumerPremium": "Grand public Premium",
-          "freemium": "Freemium",
-          "openSource": "Open Source"
-        }
-      }
-    },
-    "dataSources": {
-      "title": "Sources de données et validation",
-      "description": "Nous maintenons des standards rigoureux pour la collecte et validation des données",
-      "collection": {
-        "title": "Méthodes de collecte de données",
-        "sources": {
-          "api": "Intégrations API directes avec les fournisseurs d'outils",
-          "research": "Rapports de recherche industrielle et données d'analystes",
-          "announcements": "Annonces officielles d'entreprises et communiqués de presse",
-          "community": "Sondages de développeurs et feedback de la communauté",
-          "benchmarks": "Benchmarks de performance standardisés"
-        }
-      },
-      "validation": {
-        "title": "Exigences de validation",
-        "requirements": {
-          "completeness": "Toutes les métriques requises doivent être présentes",
-          "reliability": "Vérification de sources multiples pour les métriques clés",
-          "outlier": "Détection d'aberrations et révision manuelle",
-          "crossValidation": "Validation croisée avec les benchmarks de l'industrie"
-        }
-      },
-      "updateFrequency": {
-        "title": "Planning de mise à jour",
-        "description": "Les classements sont recalculés chaque semaine avec une collecte de données continue. Les mises à jour majeures d'algorithme sont versionnées et documentées."
-      }
-    },
-    "sections": {
-      "scoringFactors": {
-        "title": "Facteurs de notation",
-        "intro": "Notre algorithme évalue les outils à travers 8 dimensions clés, chacune pondérée selon son importance pour les développeurs :"
-      },
-      "modifiers": {
-        "title": "Modificateurs dynamiques",
-        "intro": "Pour garantir que les classements reflètent les réalités actuelles du marché, nous appliquons trois modificateurs sophistiqués :"
-      },
-      "dataCollection": {
-        "title": "Collecte de données",
-        "intro": "Nous rassemblons des données de sources multiples pour garantir la précision :",
-        "sources": [
-          "Intégrations API directes avec les fournisseurs d'outils",
-          "Dépôts publics et statistiques de développeurs",
-          "Rapports de l'industrie et sources d'actualités vérifiées",
-          "Sondages utilisateurs et feedback de la communauté",
-          "Benchmarks de performance (SWE-bench, HumanEval)"
-        ]
-      },
-      "updateFrequency": {
-        "title": "Fréquence de mise à jour",
-        "content": "Les classements sont recalculés chaque semaine pour refléter le paysage IA en évolution rapide. Les mises à jour majeures de méthodologie sont versionnées et documentées."
-      }
     }
   },
   "about": {

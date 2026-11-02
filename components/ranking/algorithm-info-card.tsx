@@ -1,119 +1,33 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
-/** The algorithm explainer card below the rankings grid (moved out of `rankings-grid.tsx`, #186). */
+/**
+ * The methodology summary card below the rankings grid (moved out of `rankings-grid.tsx`, #186).
+ *
+ * #280: it showed "About Algorithm v7.6" with the v7 primary/secondary factor split and
+ * modifiers. It now shows the v8 per-list summary from the `methodologyV8` block, the
+ * same text as the methodology page, and links there. It names no version, so it cannot
+ * disagree with the version the board's header shows.
+ * Test: `tests/unit/stale-v76-copy-280.test.tsx`.
+ */
 export function AlgorithmInfoCard({ lang, dict }: { lang: Locale; dict: Dictionary }): React.JSX.Element {
+  const text = dict.methodologyV8;
   return (
-    <Card className="mt-12">
+    <Card className="mt-12" data-algorithm-info-card>
       <CardHeader>
-        <CardTitle>{dict.rankings.algorithm.title}</CardTitle>
-        <CardDescription>{dict.rankings.algorithm.description}</CardDescription>
+        <CardTitle>{text.title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="factors" className="w-full">
-          <TabsList>
-            <TabsTrigger value="factors">{dict.rankings.algorithm.tabs.factors}</TabsTrigger>
-            <TabsTrigger value="modifiers">{dict.rankings.algorithm.tabs.modifiers}</TabsTrigger>
-            <TabsTrigger value="methodology">
-              {dict.rankings.algorithm.tabs.methodology}
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="factors" className="mt-4">
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <h4 className="font-semibold mb-2">{dict.rankings.algorithm.primaryFactors}</h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>{dict.rankings.algorithm.factors.agentic}</span>
-                      <span className="text-muted-foreground">30.0%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>{dict.rankings.algorithm.factors.innovation}</span>
-                      <span className="text-muted-foreground">15.0%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>{dict.rankings.algorithm.factors.performance}</span>
-                      <span className="text-muted-foreground">12.5%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>{dict.rankings.algorithm.factors.adoption}</span>
-                      <span className="text-muted-foreground">10.0%</span>
-                    </div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-2">
-                    {dict.rankings.algorithm.secondaryFactors}
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span>{dict.rankings.algorithm.factors.traction}</span>
-                      <span className="text-muted-foreground">12.5%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>{dict.rankings.algorithm.factors.sentiment}</span>
-                      <span className="text-muted-foreground">7.5%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>{dict.rankings.algorithm.factors.velocity}</span>
-                      <span className="text-muted-foreground">5.0%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>{dict.rankings.algorithm.factors.resilience}</span>
-                      <span className="text-muted-foreground">5.0%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="modifiers" className="mt-4">
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-2">
-                  💡 {dict.home.methodology.modifiers.decay.name}
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  {dict.rankings.algorithm.modifiers.decay}
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">
-                  ⚠️ {dict.home.methodology.modifiers.risk.name}
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  {dict.rankings.algorithm.modifiers.risk}
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">
-                  💰 {dict.home.methodology.modifiers.revenue.name}
-                </h4>
-                <p className="text-sm text-muted-foreground">
-                  {dict.rankings.algorithm.modifiers.revenue}
-                </p>
-              </div>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="methodology" className="mt-4">
-            <div className="prose prose-sm text-muted-foreground">
-              <p>{dict.rankings.algorithm.methodologyText}</p>
-              <Button variant="outline" size="sm" className="mt-4" asChild>
-                <Link href={`/${lang}/methodology`}>
-                  {dict.rankings.algorithm.viewMethodology}
-                </Link>
-              </Button>
-            </div>
-          </TabsContent>
-        </Tabs>
+        <div className="prose prose-sm text-muted-foreground space-y-2">
+          <p>{text.listsBody}</p>
+          <p>{text.profilesBody}</p>
+          <Button variant="outline" size="sm" className="mt-4" asChild>
+            <Link href={`/${lang}/methodology`}>{dict.rankings.algorithm.viewMethodology}</Link>
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
