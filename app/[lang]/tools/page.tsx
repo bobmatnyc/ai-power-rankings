@@ -9,6 +9,10 @@ import ToolsClient from "./tools-client";
 // Enable ISR with 1-hour revalidation
 // Tools page updates when new articles affect rankings
 export const revalidate = 3600; // 1 hour
+// #368: without static params the route was dynamic and never cached; each locale renders on first request.
+export function generateStaticParams(): Array<{ lang: string }> {
+  return [];
+}
 
 interface PageProps {
   params: Promise<{ lang: string }>;

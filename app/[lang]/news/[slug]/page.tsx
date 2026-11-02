@@ -1,72 +1,43 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
+import { cache, Suspense } from "react";
 import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { toMetaDescription } from "@/lib/article-summary";
-import { getUrl } from "@/lib/get-url";
+import { type NewsArticleTool, type NewsArticleView, loadNewsArticle } from "@/lib/news-article";
 import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
-// Force dynamic rendering to ensure fresh data
-export const dynamic = "force-dynamic";
+// #368: ISR with the 60-second window the /api/news fetch used; slugs render on first request.
+export const revalidate = 60;
+export function generateStaticParams(): Array<{ lang: string; slug: string }> {
+  return [];
+}
 
 interface PageProps {
   params: Promise<{ lang: string; slug: string }>;
 }
 
-interface NewsArticle {
-  id: string;
-  slug: string;
-  title: string;
-  content: string;
-  summary?: string;
-  published_date: string;
-  source?: string;
-  source_url?: string;
-  tags?: string[];
-  tool_mentions?: string[];
-  created_at: string;
-  updated_at: string;
-}
+type DetailProps = Parameters<typeof NewsDetailContent>[0];
 
-interface Tool {
-  id: string;
-  slug: string;
-  name: string;
-  description?: string;
-  category?: string;
-  info?: {
-    website?: string;
-  };
-}
-
-async function fetchArticle(slug: string): Promise<{ article: NewsArticle; tool: Tool | null }> {
-  try {
-    const baseUrl = getUrl();
-    const response = await fetch(`${baseUrl}/api/news/${slug}`, {
-      next: { revalidate: 60 }, // Cache for 1 minute
-    });
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        notFound();
-      }
-      throw new Error(`Failed to fetch article: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return { article: data.article, tool: data.tool };
-  } catch (error) {
-    console.error("Error fetching article:", error);
-    notFound();
-  }
-}
+/**
+ * The article and its tool, or `notFound()`.
+ *
+ * #368: reads the database directly (was a fetch of `/api/news/<slug>`); React
+ * `cache()` shares one read between `generateMetadata` and the page. An
+ * unknown slug is a 404. A failed read throws rather than 404s, so an ISR
+ * regeneration that hits a database error keeps serving the cached article
+ * instead of caching a 404 for a real one.
+ */
+const fetchArticle = cache(async (slug: string): Promise<{ article: NewsArticleView; tool: NewsArticleTool | null }> => {
+  const detail = await loadNewsArticle(slug, "/[lang]/news/[slug]");
+  if (!detail) notFound();
+  return { article: detail.article, tool: detail.tool };
+});
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, slug } = await params;
-  // #153: only fetchArticle() uses getUrl(), which must reach this deployment's
-  // own API on previews; SEO URLs come from englishOnlyAlternates().
+  // #153: SEO URLs come from englishOnlyAlternates(), never the deployment host.
 
   try {
     const { article, tool } = await fetchArticle(slug);
@@ -133,9 +104,10 @@ export default async function NewsArticlePage({ params }: PageProps): Promise<Re
             </div>
           }
         >
+          {/* #368: the same values the /api/news JSON carried (nulls included); the component's types never named the nulls. */}
           <NewsDetailContent
-            article={article}
-            tool={tool}
+            article={article as DetailProps["article"]}
+            tool={tool as DetailProps["tool"]}
             dict={dict}
             lang={lang as Locale}
           />

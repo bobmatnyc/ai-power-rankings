@@ -1,6 +1,7 @@
 import { isValidElement, type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { locales } from "../../i18n/config";
+import { currentBoard } from "./helpers/current-board";
 
 /**
  * #186: the per-list ranking pages and their SEO.
@@ -10,8 +11,8 @@ import { locales } from "../../i18n/config";
  *   `/rankings/coding-harnesses` canonicalises there; a list below 10 entries is
  *   noindex (D53) and left out of the sitemap; the productivity page carries the
  *   provisional-weights note (D54).
- * What: stubs `fetch` with an `/api/rankings` response per list (entry count and
- *   `list_meta` chosen per test), calls the real `generateMetadata` and page
+ * What: stubs `loadCurrentRankings()` with a board per list (entry count chosen per
+ *   test; #368: the pages read it directly, and any `fetch` fails the test), calls the real `generateMetadata` and page
  *   components of `app/[lang]/rankings/[list]/page.tsx` and `app/[lang]/rankings/page.tsx`,
  *   and walks the returned element tree for the notes and the list navigation.
  *   The sitemap is built from a stubbed tool catalogue with 9 and with 10 models.
@@ -43,19 +44,16 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
   return { ToolsRepository, toolsRepository: new ToolsRepository() };
 });
 
-/** `/api/rankings` entry count per list, as the stubbed API reports it. */
-const counts: Record<string, number> = {};
-
-const fetchMock = vi.fn(async (input: string | URL | Request) => {
-  const url = new URL(String(input instanceof Request ? input.url : input));
-  const list = url.searchParams.get("list") ?? "harness";
-  const n = counts[list] ?? 0;
-  const rankings = Array.from({ length: n }, (_, i) => ({ rank: i + 1, tool: { id: `t${i}`, name: `Tool ${i}` } }));
-  return Response.json({
-    rankings,
-    list,
-    list_meta: { list, entry_count: n, indexable: n >= 10, tier_scheme: n >= 10 ? "standard" : "thirds" },
-  });
+/** Board entry count per list, as the stubbed read reports it. */
+const { counts, loadCurrentRankings } = vi.hoisted(() => {
+  const counts: Record<string, number> = {};
+  return { counts, loadCurrentRankings: vi.fn() };
+});
+// #368: the pages read the board from loadCurrentRankings(), no longer from a /api/rankings fetch.
+vi.mock("../../lib/rankings/current-rankings", () => ({ loadCurrentRankings }));
+const boardFor = async (list: string) => currentBoard(list, counts[list] ?? 0);
+const fetchMock = vi.fn(async () => {
+  throw new Error("the ranking pages must not fetch");
 });
 
 const params = (p: Record<string, string>) => ({ params: Promise.resolve(p) }) as never;
@@ -68,6 +66,8 @@ beforeEach(() => {
   vi.stubEnv("VERCEL_ENV", "production");
   vi.stubGlobal("fetch", fetchMock);
   fetchMock.mockClear();
+  loadCurrentRankings.mockReset();
+  loadCurrentRankings.mockImplementation(boardFor);
   Object.assign(counts, { harness: 40, model: 12, productivity: 0 });
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -117,12 +117,14 @@ describe("list page metadata (#186)", () => {
   it("D51: /rankings/coding-harnesses shows the harness board and canonicalises to /rankings", async () => {
     const metadata = await listMetadata("de", "coding-harnesses");
     expect(metadata.alternates?.canonical).toBe(`${ORIGIN}/de/rankings`);
-    expect(String(fetchMock.mock.calls[0]?.[0])).toBe(`https://${PREVIEW_HOST}/api/rankings`);
+    expect(loadCurrentRankings).toHaveBeenCalledWith("harness");
   });
 
-  it("asks /api/rankings for the page's list", async () => {
+  // #368: the page's own list, read directly; no HTTP request to /api/rankings.
+  it("reads the page's list from the database, with no fetch", async () => {
     await listMetadata("en", "models");
-    expect(String(fetchMock.mock.calls[0]?.[0])).toBe(`https://${PREVIEW_HOST}/api/rankings?list=model`);
+    expect(loadCurrentRankings).toHaveBeenCalledWith("model");
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("D53: a list of exactly 9 entries is noindex; exactly 10 is indexed", async () => {
@@ -142,15 +144,10 @@ describe("list page metadata (#186)", () => {
   // #186 review: an unknown list size fails closed, so a thin list never renders indexable.
   describe("an unknown list size is noindex", () => {
     const NOINDEX = { index: false, follow: true };
+    // #368: the read is the database now; "no current snapshot" replaces the non-OK response.
     const arms: Array<[string, () => void]> = [
-      ["a non-OK response", () => fetchMock.mockImplementationOnce(async () => new Response("down", { status: 503 }))],
-      [
-        "a thrown read",
-        () =>
-          fetchMock.mockImplementationOnce(async () => {
-            throw new TypeError("fetch failed");
-          }),
-      ],
+      ["no current snapshot", () => loadCurrentRankings.mockResolvedValueOnce(null)],
+      ["a thrown read", () => loadCurrentRankings.mockRejectedValueOnce(new TypeError("connection failed"))],
     ];
 
     it.each(arms)("on /rankings/models after %s", async (_label, arrange) => {

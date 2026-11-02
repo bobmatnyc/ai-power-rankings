@@ -26,11 +26,15 @@ import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 /** #185: the profile set this page explains. Not exported: a page module exports only Next.js names. */
 const METHODOLOGY_PROFILE_SET = "v8.0";
 
-// Force dynamic rendering to avoid Clerk SSG issues (kept from the v7.6 page).
-export const dynamic = "force-dynamic";
+// #368: no force-dynamic; Clerk no longer runs on this page, and the body is repo content.
 
 interface PageProps {
   params: Promise<{ lang: string }>;
+}
+
+// #368: prerender the main locales like about/privacy/terms, so the route stays static.
+export async function generateStaticParams() {
+  return [{ lang: "en" }, { lang: "de" }, { lang: "ja" }];
 }
 
 const version = (): string => METHODOLOGY_PROFILE_SET.replace(/^v/, "");
