@@ -78,7 +78,7 @@
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.544.0",
     "next": "15.5.9",
-    "next-auth": "^5.0.0-beta.28",
+    "next-auth": "^5.0.0-beta.32",
     "pdf-parse": "^1.1.1",
     "pino": "^9.12.0",
     "react": "^19.2.1",
