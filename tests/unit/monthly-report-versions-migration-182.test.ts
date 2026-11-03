@@ -110,6 +110,7 @@ describe("#182 migration 0031", () => {
       executeStatement: async (statement) => void executed.push(statement),
       recordApplied: async (file) => void recorded.push(file),
       describeColumns: async () => [],
+      describeIndexes: async () => [],
     };
     const files = {
       list: () => ["0029_create_provider_usage_events.sql", FILE],

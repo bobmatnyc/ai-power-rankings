@@ -36,6 +36,17 @@ import {
   type ReportVerdict,
   summarizeConversion,
 } from "./migration-preflight";
+import {
+  type ColumnRow,
+  DESCRIBE_COLUMNS_SQL,
+  DESCRIBE_INDEXES_SQL,
+  formatTableSnapshot,
+  type IndexRow,
+  parseColumnRow,
+  parseIndexRow,
+} from "./migration-table-snapshot";
+
+export type { ColumnRow, IndexRow };
 
 export const MIGRATIONS_DIR = "lib/db/migrations";
 export const TRACKING_TABLE = "_drizzle_migrations";
@@ -45,19 +56,13 @@ export const STATEMENT_BREAKPOINT = "--> statement-breakpoint";
 export const MIGRATION_FILE_PATTERN = /^[0-9]{4}_[a-z0-9_]+\.sql$/;
 export const TABLE_NAME_PATTERN = /^[a-z_][a-z0-9_]*$/;
 
-export interface ColumnRow {
-  column_name: string;
-  data_type: string;
-  column_default: string | null;
-}
-
 /**
  * The complete set of database operations this script performs.
  *
  * Why: #134 — the dry-run guarantee ("no statement from any migration file executes") is
  * only checkable if every write is a named method a test double can assert was not called.
- * Read-only members are trackingTableExists, listAppliedFilenames and describeColumns;
- * everything else writes.
+ * Read-only members are trackingTableExists, listAppliedFilenames, describeColumns and
+ * describeIndexes; everything else writes.
  */
 export interface MigrationDb {
   trackingTableExists(): Promise<boolean>;
@@ -66,6 +71,8 @@ export interface MigrationDb {
   executeStatement(statement: string): Promise<void>;
   recordApplied(filename: string): Promise<void>;
   describeColumns(table: string): Promise<ColumnRow[]>;
+  /** #361: the table's indexes, printed with its columns by --show-columns. */
+  describeIndexes(table: string): Promise<IndexRow[]>;
   /**
    * #237: SELECT/SHOW statements in one READ ONLY transaction. Required to dry-run or
    * apply a migration in PREFLIGHT_REQUIRED; a db without it is refused for those files.
@@ -286,13 +293,15 @@ export function planMigrations(
   return { files, applied, pending, toApply, skipRecord, errors };
 }
 
-function formatColumns(table: string, rows: ColumnRow[]): string[] {
-  if (rows.length === 0) {
-    return [`  (no columns found for ${table} — does the table exist?)`];
-  }
-  return rows.map(
-    (row) => `  ${row.column_name}, ${row.data_type}, ${row.column_default ?? "NULL"}`
-  );
+/**
+ * #361: reads and formats one --show-columns snapshot. A query error propagates, so the run
+ * fails before any apply rather than printing an empty snapshot. `found` is false when the
+ * table has no columns, i.e. does not exist.
+ */
+async function snapshotTable(db: MigrationDb, table: string): Promise<{ lines: string[]; found: boolean }> {
+  const columns = await db.describeColumns(table);
+  const indexes = await db.describeIndexes(table);
+  return { lines: formatTableSnapshot(table, columns, indexes), found: columns.length > 0 };
 }
 
 /**
@@ -408,9 +417,9 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
   const willApply = !options.dryRun && plan.errors.length === 0 && plan.toApply.length > 0;
 
   if (options.showColumns) {
-    const before = await db.describeColumns(options.showColumns);
+    const before = await snapshotTable(db, options.showColumns);
     emit(`\nColumns of ${options.showColumns}${willApply ? " (before)" : ""}:`);
-    for (const line of formatColumns(options.showColumns, before)) {
+    for (const line of before.lines) {
       emit(line);
     }
   }
@@ -530,10 +539,17 @@ export async function runMigrations(deps: MigrationDeps, options: CliOptions): P
   }
 
   if (options.showColumns) {
-    const after = await db.describeColumns(options.showColumns);
+    const after = await snapshotTable(db, options.showColumns);
     emit(`\nColumns of ${options.showColumns} (after):`);
-    for (const line of formatColumns(options.showColumns, after)) {
+    for (const line of after.lines) {
       emit(line);
+    }
+    // #361: the apply wrote, but the snapshot that is its evidence is empty — fail the run
+    // rather than report "Done" over nothing. A missing table is fine in the before
+    // snapshot, where the migration may be the one that creates it.
+    if (!after.found) {
+      emit(`\nERROR: applied ${appliedNow.join(", ")}, but ${options.showColumns} has no columns afterwards; check the table name.`);
+      return { exitCode: 1, lines, appliedNow };
     }
   }
 
@@ -604,18 +620,12 @@ async function createNeonDb(): Promise<MigrationDb> {
         VALUES (${filename}, ${Date.now()});
       `);
     },
+    // #361: catalog reads with the table bound as $1; the SQL text is shared with the tests.
     async describeColumns(table: string) {
-      const result = await db.execute(sql`
-        SELECT column_name, data_type, column_default
-        FROM information_schema.columns
-        WHERE table_schema = 'public' AND table_name = ${table}
-        ORDER BY ordinal_position
-      `);
-      return rowsOf(result).map((row) => ({
-        column_name: String(row["column_name"]),
-        data_type: String(row["data_type"]),
-        column_default: row["column_default"] === null || row["column_default"] === undefined ? null : String(row["column_default"]),
-      }));
+      return rowsOf(await raw(DESCRIBE_COLUMNS_SQL, [table])).map(parseColumnRow);
+    },
+    async describeIndexes(table: string) {
+      return rowsOf(await raw(DESCRIBE_INDEXES_SQL, [table])).map(parseIndexRow);
     },
     // #237: the server enforces READ ONLY; a write in `statements` fails the transaction.
     async readOnlyQueries(statements: string[]) {
