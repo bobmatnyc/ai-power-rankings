@@ -78,7 +78,6 @@ async function verifyVercelEnvironment() {
   // Check for SEO-related variables
   const seoVariables = [
     "GOOGLE_SEARCH_CONSOLE_SITE_URL",
-    "GOOGLE_API_KEY",
     "GOOGLE_OAUTH_CLIENT_ID",
     "GOOGLE_OAUTH_CLIENT_SECRET",
     "NEXT_PUBLIC_GA_ID",
