@@ -66,7 +66,11 @@ function createFakeDb(options: { applied?: string[]; tableExists?: boolean; colu
     },
     async describeColumns() {
       calls.push("describeColumns");
-      return options.columns ?? [{ column_name: "id", data_type: "uuid", column_default: null }];
+      return options.columns ?? [{ column_name: "id", data_type: "uuid", column_default: null, is_nullable: "NO" }];
+    },
+    async describeIndexes() {
+      calls.push("describeIndexes");
+      return [];
     },
   };
 }

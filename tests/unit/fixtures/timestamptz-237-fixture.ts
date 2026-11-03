@@ -167,6 +167,7 @@ export function pgliteMigrationDb(db: PGlite): MigrationDb & { executed: string[
     },
     recordApplied: async (file) => void applied.push(file),
     describeColumns: async () => [],
+    describeIndexes: async () => [],
     async readOnlyQueries(statements) {
       return db.transaction(async (tx) => {
         await tx.exec("SET TRANSACTION READ ONLY");

@@ -117,6 +117,7 @@ describe("#95 migration 0014", () => {
       executeStatement: async (statement) => void executed.push(statement),
       recordApplied: async (file) => void recorded.push(file),
       describeColumns: async () => [],
+      describeIndexes: async () => [],
     };
     const files = {
       list: () => ["0013_add_candidate_outcome_tracking.sql", FILE],

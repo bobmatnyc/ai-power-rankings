@@ -110,6 +110,7 @@ describe("#181 migration 0030", () => {
       executeStatement: async (statement) => void executed.push(statement),
       recordApplied: async (file) => void recorded.push(file),
       describeColumns: async () => [],
+      describeIndexes: async () => [],
     };
     const files = {
       list: () => ["0021_drop_rankings_period_unique.sql", FILE],

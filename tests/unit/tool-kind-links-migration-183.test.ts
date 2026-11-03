@@ -186,6 +186,7 @@ describe("#183 migration 0016 is additive and guarded", () => {
       executeStatement: async (statement) => void executed.push(statement),
       recordApplied: async (file) => void recorded.push(file),
       describeColumns: async () => [],
+      describeIndexes: async () => [],
     };
     const files = {
       list: () => ["0014_add_tool_metrics_history.sql", "0015_timestamptz_utc.sql", FILE],
