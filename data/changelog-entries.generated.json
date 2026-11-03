@@ -101,8 +101,8 @@
   {
     "id": "unreleased-3eb0e79277ca",
     "version": "Unreleased",
-    "date": "2026-11-03T20:47:07.142Z",
-    "dateSource": "build",
+    "date": "2026-11-03T20:53:31.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "ingestion",
     "title": "daily-news ingestion stores one entry per event when several outlets report it",
@@ -801,6 +801,17 @@
     "title": "the daily cron called runDailyDiscovery() with no arguments, so the Tavily days lookback was undefined and omitted from…",
     "description": "the daily cron called `runDailyDiscovery()` with no arguments, so the Tavily `days` lookback was `undefined` and omitted from the request — discovery was relevance-ranked with no date bound at all. It now defaults to the freshness window; an explicit `--days` still wins and widens the gate in step",
     "changeType": "fix"
+  },
+  {
+    "id": "unreleased-a40be3d85ffb",
+    "version": "Unreleased",
+    "date": "2026-11-03T21:03:23.700Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "db",
+    "title": "the apply-migration workflow's show_columns_table output, in both the dry run and the apply, prints each column's…",
+    "description": "the apply-migration workflow's `show_columns_table` output, in both the dry run and the apply, prints each column's nullability (`NOT NULL` or `nullable`) after its name, type and default, then the table's indexes as `name (columns), unique|not unique`. `scripts/apply-migrations.ts --show-columns` reads them with two catalog-only queries (`information_schema.columns`, and `pg_catalog.pg_index`, which gives the unique flag directly). A catalog query error fails the run before any apply, and an apply whose table has no columns afterwards exits non-zero instead of printing \"Done\". Tests: `tests/unit/apply-migrations-table-snapshot-361.test.ts` (#361)",
+    "changeType": "feature"
   },
   {
     "id": "unreleased-13747232521c",
