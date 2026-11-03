@@ -39,7 +39,13 @@ import { isDomainBlocked, addBlockedDomain } from "./blocked-domains.config";
 import { ProviderBillingFailures } from "./provider-billing-errors";
 import { isProviderApiError, providerApiStatusOf } from "./provider-api-error"; // #367
 import { runWithUsageRun } from "./provider-usage"; // #325
-import { isSameEvent, type DatedTitle } from "./same-event-dedup"; // #366
+import {
+  isNewsVerb,
+  isSameEvent,
+  sharedEventTermCount,
+  subjectsConflict,
+  type DatedTitle,
+} from "./same-event-dedup"; // #366
 // #172: one counts-only summary line per run.
 import {
   classifyAssessments,
@@ -101,6 +107,17 @@ export const FRESHNESS_WINDOW_DAYS = 14;
  * Test: automated-ingestion.semantic-dedup.test.ts.
  */
 export const SEMANTIC_DUPLICATE_MIN_WORD_OVERLAP = 0.5;
+
+/**
+ * Word overlap at or above which the #319 title score skips the shared
+ * event-term check: the titles are near-identical (re-posts, case changes).
+ *
+ * Why (#366 review): below it, a subject plus "code" or one noun reached the
+ * 0.5 floor ("Claude Code gets plugin marketplace" / "... remote sessions
+ * marketplace"), so a match also needs two shared event terms.
+ * Test: automated-ingestion.same-event-dedup.test.ts.
+ */
+export const SEMANTIC_DUPLICATE_NEAR_IDENTICAL_OVERLAP = 0.8;
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -1822,8 +1839,14 @@ export class AutomatedIngestionService {
       return 0;
     }
 
-    const words1 = new Set(normalized1.split(' '));
-    const words2 = new Set(normalized2.split(' '));
+    // #366 review: titles naming different subjects (JetBrains vs Xcode) are distinct stories.
+    if (subjectsConflict(title1, title2)) {
+      return 0;
+    }
+
+    // #366 review: a shared news verb ("adds", "gets") is not shared content.
+    const words1 = new Set(normalized1.split(' ').filter((w) => !isNewsVerb(w)));
+    const words2 = new Set(normalized2.split(' ').filter((w) => !isNewsVerb(w)));
 
     // Calculate standard Jaccard similarity
     const intersection = new Set([...words1].filter(w => words2.has(w)));
@@ -1833,6 +1856,15 @@ export class AutomatedIngestionService {
     // Entity overlap alone must never make two titles duplicates: "Claude Code X"
     // and "Claude Code Y" are different stories. Require real title-word overlap.
     if (jaccardSimilarity < SEMANTIC_DUPLICATE_MIN_WORD_OVERLAP) {
+      return 0;
+    }
+
+    // #366 review: below near-identical, require two shared event terms, so a
+    // subject plus one noun ("marketplace") no longer reaches the floor.
+    if (
+      jaccardSimilarity < SEMANTIC_DUPLICATE_NEAR_IDENTICAL_OVERLAP &&
+      sharedEventTermCount(title1, title2) < 2
+    ) {
       return 0;
     }
 

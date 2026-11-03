@@ -147,6 +147,44 @@ describe("same-event dedup: distinct stories about the same tool stay separate (
   });
 });
 
+/**
+ * Code-review probe pairs for 04ff4fbf: each pair is two distinct stories that merged
+ * through a shared news verb ("adds", "gets", "ships"), a shared noun phrase
+ * ("pull requests"), or a hidden differing subject (JetBrains vs Xcode).
+ */
+const DISTINCT_PAIRS: Array<[string, string]> = [
+  ["Cursor adds Bugbot review for pull requests", "Cursor adds voice mode for pull requests"],
+  ["Claude Code gets plugin marketplace", "Claude Code gets remote sessions marketplace"],
+  [
+    "Claude Code adds subagent support for parallel tasks",
+    "Claude Code adds memory support for long tasks",
+  ],
+  ["Cursor ships browser automation for developers", "Cursor ships automation for Slack developers"],
+  [
+    "GitHub Copilot agent mode now generally available in JetBrains",
+    "GitHub Copilot agent mode now generally available in Xcode",
+  ],
+];
+
+describe("same-event dedup: shared verbs and differing subjects do not merge (#366 review)", () => {
+  it.each(DISTINCT_PAIRS)("keeps both: %s / %s", async (first, second) => {
+    const kept = await survivors([
+      [first, OCT_30],
+      [second, OCT_30],
+    ]);
+    expect(kept).toEqual([first, second]);
+  });
+
+  it("keeps both when the batch order is reversed", async () => {
+    const [first, second] = DISTINCT_PAIRS[0] as [string, string];
+    const kept = await survivors([
+      [second, OCT_30],
+      [first, OCT_30],
+    ]);
+    expect(kept).toEqual([second, first]);
+  });
+});
+
 describe("isSameEvent: date rules", () => {
   const [a, b] = CURSOR_EXTENSION_EVENT.map(([title]) => title) as [string, string];
 
