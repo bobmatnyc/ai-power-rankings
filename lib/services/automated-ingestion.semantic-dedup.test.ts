@@ -140,10 +140,17 @@ describe("semantic duplicate filter: word-overlap floor boundary", () => {
     expect(SEMANTIC_DUPLICATE_MIN_WORD_OVERLAP).toBe(0.5);
   });
 
-  // Normalized word sets: {claude, code, pricing} vs {claude, code, plans} -> 2/4 = 0.50.
+  // #366 review: the old pair "Claude Code Pricing" / "Claude Code Plans" shares
+  // no event term, the same shape as "Claude Code gets plugin marketplace" /
+  // "... remote sessions marketplace", which must stay apart; this pair at the
+  // floor shares two (outage, europe). The news verb "hits" is dropped.
+  // {claude, outage, europe} vs {claude, outage, europe, again, friday, morning} -> 3/6 = 0.50.
   it("treats word Jaccard exactly at the floor as a duplicate", async () => {
-    const kept = await survivors(["Claude Code Pricing", "Claude Code Plans"]);
-    expect(kept).toEqual(["Claude Code Pricing"]);
+    const kept = await survivors([
+      "Claude Outage Hits Europe",
+      "Claude Outage Hits Europe Again Friday Morning",
+    ]);
+    expect(kept).toEqual(["Claude Outage Hits Europe"]);
   });
 
   // {claude, code, pricing} vs {claude, code, plans, changed} -> 2/5 = 0.40.
