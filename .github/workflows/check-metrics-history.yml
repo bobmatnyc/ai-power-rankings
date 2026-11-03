@@ -46,6 +46,7 @@ jobs:
   check:
     name: metrics history ledger
     runs-on: ubuntu-latest
+    environment: prod-db
     timeout-minutes: 10
     steps:
       - name: Checkout

@@ -45,6 +45,7 @@ jobs:
   check-ingestion-gap:
     name: Check last ingestion run
     runs-on: ubuntu-latest
+    environment: prod-db
     # issues:write lets the post-failure step open/comment on an ingestion-alert issue, and
     # the post-success step close it, using the built-in GITHUB_TOKEN — no extra
     # secret/webhook required. contents:read is the minimum actions/checkout needs.
