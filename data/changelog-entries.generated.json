@@ -99,10 +99,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-3eb0e79277ca",
+    "version": "Unreleased",
+    "date": "2026-11-03T20:47:07.142Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "ingestion",
+    "title": "daily-news ingestion stores one entry per event when several outlets report it",
+    "description": "daily-news ingestion stores one entry per event when several outlets report it. On 2026-10-29/30 five articles about one malicious Claude Code-branded extension on Cursor took five feed slots, because their headlines fell below the #319 word-overlap floor. The semantic duplicate filter now also drops a candidate that reports the same event as a stored article (last 7 days) or an earlier candidate in the batch: both publish dates lie within 3 days (`SAME_EVENT_WINDOW_DAYS`), the titles name the same companies and products (Claude counts as Anthropic), and they share at least 2 event terms after stop words, product names, generic words and news verbs (adds, gets, ships) are removed; a phrase shared word for word, such as \"pull requests\", counts once (`lib/services/same-event-dedup.ts`). A missing publish date never matches, so an unsure pair is kept. The #319 title score no longer counts news verbs, scores 0 for titles that name different products (\"... in JetBrains\" / \"... in Xcode\"), and below a word overlap of 0.8 needs 2 shared event terms (`SEMANTIC_DUPLICATE_NEAR_IDENTICAL_OVERLAP`), so distinct stories about the same tool stay separate. No LLM call is added. Tests: `lib/services/automated-ingestion.same-event-dedup.test.ts` (#366)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-1908fb9f6a3b",
     "version": "Unreleased",
-    "date": "2026-11-02T18:43:13.442Z",
-    "dateSource": "build",
+    "date": "2026-11-02T18:57:40.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "ingestion",
     "title": "a provider's own 401 or 403 no longer blocks a news site, and it fails the daily-news run",
@@ -112,8 +123,8 @@
   {
     "id": "unreleased-eb257b362814",
     "version": "Unreleased",
-    "date": "2026-11-02T18:03:54.393Z",
-    "dateSource": "build",
+    "date": "2026-11-02T19:06:18.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "rankings",
     "title": "public pages no longer describe v7.6 as the current algorithm after the v8 per-list activation",
