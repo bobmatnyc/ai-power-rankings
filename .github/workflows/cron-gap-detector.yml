@@ -18,6 +18,8 @@ name: Ingestion gap detector
 # is a recovery (and a backfill), a 2xx with no new row is a route that wrote nothing. The
 # same call is available on demand via the force_trigger dispatch input, which replaces
 # running scripts/trigger-ingestion.ts from a laptop.
+#
+# #363: a second job, check-weekly-digest-gap, watches the weekly-digest cron the same way.
 on:
   schedule:
     # 09:00 UTC — 3h after the 06:00 UTC daily-news cron, so a missed daily run is caught
@@ -599,3 +601,33 @@ jobs:
             } catch (err) {
               core.warning(`Could not close ingestion-alert issue(s): ${err.message}`);
             }
+
+  # #363: the weekly-digest cron (Mondays 07:30 UTC) writes no automated_ingestion_runs row,
+  # so the job above cannot see it miss. This job reads the newest weekly_digests row and
+  # fails red when none exists or its generated_at is more than 8 days old — a missed or
+  # failed Monday run is reported on the Tuesday. A separate job, so a digest alert never
+  # reaches the ingestion job's fallback trigger, its re-check, or its ingestion-alert issue;
+  # the red workflow sends the same failed-workflow email. Thresholds live in
+  # scripts/check-weekly-digest-gap.mjs.
+  check-weekly-digest-gap:
+    name: Check last weekly digest
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check weekly digest gap
+        run: node scripts/check-weekly-digest-gap.mjs
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
