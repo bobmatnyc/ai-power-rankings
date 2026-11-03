@@ -39,6 +39,7 @@ import { isDomainBlocked, addBlockedDomain } from "./blocked-domains.config";
 import { ProviderBillingFailures } from "./provider-billing-errors";
 import { isProviderApiError, providerApiStatusOf } from "./provider-api-error"; // #367
 import { runWithUsageRun } from "./provider-usage"; // #325
+import { isSameEvent, type DatedTitle } from "./same-event-dedup"; // #366
 // #172: one counts-only summary line per run.
 import {
   classifyAssessments,
@@ -1856,7 +1857,8 @@ export class AutomatedIngestionService {
 
   /**
    * Filter semantic duplicates using "first wins" approach
-   * Removes articles with similar titles to already-ingested articles or earlier articles in the batch
+   * Removes articles with similar titles to already-ingested articles or earlier articles in the batch,
+   * and (#366) articles reporting the same event as one of them — see isSameEvent()
    *
    * @param articles - Articles to check for duplicates
    * @param existingArticles - Recently published articles from DB (last 7 days)
@@ -1864,13 +1866,12 @@ export class AutomatedIngestionService {
    */
   private async filterSemanticDuplicates(
     articles: SearchResult[],
-    existingArticles: { title: string }[]
+    existingArticles: DatedTitle[]
   ): Promise<SearchResult[]> {
     const similarityThreshold = 0.35; // 35% weighted similarity triggers duplicate detection
     // Note: Uses weighted algorithm (40% word overlap + 60% key feature overlap)
     // Titles must also clear SEMANTIC_DUPLICATE_MIN_WORD_OVERLAP; entities alone never match.
     const uniqueArticles: SearchResult[] = [];
-    const seenTitles: string[] = [];
 
     loggers.api.info("[AutomatedIngestion] Starting semantic duplicate detection", {
       articleCount: articles.length,
@@ -1878,22 +1879,28 @@ export class AutomatedIngestionService {
       threshold: similarityThreshold,
     });
 
-    // Build list of existing article titles for comparison
-    const existingTitles = existingArticles.map(a => a.title);
+    // #366: a pair is a duplicate when the titles match (#319 score) OR the
+    // articles report the same event (isSameEvent: date window + shared
+    // subject + shared event terms). Returns the reason for the log line.
+    const duplicateReason = (article: SearchResult, other: DatedTitle): string | null => {
+      const similarity = this.calculateTitleSimilarity(article.title, other.title);
+      if (similarity >= similarityThreshold) return `title similarity ${similarity.toFixed(2)}`;
+      if (isSameEvent(article, other)) return "same event";
+      return null;
+    };
 
     for (const article of articles) {
       let isDuplicate = false;
 
       // Check against existing DB articles
-      for (const existingTitle of existingTitles) {
-        const similarity = this.calculateTitleSimilarity(article.title, existingTitle);
-
-        if (similarity >= similarityThreshold) {
+      for (const existing of existingArticles) {
+        const reason = duplicateReason(article, existing);
+        if (reason) {
           isDuplicate = true;
           loggers.api.info("[AutomatedIngestion] Semantic duplicate detected (vs DB)", {
             newTitle: article.title.substring(0, 80),
-            existingTitle: existingTitle.substring(0, 80),
-            similarity: similarity.toFixed(2),
+            existingTitle: existing.title.substring(0, 80),
+            reason,
             url: article.url.substring(0, 100),
           });
           break;
@@ -1902,15 +1909,14 @@ export class AutomatedIngestionService {
 
       // Check against earlier articles in current batch (first wins)
       if (!isDuplicate) {
-        for (const seenTitle of seenTitles) {
-          const similarity = this.calculateTitleSimilarity(article.title, seenTitle);
-
-          if (similarity >= similarityThreshold) {
+        for (const seen of uniqueArticles) {
+          const reason = duplicateReason(article, seen);
+          if (reason) {
             isDuplicate = true;
             loggers.api.info("[AutomatedIngestion] Semantic duplicate detected (within batch)", {
               newTitle: article.title.substring(0, 80),
-              firstTitle: seenTitle.substring(0, 80),
-              similarity: similarity.toFixed(2),
+              firstTitle: seen.title.substring(0, 80),
+              reason,
               url: article.url.substring(0, 100),
             });
             break;
@@ -1920,7 +1926,6 @@ export class AutomatedIngestionService {
 
       if (!isDuplicate) {
         uniqueArticles.push(article);
-        seenTitles.push(article.title);
       }
     }
 
@@ -1937,9 +1942,9 @@ export class AutomatedIngestionService {
   /**
    * Get recent article titles from the database for semantic duplicate detection
    * @param daysBack - Number of days to look back (default: 7)
-   * @returns Array of article titles
+   * @returns Array of article titles with their publish dates
    */
-  async getRecentArticleTitles(daysBack: number = 7): Promise<{ title: string }[]> {
+  async getRecentArticleTitles(daysBack: number = 7): Promise<DatedTitle[]> {
     const db = getDb();
     if (!db) {
       loggers.api.warn("[AutomatedIngestion] Database not available, no recent articles for comparison");
@@ -1957,7 +1962,8 @@ export class AutomatedIngestionService {
 
       // Query articles published in the last N days
       const recentArticles = await db
-        .select({ title: articles.title })
+        // #366: publishedDate feeds the same-event window in isSameEvent().
+        .select({ title: articles.title, publishedDate: articles.publishedDate })
         .from(articles)
         .where(gte(articles.publishedDate, cutoffDate))
         .orderBy(desc(articles.publishedDate));
@@ -1966,7 +1972,9 @@ export class AutomatedIngestionService {
         count: recentArticles.length,
       });
 
-      return recentArticles.filter((a): a is { title: string } => a.title !== null);
+      return recentArticles.filter(
+        (a): a is { title: string; publishedDate: Date | null } => a.title !== null
+      );
     } catch (error) {
       loggers.api.error("[AutomatedIngestion] Error fetching recent articles", {
         error: error instanceof Error ? error.message : "Unknown error",
