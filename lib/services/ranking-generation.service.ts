@@ -171,7 +171,7 @@ export interface RankingGenerationResult {
   pointInTime: PointInTimeReport | null;
   /** #95: the freshness guard's finding for the period. */
   metricsFreshness: MetricsFreshness;
-  /** #95: true when the guard ran and the snapshot is stale or could not be checked. Never blocks. */
+  /** #95: true when the guard ran on a history-scored run and the snapshot is stale or could not be checked. Never blocks. */
   staleMetrics: boolean;
 }
 
@@ -244,7 +244,10 @@ export interface RegenerateRankingsOptions {
    * `MetricsHistoryReadError` before any write. `metricsOverridePath`, when its file exists, wins.
    */
   usePointInTimeMetrics?: boolean;
-  /** #95 step 5: freshness guard mode. Default "flag" (spec phase 1): record, never block. */
+  /**
+   * #95 step 5: freshness guard mode. Default "flag" (spec phase 1): record, never block.
+   * It reads history only on a run that scored from history; otherwise `not_applicable`.
+   */
   metricsFreshness?: MetricsFreshnessMode;
 }
 
@@ -716,14 +719,28 @@ function errorText(error: unknown): string {
 /**
  * #95 step 5: the freshness guard. Flag mode records a stale or unverifiable snapshot
  * and never throws: a failed read is `unknown` with its reason, never `fresh`.
+ * It checks history only when the run scored from history (`usedHistory`); a run scored
+ * from live `tools.data` is `not_applicable`, with no read, since history freshness
+ * says nothing about the data that run published.
  */
 async function checkMetricsFreshness(
   mode: MetricsFreshnessMode,
   period: string,
-  persistence: RankingPersistencePort
+  persistence: RankingPersistencePort,
+  usedHistory: boolean
 ): Promise<MetricsFreshness> {
   if (mode === "off") {
     return { mode, status: "off", period, latestCollectedDate: null, reason: null };
+  }
+  // #95 fix round: the live cron path scores tools.data; never report it fresh from history.
+  if (!usedHistory) {
+    return {
+      mode,
+      status: "not_applicable",
+      period,
+      latestCollectedDate: null,
+      reason: "publish scored from live tools.data, not tool_metrics_history",
+    };
   }
   if (!persistence.loadLatestMetricsCollectedDate) {
     return { mode, status: "unknown", period, latestCollectedDate: null, reason: "persistence port has no metrics-history reader" };
@@ -773,7 +790,8 @@ async function loadPointInTimeTools(
  * tie order and stores its version. Callers resolve it before this call, so a
  * profile error writes nothing.
  * #95: `usePointInTimeMetrics` (default off) scores from `tool_metrics_history` as of the
- * period; the freshness guard (default "flag") reports a stale snapshot and never blocks.
+ * period; the freshness guard (default "flag") checks only such a run, reports a stale
+ * snapshot and never blocks; a live-scored run is `not_applicable`.
  * Test: `lib/services/ranking-generation.golden.test.ts` (publish unchanged),
  * `lib/services/ranking-generation.modes.test.ts` (draft, dry-run),
  * `tests/unit/ranking-generation-per-list-186.test.ts` (per-list layout),
@@ -884,7 +902,7 @@ export async function regenerateRankings(
     });
 
     // #95 step 5: flag a stale snapshot right before the write; flag mode never blocks.
-    const metricsFreshness = await checkMetricsFreshness(freshnessMode, period, persistence);
+    const metricsFreshness = await checkMetricsFreshness(freshnessMode, period, persistence, pointInTime?.applied === true);
 
     if (mode === "publish") {
       if (layout === "combined") {

@@ -170,6 +170,24 @@ describe("usePointInTimeMetrics (#95 step 4)", () => {
     expect(rows.get("alpha")!.rank).toBe(1);
   });
 
+  it("flag on with an empty history map: every tool is scored live and listed as a fallback", async () => {
+    const live = fakePort({ withReaders: false });
+    await regenerateRankings({ persistence: live, now, period: PERIOD, metricsFreshness: "off" });
+    const port = fakePort({ history: new Map() });
+
+    const result = await regenerateRankings({ persistence: port, now, period: PERIOD, usePointInTimeMetrics: true });
+
+    expect(result.pointInTime).toEqual({
+      period: PERIOD,
+      applied: true,
+      snapshotTools: 0,
+      fallbackTools: ["alpha", "bravo", "charlie"],
+      skippedLeaves: 0,
+      reason: null,
+    });
+    expect(port.saved).toEqual(live.saved);
+  });
+
   it("flag on and the history read throws: the run rejects and writes nothing", async () => {
     const port = fakePort({ history: new Error("relation \"tool_metrics_history\" does not exist") });
 
@@ -191,10 +209,43 @@ describe("usePointInTimeMetrics (#95 step 4)", () => {
 });
 
 describe("metrics freshness guard (#95 step 5)", () => {
+  // The guard checks history only on a run that scored from it (#95 fix round).
+  const PIT = { usePointInTimeMetrics: true } as const;
+
+  it("point-in-time off (the cron default): not_applicable, no history read, not stale", async () => {
+    const port = fakePort({ latest: "2020-01-01" });
+
+    const result = await regenerateRankings({ persistence: port, now, period: PERIOD });
+
+    expect(port.freshnessCalls).toEqual([]);
+    expect(port.historyCalls).toEqual([]);
+    expect(result.staleMetrics).toBe(false);
+    expect(result.metricsFreshness).toMatchObject({
+      mode: "flag",
+      status: "not_applicable",
+      reason: "publish scored from live tools.data, not tool_metrics_history",
+    });
+  });
+
+  it("an override file that took precedence is not_applicable too", async () => {
+    const port = fakePort({ latest: "2020-01-01" });
+    const result = await regenerateRankings({
+      persistence: port,
+      now,
+      period: PERIOD,
+      usePointInTimeMetrics: true,
+      metricsOverridePath: "data/historical-metrics/2025-12.json",
+    });
+
+    expect(result.pointInTime).toMatchObject({ applied: false, reason: "metricsOverridePath took precedence" });
+    expect(result.metricsFreshness.status).toBe("not_applicable");
+    expect(port.freshnessCalls).toEqual([]);
+  });
+
   it("defaults to flag mode: a snapshot older than the period is flagged and the run still publishes", async () => {
     const port = fakePort({ latest: "2026-10-01" });
 
-    const result = await regenerateRankings({ persistence: port, now, period: PERIOD });
+    const result = await regenerateRankings({ persistence: port, now, period: PERIOD, ...PIT });
 
     expect(port.freshnessCalls).toEqual([PERIOD]);
     expect(result.staleMetrics).toBe(true);
@@ -203,7 +254,7 @@ describe("metrics freshness guard (#95 step 5)", () => {
   });
 
   it("a snapshot collected in the period is fresh", async () => {
-    const result = await regenerateRankings({ persistence: fakePort({ latest: "2026-11-01" }), now, period: PERIOD });
+    const result = await regenerateRankings({ persistence: fakePort({ latest: "2026-11-01" }), now, period: PERIOD, ...PIT });
 
     expect(result.staleMetrics).toBe(false);
     expect(result.metricsFreshness.status).toBe("fresh");
@@ -212,7 +263,7 @@ describe("metrics freshness guard (#95 step 5)", () => {
   it("a failed freshness read is recorded as unknown, flagged, and does not block", async () => {
     const port = fakePort({ latest: new Error("timeout") });
 
-    const result = await regenerateRankings({ persistence: port, now, period: PERIOD });
+    const result = await regenerateRankings({ persistence: port, now, period: PERIOD, ...PIT });
 
     expect(result.metricsFreshness).toMatchObject({ status: "unknown", reason: "history read failed: timeout" });
     expect(result.staleMetrics).toBe(true);
@@ -222,7 +273,7 @@ describe("metrics freshness guard (#95 step 5)", () => {
   it("off skips the read", async () => {
     const port = fakePort({ latest: "2020-01-01" });
 
-    const result = await regenerateRankings({ persistence: port, now, period: PERIOD, metricsFreshness: "off" });
+    const result = await regenerateRankings({ persistence: port, now, period: PERIOD, metricsFreshness: "off", ...PIT });
 
     expect(port.freshnessCalls).toEqual([]);
     expect(result.staleMetrics).toBe(false);

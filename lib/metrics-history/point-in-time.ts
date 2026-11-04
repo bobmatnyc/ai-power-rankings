@@ -173,8 +173,11 @@ export const METRICS_FRESHNESS_MODES: readonly MetricsFreshnessMode[] = ["off", 
 
 export interface MetricsFreshness {
   mode: MetricsFreshnessMode;
-  /** `unknown`: the check could not run (read error, or no reader); never reported as fresh. */
-  status: "off" | "fresh" | "stale" | "unknown";
+  /**
+   * `unknown`: the check could not run (read error, or no reader); never reported as fresh.
+   * `not_applicable`: the run did not score from history, so history freshness says nothing about it (#95).
+   */
+  status: "off" | "not_applicable" | "fresh" | "stale" | "unknown";
   period: string;
   /** Newest `collected_date` at or before the period; null when there is none or the read failed. */
   latestCollectedDate: string | null;
