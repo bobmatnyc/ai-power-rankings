@@ -5,8 +5,8 @@
 --   website change), openclaw changes kind (harness to productivity) and listing fields, and perplexity changes
 --   kind, subcategory and category (other/non_ai to productivity/ai_assistant/productivity).
 --   openclaw's listing fields are also corrected (website, pricing, licence), each guarded: a field
---   is written only when it holds the known wrong value or already holds the target, else this
---   file raises. Sources are recorded in data.info_provenance: https://openclaw.ai/ (free, no
+--   is written only when it holds the known wrong value, already holds the target, or (website and
+--   licence only; see #315, production holds neither) is empty, else this file raises. Sources are recorded in data.info_provenance: https://openclaw.ai/ (free, no
 --   paid version, MIT) and https://github.com/openclaw/openclaw/blob/main/LICENSE (MIT).
 --   The description is left as it is. openclaw's two retired alias
 --   rows, clawdbot and moltbot, change kind only, because the kind sheet holds a retired row at its
@@ -87,9 +87,14 @@ BEGIN
   -- #314: guard — openclaw's listing fields hold the known wrong value or already the target.
   SELECT data->'info' INTO info FROM public."tools" WHERE slug = 'openclaw';
   biz := info->'business';
+  -- See #315: production holds no openclaw website (NULL); an empty field is filled below, any
+  -- other value still raises.
+  IF jsonb_typeof(info) IS DISTINCT FROM 'object' OR jsonb_typeof(biz) IS DISTINCT FROM 'object' THEN
+    RAISE EXCEPTION '#314 0028: openclaw data.info or data.info.business is not an object';
+  END IF;
   v := info->>'website';
-  IF v IS NULL OR v NOT IN ('https://openclaw.dev', 'https://openclaw.ai') THEN
-    RAISE EXCEPTION '#314 0028: openclaw data.info.website is %, expected https://openclaw.dev or https://openclaw.ai', v;
+  IF v IS NOT NULL AND v NOT IN ('https://openclaw.dev', 'https://openclaw.ai') THEN
+    RAISE EXCEPTION '#314 0028: openclaw data.info.website is %, expected none, https://openclaw.dev or https://openclaw.ai', v;
   END IF;
   v := biz->>'pricing_model';
   IF v IS NULL OR v NOT IN ('subscription', 'free') THEN
@@ -100,7 +105,7 @@ BEGIN
     RAISE EXCEPTION '#314 0028: openclaw business.free_tier is %, expected false or true', v;
   END IF;
   -- The licence sits under info.business in the dashboard reader and under info in the API reader;
-  -- every path the row carries is checked and written, and at least one must exist.
+  -- every path the row carries is checked and written. lic_found records whether any exists.
   FOREACH lic_path IN ARRAY lic_paths LOOP
     v := (SELECT data #>> lic_path::text[] FROM public."tools" WHERE slug = 'openclaw');
     IF v IS NOT NULL THEN
@@ -110,9 +115,6 @@ BEGIN
       END IF;
     END IF;
   END LOOP;
-  IF NOT lic_found THEN
-    RAISE EXCEPTION '#314 0028: openclaw has no license_type under data.info or data.info.business';
-  END IF;
 
   -- #314: guard — a row that stops being a harness must not be the harness side of a link
   -- (tool_links.harness_tool_id rows must point at kind harness; see TOOL_LINK_KIND_VIOLATIONS_SQL).
@@ -179,10 +181,23 @@ BEGIN
   FOREACH lic_path IN ARRAY lic_paths LOOP
     UPDATE public."tools"
        SET data = jsonb_set(data, lic_path::text[], '"MIT"'::jsonb), updated_at = now()
-     WHERE slug = 'openclaw' AND data #>> lic_path::text[] IS NOT NULL AND data #>> lic_path::text[] <> 'MIT';
+     WHERE slug = 'openclaw'
+       AND data #>> lic_path::text[] IS DISTINCT FROM 'MIT'
+       -- See #315: production carries no licence on either path; then both paths get MIT (the
+       -- API reader shows 'proprietary' for an absent info.license_type).
+       AND (lic_found = false OR data #>> lic_path::text[] IS NOT NULL);
     GET DIAGNOSTICS n = ROW_COUNT;
     changed := changed + n;
   END LOOP;
+
+  -- See #315: post-check — openclaw ends at the cited website and carries MIT on some licence path.
+  IF NOT EXISTS (
+    SELECT 1 FROM public."tools"
+     WHERE slug = 'openclaw' AND data #>> '{info,website}' = 'https://openclaw.ai'
+       AND 'MIT' IN (data #>> '{info,business,license_type}', data #>> '{info,license_type}')
+  ) THEN
+    RAISE EXCEPTION '#314 0028: openclaw website or licence is not at its target after the update';
+  END IF;
 
   -- #314: openclaw's retired aliases follow it; a missing alias row is not an error.
   UPDATE public."tools"

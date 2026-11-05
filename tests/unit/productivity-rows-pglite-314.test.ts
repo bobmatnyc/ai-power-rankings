@@ -210,12 +210,49 @@ describe("#314 migration 0028 converts the six existing rows", () => {
     expect(info["license_type"]).toBe("MIT");
   });
 
+  // See #315: the openclaw row production holds (read-only check, 2026-11-04): no website, no
+  // licence on either path, no info_provenance. The website key may be absent or JSON null.
+  it.each([
+    ["absent", { description: "", business: { pricing_model: "subscription", free_tier: false } }],
+    ["null", { website: null, description: "", business: { pricing_model: "subscription", free_tier: false } }],
+  ])("applies on the production openclaw state (website %s, no licence) and re-runs as a no-op", async (_n, info) => {
+    await ctx.db.query(
+      `UPDATE public."tools" SET kind = 'harness', category = 'autonomous-agent', subcategory = 'autonomous_agent',
+              status = 'active' WHERE slug = 'openclaw'`
+    );
+    await setOpenclawData({ name: "OpenClaw", info });
+    const before = (await rows(["openclaw"]))[0]!.row;
+    expect((await apply(ctx, F28)).exitCode).toBe(0);
+    const after = (await rows(["openclaw"]))[0]!.row;
+    expect(after["kind"]).toBe("productivity");
+    const keep = ["category", "subcategory", "status", "name", "current_score"];
+    expect(keep.map((k) => after[k])).toEqual(keep.map((k) => before[k]));
+    const data = after["data"] as {
+      info: Record<string, unknown>;
+      info_provenance: Record<string, { source: string; as_of: string }>;
+    };
+    expect(data.info).toEqual({
+      website: "https://openclaw.ai",
+      description: "",
+      license_type: "MIT",
+      business: { pricing_model: "free", free_tier: true, license_type: "MIT" },
+    });
+    expect(Object.keys(data.info_provenance).sort()).toEqual(["free_tier", "license_type", "pricing_model", "website"]);
+    expect(data.info_provenance["license_type"]!.source).toBe("https://github.com/openclaw/openclaw/blob/main/LICENSE");
+    const once = await rows();
+    expect((await apply(ctx, F28, true)).exitCode).toBe(0);
+    expect(await rows()).toEqual(once);
+  });
+
   it.each([
     ["an unexpected website", { website: "https://example.test", business: { pricing_model: "subscription", free_tier: false, license_type: "proprietary" } }],
     ["an unexpected pricing_model", { website: "https://openclaw.dev", business: { pricing_model: "usage", free_tier: false, license_type: "proprietary" } }],
     ["a missing free_tier", { website: "https://openclaw.dev", business: { pricing_model: "subscription", license_type: "proprietary" } }],
     ["an unexpected licence", { website: "https://openclaw.dev", business: { pricing_model: "subscription", free_tier: false, license_type: "gpl" } }],
-    ["no licence field", { website: "https://openclaw.dev", business: { pricing_model: "subscription", free_tier: false } }],
+    // See #315: the production state (no website, no licence) with one field off still raises.
+    ["an unexpected website beside an absent licence", { website: "https://openclaw.example", business: { pricing_model: "subscription", free_tier: false } }],
+    ["an unexpected licence on data.info beside a null website", { website: null, license_type: "gpl", business: { pricing_model: "subscription", free_tier: false } }],
+    ["a business field that is not an object", { business: "subscription" }],
   ])("raises, writing nothing, on %s", async (_n, info) => {
     await setOpenclawData({ info });
     const before = await rows();
