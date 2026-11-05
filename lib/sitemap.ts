@@ -30,6 +30,8 @@ import { loadCurrentRankings } from "@/lib/rankings/current-rankings";
 import { listDigestWeeks } from "@/lib/services/weekly-digest.repository";
 import { listPeriods } from "@/lib/services/whats-new-summary.service";
 import { isNoindexToolSlug, isTableRedirectSource } from "@/lib/seo/url-table";
+// #198: the Insights URLs are built under the Insights route directory.
+import { insightsSitemapEntries } from "@/app/[lang]/insights/insights-sitemap";
 
 // Category page slugs based on existing app structure
 const categoryPages = [
@@ -78,6 +80,7 @@ const staticPages = [
  * is never listed. All URLs start with `baseUrl`. Rejects when any database read rejects,
  * except the models board read, whose failure only leaves `/rankings/models` out (#329),
  * and the weekly digest read, whose failure is logged and only leaves the digest URLs out (#181).
+ * #198: with `INSIGHTS_PREVIEW` on, `/en/insights` and each stored week and period under it.
  * Test: `tests/unit/sitemap-route.test.ts`, `tests/unit/seo-canonical-origin.test.ts`.
  */
 export async function buildSitemapEntries(
@@ -210,6 +213,10 @@ export async function buildSitemapEntries(
       priority: 0.6,
     });
   }
+
+  // 7. #198: the Insights hub, weekly and monthly pages, only while INSIGHTS_PREVIEW is on
+  // (read per request). Off, nothing is added and the output is unchanged.
+  routes.push(...insightsSitemapEntries(baseUrl, now, digestWeeks, reportPeriods));
 
   // #191: a URL that 308s under the signed table is never listed.
   return routes.filter((route) => !isTableRedirectSource(new URL(route.url).pathname));

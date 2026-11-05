@@ -6,7 +6,7 @@ import { listPeriods } from '@/lib/services/whats-new-summary.service';
 import { siteOrigin } from '@/lib/site-origin';
 import { firstSentence, formatPeriod } from '@/lib/whats-new-period';
 import { digestBody, digestRange } from '@/lib/weekly-digest-window';
-import { insightsPreviewEnabled, monthlyInsightPath, weeklyInsightPath } from './preview-gate';
+import { INSIGHTS_FEED_TITLES, insightsPreviewEnabled, monthlyInsightPath, weeklyInsightPath } from './preview-gate';
 
 /**
  * RSS 2.0 feeds of the Insights preview, one per cadence (#198).
@@ -15,8 +15,8 @@ import { insightsPreviewEnabled, monthlyInsightPath, weeklyInsightPath } from '.
  * beside the pages they list, at `/{lang}/insights/weekly/rss.xml` and
  * `/{lang}/insights/monthly/rss.xml`, the `<section>/rss.xml` shape of the news
  * and What's New feeds. Like the pages they are a preview: behind
- * `INSIGHTS_PREVIEW`, `X-Robots-Tag: noindex`, and advertised by no
- * `<link rel="alternate">` until launch. This module lives under the route
+ * `INSIGHTS_PREVIEW`, `X-Robots-Tag: noindex`; each Insights page head
+ * advertises them while the flag is on (`insightsFeedLinks`). This module lives under the route
  * directory so no file outside `/insights` names an Insights URL.
  * What: `buildInsightsRssFeed` renders one RSS 2.0 document; every text node
  * goes through `escapeXml`. Item links and guids are the `/en` permalinks on
@@ -31,11 +31,11 @@ export const INSIGHTS_RSS_ITEM_LIMIT = 20;
 
 const CHANNEL: Record<InsightsCadence, { title: string; description: string }> = {
   weekly: {
-    title: 'AI Power Rankings - Weekly Insights',
+    title: INSIGHTS_FEED_TITLES.weekly, // #198: shared with the page-head feed link
     description: 'Weekly insights on AI coding tools: what moved, what shipped and what to watch.',
   },
   monthly: {
-    title: 'AI Power Rankings - Monthly Insights',
+    title: INSIGHTS_FEED_TITLES.monthly, // #198: shared with the page-head feed link
     description: 'Monthly insights on AI coding tools from AI Power Rankings.',
   },
 };

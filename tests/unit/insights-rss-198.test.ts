@@ -6,8 +6,8 @@ import { insightsLinksOutsideInsights } from "./insights-198-links";
  * The Insights RSS feeds, slice 3 of #198.
  *
  * Why: #198 adds one RSS 2.0 feed per cadence behind the slice 1 flag. With the
- * flag off they 404; with it on they carry `X-Robots-Tag: noindex`, no page
- * advertises them yet, and a failed read is a 5xx, never an empty feed.
+ * flag off they 404; with it on they carry `X-Robots-Tag: noindex` (the page-head
+ * links are in `tests/unit/insights-sitemap-198.test.ts`), and a failed read is a 5xx, never an empty feed.
  * What: calls the real route handlers with the #181 and #182 readers replaced
  * by in-memory fixtures, and parses each feed as XML with jsdom's XML parser,
  * which throws on a document that is not well-formed.
@@ -216,38 +216,7 @@ describe("/[lang]/insights/monthly/rss.xml (#198)", () => {
   });
 });
 
-describe("Insights feeds stay out of discovery while they are a preview (#198)", () => {
-  it("advertises no Insights feed in any Insights page head", async () => {
-    weekly.getStoredDigest.mockResolvedValue(digest("2026-W44", "2026-11-02T07:31:00.000Z"));
-    monthly.getStoredSummary.mockResolvedValue({
-      period: "2026-10",
-      content: "# T\n\nBody.",
-      generatedAt: new Date("2026-11-01T08:05:00.000Z"),
-      metadata: {},
-    });
-    const metas = await Promise.all([
-      import("../../app/[lang]/insights/page").then((m) => m.generateMetadata(params("en"))),
-      import("../../app/[lang]/insights/weekly/[week]/page").then((m) =>
-        m.generateMetadata({ params: Promise.resolve({ lang: "en", week: "2026-W44" }) })
-      ),
-      import("../../app/[lang]/insights/monthly/[month]/page").then((m) =>
-        m.generateMetadata({ params: Promise.resolve({ lang: "en", month: "2026-10" }) })
-      ),
-    ]);
-    for (const meta of metas) {
-      // Every page carries the site-wide news feed (#155); no Insights feed until launch.
-      const feeds = Object.values(meta.alternates?.types ?? {}).flat() as Array<{ url: string }>;
-      expect(feeds.map(({ url }) => url)).toEqual([`${ORIGIN}/en/news/rss.xml`]);
-    }
-  });
-
-  it("is absent from the sitemap", async () => {
-    const { buildSitemapEntries } = await import("../../lib/sitemap");
-    const urls = (await buildSitemapEntries(ORIGIN)).map(({ url }) => url);
-    expect(urls.length).toBeGreaterThan(0);
-    expect(urls.filter((url) => /\/insights(?:[/?#]|$)/.test(url))).toEqual([]);
-  });
-
+describe("Insights feeds are linked from no other page while they are a preview (#198)", () => {
   it("has no link from any source outside the Insights route and template", () => {
     const { scanned, linking } = insightsLinksOutsideInsights();
     expect(scanned).toBeGreaterThan(0);
