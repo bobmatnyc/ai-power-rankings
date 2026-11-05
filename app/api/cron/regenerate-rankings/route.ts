@@ -28,7 +28,9 @@ import { RankingGenerationInProgressError } from "@/lib/services/ranking-generat
 async function sendCronAlert(
   route: string,
   errorMessage: string,
-  details: Record<string, unknown>
+  details: Record<string, unknown>,
+  // #95: a stale-metrics warning reuses this webhook without calling itself a failure.
+  label: "FAILURE" | "WARNING" = "FAILURE"
 ): Promise<void> {
   const webhookUrl = process.env["ALERT_WEBHOOK_URL"];
   if (!webhookUrl) return;
@@ -38,7 +40,7 @@ async function sendCronAlert(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        text: `[CRON FAILURE] ${route}`,
+        text: `[CRON ${label}] ${route}`,
         error: errorMessage,
         ...details,
         timestamp: new Date().toISOString(),
@@ -122,6 +124,24 @@ export async function GET(request: Request) {
       durationMs: duration,
     });
 
+    // #95 step 5: a stale or unverifiable metrics snapshot is a warning; the publish stands.
+    if (result.staleMetrics) {
+      loggers.api.warn("Cron: Metrics history snapshot is stale for the period", {
+        period: result.period,
+        metricsFreshness: result.metricsFreshness,
+      });
+      await sendCronAlert(
+        "/api/cron/regenerate-rankings",
+        `Metrics snapshot for period ${result.period} is ${result.metricsFreshness.status}: ${result.metricsFreshness.reason ?? "no reason recorded"}`,
+        {
+          period: result.period,
+          latestCollectedDate: result.metricsFreshness.latestCollectedDate,
+          impact: "Rankings were published, but may be unchanged from the previous month",
+        },
+        "WARNING"
+      );
+    }
+
     // #311: only a committed publish gets here, so purge the cached current board; a failed one threw above.
     // #311: the purge never throws; report its outcome in the 200 body rather than
     // failing a publish that has already committed (a failure would invite a re-publish).
@@ -146,6 +166,9 @@ export async function GET(request: Request) {
         published_at: result.publishedAt,
         top_movers: result.topMovers,
         cache_purge: { success: purge.success, errors: purge.errors },
+        // #95: the freshness guard's finding (flag-only).
+        stale_metrics: result.staleMetrics,
+        metrics_freshness: result.metricsFreshness,
         durationMs: duration,
       },
       { status: 200 }

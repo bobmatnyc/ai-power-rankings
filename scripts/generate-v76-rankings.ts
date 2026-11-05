@@ -26,6 +26,9 @@
  *                            prod run. #185: the offline roster has no
  *                            tools.kind, so this preview stays the one v7.10
  *                            table over the whole roster; it never publishes.
+ *   --point-in-time          #95: score each tool from its newest tool_metrics_history
+ *                            snapshot at or before the period (publish run only).
+ *                            Tools with no history are scored live and listed.
  *
  * #185 (v8 activation): a publish run calls `publishActiveRankings()`, as the cron
  * does: one board per list, scored by the active set in
@@ -203,9 +206,12 @@ async function main() {
   // combined board; a refused or invalid profile set throws before any write.
   const { publishActiveRankings } = await import("@/lib/rankings/publish-active");
   console.log("\n🧮 Scoring active tools per list and persisting one board per list...");
+  // #95: opt-in point-in-time scoring from tool_metrics_history; off keeps the run unchanged.
+  const usePointInTimeMetrics = process.argv.includes("--point-in-time");
   const result = await publishActiveRankings({
     ...(period ? { period } : {}),
     ...(metricsOverridePath ? { metricsOverridePath } : {}),
+    ...(usePointInTimeMetrics ? { usePointInTimeMetrics } : {}),
   });
 
   console.log("\n" + "=".repeat(80));
@@ -219,6 +225,18 @@ async function main() {
     console.log(`   List ${board.list.padEnd(13)} ${board.toolCount} tools`);
   }
   console.log(`   Published At:      ${result.publishedAt}`);
+  if (result.pointInTime) {
+    const pit = result.pointInTime;
+    console.log(`   Point-in-time:     ${pit.applied ? `${pit.snapshotTools} tools from history` : `not applied (${pit.reason})`}`);
+    if (pit.fallbackTools.length > 0) {
+      console.log(`   ⚠️  Scored live (no history): ${pit.fallbackTools.length} — ${pit.fallbackTools.join(", ")}`);
+    }
+    if (pit.skippedLeaves > 0) console.log(`   ⚠️  Flagged leaves kept live: ${pit.skippedLeaves}`);
+  }
+  if (result.staleMetrics) {
+    const f = result.metricsFreshness;
+    console.log(`   ⚠️  Metrics freshness: ${f.status} — ${f.reason ?? "no reason recorded"}`);
+  }
 
   if (result.topMovers.length > 0) {
     console.log("\n🔥 Notable Changes:");

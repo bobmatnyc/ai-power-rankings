@@ -8,6 +8,9 @@
  *   (drizzle names and SQL names) and the lib/metrics-history modules. Under
  *   app/ only the cron route may match; under lib/ only the schema and the
  *   history store. The route itself must match, so the scan cannot pass vacuously.
+ *   #95 steps 4-5: ranking regeneration reads the history (point-in-time scoring and
+ *   the freshness guard), so under lib/ its read modules and the ranking service are
+ *   allowed too; under app/ only cron and admin routes may import that service at runtime.
  * Test: `npx vitest run tests/unit/metrics-history-private-95.test.ts`
  */
 
@@ -40,7 +43,24 @@ describe("#95 metrics history is private", () => {
     expect(referencing("app")).toEqual(["app/api/cron/collect-metrics/route.ts"]);
   });
 
-  it("under lib/ only the schema and the history store reference them", () => {
-    expect(referencing("lib")).toEqual(["lib/db/schema.ts", "lib/metrics-history/store.ts"]);
+  it("under lib/ only the schema, the history store and the regen read path reference them", () => {
+    expect(referencing("lib")).toEqual([
+      "lib/db/schema.ts",
+      // #95 steps 4-5: the regen read path (point-in-time scoring, freshness guard).
+      "lib/metrics-history/point-in-time.ts",
+      "lib/metrics-history/read.ts",
+      "lib/metrics-history/store.ts",
+      "lib/services/ranking-generation.service.ts",
+    ]);
+  });
+
+  it("#95: only cron and admin routes import the regen service at runtime", () => {
+    const runtimeImport =
+      /^import (?!type )[^;]*from "@\/lib\/(services\/ranking-generation\.service|rankings\/publish-active|services\/ranking-preview\.service)"/m;
+    const importers = sourceFiles("app")
+      .filter((file) => runtimeImport.test(readFileSync(path.join(ROOT, file), "utf8")))
+      .map((file) => file.split(path.sep).join("/"));
+    expect(importers).toContain("app/api/cron/regenerate-rankings/route.ts");
+    expect(importers.filter((file) => !/^app\/api\/(cron|admin)\//.test(file))).toEqual([]);
   });
 });
