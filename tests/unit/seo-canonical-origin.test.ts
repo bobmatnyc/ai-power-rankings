@@ -98,6 +98,37 @@ vi.mock("../../lib/services/whats-new-summary.service", () => ({
   listPeriods: async () => [{ period: "2026-07", updatedAt: new Date("2026-08-02") }],
 }));
 
+// #368: the article and rankings pages read through these, no longer through a self-fetch.
+const pageReads = vi.hoisted(() => ({ loadNewsArticle: vi.fn(), loadCurrentRankings: vi.fn() }));
+vi.mock("../../lib/news-article", () => ({ loadNewsArticle: pageReads.loadNewsArticle }));
+vi.mock("../../lib/rankings/current-rankings", () => ({ loadCurrentRankings: pageReads.loadCurrentRankings }));
+const ARTICLE_DETAIL = {
+  article: {
+    id: "a1",
+    slug: "big-launch",
+    title: "Big launch",
+    content: "Body",
+    summary: "Summary",
+    published_date: "2026-09-01",
+    created_at: "2026-09-01",
+    updated_at: "2026-09-02",
+  },
+  tool: null,
+  tools: null,
+};
+/** The home page's call (no list) finds no snapshot, so home renders its empty state; a list read gets one row. */
+async function currentRankingsStub(list?: string) {
+  // #368: null, not a throw; a thrown read now fails the home render.
+  if (list === undefined) return null;
+  return {
+    list,
+    source: "list",
+    snapshot: { algorithm_version: "7.6", published_at: null, created_at: new Date("2026-09-01T00:00:00.000Z") },
+    rankings: [{ name: "Cursor", updated_at: "2026-09-01" }],
+    metricRowCount: 0,
+  };
+}
+
 const fetchMock = vi.fn(async (input: string | URL | Request) => {
   const url = String(input instanceof Request ? input.url : input);
   if (url.includes("/api/news/")) {
@@ -136,6 +167,8 @@ beforeEach(() => {
   vi.stubEnv("DATABASE_URL", "postgres://stub");
   vi.stubGlobal("fetch", fetchMock);
   fetchMock.mockClear();
+  pageReads.loadNewsArticle.mockReset().mockResolvedValue(ARTICLE_DETAIL);
+  pageReads.loadCurrentRankings.mockReset().mockImplementation(currentRankingsStub);
   reports.latest = null;
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -321,7 +354,7 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     expectEnglishOnly(metadata, "/news", "news list");
   });
 
-  it("news article metadata uses the production origin while the fetch keeps the deployment host", async () => {
+  it("news article metadata uses the production origin and reads the article without a fetch", async () => {
     const { generateMetadata } = await import("../../app/[lang]/news/[slug]/page");
     const metadata = await generateMetadata(params({ lang: "fr", slug: "big-launch" }));
     expectProductionUrls(metadata, "news article");
@@ -337,21 +370,23 @@ describe("SEO origin on a Vercel deployment (#153)", () => {
     expect(alternates.types?.["application/rss+xml"], "news article RSS").toEqual([
       { title: "AI Power Rankings - News & Updates", url: `${ORIGIN}/fr/news/rss.xml` },
     ]);
-    expect(String(fetchMock.mock.calls[0]?.[0])).toBe(`https://${PREVIEW_HOST}/api/news/big-launch`);
+    // #368: read from the database (was a fetch of the deployment's /api/news/<slug>).
+    expect(pageReads.loadNewsArticle).toHaveBeenCalledWith("big-launch", expect.any(String));
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
-  it("rankings metadata and JSON-LD use the production origin while the fetch keeps the deployment host", async () => {
+  it("rankings metadata and JSON-LD use the production origin and read the board without a fetch", async () => {
     const mod = await import("../../app/[lang]/rankings/page");
     const metadata = await mod.generateMetadata(params({ lang: "de" }));
     expectProductionUrls(metadata, "rankings metadata");
     expectSelfCanonical(metadata, "de", "/rankings", "rankings");
-    expect(String(fetchMock.mock.calls[0]?.[0])).toBe(`https://${PREVIEW_HOST}/api/rankings`);
+    // #368: read from the database (was a fetch of the deployment's /api/rankings).
+    expect(pageReads.loadCurrentRankings).toHaveBeenCalledWith("harness");
 
-    fetchMock.mockClear();
     const blocks = jsonLdIn(await mod.default(params({ lang: "de" })));
     expect(blocks.length).toBeGreaterThan(0);
     expectProductionUrls(blocks, "rankings JSON-LD");
-    expect(String(fetchMock.mock.calls[0]?.[0])).toBe(`https://${PREVIEW_HOST}/api/rankings`);
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 
   it("trending metadata emits absolute production canonical and hreflang", async () => {

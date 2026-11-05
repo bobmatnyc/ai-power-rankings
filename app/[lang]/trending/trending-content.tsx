@@ -40,8 +40,17 @@ import type { TrendingAnalysisResult } from "@/lib/trending-analyzer";
 
 export interface TrendingPageContentProps {
   lang: Locale;
-  initialTimeRange: number | "all";
   dictionary: Dictionary;
+}
+
+/**
+ * The time range a `?months=` value names: 1-24 months, else `"all"`.
+ * #368: parsed here from the URL, so the server page reads no `searchParams` and stays static.
+ */
+export function parseTimeRange(months: string | null): number | "all" {
+  if (!months || months === "all") return "all";
+  const parsed = parseInt(months, 10);
+  return !Number.isNaN(parsed) && parsed > 0 && parsed <= 24 ? parsed : "all";
 }
 
 interface LoadingState {
@@ -184,9 +193,10 @@ function StatCard({
  * Main content component for the trending page.
  * Handles data fetching, state management, and user interactions.
  */
-export function TrendingPageContent({ lang, initialTimeRange }: TrendingPageContentProps) {
+export function TrendingPageContent({ lang }: TrendingPageContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const initialTimeRange = parseTimeRange(searchParams.get("months"));
 
   const [trendingData, setTrendingData] = useState<TrendingAnalysisResult | null>(null);
   const [loadingState, setLoadingState] = useState<LoadingState>({
