@@ -7,13 +7,13 @@ import { insightsLinksOutsideInsights } from "./insights-198-links";
  * The monthly Insights preview, slice 2 of #198.
  *
  * Why: #198 adds `/insights/monthly/<yyyy-mm>` and the hub's monthly list
- * behind the slice 1 flag: off by default, `noindex`, outside the sitemap and
+ * behind the slice 1 flag: off by default, `noindex` and
  * unlinked, so the #191 redirects stay held. A failed report read must not look
  * like "no insights yet" or a 404.
  * What: renders the real monthly and hub pages and their `generateMetadata`
  * with the #182 readers (`whats-new-summary.service`) and the #181 digest
- * readers replaced by in-memory fixtures, and builds the real sitemap with its
- * database reads stubbed.
+ * readers replaced by in-memory fixtures. The sitemap entries are in
+ * `tests/unit/insights-sitemap-198.test.ts`.
  * Test: `npx vitest run tests/unit/insights-monthly-198.test.tsx`. No database, no network.
  */
 
@@ -192,15 +192,7 @@ describe("/insights hub, monthly list (#198)", () => {
   });
 });
 
-describe("Monthly Insights stays out of discovery while it is a preview (#198)", () => {
-  it("is absent from the sitemap with the flag on and a report stored", async () => {
-    const { buildSitemapEntries } = await import("../../lib/sitemap");
-    const urls = (await buildSitemapEntries(ORIGIN)).map(({ url }) => url);
-    // The stored month is listed under its #54 permalink, never under /insights.
-    expect(urls).toContain(`${ORIGIN}/en/whats-new/2026-10`);
-    expect(urls.filter((url) => /\/insights(?:[/?#]|$)/.test(url))).toEqual([]);
-  });
-
+describe("Monthly Insights is linked from no other page while it is a preview (#198)", () => {
   it("has no link from any source outside the Insights route and template", () => {
     const { scanned, linking } = insightsLinksOutsideInsights();
     expect(scanned).toBeGreaterThan(0);

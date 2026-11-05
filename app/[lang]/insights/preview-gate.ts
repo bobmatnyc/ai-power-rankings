@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
+import { canonicalLocale, ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
+import { siteOrigin } from "@/lib/site-origin";
 
 /**
  * Whether the `/[lang]/insights` routes render (#198).
@@ -24,6 +25,35 @@ export function requireInsightsPreview(): void {
 
 export const INSIGHTS_TITLE = "Insights | AI Power Rankings";
 
+/** #198: the channel title of each cadence's feed; the feed and the page head share it. */
+export const INSIGHTS_FEED_TITLES = {
+  weekly: "AI Power Rankings - Weekly Insights",
+  monthly: "AI Power Rankings - Monthly Insights",
+} as const;
+
+/**
+ * The `<link rel="alternate" type="application/rss+xml">` entries for the Insights feeds (#198).
+ *
+ * Why: #198: proposal M5-7 asks for RSS per cadence; a feed reader finds a
+ * feed through the page head. The feeds 404 while the preview is off, so they
+ * are advertised only when it is on.
+ * What: `[]` when `insightsPreviewEnabled(env)` is false. Otherwise the weekly
+ * and monthly feed, each `${siteOrigin()}/${canonicalLocale(lang)}/insights/<cadence>/rss.xml`,
+ * the same per-locale shape as the news feed link (#156).
+ * Test: `tests/unit/insights-sitemap-198.test.ts`.
+ */
+export function insightsFeedLinks(
+  lang: string,
+  env: Record<string, string | undefined> = process.env
+): Array<{ title: string; url: string }> {
+  if (!insightsPreviewEnabled(env)) return [];
+  const base = `${siteOrigin()}/${canonicalLocale(lang)}`;
+  return (["weekly", "monthly"] as const).map((cadence) => ({
+    title: INSIGHTS_FEED_TITLES[cadence],
+    url: `${base}/insights/${cadence}/rss.xml`,
+  }));
+}
+
 /**
  * Metadata for an `/[lang]/insights` page while it is a preview.
  *
@@ -32,9 +62,10 @@ export const INSIGHTS_TITLE = "Insights | AI Power Rankings";
  * `noindex`. The body is English in every locale, so it follows the #156
  * English-only rule (an `/en` canonical, no hreflang).
  * What: absolute `title`, `description`, `robots` noindex/nofollow (also for
- * googleBot), `englishOnlyAlternates(lang, path)` and an `openGraph` whose `url`
- * is that canonical and whose `locale` is `en`.
- * Test: `tests/unit/insights-weekly-198.test.tsx`.
+ * googleBot), `englishOnlyAlternates(lang, path)` with `insightsFeedLinks(lang)`
+ * appended to its RSS types, and an `openGraph` whose `url` is that canonical
+ * and whose `locale` is `en`.
+ * Test: `tests/unit/insights-weekly-198.test.tsx`, `tests/unit/insights-sitemap-198.test.ts`.
  */
 export function insightsPreviewMetadata(
   lang: string,
@@ -42,7 +73,16 @@ export function insightsPreviewMetadata(
   title: string,
   description: string
 ): Metadata {
-  const alternates = englishOnlyAlternates(lang, path);
+  const base = englishOnlyAlternates(lang, path);
+  // #198: the Insights feeds join the site-wide news feed only while the preview is on.
+  const newsFeeds = base.types?.["application/rss+xml"];
+  const alternates = {
+    ...base,
+    types: {
+      ...base.types,
+      "application/rss+xml": [...(Array.isArray(newsFeeds) ? newsFeeds : []), ...insightsFeedLinks(lang)],
+    },
+  };
   return {
     title: { absolute: title },
     description,

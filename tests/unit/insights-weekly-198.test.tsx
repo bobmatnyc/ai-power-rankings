@@ -7,11 +7,11 @@ import { insightsLinksOutsideInsights } from "./insights-198-links";
  * The weekly Insights preview, slice 1 of #198.
  *
  * Why: #198 ships `/insights` and `/insights/weekly/<week>` behind a flag that
- * is off by default, `noindex`, outside the sitemap and unlinked, so the #191
+ * is off by default, `noindex` and unlinked, so the #191
  * redirects stay held. A failed digest read must not look like "no insights yet".
  * What: renders the real hub and permalink pages and their `generateMetadata`
- * with the #181 digest readers replaced by in-memory fixtures, and builds the
- * real sitemap with its database reads stubbed.
+ * with the #181 digest readers replaced by in-memory fixtures. The sitemap
+ * entries are in `tests/unit/insights-sitemap-198.test.ts`.
  * Test: `npx vitest run tests/unit/insights-weekly-198.test.tsx`. No database, no network.
  */
 
@@ -230,16 +230,7 @@ describe("/insights hub (#198)", () => {
   });
 });
 
-describe("Insights stays out of discovery while it is a preview (#198)", () => {
-  it("is absent from the sitemap with the flag on and a digest stored", async () => {
-    const { buildSitemapEntries } = await import("../../lib/sitemap");
-    const entries = await buildSitemapEntries(ORIGIN);
-    expect(entries.length).toBeGreaterThan(0);
-    // The stored week is listed under its #181 permalink, never under /insights.
-    expect(entries.map(({ url }) => url)).toContain(`${ORIGIN}/en/whats-new/weekly/2026-W44`);
-    expect(entries.filter(({ url }) => /\/insights(?:[/?#]|$)/.test(url))).toEqual([]);
-  });
-
+describe("Insights is linked from no other page while it is a preview (#198)", () => {
   it("has no link from any source outside the Insights route and template", () => {
     const { scanned, linking } = insightsLinksOutsideInsights();
     expect(scanned).toBeGreaterThan(0);
