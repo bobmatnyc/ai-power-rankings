@@ -57,3 +57,8 @@ export function insightsPreviewMetadata(
 export function weeklyInsightPath(week: string): string {
   return `/insights/weekly/${week}`;
 }
+
+/** #198: the locale-free path of a monthly Insight; proposal M5-7 names `/insights/monthly/<yyyy-mm>`. */
+export function monthlyInsightPath(period: string): string {
+  return `/insights/monthly/${period}`;
+}

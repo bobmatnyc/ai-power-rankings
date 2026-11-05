@@ -1,8 +1,7 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
-import { join, relative, sep } from "node:path";
 import type { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { insightsLinksOutsideInsights } from "./insights-198-links";
 
 /**
  * The weekly Insights preview, slice 1 of #198.
@@ -206,7 +205,7 @@ describe("/insights hub (#198)", () => {
     repo.listDigests.mockResolvedValue([]);
     const html = await renderHub();
     expect(html).toContain('data-state="empty"');
-    expect(html).toContain("No weekly insights yet");
+    expect(html).toContain("No insights yet");
     expect(html).not.toContain("Latest week");
   });
 
@@ -242,29 +241,8 @@ describe("Insights stays out of discovery while it is a preview (#198)", () => {
   });
 
   it("has no link from any source outside the Insights route and template", () => {
-    const root = join(__dirname, "..", "..");
-    // A quoted "/insights..." path, or one after a template `${...}` segment.
-    const link = /(?:["'`]|\})\/insights(?:["'`/?#])/;
-    const sources = ["app", "components", "lib", "i18n", "contexts", "hooks", "src"].flatMap((dir) =>
-      walk(root, join(root, dir))
-    );
-    expect(sources.length).toBeGreaterThan(0);
-    const linking = sources.filter(
-      (file) =>
-        !file.startsWith("app/[lang]/insights/") &&
-        !file.startsWith("components/insights/") &&
-        link.test(readFileSync(join(root, file), "utf8"))
-    );
+    const { scanned, linking } = insightsLinksOutsideInsights();
+    expect(scanned).toBeGreaterThan(0);
     expect(linking).toEqual([]);
   });
 });
-
-function walk(root: string, dir: string, out: string[] = []): string[] {
-  for (const name of readdirSync(dir)) {
-    if (name.startsWith(".") || name === "node_modules") continue;
-    const path = join(dir, name);
-    if (statSync(path).isDirectory()) walk(root, path, out);
-    else if (/\.(ts|tsx|js|jsx|mjs|md|mdx|json)$/.test(name)) out.push(relative(root, path).split(sep).join("/"));
-  }
-  return out;
-}
