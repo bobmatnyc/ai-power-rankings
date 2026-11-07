@@ -40,7 +40,7 @@
     "test:visual": "playwright test -c tests/visual/playwright.design.config.ts"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.33.0",
+    "@clerk/nextjs": "^6.39.8",
     "@hookform/resolvers": "^5.2.2",
     "@neondatabase/serverless": "^0.10.3",
     "@radix-ui/react-alert-dialog": "^1.2.1",
