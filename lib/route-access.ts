@@ -89,12 +89,40 @@ export function pathForms(raw: string): string[] {
 }
 
 /**
- * Runs a Clerk route matcher on a bare pathname. A matcher built from a
- * pattern list reads only `req.nextUrl.pathname`, so a shim carrying that
- * field avoids `new URL()`, which would normalise the decoded path further.
+ * True for the error Clerk's path matcher throws on a path it cannot decode.
+ * Checked by name, as Clerk itself does, because the class can be bundled
+ * more than once.
  */
-function matchesPath(matcher: (req: NextRequest) => boolean, pathname: string): boolean {
-  return matcher({ nextUrl: { pathname } } as unknown as NextRequest);
+function isMalformedURLError(e: unknown): boolean {
+  return e instanceof Error && e.name === "MalformedURLError";
+}
+
+/**
+ * Runs a Clerk route matcher on one exact pathname form.
+ *
+ * Why: From `@clerk/shared` 3.48 the matcher runs `decodeURI` on the path
+ * before matching. That decodes a form `pathForms` already decoded a second
+ * time, and it throws `MalformedURLError` on a malformed escape.
+ * What: Escapes every `%` as `%25`, so Clerk's `decodeURI` gives back exactly
+ * `pathname` and the matcher sees the form chosen here. A matcher built from a
+ * pattern list reads only `req.nextUrl.pathname`, so the shim avoids
+ * `new URL()`. If Clerk still reports a malformed URL, returns `onMalformed`.
+ * Test: `tests/unit/route-access-encoded-228.test.ts`.
+ */
+function matchesPath(
+  matcher: (req: NextRequest) => boolean,
+  pathname: string,
+  onMalformed: boolean
+): boolean {
+  // #386: Clerk 6.39 decodes inside the matcher; escape `%` so it decodes back to this form. See #228.
+  const shim = { nextUrl: { pathname: pathname.replace(/%/g, "%25") } } as unknown as NextRequest;
+  try {
+    return matcher(shim);
+  } catch (e) {
+    // #386: a path Clerk cannot decode fails closed: protected, never public.
+    if (isMalformedURLError(e)) return onMalformed;
+    throw e;
+  }
 }
 
 /**
@@ -102,11 +130,12 @@ function matchesPath(matcher: (req: NextRequest) => boolean, pathname: string): 
  * #228: protected when the raw OR the once-decoded path is protected (fail
  * closed); public only when the raw path is public, so decoding never widens
  * public access.
+ * #386: a path the matcher reports as malformed classes protected.
  */
 export function routeAccess(req: NextRequest): RouteAccess {
   const forms = pathForms(req.nextUrl.pathname);
-  if (forms.some((pathname) => matchesPath(isProtectedRoute, pathname))) return "protected";
-  if (isPublicRoute(req)) return "public";
+  if (forms.some((pathname) => matchesPath(isProtectedRoute, pathname, true))) return "protected";
+  if (matchesPath(isPublicRoute, forms[0], false)) return "public";
   return "default";
 }
 
