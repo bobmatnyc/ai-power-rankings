@@ -1,3 +1,4 @@
+import { DrizzleQueryError } from "drizzle-orm";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
@@ -68,6 +69,25 @@ import { NewsRepository } from "./news";
 /** The count query answers with this many rows unless a test says otherwise. */
 function countRows(total: number): unknown[][] {
   return [[String(total)]];
+}
+
+// #386: drizzle-orm 0.45 wraps a driver failure in `DrizzleQueryError` and
+// carries the original driver error on `.cause`; before 0.45 the driver error
+// propagated unwrapped, so these reads used to reject with the bare
+// "connection reset" message. The contract a caller relies on is unchanged —
+// the read still throws — but the surfaced error is now the wrapper, so the
+// underlying message has to be read off `.cause`.
+async function expectDriverFailure(run: () => Promise<unknown>): Promise<void> {
+  let caught: unknown;
+  try {
+    await run();
+  } catch (error) {
+    caught = error;
+  }
+  expect(caught).toBeInstanceOf(DrizzleQueryError);
+  const cause = (caught as DrizzleQueryError).cause;
+  expect(cause).toBeInstanceOf(Error);
+  expect((cause as Error).message).toContain("connection reset");
 }
 
 describe("NewsRepository.getPaginatedFiltered (#140)", () => {
@@ -214,23 +234,19 @@ describe("NewsRepository.getPageFiltered (#150)", () => {
     fixture.reset();
   });
 
-  it("throws when the read fails, and so does every read /api/news* composes from it", async () => {
+  it("throws DrizzleQueryError wrapping the driver failure, and so does every read /api/news* composes from it", async () => {
     // The RSS feed reads through getPageFiltered so a failed read becomes a 5xx,
     // not an empty feed. #152: getPaginatedFiltered, countFiltered and
     // getRecentWithin used to swallow the same failure into an empty result,
     // which /api/news and /api/news/recent served as a 200.
+    // #386: drizzle 0.45 surfaces the failure as DrizzleQueryError, so the
+    // "connection reset" the driver raised now lives on `.cause`.
     fixture.state.failWith = new Error("connection reset");
 
-    await expect(new NewsRepository().getPageFiltered({ limit: 50 })).rejects.toThrow(
-      "connection reset"
-    );
-    await expect(new NewsRepository().getPaginatedFiltered({ limit: 50 })).rejects.toThrow(
-      "connection reset"
-    );
-    await expect(new NewsRepository().countFiltered()).rejects.toThrow("connection reset");
-    await expect(
-      new NewsRepository().getRecentWithin({ days: 14, limit: 50 })
-    ).rejects.toThrow("connection reset");
+    await expectDriverFailure(() => new NewsRepository().getPageFiltered({ limit: 50 }));
+    await expectDriverFailure(() => new NewsRepository().getPaginatedFiltered({ limit: 50 }));
+    await expectDriverFailure(() => new NewsRepository().countFiltered());
+    await expectDriverFailure(() => new NewsRepository().getRecentWithin({ days: 14, limit: 50 }));
   });
 
   it("throws when no database is configured instead of returning an empty page", async () => {
@@ -271,8 +287,9 @@ describe("NewsRepository.getPublishedSlugs (#162)", () => {
   it("throws when the read fails or no database is configured, where getAll returns []", async () => {
     // The sitemap reads through getPublishedSlugs so a failed read becomes a 503,
     // not a cached sitemap without articles.
+    // #386: drizzle 0.45 wraps the driver failure in DrizzleQueryError (.cause).
     fixture.state.failWith = new Error("connection reset");
-    await expect(new NewsRepository().getPublishedSlugs()).rejects.toThrow("connection reset");
+    await expectDriverFailure(() => new NewsRepository().getPublishedSlugs());
     await expect(new NewsRepository().getAll()).resolves.toEqual([]);
 
     fixture.reset();
