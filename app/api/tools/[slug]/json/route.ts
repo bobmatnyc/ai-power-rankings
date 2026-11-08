@@ -9,31 +9,11 @@ import { entryRank, matchesTool, rankingEntries } from "@/lib/tools/ranking-entr
 import { loggers } from "@/lib/logger";
 import { describeReadError, readToolLinks, type ToolLinkEntry } from "@/lib/tools/tool-links";
 import { articles, rankingVersions } from "@/lib/db/schema";
+// #269: single shared helper; reads factors from their camelCase stored keys.
+import { deriveCompleteScores } from "@/lib/rankings/derive-complete-scores";
 
 interface RouteParams {
   params: Promise<{ slug: string }>;
-}
-
-/**
- * Derives complete factor scores from partial data using the overall score as a baseline.
- * This ensures all 9 dimensions are present even when some scores are missing.
- * Uses multipliers that reflect typical patterns from algorithm weights.
- */
-function deriveCompleteScores(partialScores: any, overallScore: number) {
-  // If we have an overall score, use it to derive missing dimensions
-  const base = overallScore || partialScores?.overall || 0;
-
-  return {
-    overall: partialScores?.overall || base,
-    agentic_capability: partialScores?.agentic_capability ?? base * 0.90,
-    innovation: partialScores?.innovation ?? base * 0.85,
-    technical_performance: partialScores?.technical_performance ?? base * 0.82,
-    developer_adoption: partialScores?.developer_adoption ?? base * 0.78,
-    market_traction: partialScores?.market_traction ?? base * 0.75,
-    business_sentiment: partialScores?.business_sentiment ?? base * 0.85,
-    development_velocity: partialScores?.development_velocity ?? base * 0.70,
-    platform_resilience: partialScores?.platform_resilience ?? base * 0.72,
-  };
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {

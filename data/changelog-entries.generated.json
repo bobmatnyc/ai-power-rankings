@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-ec2ee34831cd",
+    "version": "Unreleased",
+    "date": "2026-11-08T16:25:25.064Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "ranking",
+    "title": "the public tool and rankings APIs report each tool's real factor scores",
+    "description": "the public tool and rankings APIs report each tool's real factor scores. `deriveCompleteScores` read the seven multi-word factors (`agentic_capability`, `technical_performance`, `developer_adoption`, `market_traction`, `business_sentiment`, `development_velocity`, `platform_resilience`) with snake_case keys from a `factor_scores` object that stores them camelCase (`agenticCapability`, …), so every lookup missed and those factors fell back to `overall × a fixed multiplier`. The helper now reads each factor from its camelCase stored key and keeps the multiplier only for a genuinely absent factor; `innovation` and `overall` are unchanged. The public output keys stay snake_case and `rank`/`position`/`score` are untouched. The two verbatim-duplicated copies (`app/api/tools/[slug]/json/route.ts`, `app/api/rankings/current/route.ts`) are extracted to one shared `lib/rankings/derive-complete-scores.ts`. Tests: `lib/rankings/derive-complete-scores.test.ts` (#269)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-3eb0e79277ca",
     "version": "Unreleased",
     "date": "2026-11-03T20:53:31.000Z",
@@ -244,7 +255,7 @@
   {
     "id": "unreleased-1040517df015",
     "version": "Unreleased",
-    "date": "2026-11-03T23:08:44.000Z",
+    "date": "2026-11-03T23:28:15.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "data",
