@@ -13,21 +13,21 @@ import {
 import { calculateTier, computeRankings } from "./services/ranking-generation.service";
 
 /**
- * #185 PR-2 — kind routing and the staged v8.0 model profile.
+ * #185 PR-2 — kind routing and the active v8.1 model profile (D73: the v8.0 weights).
  *
  * Why: v8 scores each tool with the profile for its `tools.kind`. A wrong
  *   table gives a plausible score, so each test here targets one wrong
  *   implementation: harness weights for every tool, a model on harness
  *   weights, an unknown kind falling back, the legacy set routed per kind, a
  *   model table that does not sum to 1.00, and open-weight carrying weight.
- * What: checks the checked-in v8.0 profiles, `kindRouting()` /
+ * What: checks the checked-in active v8.1 profiles, `kindRouting()` /
  *   `profileRouting()`, and `computeRankings()` handed a routing, on the
  *   synthetic `mixedBoard()` (harness, model and productivity tools; no real data).
  * Test: `npx vitest run lib/scoring-kind-routing.test.ts`
  */
 
 const config = loadCheckedInScoringProfiles();
-const v8 = config.profileSets["v8.0"]!;
+const v8 = config.profileSets["v8.1"]!;
 
 /** D44: technical and adoption 0.18 -> 0.17, the rest as v7.10. */
 const D44_HARNESS: RankingWeightsV76 = {
@@ -61,7 +61,7 @@ beforeEach(() => {
 });
 afterEach(() => vi.restoreAllMocks());
 
-describe("v8.0 model profile, D4b (#185)", () => {
+describe("v8.1 model profile, D4b (#185)", () => {
   it("is exactly the D4b table, sums to 1.00 and is signed off under D9b, not provisional", () => {
     const model = v8.profiles["model"]!;
     expect(model.weights).toEqual(D4B_MODEL);
@@ -77,11 +77,11 @@ describe("v8.0 model profile, D4b (#185)", () => {
 
   it("gives open-weight status no weight: the model table has the eight engine factors only (D2f)", () => {
     expect(Object.keys(v8.profiles["model"]!.weights)).toEqual([...FACTOR_KEYS]);
-    const raw = configJson()["profileSets"]["v8.0"]["profiles"]["model"]["weights"];
+    const raw = configJson()["profileSets"]["v8.1"]["profiles"]["model"]["weights"];
     expect(Object.keys(raw).filter((k) => /open/i.test(k))).toEqual([]);
 
     const weighted = configJson();
-    const weights = weighted["profileSets"]["v8.0"]["profiles"]["model"]["weights"];
+    const weights = weighted["profileSets"]["v8.1"]["profiles"]["model"]["weights"];
     weights["openWeight"] = 0.02;
     weights["developerAdoption"] = 0.08;
     expect(() => parseScoringProfiles(weighted)).toThrow(/unknown factor\(s\): openWeight/);
@@ -92,13 +92,13 @@ describe("v8.0 model profile, D4b (#185)", () => {
     ["sums to 0.99", 0.09],
   ])("the loader refuses a model table that %s", (_label, adoption) => {
     const broken = configJson();
-    broken["profileSets"]["v8.0"]["profiles"]["model"]["weights"]["developerAdoption"] = adoption;
+    broken["profileSets"]["v8.1"]["profiles"]["model"]["weights"]["developerAdoption"] = adoption;
     expect(() => parseScoringProfiles(broken)).toThrow(ScoringProfileError);
   });
 
   it("the loader refuses an empty provisional marker", () => {
     const broken = configJson();
-    broken["profileSets"]["v8.0"]["profiles"]["model"]["provisional"] = " ";
+    broken["profileSets"]["v8.1"]["profiles"]["model"]["provisional"] = " ";
     expect(() => parseScoringProfiles(broken)).toThrow(/provisional must be a non-empty string/);
   });
 
@@ -107,19 +107,19 @@ describe("v8.0 model profile, D4b (#185)", () => {
     expect(v8.profiles["harness"]!.provisional).toBeUndefined();
     expect(v8.profiles["productivity"]!.weights).toEqual(D44_HARNESS);
     expect(v8.profiles["productivity"]!.provisional).toMatch(/Architect decision/);
-    // #185: v8.0 has no other profile.
+    // #185: v8.1, like v8.0, has no other profile.
     expect(Object.keys(v8.profiles).sort()).toEqual(["harness", "model", "productivity"]);
   });
 });
 
 describe("kindRouting / profileRouting (#185)", () => {
-  const routing = profileRouting(config, "v8.0");
+  const routing = profileRouting(config, "v8.1");
 
   it("routes each kind to the profile of the same name", () => {
     expect(routing.route("harness")).toEqual({ profile: "harness", weights: D44_HARNESS });
     expect(routing.route("model")).toEqual({ profile: "model", weights: D4B_MODEL });
     expect(routing.route("productivity")).toEqual({ profile: "productivity", weights: D44_HARNESS });
-    // #185: v8.0 has no other profile, so an other tool is never scored by it.
+    // #185: v8.1, like v8.0, has no other profile, so an other tool is never scored by it.
     expect(() => routing.route("other")).toThrow(/no profile for kind "other"/);
   });
 
@@ -160,7 +160,7 @@ describe("kindRouting / profileRouting (#185)", () => {
 
 describe("computeRankings with kind routing (#185)", () => {
   const tools = mixedBoard();
-  const routing = profileRouting(config, "v8.0");
+  const routing = profileRouting(config, "v8.1");
   /** One tool scored alone with one table: no other tool can affect it. */
   const alone = (i: number, weights: RankingWeightsV76) => computeRankings([tools[i]!], new Map(), FIXTURE_DATE, weights)[0]!.score;
   const weightsFor = (kind: string) => (kind === "model" ? D4B_MODEL : D44_HARNESS);

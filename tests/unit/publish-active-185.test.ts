@@ -9,13 +9,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *   every row as it was and must not fall back to the combined layout or v7.10.
  * What: runs `publishActiveRankings()` and the cron route against the in-memory
  *   Drizzle stand-in, seeded with a current combined v7.10 row and tools of every kind.
- *   With a v8.0-active config (`tests/fixtures/scoring-profiles-v8-active-185.ts`) it
+ *   With a v8.1-active config (`tests/fixtures/scoring-profiles-v8-active-185.ts`) it
  *   checks the rows written, the version, per-kind weights, the tie order and that
  *   no write touches the combined rows. With a v7.10-active config and with a set
  *   missing a list profile it checks the refusal writes nothing; a failed
  *   insert rolls the whole publish back. #185 M3: a committed publish revalidates the
  *   `rankings` tag and the home, rankings and tools layouts and clears the in-memory
- *   rankings entries; a refused or failed publish revalidates nothing. #185: the checked-in active set is v8.0 with no `other` profile, and no
+ *   rankings entries; a refused or failed publish revalidates nothing. #185: the checked-in active set is v8.1 with no `other` profile, and no
  *   publish writes an `other` board.
  * Test: `npx vitest run tests/unit/publish-active-185.test.ts`. No network.
  */
@@ -114,42 +114,42 @@ describe("resolvePublishScoring (#185)", () => {
     expect(() => resolvePublishScoring(legacyActiveConfig())).toThrow(/legacy one-table set/);
   });
 
-  it("resolves the checked-in config to the v8.0 routing and stored version 8.0", () => {
+  it("resolves the checked-in config to the v8.1 routing and stored version 8.1", () => {
     const scoring = resolvePublishScoring(loadCheckedInScoringProfiles());
-    expect(scoring.setId).toBe("v8.0");
-    expect(scoring.algorithmVersion).toBe("8.0");
+    expect(scoring.setId).toBe("v8.1");
+    expect(scoring.algorithmVersion).toBe("8.1");
   });
 
   it("refuses a per-kind set with no profile for a list", () => {
     const raw = v8ActiveRaw();
-    delete raw["profileSets"]["v8.0"]["profiles"]["model"];
+    delete raw["profileSets"]["v8.1"]["profiles"]["model"];
     expect(() => resolvePublishScoring(parseScoringProfiles(raw))).toThrow(/no profile for list\(s\): model/);
   });
 
-  it("resolves a v8.0-active config to the v8.0 routing and stored version 8.0", () => {
+  it("resolves a v8.1-active config to the v8.1 routing and stored version 8.1", () => {
     const scoring = resolvePublishScoring(v8ActiveConfig());
-    expect(scoring.setId).toBe("v8.0");
-    expect(scoring.algorithmVersion).toBe("8.0");
-    expect(scoring.routing.route("model").weights).toEqual(profileWeights(v8ActiveConfig(), "v8.0", "model"));
+    expect(scoring.setId).toBe("v8.1");
+    expect(scoring.algorithmVersion).toBe("8.1");
+    expect(scoring.routing.route("model").weights).toEqual(profileWeights(v8ActiveConfig(), "v8.1", "model"));
   });
 });
 
-describe("publishActiveRankings with v8.0 active (#185)", () => {
+describe("publishActiveRankings with v8.1 active (#185)", () => {
   const publish = () => publishActiveRankings({ now, loadProfiles: v8ActiveConfig });
 
-  it("writes one current 8.0 row per list and never writes or changes a combined row", async () => {
+  it("writes one current 8.1 row per list and never writes or changes a combined row", async () => {
     const before = structuredClone(rowOf("combined", "2026-10"));
     const result = await publish();
 
     expect(result.layout).toBe("per-list");
-    expect(result.algorithmVersion).toBe("8.0");
+    expect(result.algorithmVersion).toBe("8.1");
     expect(result.boards).toEqual([
       { list: "harness", toolCount: 6 },
       { list: "model", toolCount: 3 },
       { list: "productivity", toolCount: 1 },
     ]);
     for (const list of ["harness", "model", "productivity"]) {
-      expect(rowOf(list)).toMatchObject({ isCurrent: true, algorithmVersion: "8.0" });
+      expect(rowOf(list)).toMatchObject({ isCurrent: true, algorithmVersion: "8.1" });
     }
     expect(rowOf("combined", "2026-10")).toEqual(before);
     expect(rowOf("combined")).toBeUndefined();
@@ -163,7 +163,7 @@ describe("publishActiveRankings with v8.0 active (#185)", () => {
     await publish();
     const config = v8ActiveConfig();
     const models = TOOLS.filter((t) => t.kind === "model");
-    const withModel = computeRankings(models, new Map(), now(), profileWeights(config, "v8.0", "model"));
+    const withModel = computeRankings(models, new Map(), now(), profileWeights(config, "v8.1", "model"));
     const withV710 = computeRankings(models, new Map(), now());
     expect(entries("model").map((e) => e.score)).toEqual(withModel.map((e) => e.score));
     expect(entries("model").map((e) => e.score)).not.toEqual(withV710.map((e) => e.score));
@@ -267,11 +267,11 @@ describe("GET /api/cron/regenerate-rankings (#185)", () => {
     const response = await cron();
     const body = await response.json();
     expect(response.status).toBe(200);
-    expect(body.algorithm_version).toBe("8.0");
+    expect(body.algorithm_version).toBe("8.1");
     expect(body.boards.map((b: { list: string }) => b.list)).toEqual(["harness", "model", "productivity"]);
     // The cron publishes the current UTC month; find the row by list.
     const harness = fake.state.rankings.filter((r) => r.list === "harness");
-    expect(harness.map((r) => [r.isCurrent, r.algorithmVersion])).toEqual([[true, "8.0"]]);
+    expect(harness.map((r) => [r.isCurrent, r.algorithmVersion])).toEqual([[true, "8.1"]]);
     expect(fake.state.rankings.find((r) => r.id === "combined-2026-10")?.isCurrent).toBe(true);
   });
 
@@ -292,7 +292,7 @@ describe("no other list under v8 (#185)", () => {
     // The checked-in config itself, with no override: what the cron and the CLI publish.
     const config = loadCheckedInScoringProfiles();
     const active = config.profileSets[config.activeProfileSet]!;
-    expect(config.activeProfileSet).toBe("v8.0");
+    expect(config.activeProfileSet).toBe("v8.1");
     expect(Object.keys(active.profiles).sort()).toEqual(["harness", "model", "productivity"]);
     expect([...RANKING_LISTS]).not.toContain("other");
     expect(() => resolvePublishScoring(config).routing.route("other")).toThrow(/no profile for kind "other"/);
@@ -312,13 +312,13 @@ describe("no other list under v8 (#185)", () => {
 
     // The provisional other profile re-entering the active set is refused (S5).
     const reentered = v8ActiveRaw();
-    reentered["profileSets"]["v8.0"]["profiles"]["other"] = {
-      ...reentered["profileSets"]["v8.0"]["profiles"]["harness"],
+    reentered["profileSets"]["v8.1"]["profiles"]["other"] = {
+      ...reentered["profileSets"]["v8.1"]["profiles"]["harness"],
       provisional: "harness weights, awaiting a decision on the other profile",
     };
     expect(() => parseScoringProfiles(reentered)).toThrow(/holds the provisional profile "other"/);
     // Without the provisional marker it parses, but the publish refuses a profile with no list.
-    delete reentered["profileSets"]["v8.0"]["profiles"]["other"]["provisional"];
+    delete reentered["profileSets"]["v8.1"]["profiles"]["other"]["provisional"];
     expect(() => resolvePublishScoring(parseScoringProfiles(reentered))).toThrow(/profile\(s\) for no list: other/);
   });
 });
