@@ -9,6 +9,7 @@
  */
 
 import { loggers } from '@/lib/logger';
+import { recordCrawlUsage } from './provider-usage'; // #392
 
 /**
  * Search result structure from Brave Search API
@@ -187,6 +188,9 @@ export class BraveSearchService {
         });
         return [];
       }
+
+      // #392: one ledger row per billed request; never throws, so results are unchanged.
+      await recordCrawlUsage({ provider: 'brave', operation: 'search', units: 1 });
 
       const data: BraveApiResponse = await response.json();
 
