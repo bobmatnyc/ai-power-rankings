@@ -1223,8 +1223,8 @@
   {
     "id": "unreleased-a96b998b375b",
     "version": "Unreleased",
-    "date": "2026-11-09T14:18:12.409Z",
-    "dateSource": "build",
+    "date": "2026-11-09T14:18:13.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "ranking",
     "title": "ranking algorithm v7.11",
