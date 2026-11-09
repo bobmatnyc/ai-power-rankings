@@ -108,9 +108,10 @@ async function metricsNotes(slug: string, lang: string) {
 }
 
 describe("models list robots", () => {
-  it.each([0, 9, 12, 50])("is noindex with %i entries when the API reports no metric-row count", async (n) => {
+  // D6e: with no metric-row count the models page is hidden (404), which also keeps it unindexed.
+  it.each([0, 9, 12, 50])("is a 404 with %i entries when the API reports no metric-row count", async (n) => {
     counts["model"] = n;
-    expect(await robotsOf("models")).toEqual(NOINDEX);
+    await expect(robotsOf("models")).rejects.toBe(NOT_FOUND);
   });
 
   // #329: D63 — the boundary is 10 active rows with metrics.
@@ -157,6 +158,7 @@ describe("models list note", () => {
   });
 
   it.each(locales)("renders in %s with that locale's dictionary text", async (lang) => {
+    metricRows["model"] = 1; // D6e: shown from one metric row; the note stays below 10.
     const expected = dictionary(lang).rankings.lists.modelsMetricsPendingNote as string;
     expect(expected.length).toBeGreaterThan(10);
     if (lang !== "en") expect(expected).not.toBe(english);

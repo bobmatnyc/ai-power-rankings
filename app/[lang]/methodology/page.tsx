@@ -4,6 +4,7 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { INDEX_MIN_ENTRIES, listHasProvisionalNote, RANKING_LISTS, rankingListPath } from "@/lib/rankings/lists";
 import { FACTOR_KEYS, loadCheckedInScoringProfiles } from "@/lib/scoring-profiles";
+import { visibleRankingLists } from "@/lib/rankings/model-page-visibility";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 
 /**
@@ -14,13 +15,14 @@ import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
  *   the productivity provisional-weights note and the open-weight rule.
  *   It replaces the English-only v7.6 markdown page.
  * What: the text comes from the `methodologyV8` dictionary block and the list names
- *   from `rankings.lists`. The weight tables are read from the checked-in
+ *   from `rankings.lists`; the list links omit the models page while it is hidden (D6e). The weight tables are read from the checked-in
  *   `config/scoring-profiles.json` (set `METHODOLOGY_PROFILE_SET`), one table per list
  *   in `FACTOR_KEYS` order, so the page cannot drift from the published weights. It
  *   names no tool and shows no rank or score. Metadata: a self canonical and one
  *   hreflang per locale plus x-default (`localizedAlternates()`), `og:locale` the page
  *   locale.
- * Test: `tests/unit/methodology-v8-185.test.tsx`, `tests/unit/seo-canonical-origin.test.ts`.
+ * Test: `tests/unit/methodology-v8-185.test.tsx`, `tests/unit/seo-canonical-origin.test.ts`,
+ *   `tests/unit/model-page-visibility-d6e.test.tsx`.
  */
 
 /** #185: the profile set this page explains. Not exported: a page module exports only Next.js names. */
@@ -69,6 +71,8 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
   const lists = dict.rankings.lists;
   const set = loadCheckedInScoringProfiles().profileSets[METHODOLOGY_PROFILE_SET];
   if (!set) throw new Error(`methodology: no profile set ${METHODOLOGY_PROFILE_SET}`);
+  // D6e: hide model page until model metrics land
+  const linkedLists = await visibleRankingLists();
 
   return (
     <main className="container mx-auto p-4 md:p-8 max-w-4xl" data-methodology-version={version()}>
@@ -79,7 +83,7 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
         <h2>{text.listsHeading}</h2>
         <p>{text.listsBody}</p>
         <ul>
-          {RANKING_LISTS.map((list) => (
+          {linkedLists.map((list) => (
             <li key={list}>
               <Link href={`/${locale}${rankingListPath(list)}`}>{lists[list].title}</Link>
             </li>
