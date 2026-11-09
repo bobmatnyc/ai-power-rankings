@@ -14,10 +14,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  *   productivity only, and that the HTML holds no rank marker. Checks every locale's
  *   `methodologyV8` block is complete and translated, and the German metadata is a
  *   self canonical with hreflang (the locale-wide check is in seo-canonical-origin).
- * Test: `npx vitest run tests/unit/methodology-v8-185.test.tsx`. No database, no network (`fetch` is stubbed).
+ * Test: `npx vitest run tests/unit/methodology-v8-185.test.tsx`. No database, no network
+ *   (`loadCurrentRankings()` is stubbed).
  */
 
 vi.mock("server-only", () => ({}));
+// D6e: the models link shows from one model metric row; the hidden case is in model-page-visibility-d6e.
+vi.mock("../../lib/rankings/current-rankings", async () => {
+  const { currentBoard } = await import("./helpers/current-board");
+  return { loadCurrentRankings: async (list: string) => currentBoard(list, 12, { metricRowCount: 1 }) };
+});
 
 import { locales } from "../../i18n/config";
 import { EXPECTED_DICTIONARY_STRUCTURE } from "../../i18n/expected-structure";
@@ -26,8 +32,6 @@ import { FACTOR_KEYS, loadCheckedInScoringProfiles } from "../../lib/scoring-pro
 beforeEach(() => {
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "warn").mockImplementation(() => {});
-  // D6e: the models link shows from one model metric row; the hidden case is in model-page-visibility-d6e.
-  vi.stubGlobal("fetch", async () => Response.json({ list_meta: { metric_row_count: 1 } }));
 });
 afterEach(() => {
   vi.unstubAllGlobals();

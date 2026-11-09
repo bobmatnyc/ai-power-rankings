@@ -6,8 +6,11 @@ import { getDictionary } from "@/i18n/get-dictionary";
 import { getCurrentYear } from "@/lib/get-current-year";
 import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
-// Force dynamic rendering to prevent build timeout
-export const dynamic = "force-dynamic";
+// #368: ISR, not force-dynamic; the list loads client-side. Rendered per locale on first request.
+export const revalidate = 60;
+export function generateStaticParams(): Array<{ lang: string }> {
+  return [];
+}
 
 interface PageProps {
   params: Promise<{ lang: string }>;

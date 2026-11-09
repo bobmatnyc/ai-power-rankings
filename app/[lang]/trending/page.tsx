@@ -29,14 +29,11 @@ import { getDictionary } from "@/i18n/get-dictionary";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { TrendingPageContent } from "./trending-content";
 
-export const dynamic = "force-dynamic";
+// #368: static per locale, not force-dynamic; the client component reads `?months=` from the URL.
 
 interface PageProps {
   params: Promise<{
     lang: Locale;
-  }>;
-  searchParams: Promise<{
-    months?: string;
   }>;
 }
 
@@ -152,20 +149,10 @@ function TrendingPageSkeleton() {
  * The actual interactive content is delegated to TrendingPageContent
  * which is a Client Component for better separation of concerns.
  */
-export default async function TrendingPage({ params, searchParams }: PageProps) {
+export default async function TrendingPage({ params }: PageProps) {
   const { lang } = await params;
-  const { months } = await searchParams;
 
   const dict = await getDictionary(lang as Locale);
-
-  // Validate and parse the months parameter
-  let timeRange: number | "all" = "all";
-  if (months && months !== "all") {
-    const parsed = parseInt(months, 10);
-    if (!Number.isNaN(parsed) && parsed > 0 && parsed <= 24) {
-      timeRange = parsed;
-    }
-  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -184,7 +171,7 @@ export default async function TrendingPage({ params, searchParams }: PageProps) 
 
           {/* Interactive Content */}
           <Suspense fallback={<TrendingPageSkeleton />}>
-            <TrendingPageContent lang={lang as Locale} initialTimeRange={timeRange} dictionary={dict} />
+            <TrendingPageContent lang={lang as Locale} dictionary={dict} />
           </Suspense>
 
           {/* Additional Information */}

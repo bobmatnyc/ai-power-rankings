@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 import { unstable_doesMiddlewareMatch } from "next/experimental/testing/server";
 import { config } from "../../middleware";
 import { type RouteAccess, routeAccess } from "../../lib/route-access";
+import { runMiddleware } from "./helpers/clerk-middleware-harness";
 
 /**
  * Percent-encoded path classification for #228.
@@ -20,13 +21,10 @@ import { type RouteAccess, routeAccess } from "../../lib/route-access";
 
 vi.mock("@clerk/nextjs/server", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@clerk/nextjs/server")>();
-  return { ...actual, clerkMiddleware: (handler: unknown) => handler };
+  // #368: the real middleware calls Clerk's wrapper only for needsClerk() paths.
+  const { fakeClerkMiddleware } = await import("./helpers/clerk-middleware-harness");
+  return { ...actual, clerkMiddleware: fakeClerkMiddleware };
 });
-
-type Handler = (
-  auth: () => Promise<{ userId: string | null; sessionId: string | null }>,
-  req: NextRequest
-) => Promise<Response>;
 
 const anonymousAuth = vi.fn(async () => ({ userId: null, sessionId: null }));
 
@@ -35,8 +33,7 @@ function classify(path: string): RouteAccess {
 }
 
 async function run(path: string): Promise<Response> {
-  const { default: middleware } = await import("../../middleware");
-  return (middleware as unknown as Handler)(anonymousAuth, new NextRequest(`http://localhost${path}`));
+  return runMiddleware(anonymousAuth, new NextRequest(`http://localhost${path}`));
 }
 
 function passedThrough(res: Response): boolean {

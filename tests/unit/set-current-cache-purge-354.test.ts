@@ -19,8 +19,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  *   after the write commits, purge nothing when the write fails, and report a
  *   failed purge in a 200 body as `cache_purge`. Without the `'/'` layout
  *   call, the purge still marks stale a tag that Next's own `getImplicitTags`
- *   gives the home, rankings and tool pages in every locale, and the rankings
- *   page fetch carries the `rankings` tag.
+ *   gives the home, rankings and tool pages in every locale. #368: the rankings
+ *   page reads the database with no fetch, so its page purge is the whole purge.
  * Test: `npx vitest run tests/unit/set-current-cache-purge-354.test.ts`.
  */
 
@@ -43,7 +43,7 @@ import { RankingListPage } from "../../app/[lang]/rankings/ranking-list-page";
 import { POST as consolidatedPost } from "../../app/api/admin/rankings/route";
 import { POST as setCurrentPost } from "../../app/api/admin/rankings/set-current/route";
 import { locales } from "../../i18n/config";
-import { invalidateRankingsCache } from "../../lib/cache/invalidation.service";
+import { invalidateRankingsCache, rankingsPagePaths } from "../../lib/cache/invalidation.service";
 import { RankingsRepository } from "../../lib/db/repositories/rankings.repository";
 import { loggers } from "../../lib/logger";
 import { createFakeRankingsDb, rankingRow } from "../../lib/services/__fixtures__/fake-rankings-db";
@@ -187,10 +187,12 @@ describe("invalidateRankingsCache paths (#354)", () => {
   });
 });
 
-describe("rankings page fetch (#354)", () => {
-  it("carries the rankings tag so revalidateTag('rankings') reaches it", async () => {
-    const fetchSpy = vi.fn<(url: string, init?: RequestInit & { next?: { tags?: string[] } }) => Promise<Response>>(
-      async () => Response.json({ rankings: [], list_meta: null })
+describe("rankings page data (#354, #368)", () => {
+  // #368: the page reads the board from the database, so no fetch-cache entry outlives the
+  // page's own ISR entry; the route-pattern purge above (`/[lang]/rankings` layout) reaches it.
+  it("makes no fetch whose cache entry could outlive the page purge", async () => {
+    const fetchSpy = vi.fn<(url: string, init?: RequestInit) => Promise<Response>>(async () =>
+      Response.json({ rankings: [], list_meta: null })
     );
     vi.stubGlobal("fetch", fetchSpy);
     try {
@@ -199,8 +201,7 @@ describe("rankings page fetch (#354)", () => {
       vi.unstubAllGlobals();
     }
 
-    expect(fetchSpy).toHaveBeenCalled();
-    const init = fetchSpy.mock.calls[0]?.[1];
-    expect(init?.next?.tags).toContain("rankings");
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(rankingsPagePaths()).toContainEqual({ path: "/[lang]/rankings", type: "layout" });
   });
 });

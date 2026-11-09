@@ -27,6 +27,11 @@ import {
 // Enable ISR: Semi-static tool pages that update occasionally
 // Revalidate every 30 minutes - tool details update when rankings change or data is refreshed
 export const revalidate = 1800; // 30 minutes
+// #368: without static params the route was dynamic and never cached. Empty: every slug renders
+// on first request (dynamicParams stays true) and an unknown slug still 404s.
+export function generateStaticParams(): Array<{ lang: string; slug: string }> {
+  return [];
+}
 
 interface PageProps {
   params: Promise<{ lang: Locale; slug: string }>;

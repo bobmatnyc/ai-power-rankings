@@ -1210,20 +1210,20 @@
     "changeType": "feature"
   },
   {
-    "id": "unreleased-c0b44017e023",
+    "id": "unreleased-7784d26eb94f",
     "version": "Unreleased",
-    "date": "2026-11-09T14:16:33.000Z",
+    "date": "2026-11-09T19:19:37.000Z",
     "dateSource": "commit",
     "section": "Changed",
     "scope": "rankings",
     "title": "the models board page is hidden until model metrics land (owner ruling D6e)",
-    "description": "the models board page is hidden until model metrics land (owner ruling D6e). While `/api/rankings?list=model` reports a `metric_row_count` of 0, `/[lang]/rankings/models` is a 404 in every locale and the list switcher on the rankings pages and the list links on `/methodology` omit it. The check reads the count through the list page's cached fetch of that API (300 s, tag `rankings`), so the page and links return by themselves once a model metric row is published. A failed read or a missing count hides them and logs the error. The harness and productivity pages, the API and the sitemap are unchanged (`lib/rankings/model-page-visibility.ts`). Tests: `tests/unit/model-page-visibility-d6e.test.tsx` (D6e)",
+    "description": "the models board page is hidden until model metrics land (owner ruling D6e). While the model board's `metric_row_count` is 0, `/[lang]/rankings/models` is a 404 in every locale and the list switcher on the rankings pages and the list links on `/methodology` omit it. The check reads the count from the database through the same board read the ranking pages use (`loadListBoard`), with no HTTP request, so the page and links return by themselves once a model metric row is published and the page regenerates (300 s). A missing or malformed count hides the page and links and logs the error. A thrown read hides the links but fails the models page render, so ISR keeps the last good page (#369). `/methodology` is now ISR (300 s) instead of static, because its links read the database. The harness and productivity pages, the API and the sitemap are unchanged (`lib/rankings/model-page-visibility.ts`). Tests: `tests/unit/model-page-visibility-d6e.test.tsx` (D6e)",
     "changeType": "improvement"
   },
   {
     "id": "unreleased-a96b998b375b",
     "version": "Unreleased",
-    "date": "2026-11-09T14:18:13.000Z",
+    "date": "2026-11-09T14:24:45.000Z",
     "dateSource": "commit",
     "section": "Changed",
     "scope": "ranking",

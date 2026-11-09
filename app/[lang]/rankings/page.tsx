@@ -12,9 +12,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return rankingListMetadata(lang, DEFAULT_RANKING_LIST);
 }
 
-// Use dynamic rendering with optimized queries
-export const dynamic = "force-dynamic";
-// Consider ISR in the future: export const revalidate = 300;
+// #368: ISR, rendered per locale on first request (not at build, where the database is unavailable).
+export const revalidate = 300;
+export function generateStaticParams(): Array<{ lang: string }> {
+  return [];
+}
 
 export default async function RankingsPage({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang } = await params;

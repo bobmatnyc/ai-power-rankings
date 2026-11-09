@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { isValidElement, type ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { locales } from "../../i18n/config";
+import { currentBoard } from "./helpers/current-board";
 
 /**
  * The models list is noindex and says its order is provisional until 10 or more active rows
@@ -9,8 +10,8 @@ import { locales } from "../../i18n/config";
  *
  * Why: a models list ordered without metrics is not a ranking of quality. Search engines
  *   must not index it, and a reader must be told.
- * What: stubs `/api/rankings` (claiming the list indexable at 10 or more entries, so the page
- *   must enforce the metric rule itself), calls the real models-page `generateMetadata` and
+ * What: stubs `loadCurrentRankings()` with a board per list and its metric-row count
+ *   (#368: the page reads it directly), calls the real models-page `generateMetadata` and
  *   page component, and checks `robots`, the rendered note in every locale against its
  *   dictionary, `rankingListMeta()`, and the sitemap, on both sides of the 10-row metric
  *   boundary. The harness and productivity pages keep the D53 rule (10 or more entries are indexed).
@@ -39,27 +40,18 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
   return { ToolsRepository, toolsRepository: new ToolsRepository() };
 });
 
-const counts: Record<string, number> = {};
-// #329: the API's count of active rows with metrics per list; absent means the API sent none.
-const metricRows: Record<string, number | undefined> = {};
-const fetchStub = async (input: string | URL | Request) => {
-  const url = new URL(String(input instanceof Request ? input.url : input));
-  const list = url.searchParams.get("list") ?? "harness";
-  const n = counts[list] ?? 0;
-  const rankings = Array.from({ length: n }, (_, i) => ({ rank: i + 1, tool: { id: `t${i}`, name: `Tool ${i}` } }));
-  // Always claims indexable at 10 or more, so the models rule must come from the page.
-  const m = metricRows[list];
-  return Response.json({
-    rankings,
-    list,
-    list_meta: {
-      list,
-      entry_count: n,
-      indexable: n >= 10,
-      tier_scheme: n >= 10 ? "standard" : "thirds",
-      ...(m === undefined ? {} : { metric_row_count: m }),
-    },
-  });
+// #368: the pages read the board from loadCurrentRankings(), no longer from a /api/rankings fetch.
+const { counts, metricRows } = vi.hoisted(() => ({
+  counts: {} as Record<string, number>,
+  // #329: active rows with metrics per list; absent means the read counted none.
+  metricRows: {} as Record<string, number | undefined>,
+}));
+vi.mock("../../lib/rankings/current-rankings", () => ({
+  loadCurrentRankings: async (list: string) =>
+    currentBoard(list, counts[list] ?? 0, { metricRowCount: metricRows[list] ?? 0 }),
+}));
+const fetchStub = async () => {
+  throw new Error("the ranking pages must not fetch");
 };
 
 const params = (p: Record<string, string>) => ({ params: Promise.resolve(p) }) as never;
