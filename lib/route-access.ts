@@ -184,8 +184,9 @@ export function needsClerk(req: NextRequest): boolean {
   }
   if (forms.some((pathname) => pathname.toLowerCase().startsWith("/api/"))) return true;
   if (forms.some((pathname) => /^\/trpc(\/|$)/i.test(pathname))) return true;
+  // #388: a path Clerk cannot decode still goes through Clerk (fail closed).
   return forms.some(
-    (pathname) => matchesPath(isProtectedRoute, pathname) || matchesPath(isClerkPage, pathname)
+    (pathname) => matchesPath(isProtectedRoute, pathname, true) || matchesPath(isClerkPage, pathname, true)
   );
 }
 
