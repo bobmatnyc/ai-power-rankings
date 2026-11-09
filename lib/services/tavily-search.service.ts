@@ -10,6 +10,7 @@
 
 import { loggers } from '@/lib/logger';
 import { ProviderApiError } from './provider-api-error'; // #367
+import { recordCrawlUsage, tavilyCredits } from './provider-usage'; // #392
 
 /**
  * Which discovery pass produced a result.
@@ -333,6 +334,12 @@ export class TavilySearchService {
     }
 
     const data: TavilyApiResponse = await response.json();
+    // #392: one ledger row per billed search; never throws, so the crawl is unaffected.
+    await recordCrawlUsage({
+      provider: 'tavily',
+      operation: 'search',
+      units: tavilyCredits({ operation: 'search', depth: searchDepth, body: data }),
+    });
 
     return data.results.map((result) => this.mapToSearchResult(result, discoveredVia));
   }

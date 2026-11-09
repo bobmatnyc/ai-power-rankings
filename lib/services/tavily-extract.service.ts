@@ -10,6 +10,7 @@
 
 import { loggers } from '@/lib/logger';
 import { ProviderApiError } from './provider-api-error'; // #367
+import { recordCrawlUsage, tavilyCredits } from './provider-usage'; // #392
 
 /**
  * Result from Tavily Extract API for a single URL
@@ -125,7 +126,8 @@ export class TavilyExtractService {
           chunks_per_source,
           include_images: options.include_images ?? false,
           include_favicon: options.include_favicon ?? false,
-          include_usage: options.include_usage ?? false,
+          // #392: ask for `usage.credits` so the ledger records Tavily's own count.
+          include_usage: options.include_usage ?? true,
         };
 
         // Add optional query if provided
@@ -153,6 +155,17 @@ export class TavilyExtractService {
         }
 
         const data: TavilyExtractResponse = await response.json();
+        // #392: one ledger row per billed extract attempt; never throws into the retry loop.
+        await recordCrawlUsage({
+          provider: 'tavily',
+          operation: 'extract',
+          units: tavilyCredits({
+            operation: 'extract',
+            depth: extract_depth,
+            body: data,
+            extractedUrls: (data.results ?? []).filter((r) => r.raw_content).length,
+          }),
+        });
 
         // Check if extraction succeeded
         if (data.results && data.results.length > 0 && data.results[0].raw_content) {
