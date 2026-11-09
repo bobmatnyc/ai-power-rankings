@@ -15,6 +15,7 @@
  */
 
 import { ProviderApiError } from "./provider-api-error"; // #367
+import { jinaTokens, recordCrawlUsage } from "./provider-usage"; // #392
 
 /**
  * #367: the `name` r.jina.ai puts in its JSON error body when OUR key is rejected.
@@ -153,6 +154,8 @@ export class JinaReaderService {
         }
 
         const data = await response.json();
+        // #392: one ledger row per billed read; never throws, so the fetch result is unchanged.
+        await recordCrawlUsage({ provider: "jina", operation: "read", units: jinaTokens(data) });
 
         // Extract content and metadata from Jina response
         const content = this.extractContent(data);
