@@ -15,7 +15,8 @@ import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
  *   the productivity provisional-weights note and the open-weight rule.
  *   It replaces the English-only v7.6 markdown page.
  * What: the text comes from the `methodologyV8` dictionary block and the list names
- *   from `rankings.lists`; the list links omit the models page while it is hidden (D6e). The weight tables are read from the checked-in
+ *   from `rankings.lists`; the list links omit the models page while it is hidden, or when
+ *   the visibility read throws (D6e). The weight tables are read from the checked-in
  *   `config/scoring-profiles.json` (set `METHODOLOGY_PROFILE_SET`), one table per list
  *   in `FACTOR_KEYS` order, so the page cannot drift from the published weights. It
  *   names no tool and shows no rank or score. Metadata: a self canonical and one
@@ -28,11 +29,17 @@ import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 /** #185: the profile set this page explains. Not exported: a page module exports only Next.js names. */
 const METHODOLOGY_PROFILE_SET = "v8.0";
 
-// Force dynamic rendering to avoid Clerk SSG issues (kept from the v7.6 page).
-export const dynamic = "force-dynamic";
+// #368: no force-dynamic; Clerk no longer runs on this page, and the body is repo content.
 
 interface PageProps {
   params: Promise<{ lang: string }>;
+}
+
+// D6e (#401): the models link reads the model-visibility gate from the database, which is
+// unavailable at build, so the page is ISR: no prerendered locale, regenerated every 300 s.
+export const revalidate = 300;
+export function generateStaticParams(): Array<{ lang: string }> {
+  return [];
 }
 
 const version = (): string => METHODOLOGY_PROFILE_SET.replace(/^v/, "");

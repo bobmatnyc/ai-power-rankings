@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { isLocale, locales } from "../../i18n/config";
 import { formatHeaderDate } from "../../lib/rankings/header";
 import { URL_TABLE_ROWS, resolveTableRedirect } from "../../lib/seo/url-table";
+import { runMiddleware } from "./helpers/clerk-middleware-harness";
 
 /**
  * #340: a `[lang]` segment that is not a supported locale answers 404.
@@ -35,7 +36,9 @@ vi.mock("../../components/layout/client-layout", () => ({
 vi.mock("../../components/analytics/GoogleAnalytics", () => ({ GoogleAnalytics: () => null }));
 vi.mock("@clerk/nextjs/server", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@clerk/nextjs/server")>();
-  return { ...actual, clerkMiddleware: (handler: unknown) => handler };
+  // #368: the real middleware calls Clerk's wrapper only for needsClerk() paths.
+  const { fakeClerkMiddleware } = await import("./helpers/clerk-middleware-harness");
+  return { ...actual, clerkMiddleware: fakeClerkMiddleware };
 });
 
 async function renderLayout(lang: string, children: ReactNode = <p>page body</p>): Promise<ReactElement> {
@@ -62,15 +65,9 @@ describe("[lang] layout rejects a segment that is not a supported locale (#340)"
   });
 });
 
-type Handler = (
-  auth: () => Promise<{ userId: string | null; sessionId: string | null }>,
-  req: NextRequest
-) => Promise<Response>;
-
 /** The path Next.js renders for `source` after the real middleware: its rewrite target, else itself. */
 async function servedPath(source: string): Promise<{ status: number; location: string | null; path: string }> {
-  const { default: middleware } = await import("../../middleware");
-  const res = await (middleware as unknown as Handler)(
+  const res = await runMiddleware(
     async () => ({ userId: null, sessionId: null }),
     new NextRequest(`http://localhost${source}`)
   );

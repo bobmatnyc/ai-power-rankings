@@ -323,27 +323,26 @@ export class NewsRepository {
   }
 
   /**
-   * Get news article by slug
+   * The active article with `slug`, or null when no such row exists.
+   * #368: a missing connection or a failed query throws, never null, so the
+   * ISR article page keeps its last good render instead of caching a 404.
    */
   async getBySlug(slug: string) {
     const db = getDb();
-    if (!db) return null;
-
-    try {
-      const results = await db
-        .select()
-        .from(articles)
-        .where(and(
-          eq(articles.slug, slug),
-          eq(articles.status, "active")
-        ))
-        .limit(1);
-
-      return results[0] ? this.mapArticleToNews(results[0]) : null;
-    } catch (error) {
-      console.error("Error fetching news by slug:", error);
-      return null;
+    if (!db) {
+      throw new Error("Database connection unavailable");
     }
+
+    const results = await db
+      .select()
+      .from(articles)
+      .where(and(
+        eq(articles.slug, slug),
+        eq(articles.status, "active")
+      ))
+      .limit(1);
+
+    return results[0] ? this.mapArticleToNews(results[0]) : null;
   }
 
   /**

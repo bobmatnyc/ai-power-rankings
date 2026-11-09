@@ -7,7 +7,7 @@ import { contentLoader } from "@/lib/content-loader";
 import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 import { MarkdownAboutContent } from "./markdown-about-content";
 
-export const dynamic = "force-dynamic";
+// #368: no force-dynamic; the body is repo content, so the page is static per locale.
 
 interface PageProps {
   params: Promise<{ lang: string }>;
