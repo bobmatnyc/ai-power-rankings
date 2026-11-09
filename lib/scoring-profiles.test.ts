@@ -3,6 +3,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
+import checkedInJson from "../config/scoring-profiles.json";
+
 import { ALGORITHM_V76_WEIGHTS } from "./ranking-algorithm-v76";
 import {
   FACTOR_KEYS,
@@ -66,10 +68,19 @@ const harness = (c: Json) => c["profileSets"]["v8.0"]["profiles"]["harness"];
 describe("checked-in config/scoring-profiles.json (#185)", () => {
   const config = loadCheckedInScoringProfiles();
 
-  it("selects v8.0 as the active set, marked active, with no other profile (#185)", () => {
-    expect(config.activeProfileSet).toBe("v8.0");
-    expect(config.profileSets["v8.0"]!.status).toBe("active");
-    expect(Object.hasOwn(config.profileSets["v8.0"]!.profiles, "other")).toBe(false);
+  it("selects v8.1 as the active set, marked active, with no other profile (#185, D73)", () => {
+    expect(config.activeProfileSet).toBe("v8.1");
+    expect(config.profileSets["v8.1"]!.status).toBe("active");
+    expect(Object.hasOwn(config.profileSets["v8.1"]!.profiles, "other")).toBe(false);
+  });
+
+  // D73: v8.1 labels the company-name bonus removal (#313); its weights are v8.0's, unchanged.
+  it("gives v8.1 the v8.0 profiles unchanged and keeps v8.0 defined and frozen (D73)", () => {
+    const raw = checkedInJson["profileSets"];
+    expect(raw["v8.1"]["profiles"]).toEqual(raw["v8.0"]["profiles"]);
+    expect(config.profileSets["v8.1"]!.profiles).toEqual(config.profileSets["v8.0"]!.profiles);
+    expect(config.profileSets["v8.0"]!.frozen).toBe(true);
+    expect(config.profileSets["v8.1"]!.frozen).toBe(false);
   });
 
   it("freezes v7.10 as legacy with the published weights and their real 1.02 sum", () => {

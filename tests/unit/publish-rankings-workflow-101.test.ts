@@ -8,7 +8,7 @@
  * secret.
  * What: reads the workflow as text and checks: `workflow_dispatch` is the only
  * trigger; `confirm` is required and compared with `publish-v${EXPECTED_VERSION}`
- * (#185: the workflow's EXPECTED_VERSION is 8.0 after v8 activation); concurrency
+ * (#185: the workflow's EXPECTED_VERSION is 8.1, D73); concurrency
  * never cancels a running publish; permissions are `contents: read`; the secret
  * appears only as an `env:` value and is sent with `--header @-`; there is no
  * `set -x`; curl runs with `--retry 0` and no retry loop. It also extracts
@@ -16,8 +16,8 @@
  * first on PATH and a dummy secret: each HTTP outcome maps to its exit code,
  * the header arrives on stdin with `--proto =https`, and an origin other than
  * aipowerranking.com exits 1 before any curl call. #185: the confirm step also
- * runs under bash: publish-v8.0 passes, publish-v7.10 and an unset version stop it;
- * a 200 with 8.0 exits 0 and a 200 with any other version exits 4 with the
+ * runs under bash: publish-v8.1 passes, publish-v7.10 and an unset version stop it;
+ * a 200 with 8.1 exits 0 and a 200 with any other version exits 4 with the
  * "row was replaced" message.
  * Test: `npx vitest run tests/unit/publish-rankings-workflow-101.test.ts`. It
  * fails where the workflow file does not exist. Needs `bash` and `jq` on PATH.
@@ -65,12 +65,12 @@ describe("publish-rankings workflow (#101)", () => {
   });
 
   // #185: was "refuses anything but publish-v7.10"; the confirm string now follows EXPECTED_VERSION.
-  it("requires the confirm input and refuses anything but publish-v<EXPECTED_VERSION>, which is 8.0", () => {
+  it("requires the confirm input and refuses anything but publish-v<EXPECTED_VERSION>, which is 8.1", () => {
     const text = codeLines(load()).join("\n");
     expect(text).toMatch(/\n {6}confirm:\n(?: {8}.*\n)*? {8}required: true/);
     expect(text).toContain("CONFIRM: ${{ inputs.confirm }}");
     expect(text).toMatch(/if \[ "\$CONFIRM" != "publish-v\$\{EXPECTED_VERSION\}" \]; then/);
-    expect(expectedVersion()).toBe("8.0");
+    expect(expectedVersion()).toBe("8.1");
   });
 
   it("never cancels a running publish and reads contents only", () => {
@@ -246,26 +246,26 @@ describe("publish-rankings publish step under a stub curl (#101)", () => {
     expect(publishAt).toBeGreaterThan(confirmAt);
   });
 
-  // #185: was "200 with 7.10 exits 0"; a v8 publish reports 8.0.
-  it("200 with 8.0 exits 0 and prints only the three fields", () => {
+  // #185: was "200 with 7.10 exits 0"; a v8 publish reports 8.1.
+  it("200 with 8.1 exits 0 and prints only the three fields", () => {
     const run = runPublish({
       status: "200",
-      body: { period: "2026-11", algorithm_version: "8.0", tool_count: 51, top_movers: [{ slug: "LEAK" }] },
+      body: { period: "2026-11", algorithm_version: "8.1", tool_count: 51, top_movers: [{ slug: "LEAK" }] },
     });
     expect(run.code).toBe(0);
     expectOneSafeCall(run);
-    expect(run.output).toContain("algorithm_version: 8.0");
-    expect(run.output).toContain("Result: published v8.0");
+    expect(run.output).toContain("algorithm_version: 8.1");
+    expect(run.output).toContain("Result: published v8.1");
     expect(run.output).not.toContain("LEAK");
   });
 
   // #311: the publish has committed before the purge, so a failed purge warns and keeps exit 0.
-  it("200 with 8.0 and a failed cache purge exits 0 with a warning and no error text", () => {
+  it("200 with 8.1 and a failed cache purge exits 0 with a warning and no error text", () => {
     const run = runPublish({
       status: "200",
       body: {
         period: "2026-11",
-        algorithm_version: "8.0",
+        algorithm_version: "8.1",
         tool_count: 51,
         cache_purge: { success: false, errors: ["LEAK purge detail"] },
       },
@@ -276,10 +276,10 @@ describe("publish-rankings publish step under a stub curl (#101)", () => {
     expect(run.output).not.toContain("LEAK");
   });
 
-  it("200 with 8.0 and a successful cache purge reports it with no warning", () => {
+  it("200 with 8.1 and a successful cache purge reports it with no warning", () => {
     const run = runPublish({
       status: "200",
-      body: { period: "2026-11", algorithm_version: "8.0", tool_count: 51, cache_purge: { success: true, errors: [] } },
+      body: { period: "2026-11", algorithm_version: "8.1", tool_count: 51, cache_purge: { success: true, errors: [] } },
     });
     expect(run.code).toBe(0);
     expect(run.output).toContain("cache_purge: ok");
@@ -287,7 +287,8 @@ describe("publish-rankings publish step under a stub curl (#101)", () => {
   });
 
   // #185: was "200 with 7.9"; 7.10 is now the mismatch a stale deploy would report.
-  it.each(["7.10", "7.9"])("200 with %s exits 4 and says the row WAS published", (version) => {
+  // D73: a deploy without the v8.1 set would report 8.0.
+  it.each(["8.0", "7.10", "7.9"])("200 with %s exits 4 and says the row WAS published", (version) => {
     const run = runPublish({
       status: "200",
       body: { period: "2026-11", algorithm_version: version, tool_count: 51 },
@@ -295,18 +296,18 @@ describe("publish-rankings publish step under a stub curl (#101)", () => {
     expect(run.code).toBe(4);
     expectOneSafeCall(run);
     expect(run.output).toContain(
-      `PUBLISHED with algorithm_version ${version}, not v8.0. The current row was replaced. Do not re-dispatch; report to Architect.`
+      `PUBLISHED with algorithm_version ${version}, not v8.1. The current row was replaced. Do not re-dispatch; report to Architect.`
     );
   });
 
-  it("the confirm step passes publish-v8.0 and stops publish-v7.10, an empty value and an unset version", () => {
-    expect(runConfirm("publish-v8.0").code).toBe(0);
-    for (const confirm of ["publish-v7.10", "", "publish-v8.0 "]) {
+  it("the confirm step passes publish-v8.1 and stops publish-v8.0, publish-v7.10, an empty value and an unset version", () => {
+    expect(runConfirm("publish-v8.1").code).toBe(0);
+    for (const confirm of ["publish-v8.0", "publish-v7.10", "", "publish-v8.1 "]) {
       const run = runConfirm(confirm);
       expect(run.code, confirm).toBe(1);
-      expect(run.output).toContain("confirm must equal publish-v8.0; nothing was published");
+      expect(run.output).toContain("confirm must equal publish-v8.1; nothing was published");
     }
-    expect(runConfirm("publish-v8.0", null).code).not.toBe(0);
+    expect(runConfirm("publish-v8.1", null).code).not.toBe(0);
   });
 
   it("401 exits 2", () => {
@@ -341,7 +342,7 @@ describe("publish-rankings publish step under a stub curl (#101)", () => {
     "http://aipowerranking.com",
     "https://aipowerranking.com/other",
   ])("origin %s exits 1 with zero curl calls", (origin) => {
-    const run = runPublish({ status: "200", body: { algorithm_version: "8.0" }, origin });
+    const run = runPublish({ status: "200", body: { algorithm_version: "8.1" }, origin });
     expect(run.code).toBe(1);
     expect(run.calls).toHaveLength(0);
     expect(run.output).not.toContain(DUMMY_SECRET);

@@ -27,8 +27,8 @@ import {
  *   Replaced: "no publish-path module reads the profiles" becomes "the cron and the CLI
  *   publish only through `publishActiveRankings()`, and only that module reads the
  *   profiles"; "the active set is still v7.10" becomes "the checked-in active set is
- *   v8.0 with no `other` profile, and the publish resolves it" (#185: the switch is the
- *   one config point, `activeProfileSet`; v8.0 drops `other`); "one
+ *   v8.1 with no `other` profile, and the publish resolves it" (#185: the switch is the
+ *   one config point, `activeProfileSet`; v8.0 drops `other`; D73: v8.1 copies v8.0); "one
  *   `computeRankings()` call with no scoring argument"
  *   becomes "two calls: the v7.10 one and the per-list routing one in tie order".
  * Test: `npx vitest run lib/scoring-profiles.activation-185.test.ts`
@@ -44,8 +44,8 @@ const IMPORTS_ROUTING = /(from|import\()\s*["'][^"']*scoring-kind-routing["']/;
 
 describe("combined layout still v7.10 (#185, kept from PR-1)", () => {
   it("default computeRankings still produces the recorded v7.10 rows and version", () => {
-    expect(RANKING_ALGORITHM_VERSION).toBe("7.10");
-    expect(golden.saveSnapshotCalls[0]!.algorithmVersion).toBe("7.10");
+    expect(RANKING_ALGORITHM_VERSION).toBe("7.11");
+    expect(golden.saveSnapshotCalls[0]!.algorithmVersion).toBe("7.11");
     expect(computeRankings(GOLDEN_TOOLS, previous(), new Date(GOLDEN_NOW))).toEqual(goldenRows);
   });
 
@@ -98,12 +98,12 @@ describe("publish path activated (#185 PR-3, replaces the PR-1/PR-2 inert checks
     }
   );
 
-  it("the checked-in active set is v8.0 without the other profile, and the publish path resolves it", () => {
-    // #185: the switch to v8.0 is `activeProfileSet`; v8.0 dropped `other`.
-    expect(config.activeProfileSet).toBe("v8.0");
-    expect(Object.hasOwn(config.profileSets["v8.0"]!.profiles, "other")).toBe(false);
+  it("the checked-in active set is v8.1 without the other profile, and the publish path resolves it", () => {
+    // #185: the switch is `activeProfileSet`; v8.0 dropped `other`. D73: v8.1 keeps the v8.0 profiles.
+    expect(config.activeProfileSet).toBe("v8.1");
+    expect(Object.hasOwn(config.profileSets["v8.1"]!.profiles, "other")).toBe(false);
     const scoring = resolvePublishScoring(config);
-    expect(scoring.algorithmVersion).toBe("8.0");
+    expect(scoring.algorithmVersion).toBe("8.1");
     expect(() => scoring.routing.route("other")).toThrow(ScoringProfileError);
     // The legacy set, if named again, is still refused.
     expect(() => resolvePublishScoring({ ...config, activeProfileSet: "v7.10" })).toThrow(/legacy one-table set/);

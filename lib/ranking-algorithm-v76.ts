@@ -42,11 +42,16 @@ import {
  * v7.10 also counts `language_support` / `llm_providers` by list item, not by
  * string length, and never throws on a malformed technical leaf (#101).
  *
+ * Bumped v7.10 → v7.11 (De4): the company-name bonus is removed from
+ * calculateCompanyBacking, so a tool's company or parent-company name adds no
+ * score. Weights, curves and every other factor are unchanged.
+ *
  * NOTE: existing v76 content slugs (e.g. `algorithm-v76-november-2025-rankings`)
  * are historical references and intentionally keep their v7.6 naming.
  */
 // #101: technical/business info-path fold changes scores, so the version moves.
-export const ALGORITHM_VERSION = "v7.10";
+// De4: removing the company-name bonus changes scores, so it moves again (v7.11).
+export const ALGORITHM_VERSION = "v7.11";
 
 /**
  * Blend weight for Terminal-Bench when BOTH benchmarks are present on a tool.
@@ -436,8 +441,6 @@ function extractCapabilityScore(text: string): number {
  * Helper function to calculate company backing score
  */
 function calculateCompanyBacking(metrics: ToolMetricsV76): number {
-  // #241: an object/number/`true` company threw on `.includes`; it reads as absent.
-  const company = readCompany(metrics.info);
   // Coerce at read time: these can arrive as human-written strings
   // (e.g. Devin's "$575M+ total raised"), which previously read as 0.
   const funding = parseNumericOr(metrics.info?.metrics?.funding);
@@ -446,11 +449,7 @@ function calculateCompanyBacking(metrics: ToolMetricsV76): number {
 
   let score = 0;
 
-  // Major tech companies
-  const majorCompanies = ["Google", "Microsoft", "Meta", "Amazon", "GitHub", "Anthropic", "OpenAI"];
-  if (majorCompanies.some((c) => company.includes(c))) {
-    score += 20;
-  }
+  // De4: no bonus for a big-name vendor or parent company; the company name is not a score input.
 
   // Funding indicates serious backing
   if (funding >= 100000000) score += 15; // $100M+
