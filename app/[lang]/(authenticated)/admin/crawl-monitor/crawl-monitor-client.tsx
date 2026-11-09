@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import CrawlBalanceSection from "./crawl-balance-section";
 import CrawlSpendSection from "./crawl-spend-section";
 
 const usd = (n: number | null) => (n === null ? "—" : `$${n.toFixed(4)}`);
@@ -207,6 +208,9 @@ export default function CrawlMonitorClient({ lang }: { lang: string }) {
 
           {/* #393: per-provider spend from the usage ledger, loaded from its own admin route. */}
           <CrawlSpendSection reloadKey={reloadKey} />
+
+          {/* #394: provider-reported usage next to the ledger, from its own admin route. */}
+          <CrawlBalanceSection reloadKey={reloadKey} />
 
           <div className="grid gap-6 lg:grid-cols-3">
             <Card className="lg:col-span-2">

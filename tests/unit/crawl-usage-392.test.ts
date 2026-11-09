@@ -210,14 +210,23 @@ describe("every crawl provider call site records usage", () => {
       .map((file) => path.relative(ROOT, file))
       .sort();
 
+    // #394: the balance cross-check reads Tavily's `/usage`, which Tavily does not bill, so it
+    // writes no ledger row. It is exempt only while that is the one crawl endpoint it names.
+    const UNBILLED = "lib/crawl-monitor/balances.ts";
+    const unbilledText = readFileSync(path.join(ROOT, UNBILLED), "utf8");
+    expect(unbilledText.match(/api\.tavily\.com\/\w*|r\.jina\.ai|api\.search\.brave\.com\/res\//g)).toEqual([
+      "api.tavily.com/usage",
+    ]);
+
     // The known call sites; a new one must be added here and instrumented.
     expect(callers).toEqual([
+      UNBILLED,
       "lib/services/brave-search.service.ts",
       "lib/services/jina-reader.service.ts",
       "lib/services/tavily-extract.service.ts",
       "lib/services/tavily-search.service.ts",
     ]);
-    for (const file of callers) {
+    for (const file of callers.filter((f) => f !== UNBILLED)) {
       expect(readFileSync(path.join(ROOT, file), "utf8"), file).toMatch(/recordCrawlUsage\(\{/);
     }
   });
