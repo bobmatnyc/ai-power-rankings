@@ -18,9 +18,9 @@ import {
   listHasProvisionalNote,
   type RankingList,
   type RankingListMeta,
-  RANKING_LISTS,
   rankingListPath,
 } from "@/lib/rankings/lists";
+import { visibleRankingLists } from "@/lib/rankings/model-page-visibility";
 import { rankingMethodAnswer } from "@/lib/rankings/method-answer";
 import { createJsonLdScript, generateBreadcrumbSchema, generateRankingFAQSchema } from "@/lib/schema";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
@@ -39,7 +39,7 @@ import { siteOrigin } from "@/lib/site-origin";
  *   rows carrying metrics (#329, D63; it then also shows the metrics-pending note). An unknown entry count (a non-OK or thrown read,
  *   or a response without `list_meta`) is noindex as well, on every list including
  *   `/rankings`: a thin list must never render indexable. `RankingListPage`
- *   renders the list navigation, the D54 provisional note for productivity, the
+ *   renders the list navigation (D6e: without the models link while it is hidden), the D54 provisional note for productivity, the
  *   D53 short-list note, and the grid seeded with the list's rows.
  *   The rankings fetch keeps `getUrl()`, which must reach this deployment's own API
  *   on previews (#153); the default list keeps the unqualified `/api/rankings` URL.
@@ -181,7 +181,11 @@ export async function rankingListMetadata(lang: string, list: RankingList): Prom
 /** One list's ranking page body (#186). */
 export async function RankingListPage({ lang, list }: { lang: string; list: RankingList }): Promise<React.JSX.Element> {
   const dict = await getDictionary(lang as Locale);
-  const { rankings: initialRankings, meta, header } = await fetchListBoard(list, "page");
+  const [{ rankings: initialRankings, meta, header }, navLists] = await Promise.all([
+    fetchListBoard(list, "page"),
+    // D6e: hide model page until model metrics land
+    visibleRankingLists(),
+  ]);
   const listText = dict.rankings.lists;
   const locale = canonicalLocale(lang);
 
@@ -217,9 +221,9 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
       />
 
       <main className="px-3 md:px-6 py-8 max-w-7xl mx-auto">
-        {/* #186: one page per list; the navigation names all three. */}
+        {/* #186: one page per list; the navigation names every visible list (D6e). */}
         <nav aria-label={listText.navLabel} className="mb-6 flex flex-wrap gap-2" data-ranking-list={list}>
-          {RANKING_LISTS.map((item) => (
+          {navLists.map((item) => (
             <Link
               key={item}
               href={`/${locale}${rankingListPath(item)}`}

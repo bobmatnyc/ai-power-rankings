@@ -54,9 +54,17 @@ const fetchMock = vi.fn(async (input: string | URL | Request) => {
   return Response.json({
     rankings,
     list,
-    list_meta: { list, entry_count: n, indexable: n >= 10, tier_scheme: n >= 10 ? "standard" : "thirds" },
+    // D6e: one model metric row, so the models page is shown (the hidden case is in model-page-visibility-d6e).
+    list_meta: {
+      list,
+      entry_count: n,
+      indexable: n >= 10,
+      tier_scheme: n >= 10 ? "standard" : "thirds",
+      metric_row_count: list === "model" ? 1 : 0,
+    },
   });
 });
+const defaultFetch = fetchMock.getMockImplementation()!;
 
 const params = (p: Record<string, string>) => ({ params: Promise.resolve(p) }) as never;
 
@@ -155,6 +163,8 @@ describe("list page metadata (#186)", () => {
 
     it.each(arms)("on /rankings/models after %s", async (_label, arrange) => {
       counts["model"] = 3;
+      // D6e: the visibility read succeeds first; the board read under test then fails.
+      fetchMock.mockImplementationOnce(defaultFetch);
       arrange();
       expect((await listMetadata("en", "models")).robots).toEqual(NOINDEX);
     });
