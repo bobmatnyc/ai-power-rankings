@@ -30,7 +30,8 @@ const PAGES: Array<[string, number | null]> = [
   ["whats-new/[period]/page.tsx", 1800],
   ["whats-new/weekly/[week]/page.tsx", 1800],
   ["about/page.tsx", null],
-  // D6e (#401): methodology reads the model-visibility gate from the DB, so it is ISR (revalidate 300), not static.
+  // D6e (#401): methodology reads the model-visibility gate from the DB, so it is ISR (revalidate 300).
+  ["methodology/page.tsx", 300],
   ["privacy/page.tsx", null],
   ["terms/page.tsx", null],
   ["trending/page.tsx", null],
@@ -62,6 +63,7 @@ const DB_PAGES = [
   "whats-new/page.tsx",
   "whats-new/[period]/page.tsx",
   "whats-new/weekly/[week]/page.tsx",
+  "methodology/page.tsx",
 ];
 
 describe("#368: database pages are never prerendered at build", () => {
