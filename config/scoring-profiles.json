@@ -1,7 +1,7 @@
 {
-  "$comment": "#185: scoring profile sets, read by lib/scoring-profiles.ts. #185 PR-3: the publish path (lib/rankings/publish-active.ts) scores each list with the set activeProfileSet names, and refuses a legacy set; activeProfileSet is the one switch to v8.0. #185: activeProfileSet names v8.0, which holds no other profile, so no other list is scored or published. Weights are fractions. A set with status legacy is frozen, has the one profile all for every tool, and may declare a total other than 1.00; every other set routes each tool to the profile named after its tools.kind and must declare 1.00. A profile with provisional set awaits the decision it names. #186: publicNote true marks a provisional profile whose list page carries a public note; the active set may hold a provisional profile only when it is productivity with publicNote true.",
+  "$comment": "#185: scoring profile sets, read by lib/scoring-profiles.ts. #185 PR-3: the publish path (lib/rankings/publish-active.ts) scores each list with the set activeProfileSet names, and refuses a legacy set; activeProfileSet is the one switch; it names v8.1 (D73). #185: the active set holds no other profile, so no other list is scored or published. v8.0 is frozen: it scored the 2026-11 boards, and v8.1 copies its weights unchanged. Weights are fractions. A set with status legacy is frozen, has the one profile all for every tool, and may declare a total other than 1.00; every other set routes each tool to the profile named after its tools.kind and must declare 1.00. A profile with provisional set awaits the decision it names. #186: publicNote true marks a provisional profile whose list page carries a public note; the active set may hold a provisional profile only when it is productivity with publicNote true.",
   "schemaVersion": 1,
-  "activeProfileSet": "v8.0",
+  "activeProfileSet": "v8.1",
   "profileSets": {
     "v7.10": {
       "label": "v7.10",
@@ -27,8 +27,57 @@
     "v8.0": {
       "label": "v8.0",
       "status": "active",
+      "frozen": true,
+      "description": "Published v8.0 profiles (the 2026-11 per-list boards), frozen; superseded by v8.1 (D73), which keeps these weights and drops the company-name bonus in engine code. Routed by tools.kind. harness: technical and adoption each 0.18 -> 0.17, other factors unchanged, sum 1.00. model: its own weights. productivity: the harness weights, provisional, with a public note. No other profile. Kept so its published rows stay explained.",
+      "profiles": {
+        "harness": {
+          "declaredTotal": 1,
+          "weights": {
+            "agenticCapability": 0.12,
+            "innovation": 0.1,
+            "technicalPerformance": 0.17,
+            "developerAdoption": 0.17,
+            "marketTraction": 0.12,
+            "businessSentiment": 0.12,
+            "developmentVelocity": 0.12,
+            "platformResilience": 0.08
+          }
+        },
+        "model": {
+          "declaredTotal": 1,
+          "weights": {
+            "agenticCapability": 0.18,
+            "innovation": 0.1,
+            "technicalPerformance": 0.22,
+            "developerAdoption": 0.1,
+            "marketTraction": 0.1,
+            "businessSentiment": 0.12,
+            "developmentVelocity": 0.1,
+            "platformResilience": 0.08
+          }
+        },
+        "productivity": {
+          "declaredTotal": 1,
+          "provisional": "D44 harness weights, pending an Architect decision on the productivity profile",
+          "publicNote": true,
+          "weights": {
+            "agenticCapability": 0.12,
+            "innovation": 0.1,
+            "technicalPerformance": 0.17,
+            "developerAdoption": 0.17,
+            "marketTraction": 0.12,
+            "businessSentiment": 0.12,
+            "developmentVelocity": 0.12,
+            "platformResilience": 0.08
+          }
+        }
+      }
+    },
+    "v8.1": {
+      "label": "v8.1",
+      "status": "active",
       "frozen": false,
-      "description": "Active v8 profiles, routed by tools.kind. harness: technical and adoption each 0.18 -> 0.17, other factors unchanged, sum 1.00. model: its own weights, approved for the active set. productivity: the harness weights, provisional, with a public note. No other profile: v8.0 drops it, so a tool of kind other is ranked in no list. Open-weight status is not a factor. Selected by activeProfileSet for the per-list publish.",
+      "description": "Active v8 profiles, routed by tools.kind; weights and profiles identical to v8.0. v8.1 is the company-name bonus removal in engine code (De4, #313; D73). harness: technical and adoption each 0.17, other factors as v7.10, sum 1.00. model: its own weights, approved for the active set. productivity: the harness weights, provisional, with a public note. No other profile, so a tool of kind other is ranked in no list. Open-weight status is not a factor. Selected by activeProfileSet for the per-list publish.",
       "profiles": {
         "harness": {
           "declaredTotal": 1,
