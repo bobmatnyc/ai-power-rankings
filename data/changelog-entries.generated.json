@@ -825,6 +825,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-a1ee35e04fd4",
+    "version": "Unreleased",
+    "date": "2026-11-09T22:04:38.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "admin",
+    "title": "crawl monitor spend section",
+    "description": "crawl monitor spend section. The admin crawl monitor gains \"Spend by provider (estimated)\": today, this month and all time (UTC), in total and per provider (OpenRouter, Tavily, Jina, Brave), from the `provider_usage_events` ledger, read through the new admin-only `GET /api/admin/crawl-monitor/spend` (401/403 before any read, `Cache-Control: no-store` on every response). A call's cost is the provider-reported cost where present, else the stored env-price estimate. A call with no cost is shown as \"not priced\", never as $0: a bucket with no priced call has a null cost, and every sum states how many calls it leaves out. Per provider it shows calls, billed units and whether the env unit price is set (a flag only; no env name or value). Read-only; no migration. Tests: `tests/unit/crawl-spend-393.test.ts` (#393)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-a40be3d85ffb",
     "version": "Unreleased",
     "date": "2026-11-03T21:08:33.000Z",
@@ -1212,7 +1223,7 @@
   {
     "id": "unreleased-7784d26eb94f",
     "version": "Unreleased",
-    "date": "2026-11-09T19:19:37.000Z",
+    "date": "2026-11-09T21:16:58.000Z",
     "dateSource": "commit",
     "section": "Changed",
     "scope": "rankings",
