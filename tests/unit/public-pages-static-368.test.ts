@@ -30,7 +30,7 @@ const PAGES: Array<[string, number | null]> = [
   ["whats-new/[period]/page.tsx", 1800],
   ["whats-new/weekly/[week]/page.tsx", 1800],
   ["about/page.tsx", null],
-  ["methodology/page.tsx", null],
+  // D6e (#401): methodology reads the model-visibility gate from the DB, so it is ISR (revalidate 300), not static.
   ["privacy/page.tsx", null],
   ["terms/page.tsx", null],
   ["trending/page.tsx", null],

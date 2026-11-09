@@ -1,5 +1,5 @@
-import { getUrl } from "@/lib/get-url";
 import { loggers } from "@/lib/logger";
+import { loadListBoard } from "@/lib/rankings/list-board";
 import { RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
 
 /**
@@ -8,35 +8,22 @@ import { RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
  * Why: owner ruling D6e hides the Model page and every link to it until model metrics land.
  *   The page must come back by itself once the board carries a metric row, with no code
  *   change or redeploy, so the gate reads live data rather than a flag.
- * What: `isModelPageVisible()` reads `metric_row_count` from `/api/rankings?list=model`, the
- *   count the API already exposes (#329), through the same Next data-cache entry the list
- *   page's own fetch uses (same URL, revalidated every 300 s, tagged `rankings`). It is
- *   true only for an integer count above 0. A non-OK response, a missing or malformed count,
- *   or a thrown read logs and answers false: fail closed. `isRankingListVisible()` and
- *   `visibleRankingLists()` apply it to the model list only; the other lists are always
- *   visible and cost no read.
+ * What: `isModelPageVisible()` reads `meta.metric_row_count` from `loadListBoard("model")`,
+ *   the database read the ranking pages use (#368); nothing fetches over HTTP. It is true
+ *   only for an integer count above 0. A thrown read, or a missing or malformed count, logs
+ *   once and answers false: fail closed. `isRankingListVisible()` and `visibleRankingLists()`
+ *   apply it to the model list only; the other lists are always visible and cost no read.
+ *   Links and route differ on a thrown read (#369): links (list switcher, methodology) just
+ *   drop the models entry, while the `/rankings/models` route reads the board itself before
+ *   asking this gate, so a thrown read fails that render and ISR keeps the last good page.
  * Test: `tests/unit/model-page-visibility-d6e.test.tsx`.
  */
 
-/** The model board's `/api/rankings` URL, as `fetchListBoard` in the list page builds it. */
-function modelBoardUrl(): string {
-  return `${getUrl()}/api/rankings?list=model`;
-}
-
-/** D6e: true only when the API reports one or more model metric rows; false on any error. */
+/** D6e: true only when the model board has one or more metric rows; false on any error. */
 export async function isModelPageVisible(): Promise<boolean> {
-  const isDev = process.env["NODE_ENV"] === "development";
   try {
-    const response = await fetch(modelBoardUrl(), {
-      // "rankings" is CACHE_TAGS.RANKINGS; importing that module starts a cleanup timer.
-      next: { revalidate: isDev ? 0 : 300, tags: ["rankings"] },
-    });
-    if (!response.ok) {
-      loggers.ranking.error("D6e: model board read failed; model page hidden", { status: response.status });
-      return false;
-    }
-    const body = (await response.json()) as { list_meta?: { metric_row_count?: unknown } } | null;
-    const count = body?.list_meta?.metric_row_count;
+    const { meta } = await loadListBoard("model");
+    const count: unknown = meta?.metric_row_count;
     if (typeof count !== "number" || !Number.isInteger(count) || count < 0) {
       loggers.ranking.error("D6e: model board has no metric_row_count; model page hidden", { count });
       return false;
