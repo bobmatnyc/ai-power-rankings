@@ -37,7 +37,13 @@ afterEach(() => {
 });
 
 describe("middleware 401 for anonymous admin API requests", () => {
-  it.each(["/api/admin/crawl-monitor/overview", "/api/admin/crawl-monitor/runs", "/api/admin/automated-ingestion"])(
+  // #393: the spend route sits under the same protected prefix.
+  it.each([
+    "/api/admin/crawl-monitor/overview",
+    "/api/admin/crawl-monitor/runs",
+    "/api/admin/crawl-monitor/spend",
+    "/api/admin/automated-ingestion",
+  ])(
     "%s answers 401 with Cache-Control: no-store",
     async (path) => {
       const res = await run(path);

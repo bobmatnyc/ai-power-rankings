@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import CrawlSpendSection from "./crawl-spend-section";
 
 const usd = (n: number | null) => (n === null ? "—" : `$${n.toFixed(4)}`);
 const when = (iso: string | null) => (iso ? `${iso.replace("T", " ").slice(0, 16)} UTC` : "—");
@@ -103,10 +104,12 @@ export default function CrawlMonitorClient({ lang }: { lang: string }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openRun, setOpenRun] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setReloadKey((k) => k + 1);
     try {
       const [o, r] = await Promise.all([
         getJson<CrawlMonitorOverview>("/api/admin/crawl-monitor/overview"),
@@ -186,7 +189,8 @@ export default function CrawlMonitorClient({ lang }: { lang: string }) {
               </CardTitle>
               <CardDescription>
                 Estimated, not billed: the sum of each ingestion run&apos;s stored estimate. It covers the
-                quality assessor and a flat per-article charge; search and reader providers are not included.
+                quality assessor and a flat per-article charge; search and reader providers are in Spend by
+                provider below.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 md:grid-cols-4">
@@ -200,6 +204,9 @@ export default function CrawlMonitorClient({ lang }: { lang: string }) {
               />
             </CardContent>
           </Card>
+
+          {/* #393: per-provider spend from the usage ledger, loaded from its own admin route. */}
+          <CrawlSpendSection reloadKey={reloadKey} />
 
           <div className="grid gap-6 lg:grid-cols-3">
             <Card className="lg:col-span-2">

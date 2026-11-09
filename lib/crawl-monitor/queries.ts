@@ -12,11 +12,12 @@
  *   the shaping it delegates to is tested directly there.
  */
 
-import { desc, eq, and, type SQL } from "drizzle-orm";
+import { desc, eq, and, sql, type SQL } from "drizzle-orm";
 import type { getDb } from "@/lib/db/connection";
 import {
   automatedIngestionRuns,
   monthlySummaries,
+  providerUsageEvents,
   stateOfAiSummaries,
 } from "@/lib/db/schema";
 import {
@@ -32,6 +33,7 @@ import {
   summaryJobStatus,
   toCrawlRunView,
 } from "./aggregate";
+import { type CrawlSpendSummary, type SpendDayRow, summarizeProviderSpend } from "./spend";
 
 export type Db = NonNullable<ReturnType<typeof getDb>>;
 
@@ -132,4 +134,34 @@ export async function loadCrawlMonitorRuns(
     .orderBy(desc(automatedIngestionRuns.createdAt))
     .limit(options.limit);
   return rows.map(toCrawlRunView);
+}
+
+// #393: the ledger has one row per paid call, so it is grouped in SQL to one row per
+// provider per UTC day; the windowing and the null-cost handling run in ./spend.
+const usage = providerUsageEvents;
+const rowCost = sql`coalesce(${usage.reportedCostUsd}, ${usage.estimatedCostUsd})`;
+const utcDay = sql<string>`to_char(${usage.createdAt} at time zone 'UTC', 'YYYY-MM-DD')`;
+
+/**
+ * Why: the spend section needs per-provider cost without reading every ledger row (#393).
+ * What: one read-only `GROUP BY provider, UTC day` select over `provider_usage_events`:
+ *   calls, calls with a cost (reported, else estimated), calls with a reported cost,
+ *   the cost sum (null when no call has one) and the billed units (`units`, else
+ *   OpenRouter's input + output tokens), shaped by `summarizeProviderSpend`.
+ * Test: `tests/unit/crawl-spend-393.test.ts` runs it on PGlite with the 0029 table.
+ */
+export async function loadCrawlSpend(db: Db, now: Date): Promise<CrawlSpendSummary> {
+  const rows: SpendDayRow[] = await db
+    .select({
+      provider: usage.provider,
+      day: utcDay,
+      calls: sql<string>`count(*)`,
+      pricedCalls: sql<string>`count(${rowCost})`,
+      reportedCalls: sql<string>`count(${usage.reportedCostUsd})`,
+      costUsd: sql<string | null>`sum(${rowCost})`,
+      units: sql<string | null>`sum(coalesce(${usage.units}, ${usage.inputTokens} + ${usage.outputTokens}))`,
+    })
+    .from(usage)
+    .groupBy(usage.provider, utcDay);
+  return summarizeProviderSpend(rows, now);
 }
