@@ -15,7 +15,8 @@ import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
  *   the productivity provisional-weights note and the open-weight rule.
  *   It replaces the English-only v7.6 markdown page.
  * What: the text comes from the `methodologyV8` dictionary block and the list names
- *   from `rankings.lists`; the list links omit the models page while it is hidden (D6e). The weight tables are read from the checked-in
+ *   from `rankings.lists`; the list links omit the models page while it is hidden, or when
+ *   the visibility read throws (D6e). The weight tables are read from the checked-in
  *   `config/scoring-profiles.json` (set `METHODOLOGY_PROFILE_SET`), one table per list
  *   in `FACTOR_KEYS` order, so the page cannot drift from the published weights. It
  *   names no tool and shows no rank or score. Metadata: a self canonical and one
@@ -34,9 +35,11 @@ interface PageProps {
   params: Promise<{ lang: string }>;
 }
 
-// #368: prerender the main locales like about/privacy/terms, so the route stays static.
-export async function generateStaticParams() {
-  return [{ lang: "en" }, { lang: "de" }, { lang: "ja" }];
+// D6e (#401): the models link reads the model-visibility gate from the database, which is
+// unavailable at build, so the page is ISR: no prerendered locale, regenerated every 300 s.
+export const revalidate = 300;
+export function generateStaticParams(): Array<{ lang: string }> {
+  return [];
 }
 
 const version = (): string => METHODOLOGY_PROFILE_SET.replace(/^v/, "");

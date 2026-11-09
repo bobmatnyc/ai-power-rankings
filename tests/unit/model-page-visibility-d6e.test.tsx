@@ -2,16 +2,19 @@ import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { locales } from "../../i18n/config";
+import { rankingListMeta } from "../../lib/rankings/lists";
 
 /**
  * D6e: the models page and its links are hidden until the model board has metric rows.
  *
  * Why: owner ruling D6e hides the Model page and every link to it until model metrics land,
- *   and restores both automatically once `/api/rankings?list=model` reports a metric row.
- * What: stubs `fetch` with an `/api/rankings` response whose model `metric_row_count` is set
- *   per test (or a failed read), then checks the helper, the `/rankings/models` route
- *   (metadata and page) in every locale, the list switcher on the other list pages, and the
- *   methodology page links, on both sides of 0 rows and on the error paths.
+ *   and restores both automatically once the model board carries a metric row.
+ * What: stubs the database read `loadListBoard()` with a board whose model
+ *   `metric_row_count` is set per test (or missing, malformed, or a thrown read), then
+ *   checks the helper, the `/rankings/models` route (metadata and page) in every locale,
+ *   the list switcher on the list pages, and the methodology page links, on both sides of
+ *   0 rows and on the error paths. A thrown read hides the links but fails the route's
+ *   render (#369), so ISR keeps the last good page. Any `fetch` fails the test.
  * Test: `npx vitest run tests/unit/model-page-visibility-d6e.test.tsx`. No database, no network.
  */
 
@@ -25,29 +28,38 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
-/** The model board's metric-row count the stubbed API reports; undefined omits it. */
-let modelMetricRows: number | undefined;
-const boardFetch = async (input: string | URL | Request) => {
-  const url = new URL(String(input instanceof Request ? input.url : input));
-  const list = url.searchParams.get("list") ?? "harness";
+/** The model board's metric-row count the stubbed read reports; undefined omits it. */
+let modelMetricRows: unknown;
+const { loadListBoard } = vi.hoisted(() => ({ loadListBoard: vi.fn() }));
+vi.mock("../../lib/rankings/list-board", () => ({ loadListBoard }));
+const boardFor = async (list: "harness" | "model" | "productivity") => {
   const rankings = Array.from({ length: 12 }, (_, i) => ({ rank: i + 1, tool: { id: `t${i}`, name: `Tool ${i}` } }));
-  const count = list === "model" ? modelMetricRows : 0;
-  return Response.json({
-    rankings,
-    list,
-    list_meta: { list, entry_count: 12, indexable: true, tier_scheme: "standard", ...(count === undefined ? {} : { metric_row_count: count }) },
-  });
+  const meta: Record<string, unknown> = { ...rankingListMeta(list, 12, 0) };
+  if (list === "model") {
+    if (modelMetricRows === undefined) delete meta["metric_row_count"];
+    else meta["metric_row_count"] = modelMetricRows;
+  }
+  return { rankings, meta, header: { version: "8.0", publishedAt: "2026-10-01T00:00:00.000Z" } };
 };
-const fetchMock = vi.fn(boardFetch);
+const DB_ERROR = new TypeError("connection failed");
+/** The model board read throws; the other lists still read. */
+const modelReadThrows = () =>
+  loadListBoard.mockImplementation(async (list: "harness" | "model" | "productivity") => {
+    if (list === "model") throw DB_ERROR;
+    return boardFor(list);
+  });
+const fetchMock = vi.fn(async () => {
+  throw new Error("the D6e gate must not fetch");
+});
 
 const params = (p: Record<string, string>) => ({ params: Promise.resolve(p) }) as never;
 let logError: ReturnType<typeof vi.fn>;
 
 beforeEach(async () => {
-  vi.stubEnv("VERCEL_URL", "preview.example.test");
   vi.stubGlobal("fetch", fetchMock);
-  fetchMock.mockReset();
-  fetchMock.mockImplementation(boardFetch);
+  fetchMock.mockClear();
+  loadListBoard.mockReset();
+  loadListBoard.mockImplementation(boardFor);
   modelMetricRows = 0;
   vi.spyOn(console, "log").mockImplementation(() => {});
   vi.spyOn(console, "warn").mockImplementation(() => {});
@@ -56,17 +68,18 @@ beforeEach(async () => {
   vi.spyOn(loggers.ranking, "error").mockImplementation(logError as never);
 });
 afterEach(() => {
-  vi.unstubAllEnvs();
+  expect(fetchMock).not.toHaveBeenCalled();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
 vi.setConfig({ testTimeout: 60_000 });
 
-const failures: Array<[string, () => void]> = [
-  ["a thrown read", () => fetchMock.mockImplementation(async () => Promise.reject(new TypeError("fetch failed")))],
-  ["a non-OK response", () => fetchMock.mockImplementation(async () => new Response("down", { status: 503 }))],
-  ["a missing count", () => void (modelMetricRows = undefined)],
-  ["a malformed count", () => fetchMock.mockImplementation(async () => Response.json({ list_meta: { metric_row_count: "3" } }))],
+/** Reads that answer, but with no usable count: the gate hides the page. */
+const badCounts: Array<[string, unknown]> = [
+  ["a missing count", undefined],
+  ["a malformed count", "3"],
+  ["a negative count", -1],
+  ["a non-integer count", 1.5],
 ];
 
 describe("isModelPageVisible (D6e)", () => {
@@ -77,22 +90,30 @@ describe("isModelPageVisible (D6e)", () => {
     expect(await isModelPageVisible()).toBe(true);
     modelMetricRows = 51;
     expect(await isModelPageVisible()).toBe(true);
-    expect(String(fetchMock.mock.calls[0]?.[0])).toBe("https://preview.example.test/api/rankings?list=model");
+    expect(loadListBoard.mock.calls.every(([list]) => list === "model")).toBe(true);
+    expect(logError).not.toHaveBeenCalled();
   });
 
-  it.each(failures)("fails closed and logs after %s", async (_label, arrange) => {
-    modelMetricRows = 5;
-    arrange();
-    const { isModelPageVisible } = await import("../../lib/rankings/model-page-visibility");
-    expect(await isModelPageVisible()).toBe(false);
-    expect(logError).toHaveBeenCalledTimes(1);
-  });
+  it.each([["a thrown read", null] as [string, unknown], ...badCounts])(
+    "fails closed and logs once after %s",
+    async (label, count) => {
+      if (label === "a thrown read") {
+        modelMetricRows = 5;
+        modelReadThrows();
+      } else {
+        modelMetricRows = count;
+      }
+      const { isModelPageVisible } = await import("../../lib/rankings/model-page-visibility");
+      expect(await isModelPageVisible()).toBe(false);
+      expect(logError).toHaveBeenCalledTimes(1);
+    }
+  );
 
   it("gates only the model list: harness and productivity are visible without a read", async () => {
     const { isRankingListVisible, visibleRankingLists } = await import("../../lib/rankings/model-page-visibility");
     expect(await isRankingListVisible("harness")).toBe(true);
     expect(await isRankingListVisible("productivity")).toBe(true);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(loadListBoard).not.toHaveBeenCalled();
     expect(await visibleRankingLists()).toEqual(["harness", "productivity"]);
     modelMetricRows = 1;
     expect(await visibleRankingLists()).toEqual(["harness", "model", "productivity"]);
@@ -110,11 +131,22 @@ describe("/rankings/models route (D6e)", () => {
     await expect(mod.default(params({ lang, list: "models" }))).rejects.toBe(NOT_FOUND);
   });
 
-  it.each(failures)("is a 404 after %s", async (_label, arrange) => {
-    modelMetricRows = 5;
-    arrange();
+  it.each(badCounts)("is a 404 in every locale after %s (metadata and page)", async (_label, count) => {
+    modelMetricRows = count;
     const mod = await route();
-    await expect(mod.default(params({ lang: "en", list: "models" }))).rejects.toBe(NOT_FOUND);
+    for (const lang of locales) {
+      await expect(mod.generateMetadata(params({ lang, list: "models" }))).rejects.toBe(NOT_FOUND);
+      await expect(mod.default(params({ lang, list: "models" }))).rejects.toBe(NOT_FOUND);
+    }
+  });
+
+  // #369: a 404 would replace the last good page; a failed render lets ISR keep it.
+  it("fails the render with the database error after a thrown read, not a 404 (metadata and page)", async () => {
+    modelMetricRows = 5;
+    modelReadThrows();
+    const mod = await route();
+    await expect(mod.generateMetadata(params({ lang: "en", list: "models" }))).rejects.toBe(DB_ERROR);
+    await expect(mod.default(params({ lang: "en", list: "models" }))).rejects.toBe(DB_ERROR);
   });
 
   it("comes back at 1 metric row with no other change", async () => {
@@ -156,13 +188,11 @@ describe("links to /rankings/models (D6e)", () => {
     return renderToStaticMarkup(await Page({ params: Promise.resolve({ lang }) }));
   }
 
-  it("the list switcher omits the models link at 0 rows and after a failed read, and shows it at 1", async () => {
+  it("the list switcher omits the models link at 0 rows and after a thrown read, and shows it at 1", async () => {
     expect(await listSwitcher("de", "productivity-tools")).toEqual(["/de/rankings", "/de/rankings/productivity-tools"]);
-    fetchMock.mockImplementation(async (input) =>
-      String(input).includes("list=model") ? Promise.reject(new TypeError("fetch failed")) : boardFetch(input)
-    );
-    expect(await listSwitcher("de", "coding-harnesses")).not.toContain("/de/rankings/models");
-    fetchMock.mockImplementation(boardFetch);
+    modelReadThrows();
+    expect(await listSwitcher("de", "coding-harnesses")).toEqual(["/de/rankings", "/de/rankings/productivity-tools"]);
+    loadListBoard.mockImplementation(boardFor);
     modelMetricRows = 1;
     expect(await listSwitcher("de", "productivity-tools")).toEqual([
       "/de/rankings",
@@ -178,13 +208,15 @@ describe("links to /rankings/models (D6e)", () => {
     expect(links).not.toContain("/en/rankings/models");
   });
 
-  it("the methodology page omits the models link at 0 rows and after a failed read, and shows it at 1", async () => {
+  it("the methodology page omits the models link at 0 rows and after a thrown read, and shows it at 1", async () => {
     let html = await methodologyHtml("fr");
     expect(html).toContain('href="/fr/rankings/productivity-tools"');
     expect(html).not.toContain("/rankings/models");
-    fetchMock.mockImplementation(async () => new Response("down", { status: 503 }));
-    expect(await methodologyHtml("fr")).not.toContain("/rankings/models");
-    fetchMock.mockImplementation(boardFetch);
+    modelReadThrows();
+    html = await methodologyHtml("fr");
+    expect(html).toContain('href="/fr/rankings/productivity-tools"');
+    expect(html).not.toContain("/rankings/models");
+    loadListBoard.mockImplementation(boardFor);
     modelMetricRows = 1;
     html = await methodologyHtml("fr");
     expect(html).toContain('href="/fr/rankings/models"');

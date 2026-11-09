@@ -160,8 +160,9 @@ describe("list page metadata (#186)", () => {
 
     it.each(arms)("on /rankings/models after %s", async (_label, arrange) => {
       counts["model"] = 3;
-      // D6e: the visibility read succeeds first; the board read under test then fails.
-      loadCurrentRankings.mockImplementationOnce(boardFor);
+      // D6e (#369): the route's board read and the visibility read succeed first; the
+      // metadata's board read under test then fails. React cache() does not dedupe in tests.
+      loadCurrentRankings.mockImplementationOnce(boardFor).mockImplementationOnce(boardFor);
       arrange();
       expect((await listMetadata("en", "models")).robots).toEqual(NOINDEX);
     });
