@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { type RouteAccess, routeAccess } from "../../lib/route-access";
+import { runMiddleware } from "./helpers/clerk-middleware-harness";
 
 /**
  * #386: route access fails closed when Clerk's matcher reports a malformed URL.
@@ -18,9 +19,11 @@ import { type RouteAccess, routeAccess } from "../../lib/route-access";
 vi.mock("@clerk/nextjs/server", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@clerk/nextjs/server")>();
   type Matcher = ReturnType<typeof actual.createRouteMatcher>;
+  // #368: the real middleware calls Clerk's wrapper only for needsClerk() paths.
+  const { fakeClerkMiddleware } = await import("./helpers/clerk-middleware-harness");
   return {
     ...actual,
-    clerkMiddleware: (handler: unknown) => handler,
+    clerkMiddleware: fakeClerkMiddleware,
     createRouteMatcher: (...args: Parameters<typeof actual.createRouteMatcher>): Matcher => {
       const real = actual.createRouteMatcher(...args);
       return (req) => {
@@ -37,11 +40,6 @@ vi.mock("@clerk/nextjs/server", async (importOriginal) => {
   };
 });
 
-type Handler = (
-  auth: () => Promise<{ userId: string | null; sessionId: string | null }>,
-  req: NextRequest
-) => Promise<Response>;
-
 const anonymousAuth = vi.fn(async () => ({ userId: null, sessionId: null }));
 
 function classify(path: string): RouteAccess {
@@ -49,8 +47,7 @@ function classify(path: string): RouteAccess {
 }
 
 async function run(path: string): Promise<Response> {
-  const { default: middleware } = await import("../../middleware");
-  return (middleware as unknown as Handler)(anonymousAuth, new NextRequest(`http://localhost${path}`));
+  return runMiddleware(anonymousAuth, new NextRequest(`http://localhost${path}`));
 }
 
 function passedThrough(res: Response): boolean {
