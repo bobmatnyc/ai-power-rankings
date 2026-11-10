@@ -91,6 +91,28 @@ rollback.
 **Known gap (D99).** The dry run and the backup use the same writer `DATABASE_URL`
 repository secret, by name. There is no read-only role.
 
+### The Codex merge (ar-Te2/T76)
+
+The same workflow merges `openai-codex-cli` into `openai-codex` with the input
+`merge_set: codex` (default `d90`). The apply confirmation is `merge-codex-cli`; the D90
+string is refused for this set, and a D90 backup does not license it.
+
+1. **Dry run.** Dispatch with `merge_set: codex` and the other inputs at their defaults.
+   The log shows the D90 pair plan, the row guards (`codex: guards passed; state merge`),
+   the 12-month news counts, one `field ...` line per decision on the survivor's data, and
+   the `board:` lines: published, before and after rank and score of both Codex rows, and
+   the harness top 10 before and after, scored by the v8.1 publish code in dry-run mode
+   over the would-be data. The job fails when a guard refuses: a missing row, a data id
+   other than 40 / 24, a kind other than harness, an inactive survivor, or a half merge.
+2. **Apply.** Dispatch with `merge_set: codex`, `dry_run: false` and
+   `confirm: merge-codex-cli`. One transaction re-checks the guards on locked rows, writes
+   the survivor's merged data (description, website, GitHub stars and npm downloads with
+   provenance, the merged news count), moves the CLI's links and metrics history, and
+   retires the CLI row as `redirect` to `openai-codex`. A re-run is a no-op.
+
+The ranking pages change at the next publish: the apply writes no `rankings` row.
+Recovery follows D98, with a Neon branch named `pre-codex-merge-YYYYMMDD`.
+
 ## Fixing the stray Grok rows (D7b, migration 0022)
 
 `0022_fix_grok_stray_kind.sql` sets `grok-4-5`, `grok-4-6` and `grok-4-7` to kind `model`
