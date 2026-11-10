@@ -12,7 +12,10 @@
  * Test: `npx vitest run tests/unit/point-in-time-compare-95.test.ts`. No database.
  */
 
-import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { chmodSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 import { diffListBoards, comparePeriod } from "../../lib/rankings/point-in-time-compare";
@@ -187,5 +190,61 @@ describe("read-only mode not applied (#95 error arm)", () => {
     expect(result.stderr).toContain("read-only mode did not apply");
     expect(result.stderr).not.toContain("secret");
     expect(writeFile).not.toHaveBeenCalled();
+  });
+});
+
+// #95: the workflow prints the step summary to the step log too (the job summary needs a browser login).
+describe("compare workflow step log (#95)", () => {
+  const WORKFLOW = readFileSync(".github/workflows/compare-point-in-time.yml", "utf8");
+
+  /** The `run:` script of the "Compare (read-only)" step. */
+  function compareScript(): string {
+    const after = WORKFLOW.slice(WORKFLOW.indexOf("- name: Compare (read-only)"));
+    const body = after.slice(after.indexOf("run: |\n") + "run: |\n".length);
+    return body
+      .split("\n")
+      .map((line) => line.replace(/^ {10}/, ""))
+      .join("\n");
+  }
+
+  it("prints text identical to the step summary, with no tool identity or env value", async () => {
+    const { stdout, writeFile } = await runFixture(["--out=o.json"]);
+    const dir = mkdtempSync(join(tmpdir(), "pit-log-95-"));
+    try {
+      // A stub `npx` replaces `tsx scripts/compare-point-in-time.ts`: it emits the real
+      // script's stdout and writes its real JSON report to the --out path.
+      writeFileSync(join(dir, "stdout.md"), stdout);
+      writeFileSync(join(dir, "report.json"), writeFile.mock.calls[0]![1]);
+      writeFileSync(
+        join(dir, "npx"),
+        '#!/bin/bash\nfor a in "$@"; do case "$a" in --out=*) cp "$STUB_DIR/report.json" "${a#--out=}";; esac; done\ncat "$STUB_DIR/stdout.md"\n'
+      );
+      chmodSync(join(dir, "npx"), 0o755);
+      writeFileSync(join(dir, "run.sh"), compareScript());
+      const summaryFile = join(dir, "step-summary.md");
+      writeFileSync(summaryFile, "");
+      const res = spawnSync("bash", [join(dir, "run.sh")], {
+        cwd: dir,
+        encoding: "utf8",
+        env: {
+          PATH: `${dir}:${process.env["PATH"]}`,
+          STUB_DIR: dir,
+          GITHUB_STEP_SUMMARY: summaryFile,
+          DATABASE_URL: "postgres://user:s3cret-95@host/db",
+          PERIODS: "2026-11",
+          SCORING_DATE: "2026-11-02",
+        },
+      });
+      const summary = readFileSync(summaryFile, "utf8");
+      expect(res.status).toBe(0);
+      expect(summary).toContain("## Point-in-time metrics off vs on");
+      expect(res.stdout).toBe(summary);
+      for (const identity of IDENTITIES) expect(res.stdout).not.toContain(identity);
+      expect(res.stdout).not.toContain("s3cret-95");
+      expect(res.stdout).not.toContain("postgres://");
+      expect(compareScript()).not.toContain("--per-tool");
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
