@@ -52,9 +52,9 @@ describe("selectBestRowsByTool — best row per allowlisted tool", () => {
     expect(cc?.as_of).toBe("2026-06-07");
   });
 
-  it("credits OpenAI Codex CLI with the Codex scaffold's highest row (GPT-5.5, 83.1%)", () => {
+  it("credits OpenAI Codex (the merged Codex CLI row, ar-Te2/T76) with the Codex scaffold's highest row (GPT-5.5, 83.1%)", () => {
     const { matched } = run(LEADERBOARD);
-    const codex = matched.get("openai-codex-cli");
+    const codex = matched.get("openai-codex");
     expect(codex).toBeDefined();
     expect(codex?.accuracy).toBe(83.1);
     expect(codex?.model).toBe("GPT-5.5");
@@ -62,10 +62,10 @@ describe("selectBestRowsByTool — best row per allowlisted tool", () => {
 
   it("returns exactly the two allowlisted tools, nothing else", () => {
     const { matched } = run(LEADERBOARD);
-    expect([...matched.keys()].sort()).toEqual(["claude-code", "openai-codex-cli"]);
+    expect([...matched.keys()].sort()).toEqual(["claude-code", "openai-codex"]);
     expect(SCAFFOLD_TO_TOOL_SLUG).toEqual({
       "Claude Code": "claude-code",
-      Codex: "openai-codex-cli",
+      Codex: "openai-codex",
     });
   });
 
@@ -73,7 +73,7 @@ describe("selectBestRowsByTool — best row per allowlisted tool", () => {
     const reversed = [...LEADERBOARD].reverse();
     const { matched } = run(reversed);
     expect(matched.get("claude-code")?.accuracy).toBe(83.8);
-    expect(matched.get("openai-codex-cli")?.accuracy).toBe(83.1);
+    expect(matched.get("openai-codex")?.accuracy).toBe(83.1);
   });
 });
 

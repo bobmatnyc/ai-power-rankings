@@ -1013,7 +1013,7 @@ export class ArticleDatabaseService {
       "Google Gemini Code Assist",
       "Replit Agent",
       "Zed",
-      "OpenAI Codex CLI",
+      "OpenAI Codex",
       "Devin",
       "Continue",
       "Claude.AI", // #314: was "Claude Artifacts"

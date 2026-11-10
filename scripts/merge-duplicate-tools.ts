@@ -13,39 +13,59 @@
  *   transaction, and write nothing. The connection string is chosen by the connection
  *   module's rules (`resolveDatabaseUrl`, NODE_ENV), is never printed, and no `.env`
  *   file is read. Output names slugs and counts only.
- * Test: `tests/unit/duplicate-tool-merge-d90.test.ts` ("CLI").
+ *   Codex-merge (ar-Te2/T76): `--set codex` runs the same modes for `openai-codex-cli` into
+ *   `openai-codex` (`MERGE_SETS`); its dry run adds the row guards, the survivor's field
+ *   decisions and the before/after harness scores (`scripts/codex-merge*.ts`), and its apply
+ *   also writes the survivor's merged data in the same transaction. `--set d90` is the default.
+ * Test: `tests/unit/duplicate-tool-merge-d90.test.ts` ("CLI"), `tests/unit/codex-merge-t76.test.ts`.
  *
- * Usage: tsx scripts/merge-duplicate-tools.ts [--dry-run | --backup <file> | --apply <backup-file>]
+ * Usage: tsx scripts/merge-duplicate-tools.ts [--set d90|codex] [--dry-run | --backup <file> | --apply <backup-file>]
  */
 
 import fs from "node:fs";
-import { applyMerge, checkBackup, MergeRefusedError, takeBackup } from "./duplicate-tool-merge-apply";
-import { derivePairs, formatPlan, loadMergeState, type MergeDb, planMerge, type Queryable } from "./duplicate-tool-merge";
+import { applyMerge, type ApplyOptions, checkBackup, MergeRefusedError, takeBackup } from "./duplicate-tool-merge-apply";
+import {
+  derivePairs,
+  formatPlan,
+  loadMergeState,
+  MAX_BACKUP_AGE_MS,
+  MERGE_SETS,
+  type MergeDb,
+  type MergeSet,
+  planMerge,
+  type Queryable,
+} from "./duplicate-tool-merge";
+import { codexBackupVerdict, codexDryRun, codexPatch } from "./codex-merge";
 import { resolveDatabaseUrl } from "../lib/db/database-url";
 import { redactConnectionString } from "./apply-migrations";
 import { assertReadOnlySql, databaseFingerprint } from "./migration-preflight";
 
 export type MergeMode = { mode: "dry-run" } | { mode: "backup"; file: string } | { mode: "apply"; backupFile: string };
 
-const USAGE = "Usage: tsx scripts/merge-duplicate-tools.ts [--dry-run | --backup <file> | --apply <backup-file>]";
+const USAGE = "Usage: tsx scripts/merge-duplicate-tools.ts [--set d90|codex] [--dry-run | --backup <file> | --apply <backup-file>]";
 
-/** Parses the one mode flag; `--backup` and `--apply` each take a path. */
-export function parseArgs(argv: string[]): { mode: MergeMode | null; errors: string[] } {
+/** Parses the one mode flag (`--backup` and `--apply` each take a path) and `--set`. */
+export function parseArgs(argv: string[]): { mode: MergeMode | null; set: MergeSet; errors: string[] } {
   const errors: string[] = [];
   const modes: MergeMode[] = [];
+  let set: MergeSet = MERGE_SETS.d90;
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     const next = argv[i + 1];
     if (arg === "--dry-run") modes.push({ mode: "dry-run" });
-    else if (arg === "--backup" || arg === "--apply") {
+    else if (arg === "--set") {
+      if (next === "d90" || next === "codex") set = MERGE_SETS[next];
+      else errors.push(`--set needs one of ${Object.keys(MERGE_SETS).join(", ")}`);
+      i++;
+    } else if (arg === "--backup" || arg === "--apply") {
       if (!next || next.startsWith("--")) errors.push(`${arg} needs a file path`);
       else modes.push(arg === "--backup" ? { mode: "backup", file: next } : { mode: "apply", backupFile: next });
       i++;
     } else errors.push(`unknown argument ${arg}`);
   }
   if (modes.length > 1) errors.push("pass one mode only");
-  if (errors.length > 0) return { mode: null, errors };
-  return { mode: modes[0] ?? { mode: "dry-run" }, errors };
+  if (errors.length > 0) return { mode: null, set, errors };
+  return { mode: modes[0] ?? { mode: "dry-run" }, set, errors };
 }
 
 /** Wraps a connection so every statement must be a single SELECT (dry run, backup). */
@@ -69,13 +89,14 @@ export interface RunDeps {
  * Runs one mode and returns the exit code: 0 done, 1 unresolved, refused or failed.
  * Test: `tests/unit/duplicate-tool-merge-d90.test.ts` ("CLI").
  */
-export async function runMerge(deps: RunDeps, mode: MergeMode): Promise<number> {
+export async function runMerge(deps: RunDeps, mode: MergeMode, set: MergeSet = MERGE_SETS.d90): Promise<number> {
   const log = deps.log ?? console.log;
   const now = deps.now ?? (() => new Date());
-  const pairs = derivePairs();
+  const pairs = derivePairs(set.oldSlugs);
+  const codex = set.id === "codex";
 
   if (mode.mode === "backup") {
-    const backup = await takeBackup(readOnly(deps.db), pairs, deps.fingerprint, now());
+    const backup = await takeBackup(readOnly(deps.db), pairs, deps.fingerprint, now(), set.ruling);
     fs.writeFileSync(mode.file, `${JSON.stringify(backup, null, 2)}\n`, { flag: "wx" });
     log(
       `backup: wrote ${mode.file}: ${backup.tools.length} tools, ${backup.tool_links.length} tool_links, ` +
@@ -85,10 +106,25 @@ export async function runMerge(deps: RunDeps, mode: MergeMode): Promise<number> 
   }
 
   if (mode.mode === "dry-run") {
-    const plan = planMerge(pairs, await loadMergeState(readOnly(deps.db), pairs));
+    const q = readOnly(deps.db);
+    const state = await loadMergeState(q, pairs);
+    const plan = planMerge(pairs, state);
     for (const line of formatPlan(plan)) log(line);
+    let ok = plan.totals.unresolved === 0;
+    if (codex) {
+      // Codex-merge: guards, field decisions, then the board scored before and after.
+      const at = now();
+      const extra = await codexDryRun(q, state, log, at);
+      ok = ok && extra.ok;
+      if (extra.ok) {
+        // Imported here: the ranking service loads the connection module, which reads
+        // .env files outside production; the URL is already chosen by then.
+        const { boardReport, loadBoardInputs } = await import("./codex-merge-board");
+        for (const line of await boardReport(await loadBoardInputs(q), extra.survivorData, at)) log(line);
+      }
+    }
     log("dry run: nothing written (pass --apply <backup-file> to write)");
-    return plan.totals.unresolved > 0 ? 1 : 0;
+    return ok ? 0 : 1;
   }
 
   if (!fs.existsSync(mode.backupFile)) {
@@ -96,8 +132,13 @@ export async function runMerge(deps: RunDeps, mode: MergeMode): Promise<number> 
     return 1;
   }
   const raw = fs.readFileSync(mode.backupFile, "utf8");
+  const options: ApplyOptions = { ruling: set.ruling, ...(codex ? { patch: codexPatch(now()) } : {}) };
+  const verdict = (p: Parameters<typeof checkBackup>[2]) => {
+    const shared = checkBackup(raw, deps.fingerprint, p, now(), MAX_BACKUP_AGE_MS, set.ruling);
+    return shared.ok && codex ? codexBackupVerdict(raw) : shared;
+  };
   try {
-    const plan = await applyMerge(deps.db, pairs, (p) => checkBackup(raw, deps.fingerprint, p, now()));
+    const plan = await applyMerge(deps.db, pairs, verdict, options);
     for (const line of formatPlan(plan, "will")) log(line);
     log(`--apply: committed (${plan.pairs.every((p) => p.state === "already-merged") ? "no-op, already merged" : "merged"})`);
     return 0;
@@ -109,7 +150,7 @@ export async function runMerge(deps: RunDeps, mode: MergeMode): Promise<number> 
 }
 
 async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
-  const { mode, errors } = parseArgs(argv);
+  const { mode, set, errors } = parseArgs(argv);
   if (!mode) {
     for (const e of errors) console.error(`ERROR: ${e}`);
     console.error(USAGE);
@@ -144,7 +185,7 @@ async function main(argv: string[] = process.argv.slice(2)): Promise<number> {
     },
   };
   try {
-    return await runMerge({ db, fingerprint }, mode);
+    return await runMerge({ db, fingerprint }, mode, set);
   } catch (error) {
     // Never let a driver error carry the connection string into the output.
     const message = error instanceof Error ? error.message : String(error);

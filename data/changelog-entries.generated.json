@@ -101,12 +101,23 @@
   {
     "id": "unreleased-e588662acce3",
     "version": "Unreleased",
-    "date": "2026-11-10T00:50:16.303Z",
-    "dateSource": "build",
+    "date": "2026-11-10T00:57:58.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "rankings",
     "title": "the trending chart shows the monthly history again",
     "description": "the trending chart shows the monthly history again. Since #185 the coding-harness history read only its per-list boards, which start at the first v8 publish (2026-11), so \"All Time\" showed one month. The harness history now adds the legacy combined board of each earlier month; a month with a per-list board always uses it. The model and productivity histories still start at their first per-list board. `/api/rankings/trending` adds `period_sources` (each period's `combined` or `list` source) and `metadata.first_list_period`, and the chart draws a labelled \"v8 per-list method\" line at that period. A failed combined read is a no-store 500, as a failed list read is. No scoring change. Tests: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/trending-chart-boundary-t76.test.tsx` (T76)",
+    "changeType": "fix"
+  },
+  {
+    "id": "unreleased-4ba16c5f5fcb",
+    "version": "Unreleased",
+    "date": "2026-11-10T01:28:51.877Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "data",
+    "title": "OpenAI Codex is ranked as one tool (ar-Te2/T76)",
+    "description": "OpenAI Codex is ranked as one tool (ar-Te2/T76). `openai-codex-cli` merges into `openai-codex` through the D90 merge path: `scripts/merge-duplicate-tools.ts --set codex` (`scripts/codex-merge.ts`) and the `merge_set: codex` input of the merge-duplicate-tools workflow, whose apply needs `confirm: merge-codex-cli`. The apply checks both rows first (data ids 40 and 24, kind harness, statuses), retires the CLI row as a `redirect` to `openai-codex`, moves its links and metrics history, and gives the survivor the CLI's benchmark figures and technical facts, a current description and website (`https://chatgpt.com/codex`), GitHub stars (134,417 for `openai/codex`, fetched 2026-11-10) and npm downloads (96,036,077 for `@openai/codex`, 2026-10-10 to 2026-11-08) with provenance, and a recount of its 12-month news mentions. The dry run writes nothing and prints each field decision and the harness board before and after, scored by the v8.1 publish code. The URL table 308s `/<lang>/tools/openai-codex-cli` to `/<lang>/tools/openai-codex`, and both ToolMappers and the Terminal-Bench mapping credit `openai-codex`. No weight or scoring code changes; the data changes only when the workflow is dispatched. Tests: `tests/unit/codex-merge-t76.test.ts`, `tests/unit/merge-duplicate-tools-workflow-d96.test.ts`, `tests/unit/url-table-191.test.ts`, `lib/terminal-bench-mapping.test.ts`, `lib/services/article-ingestion.tool-detection.test.ts`",
     "changeType": "fix"
   },
   {
@@ -838,7 +849,7 @@
   {
     "id": "unreleased-dc77cbf7f38a",
     "version": "Unreleased",
-    "date": "2026-11-09T22:28:37.000Z",
+    "date": "2026-11-10T01:03:08.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "admin",
@@ -1245,7 +1256,7 @@
   {
     "id": "unreleased-c23377110578",
     "version": "Unreleased",
-    "date": "2026-11-10T00:54:49.000Z",
+    "date": "2026-11-10T01:26:56.000Z",
     "dateSource": "commit",
     "section": "Changed",
     "scope": "rankings",
@@ -1256,8 +1267,8 @@
   {
     "id": "unreleased-01976e3ef5b7",
     "version": "Unreleased",
-    "date": "2026-11-10T01:09:19.731Z",
-    "dateSource": "build",
+    "date": "2026-11-10T01:26:56.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "rankings",
     "title": "every public model rank counts measured models only",

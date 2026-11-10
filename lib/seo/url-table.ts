@@ -35,6 +35,8 @@ export const PENDING_TARGETS: readonly RegExp[] = [
   // #197: the model family pages shipped with D91 (migrations 0018, 0019); their 70 rows now 308. See #191
   /^\/en\/insights$/, // #198: the Insights hub (the 20 /whats-new rows)
   // D6e: the per-major pages of the D58 re-point render since the set_status apply; their 60 alias rows now 308. See #329
+  // Codex merge: held until apply + publish; release in follow-up (D6e precedent)
+  /^\/[a-z]{2}\/tools\/openai-codex$/,
 ];
 
 const LOCALE_SET: ReadonlySet<string> = new Set(locales);
