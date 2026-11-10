@@ -88,9 +88,10 @@ afterEach(() => {
 describe("the committed map", () => {
   it("holds the signed table's 308 and noindex counts, path columns only", () => {
     // ar-Te2/T76: 268 signed rows plus the 10 locale rows of the Codex CLI merge.
+    // #197 (D84): 311 - 10 = 301 noindex rows after the ten perplexity locale rows left the table (589 -> 579).
     expect(redirectRows).toHaveLength(278);
-    expect(noindexRows).toHaveLength(311);
-    expect(URL_TABLE_ROWS).toHaveLength(278 + 311);
+    expect(noindexRows).toHaveLength(301);
+    expect(URL_TABLE_ROWS).toHaveLength(278 + 301);
     for (const row of rawRows as object[]) {
       expect(Object.keys(row).sort()).toEqual(["action", "destination", "source"]);
     }
@@ -291,7 +292,7 @@ describe("sitemap", () => {
   it("drops noindex tools and shipped 308 sources, keeps the rest", async () => {
     findAll.mockResolvedValue([
       // D6e: released, so an active opus-4-6 row leaves the sitemap as a shipped 308 source.
-      ...["cline", "stripe", "ollama", "clawdbot", "glm-5-0", "opus-4-6"].map((slug) => ({ slug, status: "active" })),
+      ...["cline", "stripe", "ollama", "clawdbot", "glm-5-0", "opus-4-6", "perplexity"].map((slug) => ({ slug, status: "active" })),
     ]);
     getPublishedSlugs.mockResolvedValue([]);
     listPeriods.mockResolvedValue([]);
@@ -301,6 +302,8 @@ describe("sitemap", () => {
     );
     for (const locale of locales) {
       expect(paths.has(`/${locale}/tools/cline`)).toBe(true);
+      // #197 (D84): perplexity is an active tool with no table row, so it stays in the sitemap.
+      expect(paths.has(`/${locale}/tools/perplexity`)).toBe(true);
       expect(paths.has(`/${locale}/tools/stripe`)).toBe(false);
       expect(paths.has(`/${locale}/tools/ollama`)).toBe(false);
       expect(paths.has(`/${locale}/tools/clawdbot`)).toBe(false);
