@@ -11,9 +11,11 @@
  * Test: `tests/unit/metrics-collect-route-95.test.ts` (rendered SQL, no `tools` write)
  */
 
-import { sql } from "drizzle-orm";
+import { and, eq, isNotNull, sql } from "drizzle-orm";
 import type { PgDatabase, PgQueryResultHKT } from "drizzle-orm/pg-core";
 import { metricsCollectionRuns, toolMetricsHistory, tools } from "../db/schema";
+// #184: type-only, so the scheduled cron route's import graph never loads the open-weight runner.
+import type { OpenWeightStore } from "./collect-open-weight";
 import type { MetricsHistoryStore } from "./collect-shard";
 
 // Any drizzle Postgres driver: neon-http, neon-serverless, or pg-proxy in tests.
@@ -71,5 +73,24 @@ export function createDbMetricsHistoryStore(db: AnyPgDatabase): MetricsHistorySt
           set: { ...update, updatedAt: sql`now()` },
         });
     },
+  };
+}
+
+/**
+ * #184: the store for the open-weight model run (`runOpenWeightCollection`).
+ * `listModels` is one SELECT of `kind='model'` tools with an `hf_repo`; `upsertMetrics` is the
+ * history upsert above. It writes no other table.
+ */
+export function createOpenWeightStore(db: AnyPgDatabase): OpenWeightStore {
+  const history = createDbMetricsHistoryStore(db);
+  return {
+    async listModels() {
+      const rows = await db
+        .select({ id: tools.id, slug: tools.slug, hfRepo: tools.hfRepo })
+        .from(tools)
+        .where(and(eq(tools.kind, "model"), isNotNull(tools.hfRepo)));
+      return rows.flatMap((row) => (row.hfRepo ? [{ id: row.id, slug: row.slug, hfRepo: row.hfRepo }] : []));
+    },
+    upsertMetrics: (row) => history.upsertMetrics(row),
   };
 }
