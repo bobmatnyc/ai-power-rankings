@@ -204,6 +204,20 @@ describe("planSurvivorData (field by field)", () => {
     expect((p.data as any).metrics.users).toBe(50000);
   });
 
+  it("takes the CLI's value when neither row sources it", () => {
+    const cli = cliData();
+    delete (cli["business_metrics_provenance"] as any).fields.users;
+    const p = planSurvivorData(survivor, row("openai-codex-cli", cli), { newsMentions: 1, asOf: "2026-11-10" });
+    expect((p.data as any).metrics.users).toBe(7000);
+  });
+
+  it("sets the fetched stars on a github block stored only under info.metrics", () => {
+    const nested = survivorData();
+    (nested["info"] as any).metrics = { github: { stars: 10, forks: 3 } };
+    const d = planSurvivorData(row("openai-codex", nested), old, { newsMentions: 1, asOf: "2026-11-10" }).data as any;
+    expect(d.metrics.github).toEqual({ stars: 134417, forks: 3 });
+  });
+
   it("the v8.1 harness engine reads the merged row: completeness, adoption and score rise", () => {
     const weights = profileWeights(loadCheckedInScoringProfiles(), "v8.1", "harness");
     const engine = new RankingEngineV76(weights);
