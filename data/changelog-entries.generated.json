@@ -902,14 +902,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-bfe818af2707",
+    "id": "unreleased-8d3c9be0148b",
     "version": "Unreleased",
-    "date": "2026-11-10T20:47:36.000Z",
+    "date": "2026-11-10T20:55:19.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "tools",
     "title": "seven new productivity tools go live with their metrics",
-    "description": "seven new productivity tools go live with their metrics. Migration `0033_activate_productivity_rows.sql` sets status `active` on ChatGPT, Genspark, Grok, Hermes Agent, Manus, Microsoft Copilot and Notion AI, rows 0027 created inactive, so the ranking generator scores them and the next per-list publish lists them on the productivity board. Gemini and Mistral Vibe lack enough verified data (D80) and stay inactive. A row is activated only while it is kind productivity, inactive and carries the 0027 marker; a row an admin changed is left alone, and a re-run writes nothing. It is applied inside the Dd3 window, after the promote and before the per-list publish, in the same release step as the metrics load below (D69). Tests: `tests/unit/productivity-activate-pglite-314.test.ts` (#314)",
+    "description": "seven new productivity tools go live with their metrics. Migration `0033_activate_productivity_rows.sql` sets status `active` on ChatGPT, Genspark, Grok, Hermes Agent, Manus, Microsoft Copilot and Notion AI, rows 0027 created inactive, so the ranking generator scores them and the next per-list publish lists them on the productivity board. Gemini and Mistral Vibe lack enough verified data (D80) and stay inactive. A row is activated only while it is kind productivity, inactive and carries the 0027 marker. The migration refuses, writing nothing and staying unrecorded, when the metrics load has not run first or when fewer than seven rows would end active (for example a row an admin changed); a re-run with all seven active writes nothing. It is applied inside the Dd3 window, after the promote and before the per-list publish, in the same release step as the metrics load below (D69). Tests: `tests/unit/productivity-activate-pglite-314.test.ts` (#314)",
     "changeType": "feature"
   },
   {
