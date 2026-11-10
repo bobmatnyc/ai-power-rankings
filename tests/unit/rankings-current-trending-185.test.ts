@@ -55,7 +55,9 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
   ToolsRepository: class {
     async findByIds(ids: string[]) {
       // #329: the model fixtures (m*) carry a Vals TB 4.0 figure, so the models board keeps them.
-      return ids.map((id) => ({ id, slug: `${id}-slug`, name: `Tool ${id}`, category: "other", status: "active", ...(id.startsWith("m") ? CODING_METRIC : {}) }));
+      // D1c: the `tools.kind` of each id prefix, so a combined month keeps its harnesses.
+      const kindOf = (id: string) => ({ h: "harness", m: "model", o: "productivity" } as Record<string, string>)[id[0]!] ?? "other";
+      return ids.map((id) => ({ id, slug: `${id}-slug`, name: `Tool ${id}`, category: "other", kind: kindOf(id), status: "active", ...(id.startsWith("m") ? CODING_METRIC : {}) }));
     }
     async findBySlugs() {
       return [];
@@ -323,7 +325,9 @@ describe("GET /api/rankings/trending (#185 H1, T76)", () => {
     expect(latest.period).toBe("2026-11");
     // The combined 2026-11 board ranks m1 first; the harness board ranks h1 first.
     expect(latest.h1).toBe(1);
-    expect(latest.m1).toBeNull();
+    // D1c: m1 is a model, so no harness month names it, combined or per-list.
+    expect(latest.m1).toBeUndefined();
+    expect(body.chart_data[0].h1).toBe(1);
   });
 
   it("a failed combined read is a no-store 500, never a per-list-only 200, and is not cached", async () => {

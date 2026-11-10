@@ -63,3 +63,32 @@ export function mergeTrendingHistory<T extends { period: string }>(
     firstListPeriod,
   };
 }
+
+/** The stored rank of a trending entry: `position`, else `rank` (the analyzer's order); 0 when absent. */
+function storedRank(entry: { position?: number; rank?: number }): number {
+  return entry.position || entry.rank || 0;
+}
+
+/**
+ * D1c: the combined periods of a merged history keep only the entries `isMember` accepts.
+ *
+ * Why: the combined boards ranked every kind of tool, so the older months of a per-list
+ *   chart showed tools of other lists (owner ruling D1c, 2026-11-10).
+ * What: a `combined` period keeps its member entries in stored-rank order (an entry with
+ *   no rank last), with `rank` and `position` renumbered 1..n; every other field, the
+ *   score included, is unchanged. A `list` period is returned as the same object.
+ * Test: `tests/unit/trending-harness-only-d1c.test.ts`
+ */
+export function keepCombinedMembers<
+  E extends { position?: number; rank?: number },
+  T extends { rankings: E[]; source: PeriodSource },
+>(periods: readonly T[], isMember: (entry: E) => boolean): T[] {
+  return periods.map((p) => {
+    if (p.source !== "combined") return p;
+    const kept = p.rankings
+      .filter(isMember)
+      .map((entry, i) => ({ entry, i, rank: storedRank(entry) || Number.POSITIVE_INFINITY }))
+      .sort((a, b) => a.rank - b.rank || a.i - b.i);
+    return { ...p, rankings: kept.map(({ entry }, i) => ({ ...entry, rank: i + 1, position: i + 1 })) };
+  });
+}
