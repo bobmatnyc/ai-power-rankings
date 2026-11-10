@@ -32,6 +32,8 @@ export type CoverageFloors = Record<CollectorPart, number | null>;
  * npm 159, vscode 109 and pypi 24 recorded; a part keeps 90% of last month's matches.
  * github allows 80% because its eligible set is new (URLs the collector never read before)
  * and some of those repos may be renamed or gone. Override: `METRICS_COVERAGE_FLOOR`.
+ * #95: a repo 404 is `not_found` and leaves its shard `ok`, but the tool stays eligible
+ * and unrecorded, so a mass 404 (a broken URL column) fails this floor, not the ledger.
  */
 export const COVERAGE_FLOOR: Readonly<CoverageFloors> = { github: 0.8, pypi: 0.9, npm: 0.9, vscode: 0.9 };
 

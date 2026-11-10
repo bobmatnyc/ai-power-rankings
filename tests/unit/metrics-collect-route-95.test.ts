@@ -38,10 +38,11 @@ import { GET } from "../../app/api/cron/collect-metrics/route";
 
 const SECRET = "cron-secret-fixture-value";
 const WEBHOOK = "https://alerts.example.test/hook";
+// #95: github runs 6 shards; these three slugs all hash to shard 5 of 6 (`shardOf`).
 const TOOL_ROWS = [
   ["id-alpha", "alpha", "Alpha", {}],
   ["id-beta", "beta", "Beta", {}],
-  ["id-gamma", "gamma", "Gamma", {}],
+  ["id-chi", "chi", "Chi", {}],
 ];
 
 let statements: Statement[] = [];
@@ -117,7 +118,7 @@ describe("#95 collect-metrics auth and parameters", () => {
     ["no header", null],
     ["wrong bearer", "Bearer not-the-secret"],
   ])("returns 401 and alerts for %s, touching no database", async (_name, auth) => {
-    const response = await GET(request("?part=github&shard=0&of=1", auth));
+    const response = await GET(request("?part=github&shard=5&of=6", auth));
 
     expect(response.status).toBe(401);
     await expect(response.json()).resolves.toEqual({ success: false, error: "Unauthorized" });
@@ -148,13 +149,13 @@ describe("#95 collect-metrics auth and parameters", () => {
 
 describe("#95 collect-metrics writes", () => {
   it("records every tool, answers 200, and its counts match the ledger row", async () => {
-    const response = await GET(request("?part=github&shard=0&of=1"));
+    const response = await GET(request("?part=github&shard=5&of=6"));
     const body = await response.json();
 
     expect(mocks.getDb).toHaveBeenCalledTimes(1);
     expect(mocks.createAdapter).toHaveBeenCalledWith("github", expect.objectContaining({ signal: expect.any(AbortSignal) }));
     expect(response.status).toBe(200);
-    expect(body).toMatchObject({ success: true, status: "ok", part: "github", shard: 0, of: 1, ledger_recorded: true });
+    expect(body).toMatchObject({ success: true, status: "ok", part: "github", shard: 5, of: 6, ledger_recorded: true });
     expect(body.counts).toEqual({ attempted: 3, recorded: 3, flagged: 0, not_found: 0, failed: 0, skipped_timeout: 0 });
     expect(alerts).toHaveLength(0);
 
@@ -163,8 +164,8 @@ describe("#95 collect-metrics writes", () => {
     expect(insertedValues(ledger[0] as Statement)).toMatchObject({
       collected_date: body.collected_date,
       collector: "github",
-      shard: 0,
-      shard_count: 1,
+      shard: 5,
+      shard_count: 6,
       status: "ok",
       attempted: 3,
       recorded: 3,
@@ -176,7 +177,7 @@ describe("#95 collect-metrics writes", () => {
   });
 
   it("upserts with an atomic jsonb merge on (tool_id, collected_date)", async () => {
-    await GET(request("?part=github&shard=0&of=1"));
+    await GET(request("?part=github&shard=5&of=6"));
 
     const upserts = statements.filter((s) => /^insert into "tool_metrics_history"/i.test(s.text));
     expect(upserts).toHaveLength(3);
@@ -196,7 +197,7 @@ describe("#95 collect-metrics writes", () => {
   });
 
   it("never writes the tools table: its only statement on tools is one SELECT", async () => {
-    await GET(request("?part=github&shard=0&of=1"));
+    await GET(request("?part=github&shard=5&of=6"));
 
     expect(statements.length).toBeGreaterThan(0);
     const onTools = statements.filter((s) => /"tools"/.test(s.text));
@@ -210,7 +211,7 @@ describe("#95 collect-metrics writes", () => {
 
   it("a database throw answers 500 and alerts, and still tries the ledger", async () => {
     failOn = /^insert into "tool_metrics_history"/i;
-    const response = await GET(request("?part=github&shard=0&of=1"));
+    const response = await GET(request("?part=github&shard=5&of=6"));
     const body = await response.json();
 
     expect(response.status).toBe(500);
@@ -227,7 +228,7 @@ describe("#95 collect-metrics writes", () => {
     ["every statement throws", /./],
   ])("answers 500 and alerts when %s", async (_name, pattern) => {
     failOn = pattern;
-    const response = await GET(request("?part=github&shard=0&of=1"));
+    const response = await GET(request("?part=github&shard=5&of=6"));
 
     expect(response.status).toBe(500);
     expect((await response.json()).success).toBe(false);
@@ -236,7 +237,7 @@ describe("#95 collect-metrics writes", () => {
 
   it("answers 500 and alerts when no database connection is available", async () => {
     mocks.getDb.mockReturnValue(null);
-    const response = await GET(request("?part=github&shard=0&of=1"));
+    const response = await GET(request("?part=github&shard=5&of=6"));
 
     expect(response.status).toBe(500);
     expect(alerts).toHaveLength(1);
@@ -245,7 +246,7 @@ describe("#95 collect-metrics writes", () => {
 
   it("a string in a numeric key is stored flagged and counted", async () => {
     mocks.createAdapter.mockImplementation(() => foundAdapter({ stars: "1.2k" }));
-    const response = await GET(request("?part=github&shard=0&of=1"));
+    const response = await GET(request("?part=github&shard=5&of=6"));
     const body = await response.json();
 
     expect(response.status).toBe(200);
@@ -267,7 +268,7 @@ describe("#95 collect-metrics writes", () => {
       pause: async () => {},
     }));
 
-    const response = await GET(request("?part=github&shard=0&of=1"));
+    const response = await GET(request("?part=github&shard=5&of=6"));
     const body = await response.json();
 
     expect(response.status).toBe(500);

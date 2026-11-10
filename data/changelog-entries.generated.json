@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-326d6c160e69",
+    "version": "Unreleased",
+    "date": "2026-11-10T22:01:36.579Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "metrics",
+    "title": "the github metrics collector reads its token from METRICS_GITHUB_TOKEN (owner ruling D99: one read-only token for the…",
+    "description": "the github metrics collector reads its token from `METRICS_GITHUB_TOKEN` (owner ruling D99: one read-only token for the metrics cron) and no longer reads `GITHUB_TOKEN`. With the token set it fetches repo, commits and contributors under the authenticated rate limit; without it, it still writes repo metadata (stars and the rest), but each github shard ends `partial` with \"METRICS_GITHUB_TOKEN is not set\" in the ledger `error`, so the route alerts and the metrics-history check fails the month. The github collection runs as 6 cron shards at 04:00-04:50 UTC on the 1st instead of 1 at 01:00, so about 200 tools fit the 270 s shard deadline with a token. A 404 on a tool's repo is recorded as `not_found`, as pypi records a 404, and leaves the shard `ok`; the github coverage floor still fails the check when many repos 404. A 404 after the repo resolved, a 403, a 429 or any other error still fails the tool. Tests: `tests/unit/metrics-github-token-shards-95.test.ts`, `tests/unit/metrics-cron-config-95.test.ts` (#95)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-663be054dff7",
     "version": "Unreleased",
     "date": "2026-11-10T20:54:34.000Z",
@@ -915,7 +926,7 @@
   {
     "id": "unreleased-f495731afd73",
     "version": "Unreleased",
-    "date": "2026-11-10T21:46:30.000Z",
+    "date": "2026-11-10T21:53:12.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",

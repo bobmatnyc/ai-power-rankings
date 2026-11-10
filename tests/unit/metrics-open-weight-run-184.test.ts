@@ -211,7 +211,8 @@ describe("#184 the scheduled run and scoring cannot reach the open-weight collec
 
   it("the registered parts and shard counts are unchanged", () => {
     expect([...COLLECTOR_PARTS]).toEqual(["github", "pypi", "npm", "vscode"]);
-    expect(SHARD_COUNTS).toEqual({ github: 1, pypi: 2, npm: 4, vscode: 4 });
+    // #95: github moved from 1 to 6 shards for the token run; the parts are unchanged.
+    expect(SHARD_COUNTS).toEqual({ github: 6, pypi: 2, npm: 4, vscode: 4 });
   });
 
   it("the shared store file imports the runner module for its type only", () => {
