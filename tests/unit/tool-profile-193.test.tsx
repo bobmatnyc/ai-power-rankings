@@ -73,6 +73,8 @@ const CATALOGUE: CatalogueRow[] = [
   tool("blank-tool", "Blank Tool", "autonomous-agent", "active", {}),
   // #185: a model (its own list) and a tool in no list.
   tool("some-model", "Some Model", "llm", "active", undefined, "model"),
+  // #329: a model with no coding metric; the models board leaves it off.
+  tool("bare-model", "Bare Model", "llm", "active", undefined, "model"),
   tool("other-thing", "Other Thing", "code-editor", "active", undefined, "other"),
 ];
 
@@ -129,6 +131,8 @@ const db = vi.hoisted(() => ({
   listsRead: [] as unknown[],
   /** #185: the model list's current board, when a test sets one. */
   modelCurrent: null as unknown,
+  /** #329: slugs whose catalogue row carries a Vals TB 4.0 figure. */
+  measured: new Set<string>(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -138,6 +142,17 @@ vi.mock("../../lib/db/repositories/tools.repository", () => {
     findBySlug = async (slug: string) => db.catalogue.find((r) => r.slug === slug) ?? null;
     findByStatus = async (status: string) => db.catalogue.filter((r) => r.status === status);
     findAll = async () => db.catalogue;
+    // #329: the metric-gated models board reads the tools of its rows (`hasCodingMetric`).
+    private withMetric = (row: { slug: string } & Record<string, unknown>) =>
+      db.measured.has(row.slug)
+        ? { ...row, db_id: row["id"], metrics: { terminal_bench: 50 }, metrics_provenance: { terminal_bench: { source: "https://www.vals.ai/benchmarks/terminal-bench-4" } } }
+        : { ...row, db_id: row["id"] };
+    findByIds = async (ids: string[]) =>
+      (db.catalogue as Array<{ slug: string } & Record<string, unknown>>).filter((r) => ids.includes(r["id"] as string)).map(this.withMetric);
+    findBySlugs = async (slugs: string[]) =>
+      (db.catalogue as Array<{ slug: string } & Record<string, unknown>>).filter((r) => slugs.includes(r.slug)).map(this.withMetric);
+    findById = async (id: string) => (await this.findByIds([id]))[0] ?? null;
+    findColumnStatuses = async (ids: string[]) => new Map(ids.map((id) => [id, "active"] as [string, string]));
   }
   return { ToolsRepository, toolsRepository: new ToolsRepository() };
 });
@@ -210,6 +225,7 @@ beforeEach(() => {
   db.rankingReads = 0;
   db.listsRead = [];
   db.modelCurrent = null;
+  db.measured = new Set(["some-model"]);
   dataCache.entries = new Map();
   request.memo = new Map();
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -354,6 +370,24 @@ describe("tool profile reads the tool's own list (#185)", () => {
     expect(section(html, "Score and rank")).toContain("#1");
     expect(section(html, "Score and rank")).toContain("77.0");
     expect(new Set(db.listsRead)).toEqual(new Set(["model"]));
+  });
+
+  // #329: the models board lists measured models only; the tool page agrees with it.
+  it("#329: an unmeasured model shows no rank; a measured model shows its board rank and total", async () => {
+    db.modelCurrent = {
+      period: "2026-11",
+      algorithm_version: "8.1",
+      data: { rankings: [entry("bare-model", 1, 80), entry("some-model", 2, 70)] },
+    };
+    const bare = await renderPage("bare-model");
+    expect(section(bare, "Score and rank")).toContain("not in the current rankings");
+    expect(section(bare, "Score and rank")).not.toContain("#");
+
+    const { loadCurrentRankings } = await import("../../lib/rankings/current-rankings");
+    const board = (await loadCurrentRankings("model"))!;
+    expect(board.rankings.map((r) => [r.tool.slug, r.rank])).toEqual([["some-model", 1]]);
+    const text = section(await renderPage("some-model"), "Score and rank").replace(/<!-- -->/g, "");
+    expect(text).toContain(`#${board.rankings[0]!.rank}</span> of ${board.rankings.length}`);
   });
 
   it("a tool in no list is unranked and makes no ranking read", async () => {

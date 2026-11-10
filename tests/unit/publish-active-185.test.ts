@@ -62,7 +62,13 @@ function tool(id: string, kind: string, users: number, extra: Record<string, unk
     category: "other",
     status: "active",
     kind,
-    data: { info: { description: id }, metrics: { users, github_stars: users / 10 }, ...extra },
+    // #329: a model carries a Vals TB 4.0 figure; the metric-gated models board stores only those.
+    data: {
+      info: { description: id },
+      metrics: { users, github_stars: users / 10, ...(kind === "model" ? { terminal_bench: 50 } : {}) },
+      ...(kind === "model" ? { metrics_provenance: { terminal_bench: { source: "https://www.vals.ai/benchmarks/terminal-bench-4" } } } : {}),
+      ...extra,
+    },
     createdAt: stamp,
     updatedAt: stamp,
   };

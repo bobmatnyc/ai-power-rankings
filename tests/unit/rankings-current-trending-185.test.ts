@@ -47,10 +47,15 @@ vi.mock("../../lib/db/repositories/rankings.repository", () => ({
     },
   },
 }));
+const CODING_METRIC = vi.hoisted(() => ({
+  metrics: { terminal_bench: 50 },
+  metrics_provenance: { terminal_bench: { source: "https://www.vals.ai/benchmarks/terminal-bench-4" } },
+}));
 vi.mock("../../lib/db/repositories/tools.repository", () => ({
   ToolsRepository: class {
     async findByIds(ids: string[]) {
-      return ids.map((id) => ({ id, slug: `${id}-slug`, name: `Tool ${id}`, category: "other", status: "active" }));
+      // #329: the model fixtures (m*) carry a Vals TB 4.0 figure, so the models board keeps them.
+      return ids.map((id) => ({ id, slug: `${id}-slug`, name: `Tool ${id}`, category: "other", status: "active", ...(id.startsWith("m") ? CODING_METRIC : {}) }));
     }
     async findBySlugs() {
       return [];
