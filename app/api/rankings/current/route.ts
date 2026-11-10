@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db/connection";
 import { loggers } from "@/lib/logger";
 import cacheInstance, { CACHE_TTL } from "@/lib/memory-cache";
 import { parseListQuery, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
+import { gateBoardEntries } from "@/lib/rankings/metric-gated-board";
 // #269: single shared helper; reads factors from their camelCase stored keys.
 import { deriveCompleteScores } from "@/lib/rankings/derive-complete-scores";
 
@@ -18,8 +19,9 @@ import { deriveCompleteScores } from "@/lib/rankings/derive-complete-scores";
  *   conflicting value is 400. Reads only the list's `is_current` row
  *   (`getCurrentRankings(list)`); with none it is 404, and a failed read is 500. It
  *   never reads the combined row. The body keeps its shape and adds `data.list` and
- *   `data.list_meta`. Cached in memory per list.
- * Test: `tests/unit/rankings-current-trending-185.test.ts`.
+ *   `data.list_meta`. Cached in memory per list. #329: a metric-gated list keeps only
+ *   measured models, renumbered (`gateBoardEntries`).
+ * Test: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/models-public-rank-329.test.ts`.
  */
 // #186: Next.js route exports require a non-optional Request
 export async function GET(request: Request) {
@@ -97,6 +99,8 @@ export async function GET(request: Request) {
             rankings = rankingsData["data"];
           }
         }
+        // #329: a metric-gated list (models) lists measured models only, ranked 1..n as on /api/rankings.
+        rankings = await gateBoardEntries(list, rankings, toolsRepo);
 
         // PERFORMANCE OPTIMIZATION: Batch load all tools (1-2 queries instead of N queries)
         // Extract all unique tool IDs that need to be fetched
