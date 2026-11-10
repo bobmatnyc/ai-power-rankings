@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-f6333f16e995",
+    "version": "Unreleased",
+    "date": "2026-11-10T03:00:52.580Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "seo",
+    "title": "a bare unprefixed section path such as /news, /rankings, /tools or /admin 308s once to its English page (/en/news)",
+    "description": "a bare unprefixed section path such as `/news`, `/rankings`, `/tools` or `/admin` 308s once to its English page (`/en/news`). It reached `app/[lang]` with the section as the locale and got a 404, because the pattern rule skipped single-segment paths. Only the `LOCALIZED_SECTIONS` segments move; `/sign-in`, `/sign-up`, `/api`, other reserved segments, `/` and unknown single segments are unchanged. `/admin` still ends at sign-in for a signed-out user. Tests: `tests/unit/url-table-bare-section-417.test.ts` (#417)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-366760c8f7ef",
     "version": "Unreleased",
     "date": "2026-11-10T02:31:21.000Z",
@@ -1289,8 +1300,8 @@
   {
     "id": "unreleased-6045cd61c5d8",
     "version": "Unreleased",
-    "date": "2026-11-10T02:48:09.168Z",
-    "dateSource": "build",
+    "date": "2026-11-10T02:53:22.000Z",
+    "dateSource": "commit",
     "section": "Changed",
     "scope": "trending",
     "title": "the coding-harness trending chart shows only harness tools in its older months",
