@@ -104,8 +104,9 @@ describe("#95 no METRICS_GITHUB_TOKEN", () => {
     const calls = stubFetch(() => ok(REPO_BODY, { "x-ratelimit-remaining": "59", "x-ratelimit-reset": String(HOUR_AHEAD), "x-ratelimit-limit": "60" }));
     const { store, result } = await runShard([tool("alpha")], { METRICS_GITHUB_TOKEN: token });
 
-    expect(result.error).toBeNull();
-    expect(result.status).toBe("ok");
+    // #95: the tool is recorded, but a tokenless run is degraded: partial, reason in the ledger.
+    expect(result.error).toMatch(/METRICS_GITHUB_TOKEN is not set/);
+    expect(result.status).toBe("partial");
     expect(result.counts).toMatchObject({ attempted: 1, recorded: 1, failed: 0 });
     expect(calls.map((c) => c.url)).toEqual(["/repos/org/alpha"]);
     expect(calls.every((c) => c.authorization === undefined)).toBe(true);

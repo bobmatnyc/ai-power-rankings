@@ -72,6 +72,11 @@ export interface CollectorAdapter {
   collect(tool: CollectorTool): Promise<CollectOutcome>;
   /** The CLI's pause between tools; returns early when `signal` aborts. */
   pause(signal: AbortSignal): Promise<void>;
+  /**
+   * #95: why the run collected less than the part's full metric set, or null. A non-null
+   * reason turns an `ok` shard `partial` and goes to the ledger `error`; rows are still written.
+   */
+  degraded?(): string | null;
 }
 
 export interface AdapterOptions extends CollectorOptions {
@@ -152,6 +157,12 @@ export function createCollectorAdapter(part: CollectorPart, options: AdapterOpti
           return { kind: "not_found", noRequest: true };
         },
         pause: (s) => abortableSleep(GITHUB_PAUSE_MS, s),
+        // #95: a tokenless run (unset, blank or misspelt name) drops commit_count_30d and
+        // contributors_count, so it must not pass as `ok`; the check fails a partial shard.
+        degraded: () =>
+          collector.authenticated
+            ? null
+            : "METRICS_GITHUB_TOKEN is not set: tokenless run, commit_count_30d and contributors_count not collected",
       };
     }
   }

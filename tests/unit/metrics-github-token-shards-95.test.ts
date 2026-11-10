@@ -137,7 +137,9 @@ describe("#95 the github token comes from METRICS_GITHUB_TOKEN only", () => {
     const calls = stubFetch(github());
     const { store, result } = await runShard([tool("alpha")], { GITHUB_TOKEN: FAKE_TOKEN });
 
-    expect(result.status).toBe("ok");
+    // #95: tokenless is degraded, so the shard is partial even though the tool was recorded.
+    expect(result.status).toBe("partial");
+    expect(result.counts).toMatchObject({ recorded: 1, failed: 0 });
     expect(calls.map((c) => c.url)).toEqual(["/repos/org/alpha"]);
     expect(calls.every((c) => c.authorization === undefined)).toBe(true);
     expect("commit_count_30d" in (store.rows.get("id-alpha")?.metrics["github"] ?? {})).toBe(false);
@@ -167,16 +169,17 @@ describe("#95 the github token comes from METRICS_GITHUB_TOKEN only", () => {
 });
 
 describe("#95 a repo 404 is not_found; every other error stays failed", () => {
+  // #95: without a token the shard is partial for the tokenless reason alone, not for the 404.
   it.each([
-    ["without a token", {}],
-    ["with a token", { METRICS_GITHUB_TOKEN: FAKE_TOKEN }],
-  ])("404 on /repos %s: not_found, no row, shard ok", async (_name, env) => {
+    ["without a token", {}, "partial"],
+    ["with a token", { METRICS_GITHUB_TOKEN: FAKE_TOKEN }, "ok"],
+  ])("404 on /repos %s: not_found, no row, shard %s", async (_name, env, status) => {
     stubFetch(github({ repo: () => new Response("{}", { status: 404, statusText: "Not Found" }) }));
     const { store, result } = await runShard([tool("alpha")], env);
 
     expect(store.rows.size).toBe(0);
     expect(result.counts).toMatchObject({ attempted: 1, recorded: 0, not_found: 1, failed: 0, skipped_timeout: 0 });
-    expect(result.status).toBe("ok");
+    expect(result.status).toBe(status);
   });
 
   it.each([
@@ -227,6 +230,84 @@ describe("#95 a repo 404 is not_found; every other error stays failed", () => {
     expect(report).not.toMatch(/github \d+\/\d+: (partial|failed|MISSING)/);
     expect(report).toContain("github: 0 of 10 eligible (0%) FAIL under the floor of 80%");
     expect(exitCode).toBe(3);
+  });
+});
+
+// #95: a github run without METRICS_GITHUB_TOKEN (unset, blank or misspelt in Vercel) must not
+// pass as a clean `ok`: it keeps its stars rows but ends `partial`, so the check fails it.
+describe("#95 a tokenless github run is degraded, not ok", () => {
+  it.each([
+    ["unset", {}],
+    ["blank", { METRICS_GITHUB_TOKEN: "  " }],
+    ["misspelt", { METRIC_GITHUB_TOKEN: FAKE_TOKEN }],
+  ])("token %s: stars are written, the shard is partial and names the missing variable", async (_name, env) => {
+    stubFetch(github());
+    const { store, result } = await runShard([tool("alpha"), tool("beta")], env);
+
+    expect(store.rows.size).toBe(2);
+    expect(store.rows.get("id-alpha")?.metrics["github"]?.["stars"]?.value).toBe(7);
+    expect(result.counts).toMatchObject({ attempted: 2, recorded: 2, failed: 0, skipped_timeout: 0 });
+    expect(result.status).toBe("partial");
+    expect(result.error).toMatch(/METRICS_GITHUB_TOKEN is not set/);
+    expect(result.error).not.toContain(FAKE_TOKEN);
+    expect(store.runs[0]?.status).toBe("partial");
+  });
+
+  it("the metrics-history check fails a month whose github shards ran tokenless", async () => {
+    stubFetch(github());
+    const { result } = await runShard([tool("alpha")], {});
+    const ledger: LedgerRow[] = COLLECTOR_PARTS.flatMap((part) =>
+      [...Array(SHARD_COUNTS[part]).keys()].map((shard) => ({
+        collector: part,
+        shard,
+        shard_count: SHARD_COUNTS[part],
+        status: part === "github" ? result.status : "ok",
+        attempted: 1,
+        recorded: 1,
+        flagged: 0,
+        not_found: 0,
+        failed: 0,
+        skipped_timeout: 0,
+      }))
+    );
+    const { exitCode, report } = renderMetricsHistoryReport({
+      date: "2026-12-01",
+      rowsPerDate: [],
+      ledger,
+      coverage: { tools: 1, rows: 1 },
+      previousDate: null,
+      flat: [],
+      partCoverage: [{ part: "github", eligible: 1, recorded: 1 }],
+    });
+    expect(report).toContain(`github 0/${SHARD_COUNTS.github}: partial`);
+    expect(exitCode).toBe(3);
+  });
+});
+
+describe("#95 a 401 is a failure", () => {
+  it("a 401 on /rate_limit fails the shard with no rows", async () => {
+    stubFetch((url) => (url.endsWith("/rate_limit") ? new Response("{}", { status: 401 }) : json(REPO_BODY)));
+    const { store, result } = await runShard([tool("alpha"), tool("beta")], { METRICS_GITHUB_TOKEN: FAKE_TOKEN });
+
+    expect(store.rows.size).toBe(0);
+    expect(result.status).toBe("failed");
+    expect(result.counts).toMatchObject({ attempted: 2, recorded: 0, failed: 2 });
+  });
+
+  it("a 401 on /repos mid-run fails that tool, not not_found", async () => {
+    stubFetch(
+      github({
+        repo: (() => {
+          let n = 0;
+          return () => (++n === 1 ? json(REPO_BODY) : new Response("{}", { status: 401 }));
+        })(),
+      })
+    );
+    const { store, result } = await runShard([tool("alpha"), tool("beta")], { METRICS_GITHUB_TOKEN: FAKE_TOKEN });
+
+    expect(store.rows.size).toBe(1);
+    expect(result.counts).toMatchObject({ attempted: 2, recorded: 1, not_found: 0, failed: 1 });
+    expect(result.status).toBe("partial");
   });
 });
 
