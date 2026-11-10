@@ -4,7 +4,8 @@ import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { getDb } from "@/lib/db/connection";
 import { loggers } from "@/lib/logger";
 import cacheInstance, { CACHE_TTL } from "@/lib/memory-cache";
-import { parseListQuery, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
+import { isMetricGatedList, parseListQuery, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
+import { boardFromSnapshot } from "@/lib/rankings/current-rankings";
 import { gateBoardEntries } from "@/lib/rankings/metric-gated-board";
 // #269: single shared helper; reads factors from their camelCase stored keys.
 import { deriveCompleteScores } from "@/lib/rankings/derive-complete-scores";
@@ -20,7 +21,8 @@ import { deriveCompleteScores } from "@/lib/rankings/derive-complete-scores";
  *   (`getCurrentRankings(list)`); with none it is 404, and a failed read is 500. It
  *   never reads the combined row. The body keeps its shape and adds `data.list` and
  *   `data.list_meta`. Cached in memory per list. #329: a metric-gated list keeps only
- *   measured models, renumbered (`gateBoardEntries`).
+ *   measured models, renumbered (`gateBoardEntries`), and `list_meta.metric_row_count`
+ *   comes from `boardFromSnapshot()`, the count `/api/rankings` reports.
  * Test: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/models-public-rank-329.test.ts`.
  */
 // #186: Next.js route exports require a non-optional Request
@@ -218,13 +220,18 @@ export async function GET(request: Request) {
         // Sort by position to ensure proper ordering
         validRankings.sort((a, b) => (a?.position || 999) - (b?.position || 999));
 
+        // #329: D63 metric rows counted as /api/rankings counts them; a failed read throws (500), never 0.
+        const metricRowCount = isMetricGatedList(list)
+          ? (await boardFromSnapshot(list, currentRankings)).metricRowCount
+          : 0;
+
         // Build the response in the expected format
         return {
           success: true,
           data: {
             // #185: the response names its list and carries the list rules.
             list,
-            list_meta: rankingListMeta(list, validRankings.length),
+            list_meta: rankingListMeta(list, validRankings.length, metricRowCount),
             period: currentRankings.period,
             algorithm_version: currentRankings.algorithm_version,
             rankings: validRankings,

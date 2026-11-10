@@ -47,7 +47,15 @@ export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LI
   // #185: the list's own row or nothing; no fallback to the combined board.
   const snapshot = await rankingsRepository.getCurrentRankings(list);
   if (!snapshot) return null;
+  return boardFromSnapshot(list, snapshot);
+}
 
+/**
+ * #329: `loadCurrentRankings()` for a snapshot the caller already read, so
+ * `/api/rankings/current` takes `metricRowCount` from the same count as `/api/rankings`.
+ * Throws when a tools read throws (fails closed: no count, no board).
+ */
+export async function boardFromSnapshot(list: RankingList, snapshot: RankingData): Promise<CurrentListBoard> {
   const rankingsData = snapshot.data;
   let rankings = [];
 
