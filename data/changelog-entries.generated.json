@@ -902,6 +902,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-02e8580a023b",
+    "version": "Unreleased",
+    "date": "2026-11-10T20:14:55.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "tools",
+    "title": "the nine new productivity tools go live",
+    "description": "the nine new productivity tools go live. Migration `0033_activate_productivity_rows.sql` sets status `active` on ChatGPT, Gemini, Genspark, Grok, Hermes Agent, Manus, Microsoft Copilot, Mistral Vibe and Notion AI, the rows 0027 created inactive, so the ranking generator scores them and the next per-list publish lists them on the productivity board. A row is activated only while it is kind productivity, inactive and carries the 0027 marker; a row an admin changed is left alone, and a re-run writes nothing. It is applied inside the Dd3 window, after the promote and before the per-list publish. Tests: `tests/unit/productivity-activate-pglite-314.test.ts` (#314)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-dc77cbf7f38a",
     "version": "Unreleased",
     "date": "2026-11-10T01:03:08.000Z",
