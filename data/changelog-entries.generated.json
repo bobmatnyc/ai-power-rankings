@@ -101,7 +101,7 @@
   {
     "id": "unreleased-663be054dff7",
     "version": "Unreleased",
-    "date": "2026-11-10T20:45:05.000Z",
+    "date": "2026-11-10T20:54:34.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "seo",
@@ -904,7 +904,7 @@
   {
     "id": "unreleased-8d3c9be0148b",
     "version": "Unreleased",
-    "date": "2026-11-10T20:55:19.000Z",
+    "date": "2026-11-10T20:58:16.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "tools",
