@@ -1,0 +1,366 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-10",
+  "issue": "#314",
+  "ruling": "D80",
+  "method": "Path A: WebSearch/WebFetch plus the free public GitHub and pypistats APIs. No paid provider, no database. Every figure below was read on a page fetched on checked_at; quote is the sentence (or <=125-char fragment) that states it.",
+  "how_to_load": {
+    "metrics": "tools.data.metrics.<key> = value (bare number). Nested keys: github.stars -> data.metrics.github.stars; pypi.downloads_last_month -> data.metrics.pypi.downloads_last_month.",
+    "provenance": "tools.data.metrics_provenance.<key> = { source: source_url, as_of, scope } (the existing {source, as_of} shape plus scope).",
+    "info": "tools.data.info.{description, features, company, business{pricing_model, base_price, free_tier, enterprise_pricing}}",
+    "only_include_in_0033_true": "The loader (scripts/load-productivity-metrics.ts) writes metrics for every tool here and never changes status. Migration 0033 activates only the tools with include_in_0033 true; the others stay inactive, so their metrics are not shown."
+  },
+  "scope_values": {
+    "product": "The figure is about this product.",
+    "parent": "The figure is about the parent company or the vendor's wider product family (owner ruling D80.1). The loader must carry scope into metrics_provenance."
+  },
+  "source_type_values": {
+    "vendor": "Page published by the vendor, or a public API of the vendor's repository host.",
+    "third_party": "Press or a research site reporting a figure; attributed_to names who the article credits.",
+    "third_party_estimate": "The third party's own estimate, not a company statement."
+  },
+  "engine_keys": {
+    "file": "lib/ranking-algorithm-v76.ts at origin/main (read with git show origin/main:...). Productivity uses the same engine.",
+    "metrics.users": ["869 (adoption: parseNumericOr(info?.metrics?.users || info?.user_count))", "279 (completeness hasUserCount)", "1053 (sentiment)"],
+    "metrics.monthly_arr": ["944-948 (traction)", "283 (completeness hasRevenue)", "1049 (sentiment)"],
+    "metrics.valuation": ["978 (traction)", "447 (company backing)"],
+    "metrics.funding": ["979 (traction)", "446 (company backing)"],
+    "metrics.news_mentions": ["888 (adoption)", "1024 (sentiment)"],
+    "metrics.github.stars": ["903 (adoption)", "994 (traction)", "262 (completeness)"],
+    "metrics.pypi.downloads_last_month": ["275 (completeness)"],
+    "info.description": ["296 (completeness: needs more than 100 chars)", "748 (innovation keywords)"],
+    "info.features": ["300 (completeness: needs more than 5)", "728 and 1073 (innovation, velocity)"],
+    "info.company": ["304 (completeness hasCompanyInfo via readCompany)"],
+    "info.business.pricing_model": ["307 (completeness)", "381 (pricing tier)", "953 (traction proxy when no ARR)"],
+    "info.business.base_price": ["382", "954"],
+    "info.business.free_tier": ["383", "1117 (resilience +10)"],
+    "info.business.enterprise_pricing": ["384", "955"],
+    "info.technical.llm_providers": ["804", "1100 (resilience); not filled: no vendor page fetched lists providers"],
+    "units": "users is stored as a bare count whatever the period; the period is in unit. monthly_arr is annual recurring revenue in the stated currency (the key name is historical). Engine clamps: users 5K-1M, ARR 100K-400M, valuation 100M-5B, funding 10M+; every figure here is above the clamp or below it with no effect on the loader."
+  },
+  "threshold": {
+    "rule": "include_in_0033 is true only when all three hold: (i) at least one usage or traction figure from {users, monthly_arr, github.stars} is verified; (ii) at least one more engine-scored figure from {users, monthly_arr, valuation, funding, github.stars, pypi.downloads_last_month} is verified (parent figures count, D80.1); (iii) at least one pricing fact for the product is verified on a fetched page.",
+    "why": "One figure leaves the adoption or traction factor on a single, possibly stale, number. Valuation and funding alone describe the company, not the product."
+  },
+  "not_obtained_for_any_tool": [
+    "metrics.news_mentions: computed from the site's own news corpus, which needs database access (not allowed here).",
+    "info.technical.llm_providers and recent_updates_2025: no fetched vendor page states them.",
+    "Vendor-page fetches blocked (HTTP 403): openai.com, chatgpt.com price figures, businesswire.com, genspark.ai/pricing and home page, x.ai/grok, techleap. Figures that would have come from them use a fetched third-party page and are marked third_party."
+  ],
+  "tools": {
+    "chatgpt": {
+      "include_in_0033": true,
+      "include_reason": "users (product) + annualised revenue, valuation, funding (parent, D80.1) verified; plan names and free tier verified on chatgpt.com/pricing.",
+      "metrics": {
+        "users": {
+          "value": 900000000, "unit": "weekly active users", "scope": "product", "as_of": "2026-03-31",
+          "source_url": "https://thenextweb.com/news/openai-122-billion-round-852-billion-valuation-retail-investors",
+          "source_type": "third_party", "attributed_to": "OpenAI funding announcement of 2026-03-31",
+          "quote": "ChatGPT now supports more than 900 million weekly active users", "confidence": "medium",
+          "note": "Lower bound ('more than'). Weekly, not monthly. openai.com returned 403, so OpenAI's own post was not read."
+        },
+        "monthly_arr": {
+          "value": 25000000000, "currency": "USD", "unit": "annualised revenue (OpenAI total)", "scope": "parent", "as_of": "2026-03-31",
+          "source_url": "https://investinglive.com/stock-market-update/openai-lands-record-122-billion-raise-ahead-of-expected-blockbuster-ipo-852bn-valuation-20260331",
+          "source_type": "third_party", "attributed_to": "press report on OpenAI",
+          "quote": "the company had topped $25 billion in annualised revenue, up from $21.4 billion at the end of 2025", "confidence": "medium",
+          "note": "OpenAI-wide revenue (API and enterprise included), not ChatGPT alone. The same-day thenextweb page quotes OpenAI at $2 billion revenue per month."
+        },
+        "valuation": {
+          "value": 852000000000, "currency": "USD", "unit": "post-money", "scope": "parent", "as_of": "2026-03-31",
+          "source_url": "https://thenextweb.com/news/openai-122-billion-round-852-billion-valuation-retail-investors",
+          "source_type": "third_party", "attributed_to": "OpenAI", "quote": "valuing the ChatGPT maker at $852 billion post-money", "confidence": "high"
+        },
+        "funding": {
+          "value": 122000000000, "currency": "USD", "unit": "latest round, committed capital", "scope": "parent", "as_of": "2026-03-31",
+          "source_url": "https://thenextweb.com/news/openai-122-billion-round-852-billion-valuation-retail-investors",
+          "source_type": "third_party", "attributed_to": "OpenAI",
+          "quote": "OpenAI announced that it had closed its latest funding round with $122 billion in committed capital", "confidence": "high",
+          "note": "One round, not lifetime funding."
+        }
+      },
+      "info": {
+        "company": "OpenAI",
+        "description": "OpenAI's assistant app for chat, research, files and agent tasks, offered on Free, Go, Plus and Pro plans with deep research, image creation, voice, memory, custom GPTs and the Codex coding agent.",
+        "features": ["Unlimited text chats on the Free plan, subject to abuse guardrails", "Deep research", "Image creation", "Voice", "Memory", "Projects and scheduled tasks", "Custom GPTs", "Codex coding agent", "ChatGPT Work", "Advanced reasoning models on Plus and above"],
+        "features_source": {"source_url": "https://chatgpt.com/pricing", "source_type": "vendor", "as_of": "2026-11-10"},
+        "business": {"pricing_model": "freemium", "free_tier": true, "enterprise_pricing": null, "base_price": null},
+        "business_source": {"source_url": "https://chatgpt.com/pricing", "source_type": "vendor", "as_of": "2026-11-10",
+          "quote": "Free (Intelligence for everyday tasks) / Go / Plus / Pro plans listed",
+          "note": "The fetched page shows plan names but no dollar amounts, so base_price is left null (third-party guides say Go $8, Plus $20, unconfirmed)."}
+      }
+    },
+    "gemini-app": {
+      "include_in_0033": false,
+      "include_reason": "Only one engine-scored figure is verified (users). Fails threshold (ii). It is one figure short; the figure is vendor-stated and strong, so the owner can waive the threshold for this row. No Alphabet figure for ARR, valuation or funding exists that is specific enough to use.",
+      "metrics": {
+        "users": {
+          "value": 950000000, "unit": "monthly active users", "scope": "product", "as_of": "2026-07-22",
+          "source_url": "https://blog.google/company-news/inside-google/message-ceo/alphabet-earnings-q2-2026/",
+          "source_type": "vendor", "quote": "the Gemini app, which now has 950 million monthly active users, with daily active users tripling in the last year.", "confidence": "high",
+          "note": "Later press reports 1 billion (August 2026, from a Pichai post); not fetched from a primary page, so not used."
+        }
+      },
+      "info": {
+        "company": "Google",
+        "description": "Google's Gemini assistant app on web, Android and iOS, with a free plan and Google AI Plus, Pro and Ultra subscriptions that add higher usage limits, video generation and storage.",
+        "features": ["Image generation and editing", "Deep Research", "Gemini Live", "Canvas", "Gems", "Video generation (AI Plus and above)", "Daily Brief", "Gemini in Gmail and Vids", "Google Flow credits", "Gemini Enterprise business editions"],
+        "features_source": {"source_url": "https://gemini.google/subscriptions/", "source_type": "vendor", "as_of": "2026-11-10"},
+        "business": {"pricing_model": "freemium", "base_price": 4.99, "free_tier": true, "enterprise_pricing": true},
+        "business_source": {"source_url": "https://gemini.google/subscriptions/", "source_type": "vendor", "as_of": "2026-11-10",
+          "quote": "Free $0; Google AI Plus $4.99; AI Pro $19.99; AI Ultra from $99.99; Gemini Enterprise Business $21 per seat per month",
+          "note": "Quote is the fetcher's table of the page, not a single sentence."}
+      }
+    },
+    "genspark": {
+      "include_in_0033": true,
+      "include_reason": "ARR, valuation, funding verified from two fetched press pages (company statements); plan prices verified on the vendor help center.",
+      "metrics": {
+        "monthly_arr": {
+          "value": 250000000, "currency": "USD", "unit": "ARR, cumulative as stated", "scope": "product", "as_of": "2026-06-18",
+          "source_url": "https://techintelpro.com/news/ai/agentic-ai/gensparkai-extends-series-b-to-485m-at-26b-valuation-appoints-cro",
+          "source_type": "third_party", "attributed_to": "Genspark announcement of 2026-06-17 (businesswire, 403 to the fetcher)",
+          "quote": "The company grew from $0 to $250M ARR within 12 months.", "confidence": "medium",
+          "note": "The same page and the Reuters text on boursorama give '$150M ARR added in Q1 2026, on top of $100M ARR since the April 2025 launch'. 250M is the page's own cumulative sentence."
+        },
+        "valuation": {
+          "value": 2600000000, "currency": "USD", "unit": "post-money", "scope": "product", "as_of": "2026-06-18",
+          "source_url": "https://techintelpro.com/news/ai/agentic-ai/gensparkai-extends-series-b-to-485m-at-26b-valuation-appoints-cro",
+          "source_type": "third_party", "attributed_to": "Genspark announcement",
+          "quote": "closed a $100M Series B extension at a $2.6B post-money valuation.", "confidence": "high",
+          "note": "Confirmed by the Reuters text on boursorama.com (2026-06-17): 'qui la valorise a 2,6 milliards de dollars'."
+        },
+        "funding": {
+          "value": 485000000, "currency": "USD", "unit": "total Series B (lower bound of total raised)", "scope": "product", "as_of": "2026-06-18",
+          "source_url": "https://techintelpro.com/news/ai/agentic-ai/gensparkai-extends-series-b-to-485m-at-26b-valuation-appoints-cro",
+          "source_type": "third_party", "attributed_to": "Genspark announcement",
+          "quote": "The extension brings Genspark's total Series B funding to $485M.", "confidence": "medium",
+          "note": "The same page also says '$645 million total funding'; other trackers say about $545M. The 485M is the only figure two fetched pages agree on, so total raised is at least this."
+        }
+      },
+      "info": {
+        "company": "Genspark Inc",
+        "description": "AI workspace whose Super Agent runs tasks in a cloud sandbox and makes slides, sheets and docs, sold on a credit-based Free, Plus, Pro, Team and Enterprise plan ladder.",
+        "features": ["Super Agent chat and cloud task runs", "Live tool calls and artifacts inside the conversation", "Agent can work on the user's local files (desktop Super App)", "Cloud task list synced between desktop app and web"],
+        "features_source": {"source_url": "https://www.genspark.ai/helpcenter/super-app", "source_type": "vendor", "as_of": "2026-11-10"},
+        "features_note": "Only 4 verified features, so the 'more than 5 features' completeness test does not fire. genspark.ai home page returned 403.",
+        "business": {"pricing_model": "freemium", "base_price": 24.99, "free_tier": true, "enterprise_pricing": true},
+        "business_source": {"source_url": "https://www.genspark.ai/helpcenter/membership-plans", "source_type": "vendor", "as_of": "2026-11-10",
+          "quote": "Free $0 (100 credits / day); Plus $24.99 / month; Pro $249.99 / month; Team $40 / seat / month; Enterprise Custom",
+          "note": "Quote is the fetcher's table of the page."}
+      }
+    },
+    "grok-app": {
+      "include_in_0033": true,
+      "include_reason": "users (product, via press on the SpaceX filing) + funding (xAI statement, parent) + valuation (press, parent) verified. Pricing is third-party only; users and valuation are medium/low confidence.",
+      "metrics": {
+        "users": {
+          "value": 117000000, "unit": "monthly active users", "scope": "product", "as_of": "2026-03-31",
+          "source_url": "https://pulse2.com/spacex-grok-reaches-117-million-users-as-ai-push-accelerates/amp/",
+          "source_type": "third_party", "attributed_to": "SpaceX IPO filing (S-1); the filing itself was not fetched",
+          "quote": "SpaceX revealed in its IPO filing that Grok had reached approximately 117 million monthly active users as of March 2026", "confidence": "medium",
+          "note": "Confirmed by socialmediatoday.com: 'The Grok chatbot from xAI currently sees about 117 million monthly active users'. Commentary says the count includes Grok inside X; the filing's definition was not read. as_of is the month end."
+        },
+        "funding": {
+          "value": 20000000000, "currency": "USD", "unit": "Series E round", "scope": "parent", "as_of": "2026-01-06",
+          "source_url": "https://x.ai/news/series-e",
+          "source_type": "vendor", "quote": "xAI completed its upsized Series E funding round, exceeding the $15 billion targeted round size, and raised $20 billion.", "confidence": "high",
+          "note": "One round, not lifetime funding. Date from convergedigest.com ('Announced Jan 6, 2026'); the x.ai page shows none in the fetch. xAI was later acquired by SpaceX (press, Feb 2026, not fetched)."
+        },
+        "valuation": {
+          "value": 230000000000, "currency": "USD", "unit": "reported, Series E", "scope": "parent", "as_of": "2026-01-07",
+          "source_url": "https://www.theweek.in/news/biz-tech/2026/01/07/new-20-billion-series-e-funding-lifts-value-of-elon-musk-led-x-ai.html",
+          "source_type": "third_party", "attributed_to": "press (CNBC per search result)",
+          "quote": "implies a very high valuation for the startup, reportedly in the range of about $230 billion.", "confidence": "low",
+          "note": "The page also says 'xAI is yet to confirm this valuation.' The x.ai release states no valuation. Drop this field if the owner wants vendor-confirmed figures only."
+        }
+      },
+      "info": {
+        "company": "xAI",
+        "description": "xAI's Grok assistant app (separate row from the grok model family): chat with real-time web and X search, image and video generation, voice, DeepSearch, reasoning mode and companions, with a free plan and SuperGrok subscription.",
+        "features": ["Chat with real-time web and X search", "Imagine image and video generation", "Aurora text-to-image model", "DeepSearch", "Think (reasoning) mode", "Voice mode (Grok Voice)", "Companions", "Image and PDF understanding", "Grok in X", "Grok Build terminal coding agent (SuperGrok)"],
+        "features_source": {"source_url": "https://en.wikipedia.org/wiki/Grok_(chatbot)", "source_type": "third_party", "as_of": "2026-11-10",
+          "note": "x.ai/grok returned 403 and grok.com shows only a chat box. Features are from Wikipedia's article; first 100,000 characters read."},
+        "business": {"pricing_model": "freemium", "base_price": 30, "free_tier": true, "enterprise_pricing": null},
+        "business_source": {"source_url": "https://www.eesel.ai/blog/grok-4-5-pricing", "source_type": "third_party", "as_of": "2026-07-09",
+          "quote": "Grok (Free) $0; SuperGrok $30.00 per month (page last edited July 9, 2026, attributes prices to grok.com/supergrok)",
+          "confidence": "low",
+          "note": "A search result (not fetched) says xAI changed its plans on 2026-10-12. base_price may be stale; the owner may prefer to leave pricing null for this row."}
+      }
+    },
+    "hermes-agent": {
+      "include_in_0033": true,
+      "include_reason": "github.stars and pypi downloads (both product, public APIs read today) plus funding/valuation (parent, press) verified; vendor page states the pricing tiers.",
+      "metrics": {
+        "github": {
+          "stars": {
+            "value": 262411, "unit": "GitHub stargazers", "scope": "product", "as_of": "2026-11-10",
+            "source_url": "https://api.github.com/repos/NousResearch/hermes-agent",
+            "source_type": "vendor", "quote": "\"stargazers_count\": 262411 (repo NousResearch/hermes-agent, MIT license, created 2025-07-22)", "confidence": "high",
+            "note": "Public unauthenticated GitHub API, read 2026-11-10. The github.com page showed 262.4k."
+          }
+        },
+        "pypi": {
+          "downloads_last_month": {
+            "value": 162501, "unit": "PyPI downloads, last 30 days", "scope": "product", "as_of": "2026-11-10",
+            "source_url": "https://pypistats.org/api/packages/hermes-agent/recent",
+            "source_type": "third_party", "quote": "{\"data\":{\"last_day\":7465,\"last_month\":162501,\"last_week\":85053},\"package\":\"hermes-agent\"}", "confidence": "medium",
+            "note": "pypistats.org public API. PyPI package hermes-agent 0.19.0 lists author Nous Research. The existing collector uses the same shape (data.metrics.pypi.downloads_last_month)."
+          }
+        },
+        "funding": {
+          "value": 158000000, "currency": "USD", "unit": "Nous Research total raised after the October 2026 round", "scope": "parent", "as_of": "2026-10-07",
+          "source_url": "https://dealroom.co/news/160592-nous-research-raises-90m-at-1-5b-valuation-for-open-source-ai/",
+          "source_type": "third_party", "attributed_to": "Wall Street Journal report of 2026-10-07",
+          "quote": "The round brings total funding to about $158 million", "confidence": "low",
+          "note": "Single aggregator citing WSJ. The Block (2026-07-14) reports only 'at least $75 million ... unconfirmed'. Nous Research's own announcement was not found."
+        },
+        "valuation": {
+          "value": 1500000000, "currency": "USD", "unit": "reported", "scope": "parent", "as_of": "2026-10-07",
+          "source_url": "https://dealroom.co/news/160592-nous-research-raises-90m-at-1-5b-valuation-for-open-source-ai/",
+          "source_type": "third_party", "attributed_to": "Wall Street Journal report of 2026-10-07",
+          "quote": "has raised $90 million at a $1.5 billion valuation", "confidence": "low",
+          "note": "Same page: 'The company did not disclose the valuation itself.' The Block page (https://www.theblock.co/post/408237) gives $1.5 billion for a round still 'in talks'."
+        }
+      },
+      "info": {
+        "company": "Nous Research",
+        "description": "Open-source, MIT-licensed agent with persistent memory, scheduled tasks and subagents, reachable from the CLI and chat apps such as Telegram, Discord, Slack, WhatsApp and Signal.",
+        "features": ["Runs from Telegram, Discord, Slack, WhatsApp, Signal, email and CLI", "Persistent memory that learns projects and auto-generates skills", "Natural-language scheduled automations", "Isolated subagents with their own terminals and Python RPC scripts", "Web search, browser automation, vision, image generation and text-to-speech", "Sandboxed execution backends (local, Docker, SSH, Singularity, Modal)", "Full terminal UI with streaming tool output", "Batch trajectory generation for training tool-calling models"],
+        "features_source": {"source_url": "https://hermes-agent.nousresearch.com/", "source_type": "vendor", "as_of": "2026-11-10"},
+        "business": {"pricing_model": "freemium", "base_price": 20, "free_tier": true, "enterprise_pricing": null},
+        "business_source": {"source_url": "https://hermes-agent.nousresearch.com/", "source_type": "vendor", "as_of": "2026-11-10",
+          "quote": "Hermes Agent is free and open source under the MIT license; hosted tiers Free $0, Plus $20, Super $100, Ultra $200 per month",
+          "note": "Software is free; base_price is the cheapest paid hosted tier. Quote is the fetcher's summary of the page."}
+      }
+    },
+    "manus": {
+      "include_in_0033": true,
+      "include_reason": "ARR (vendor, product) + valuation and funding (press, company) verified; the vendor docs confirm Free, Pro and Team plans. No user count.",
+      "metrics": {
+        "monthly_arr": {
+          "value": 100000000, "currency": "USD", "unit": "ARR", "scope": "product", "as_of": "2025-12-17",
+          "source_url": "https://manus.im/blog/manus-100m-arr",
+          "source_type": "vendor", "quote": "Manus has crossed $100M in ARR, eight months after launch.", "confidence": "high",
+          "note": "Eleven months old at checked_at. Sacra (sacra.com/c/manus, third_party_estimate) estimates $450M annualised revenue in June 2026; not used because it is an estimate. The same post says total revenue run rate is over $125M."
+        },
+        "valuation": {
+          "value": 2000000000, "currency": "USD", "unit": "reported, Meta acquisition", "scope": "product", "as_of": "2025-12-31",
+          "source_url": "https://sacra.com/c/manus",
+          "source_type": "third_party_estimate", "attributed_to": "press reports cited by Sacra",
+          "quote": "at a reported valuation of more than $2 billion.", "confidence": "low",
+          "note": "Sacra also says backers pursued a buyback in June 2026 'at roughly the same $2 billion valuation Meta paid'. Ownership status after that was not verified; as_of is the month of the December 2025 deal."
+        },
+        "funding": {
+          "value": 85000000, "currency": "USD", "unit": "total funding (Series A $10M + Series B $75M)", "scope": "product", "as_of": "2025-04-30",
+          "source_url": "https://sacra.com/c/manus",
+          "source_type": "third_party_estimate", "attributed_to": "Sacra",
+          "quote": "bringing total funding to $85 million.", "confidence": "medium",
+          "note": "as_of is the month of the last equity round (April 2025 Series B). Before the Meta deal."
+        }
+      },
+      "info": {
+        "company": "Manus AI",
+        "description": "General-purpose AI agent that builds slides, websites, games, video and designs from one prompt, with a web app, desktop app, Slack integration, API and a Team plan.",
+        "features": ["Create slides", "Build websites", "Create games", "Video generation", "AI design", "Wide Research", "AI image generator", "Web app, desktop app and My Browser", "Slack integration", "API, Team plan and SSO"],
+        "features_source": {"source_url": "https://manus.im/", "source_type": "vendor", "as_of": "2026-11-10"},
+        "business": {"pricing_model": "freemium", "free_tier": true, "base_price": null, "enterprise_pricing": null},
+        "business_source": {"source_url": "https://manus.im/docs/introduction/plans.md", "source_type": "vendor", "as_of": "2026-11-10",
+          "quote": "Lists three plans: Free (Limited monthly credits), Pro (Generous monthly credit allocation), Team (Shared team credit pool)",
+          "note": "No dollar amounts on the fetched vendor pages (manus.im/pricing renders no plans), so base_price is null. Third-party sources say Standard $20, Customizable $40, Extended $200; unverified."}
+      }
+    },
+    "microsoft-copilot": {
+      "include_in_0033": true,
+      "include_reason": "Two Microsoft parent figures (Copilot-family MAU, AI-business run rate; D80.1) verified from fetched pages; prices verified on the vendor page. No consumer-app-only user figure exists.",
+      "metrics": {
+        "users": {
+          "value": 150000000, "unit": "monthly active users, first-party family of Copilots (commercial and consumer)", "scope": "parent", "as_of": "2025-10-29",
+          "source_url": "https://equibles.com/stocks/msft/documents/816ed4e5-1cbb-4c54-90a6-694408c13bfd",
+          "source_type": "third_party", "attributed_to": "Microsoft FY26 Q1 earnings call, Satya Nadella",
+          "quote": "our first-party family of Copilots now has surpassed 150 million monthly active users", "confidence": "medium",
+          "note": "Transcript hosted by a third party; the moomoo transcript carries the same sentence. Counts GitHub, Microsoft 365 and consumer Copilots together; Microsoft declined to give a breakdown (TechCrunch, search result, not fetched). A newer Microsoft consumer-only figure does not exist in the pages read."
+        },
+        "monthly_arr": {
+          "value": 37000000000, "currency": "USD", "unit": "annual revenue run rate, Microsoft AI business", "scope": "parent", "as_of": "2026-04-29",
+          "source_url": "https://www.uctoday.com/unified-communications/microsoft-earnings-2026-ai-copilot-enterprise/",
+          "source_type": "third_party", "attributed_to": "Microsoft FY26 Q3 earnings call, Satya Nadella",
+          "quote": "described as now running at a $37 billion annual revenue run rate, up 123 percent year-over-year.", "confidence": "medium",
+          "note": "This is Microsoft's whole AI business, not Copilot. The page is dated 30 Apr 2026; as_of is the call date taken from the page's 'Microsoft Earnings' coverage. A teaser on the page says Microsoft later stopped publishing the Copilot seat count."
+        }
+      },
+      "info": {
+        "company": "Microsoft",
+        "description": "Microsoft's consumer Copilot assistant, bundled into Microsoft 365 Personal, Family, Premium and Pro, with Copilot in Word, Excel, PowerPoint and Outlook and higher chat, image and agent usage on paid plans.",
+        "features": ["Copilot in Word, Excel, PowerPoint and Outlook", "Copilot chat", "Image generation", "Audio and visual AI", "Cowork", "Researcher", "Analyst", "AI Restyle", "Limited agentic AI for research and analytics (Premium)", "1 TB to 5 TB cloud storage by plan"],
+        "features_source": {"source_url": "https://www.microsoft.com/en-us/microsoft-copilot/for-individuals", "source_type": "vendor", "as_of": "2026-11-10"},
+        "business": {"pricing_model": "subscription", "base_price": 6.99, "free_tier": null, "enterprise_pricing": null},
+        "business_source": {"source_url": "https://www.microsoft.com/en-us/microsoft-copilot/for-individuals", "source_type": "vendor", "as_of": "2026-11-10",
+          "quote": "Microsoft 365 Personal $6.99/month; Family $12.99/month; Premium $13.99 first month (was $19.99); Pro $99.99/month",
+          "note": "Quote is the fetcher's table. The page implies a free tier ('higher usage than free') without describing it, so free_tier is null."}
+      }
+    },
+    "mistral-vibe": {
+      "include_in_0033": false,
+      "include_reason": "Fails threshold (i): no users, ARR or GitHub figure is verified. Only company valuation and funding (vendor, parent) are verified; ARR estimates (~$400M) and user estimates appear only in aggregator search snippets and were not fetched from a primary page.",
+      "metrics": {
+        "funding": {
+          "value": 1700000000, "currency": "EUR", "unit": "Series C round", "scope": "parent", "as_of": "2025-09-09",
+          "source_url": "https://mistral.ai/news/mistral-ai-raises-1-7-b-to-accelerate-technological-progress-with-ai",
+          "source_type": "vendor", "quote": "We are announcing a Series C funding round of 1.7B€ at a 11.7B€ post-money valuation.", "confidence": "high",
+          "note": "Euros, not USD; a loader must convert or store the currency. Search snippets mention a larger 2026 round (not fetched)."
+        },
+        "valuation": {
+          "value": 11700000000, "currency": "EUR", "unit": "post-money", "scope": "parent", "as_of": "2025-09-09",
+          "source_url": "https://mistral.ai/news/mistral-ai-raises-1-7-b-to-accelerate-technological-progress-with-ai",
+          "source_type": "vendor", "quote": "We are announcing a Series C funding round of 1.7B€ at a 11.7B€ post-money valuation.", "confidence": "high",
+          "note": "Over a year old; search snippets cite newer, unconfirmed valuations."
+        }
+      },
+      "info": {
+        "company": "Mistral AI",
+        "description": "Mistral's unified agent for work and coding (the former Le Chat), with long-running multi-step tasks, connectors, a CLI and a VS Code extension, on Free, Pro, Team and Enterprise plans.",
+        "features": ["Work Mode for multi-step tasks across connected apps", "Enterprise search over Google Workspace, Outlook, SharePoint, Slack and GitHub", "Data analysis with in-conversation charts", "Document drafting", "Scheduled tasks", "Reusable skills", "Code Mode with remote sandboxed coding sessions", "VS Code extension", "CLI with subagents and /teleport"],
+        "features_source": {"source_url": "https://mistral.ai/news/vibe-agent/", "source_type": "vendor", "as_of": "2026-05-28"},
+        "business": {"pricing_model": "freemium", "base_price": 14.99, "free_tier": true, "enterprise_pricing": true},
+        "business_source": {"source_url": "https://mistral.ai/pricing", "source_type": "vendor", "as_of": "2026-11-10",
+          "quote": "Pro $14.99/mo; Team $24.99/user/mo; Free plan; Enterprise contact sales"}
+      }
+    },
+    "notion-ai": {
+      "include_in_0033": true,
+      "include_reason": "users and valuation (vendor) and ARR (third-party estimate) verified; plans and AI inclusion verified on notion.com/pricing. Users figure is 14 months old.",
+      "metrics": {
+        "users": {
+          "value": 100000000, "unit": "users (Notion workspace, not Notion AI only)", "scope": "product", "as_of": "2024-09-03",
+          "source_url": "https://www.notion.com/blog/100-million-of-you",
+          "source_type": "vendor", "quote": "Last month, Notion passed 100M users!", "confidence": "medium",
+          "note": "Notion overall, not the AI feature. Registered users, not active. Stale: no newer vendor count found."
+        },
+        "valuation": {
+          "value": 11000000000, "currency": "USD", "unit": "employee tender valuation", "scope": "product", "as_of": "2026-01-26",
+          "source_url": "https://www.notion.com/blog/gic-sequoia-index-purchase-notion-shares",
+          "source_type": "vendor", "quote": "for a total tender of around $270M at an $11B valuation", "confidence": "high",
+          "note": "A secondary share sale, not a primary raise."
+        },
+        "monthly_arr": {
+          "value": 865000000, "currency": "USD", "unit": "ARR, Sacra estimate", "scope": "product", "as_of": "2026-07-31",
+          "source_url": "https://sacra.com/research/notion-at-865m-year-growing-82-yoy/",
+          "source_type": "third_party_estimate", "attributed_to": "Sacra",
+          "quote": "Sacra estimates Notion hit $865M annual recurring revenue (ARR) in July 2026, up 82% year-over-year.", "confidence": "low",
+          "note": "Notion whole company, estimate not a company statement. Notion's own post says only 'more than 50% of our ARR came from AI-enabled customers'. Engine ARR curve saturates at 400M, so any figure above that scores the same; drop this field if estimates are not wanted. as_of is month end."
+        }
+      },
+      "info": {
+        "company": "Notion Labs",
+        "description": "Notion's built-in AI teammate that works across pages, docs, tasks and databases, with agents, enterprise search and meeting notes, included in the Business and Enterprise plans.",
+        "features": ["Notion Agent for multi-step tasks across the workspace and connected apps", "Custom Agents on a trigger or schedule", "Enterprise Search across Slack, Google Drive and GitHub", "AI Meeting Notes without a bot", "Database autofill, inline AI blocks and formula help", "Admin usage dashboards and model switching", "Per-member monthly AI credits on Business and Enterprise"],
+        "features_source": {"source_url": "https://www.notion.com/product/ai", "source_type": "vendor", "as_of": "2026-11-10"},
+        "business": {"pricing_model": "freemium", "base_price": 10, "free_tier": true, "enterprise_pricing": true},
+        "business_source": {"source_url": "https://www.notion.com/pricing", "source_type": "vendor", "as_of": "2026-11-10",
+          "quote": "Free $0; Plus $10; Business $20 per member per month; Enterprise custom pricing; Notion AI included in Business and Enterprise, trial on Free and Plus",
+          "note": "Quote is the fetcher's table. base_price is the cheapest paid plan, which has only an AI trial."}
+      }
+    }
+  }
+}
