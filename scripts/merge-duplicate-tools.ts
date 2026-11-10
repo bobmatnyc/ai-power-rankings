@@ -132,7 +132,9 @@ export async function runMerge(deps: RunDeps, mode: MergeMode, set: MergeSet = M
     return 1;
   }
   const raw = fs.readFileSync(mode.backupFile, "utf8");
-  const options: ApplyOptions = { ruling: set.ruling, ...(codex ? { patch: codexPatch(now()) } : {}) };
+  // Codex merge (D35): the patch's text-correction line is printed only once the transaction commits.
+  const patchLines: string[] = [];
+  const options: ApplyOptions = { ruling: set.ruling, ...(codex ? { patch: codexPatch(now(), (l) => patchLines.push(l)) } : {}) };
   const verdict = (p: Parameters<typeof checkBackup>[2]) => {
     const shared = checkBackup(raw, deps.fingerprint, p, now(), MAX_BACKUP_AGE_MS, set.ruling);
     return shared.ok && codex ? codexBackupVerdict(raw) : shared;
@@ -140,7 +142,9 @@ export async function runMerge(deps: RunDeps, mode: MergeMode, set: MergeSet = M
   try {
     const plan = await applyMerge(deps.db, pairs, verdict, options);
     for (const line of formatPlan(plan, "will")) log(line);
-    log(`--apply: committed (${plan.pairs.every((p) => p.state === "already-merged") ? "no-op, already merged" : "merged"})`);
+    for (const line of patchLines) log(line);
+    const merged = plan.pairs.every((p) => p.state === "already-merged");
+    log(`--apply: committed (${merged ? (patchLines.length > 0 ? "already merged, text corrected" : "no-op, already merged") : "merged"})`);
     return 0;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
