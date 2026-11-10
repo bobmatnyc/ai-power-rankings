@@ -101,8 +101,8 @@
   {
     "id": "unreleased-f6333f16e995",
     "version": "Unreleased",
-    "date": "2026-11-10T03:00:52.580Z",
-    "dateSource": "build",
+    "date": "2026-11-10T03:06:17.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "seo",
     "title": "a bare unprefixed section path such as /news, /rankings, /tools or /admin 308s once to its English page (/en/news)",

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { canonicalLocale, ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
+import { createJsonLdScript } from "@/lib/schema";
+import { createMonthlyReportSchema } from "@/lib/seo/schema";
 import { siteOrigin } from "@/lib/site-origin";
 
 /**
@@ -23,7 +25,25 @@ export function requireInsightsPreview(): void {
   if (!insightsPreviewEnabled()) notFound();
 }
 
+/**
+ * The `ClientLayout` props that put Insights in the site nav (#198).
+ *
+ * Why: #198: proposal M5-7 adds Insights to the nav, but the pages 404 while
+ * the flag is off. A server component's props to a client component are
+ * serialised into the page, so a `false` prop would still change every page's
+ * bytes; the prop is left out instead.
+ * What: `{ insightsNav: true }` when `insightsPreviewEnabled(env)`, else `{}`.
+ * Test: `tests/unit/insights-launch-198.test.tsx`.
+ */
+export function insightsNavProps(
+  env: Record<string, string | undefined> = process.env
+): { insightsNav?: true } {
+  return insightsPreviewEnabled(env) ? { insightsNav: true } : {};
+}
+
 export const INSIGHTS_TITLE = "Insights | AI Power Rankings";
+
+const SITE_NAME = "AI Power Rankings";
 
 /** #198: the channel title of each cadence's feed; the feed and the page head share it. */
 export const INSIGHTS_FEED_TITLES = {
@@ -54,24 +74,38 @@ export function insightsFeedLinks(
   }));
 }
 
+/** #198: the dates an Insight permalink's `article` Open Graph and JSON-LD carry. */
+export interface InsightDates {
+  /** When the row was first stored. */
+  createdAt: Date;
+  /** When its current text was generated; a regeneration moves it. */
+  generatedAt: Date;
+}
+
 /**
  * Metadata for an `/[lang]/insights` page while it is a preview.
  *
  * Why: #198: the preview must stay out of search until #191 releases the
  * held `/whats-new` redirects with the launch, so every Insights page is
  * `noindex`. The body is English in every locale, so it follows the #156
- * English-only rule (an `/en` canonical, no hreflang).
+ * English-only rule (an `/en` canonical, no hreflang). The rest is the
+ * metadata an indexable page needs, so the launch only drops `robots`.
  * What: absolute `title`, `description`, `robots` noindex/nofollow (also for
  * googleBot), `englishOnlyAlternates(lang, path)` with `insightsFeedLinks(lang)`
- * appended to its RSS types, and an `openGraph` whose `url` is that canonical
- * and whose `locale` is `en`.
- * Test: `tests/unit/insights-weekly-198.test.tsx`, `tests/unit/insights-sitemap-198.test.ts`.
+ * appended to its RSS types, an `openGraph` whose `url` is that canonical,
+ * whose `locale` is `en` and whose `siteName` is the site, and a `summary`
+ * Twitter card. With `dates` (a weekly or monthly permalink) the Open Graph
+ * `type` is `article`, `publishedTime` is `createdAt` and `modifiedTime` the
+ * later of `generatedAt` and `createdAt`; without (the hub), `website`.
+ * Test: `tests/unit/insights-weekly-198.test.tsx`, `tests/unit/insights-sitemap-198.test.ts`,
+ * `tests/unit/insights-launch-198.test.tsx`.
  */
 export function insightsPreviewMetadata(
   lang: string,
   path: string,
   title: string,
-  description: string
+  description: string,
+  dates?: InsightDates
 ): Metadata {
   const base = englishOnlyAlternates(lang, path);
   // #198: the Insights feeds join the site-wide news feed only while the preview is on.
@@ -83,14 +117,51 @@ export function insightsPreviewMetadata(
       "application/rss+xml": [...(Array.isArray(newsFeeds) ? newsFeeds : []), ...insightsFeedLinks(lang)],
     },
   };
+  const og = { title, description, url: alternates.canonical, locale: ENGLISH_ONLY_OG_LOCALE, siteName: SITE_NAME };
   return {
     title: { absolute: title },
     description,
     // #198: noindex until the Insights launch; see #191 for the held redirects.
     robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
-    openGraph: { title, description, url: alternates.canonical, locale: ENGLISH_ONLY_OG_LOCALE },
+    // #198: indexable metadata; a permalink is a dated article, the hub a website.
+    openGraph: dates
+      ? {
+          ...og,
+          type: "article",
+          publishedTime: dates.createdAt.toISOString(),
+          modifiedTime: modifiedAt(dates).toISOString(),
+        }
+      : { ...og, type: "website" },
+    twitter: { card: "summary", title, description },
     alternates,
   };
+}
+
+/** #198: never before `createdAt`, the rule `createMonthlyReportSchema` keeps for `dateModified` (#54). */
+function modifiedAt({ createdAt, generatedAt }: InsightDates): Date {
+  return generatedAt.getTime() >= createdAt.getTime() ? generatedAt : createdAt;
+}
+
+/**
+ * The JSON-LD `Article` script body of an Insight permalink (#198).
+ *
+ * Why: #198: the weekly and monthly pages replace the `/whats-new` permalinks
+ * (#54, #181), which carry an `Article` block; an Insight page carries the
+ * same block before it becomes indexable.
+ * What: `createMonthlyReportSchema` for `headline`, the metadata's
+ * description and canonical, and `dates`, serialised with every `<` escaped
+ * so stored text cannot close the script tag.
+ * Test: `tests/unit/insights-launch-198.test.tsx`.
+ */
+export function insightJsonLd(metadata: Metadata, headline: string, dates: InsightDates): string {
+  const schema = createMonthlyReportSchema({
+    headline,
+    description: String(metadata.description),
+    canonical: String(metadata.alternates?.canonical),
+    createdAt: dates.createdAt,
+    generatedAt: dates.generatedAt,
+  });
+  return createJsonLdScript(schema).replace(/</g, "\\u003c");
 }
 
 /** The locale-free path of a weekly Insight (#198); proposal M5-7 names `/insights/weekly/<yyyy-Www>`. */

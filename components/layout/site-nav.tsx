@@ -143,10 +143,11 @@ function RankingsMenu({
 }
 
 /** The header nav for wide screens (`xl` and up). */
-export function DesktopSiteNav({ className }: { className?: string }) {
+export function DesktopSiteNav({ className, insights = false }: { className?: string; insights?: boolean }) {
   const pathname = usePathname() ?? "";
   const { dict, lang } = useI18n();
-  const menus = buildSiteNav(lang, dict);
+  // #198: `insights` is the server's INSIGHTS_PREVIEW read; off, the menus are unchanged.
+  const menus = buildSiteNav(lang, dict, undefined, { insights });
   const section = currentSection(pathname, lang);
 
   return (
@@ -193,10 +194,11 @@ function PanelLink({ link, pathname, inSection, onNavigate }: {
 }
 
 /** The phone menu: a button and a panel below the header, shown under `xl`. */
-export function MobileSiteNav() {
+export function MobileSiteNav({ insights = false }: { insights?: boolean }) {
   const pathname = usePathname() ?? "";
   const { dict, lang } = useI18n();
-  const menus = buildSiteNav(lang, dict);
+  // #198: `insights` is the server's INSIGHTS_PREVIEW read; off, the menus are unchanged.
+  const menus = buildSiteNav(lang, dict, undefined, { insights });
   const section = currentSection(pathname, lang);
   const { open, setOpen, containerRef, buttonRef, onKeyDown } = useDisclosure(pathname);
   const panelId = useId();
