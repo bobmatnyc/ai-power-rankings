@@ -423,7 +423,8 @@
     "title": "[TRANSLATE] Historical AI Tool Rankings",
     "description": "[TRANSLATE] Explore how AI tools have performed over time. Track rising stars, established leaders, and market shifts in the rapidly evolving AI landscape.",
     "aboutTitle": "[TRANSLATE] About Historical Trending",
-    "aboutDescription": "[TRANSLATE] This chart shows how AI tools have moved in and out of the top 10 rankings over time. Tools that appear higher on the chart (closer to #1) are performing better."
+    "aboutDescription": "[TRANSLATE] This chart shows how AI tools have moved in and out of the top 10 rankings over time. Tools that appear higher on the chart (closer to #1) are performing better.",
+    "methodChangeLabel": "v8 分榜单方法"
   },
   "footer": {
     "quickLinks": "[TRANSLATE] Quick Links",

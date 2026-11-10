@@ -61,6 +61,8 @@ export interface TrendingAnalysisResult {
   periods: string[];
   tools: TrendingTool[];
   chart_data: TrendingDataPoint[];
+  /** T76: the source of each entry of `periods`, in the same order. Set by the API route. */
+  period_sources?: Array<{ period: string; source: "combined" | "list" }>;
   metadata: {
     total_periods: number;
     date_range: {
@@ -68,6 +70,8 @@ export interface TrendingAnalysisResult {
       end: string;
     };
     top_tools_count: number;
+    /** T76: the list's first per-list period, the v8 method-change boundary. Set by the API route. */
+    first_list_period?: string | null;
   };
 }
 
