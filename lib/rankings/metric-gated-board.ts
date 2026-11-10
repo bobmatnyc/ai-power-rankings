@@ -75,13 +75,14 @@ export function gateStoredEntries(
 }
 
 /**
- * Whether each entry's tool (by stored `tool_id`, else `tool_slug`) carries a coding metric.
- * Exported so a reader of many boards (the trending route) looks the tools up once (#329).
+ * The tools row of each entry, by stored `tool_id`, else `tool_slug`; undefined when absent.
+ * Two reads at most (ids, then the slugs the ids missed); a failed read throws.
+ * D1c: shared by the measured gate and the trending route's harness-membership filter.
  */
-export async function measuredPredicate(
+export async function toolLookup(
   entries: RawRankingEntry[],
   repo: ToolsRepository = new ToolsRepository()
-): Promise<(entry: RawRankingEntry) => boolean> {
+): Promise<(entry: RawRankingEntry) => Record<string, unknown> | undefined> {
   const str = (value: unknown) => (typeof value === "string" && value ? value : null);
   const ids = [...new Set(entries.flatMap((e) => str(e["tool_id"]) ?? []))];
   const byKey = new Map<string, unknown>();
@@ -95,8 +96,23 @@ export async function measuredPredicate(
   if (slugs.length > 0) {
     for (const tool of await repo.findBySlugs(slugs)) byKey.set(`slug:${tool.slug}`, tool);
   }
+  return (entry) =>
+    (byKey.get(`id:${str(entry["tool_id"])}`) ?? byKey.get(`slug:${str(entry["tool_slug"])}`)) as
+      | Record<string, unknown>
+      | undefined;
+}
+
+/**
+ * Whether each entry's tool (by stored `tool_id`, else `tool_slug`) carries a coding metric.
+ * Exported so a reader of many boards (the trending route) looks the tools up once (#329).
+ */
+export async function measuredPredicate(
+  entries: RawRankingEntry[],
+  repo: ToolsRepository = new ToolsRepository()
+): Promise<(entry: RawRankingEntry) => boolean> {
+  const toolOf = await toolLookup(entries, repo);
   return (entry) => {
-    const tool = byKey.get(`id:${str(entry["tool_id"])}`) ?? byKey.get(`slug:${str(entry["tool_slug"])}`);
+    const tool = toolOf(entry);
     return tool !== undefined && hasCodingMetric(tool);
   };
 }

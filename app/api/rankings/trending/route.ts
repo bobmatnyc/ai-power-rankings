@@ -30,10 +30,11 @@ import {
 } from "@/lib/trending-analyzer";
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import cacheInstance from "@/lib/memory-cache";
-import { isMetricGatedList, parseListQuery, RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
-import { gateStoredEntries, measuredPredicate } from "@/lib/rankings/metric-gated-board";
+import { isMetricGatedList, listOfTool, parseListQuery, RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
+import { gateStoredEntries, measuredPredicate, toolLookup } from "@/lib/rankings/metric-gated-board";
 import type { RawRankingEntry } from "@/lib/tools/ranking-entry";
 import {
+  keepCombinedMembers,
   type MergedHistory,
   mergeTrendingHistory,
   usesCombinedFallback,
@@ -50,8 +51,10 @@ type StoredRankingRow = Awaited<ReturnType<typeof rankingsRepository.findAll>>[n
  * What: reads the list's boards (`findAllForList`). For a list in
  *   `COMBINED_FALLBACK_LISTS` that has at least one board, it also reads the combined
  *   boards (`findAll`) and keeps those earlier than the list's first board. Each period
- *   carries its source. Any failed read throws, so a partial history is never served.
- * Test: `tests/unit/rankings-current-trending-185.test.ts`
+ *   carries its source. D1c: the combined periods keep only the list's own tools
+ *   (`listOfTool`), renumbered. Any failed read or tools lookup throws, so a partial or
+ *   unfiltered history is never served.
+ * Test: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/trending-harness-only-d1c.test.ts`
  */
 async function readHistoricalRankings(list: RankingList): Promise<MergedHistory<RankingPeriod>> {
   try {
@@ -62,12 +65,24 @@ async function readHistoricalRankings(list: RankingList): Promise<MergedHistory<
         ? toRankingPeriods(await rankingsRepository.findAll())
         : [];
     const merged = mergeTrendingHistory(listPeriods, combinedPeriods);
+    // Both types describe the same stored JSONB rows.
+    const raw = (p: RankingPeriod) => p.rankings as unknown as RawRankingEntry[];
+
+    // D1c: the combined boards ranked every kind of tool; their months show only this
+    // list's tools (`listOfTool`, as the per-list boards), renumbered. A failed tools
+    // lookup throws to the 500 below, never the unfiltered history.
+    const combinedOnly = merged.periods.filter((p) => p.source === "combined");
+    if (combinedOnly.length > 0) {
+      const toolOf = await toolLookup(combinedOnly.flatMap(raw));
+      merged.periods = keepCombinedMembers(merged.periods, (entry) => {
+        const tool = toolOf(entry as unknown as RawRankingEntry);
+        return tool !== undefined && listOfTool(tool["kind"], tool["modality"]) === list;
+      });
+    }
 
     // #329: a metric-gated list's history shows measured models only, in every period.
     // One tools lookup covers all periods; a failed lookup throws to the 500 below.
     if (isMetricGatedList(list)) {
-      // Both types describe the same stored JSONB rows.
-      const raw = (p: RankingPeriod) => p.rankings as unknown as RawRankingEntry[];
       const isMeasured = await measuredPredicate(merged.periods.flatMap(raw));
       for (const p of merged.periods) {
         p.rankings = gateStoredEntries(list, raw(p), isMeasured) as unknown as RankingPeriod["rankings"];
