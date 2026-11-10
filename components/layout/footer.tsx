@@ -31,11 +31,12 @@ function FooterLink({
   );
 }
 
-export function Footer() {
+export function Footer({ insights = false }: { insights?: boolean }) {
   const currentYear = new Date().getFullYear();
   const { dict, lang } = useI18n();
   const pathname = usePathname() ?? "";
-  const menus = buildSiteNav(lang, dict);
+  // #198: `insights` is the server's INSIGHTS_PREVIEW read; on, Insights joins the Explore column.
+  const menus = buildSiteNav(lang, dict, undefined, { insights });
   const section = currentSection(pathname, lang);
 
   return (

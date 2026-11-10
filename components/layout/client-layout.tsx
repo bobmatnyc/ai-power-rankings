@@ -30,9 +30,11 @@ import type { Category } from "@/lib/db/repositories/categories";
 const ClientLayoutContent = React.memo(function ClientLayoutContent({
   children,
   categories,
+  insightsNav = false,
 }: {
   children: React.ReactNode;
   categories: Category[];
+  insightsNav?: boolean;
 }) {
   const pathname = usePathname();
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -89,7 +91,7 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
                   <span className="hidden sm:inline font-bold text-sm leading-none">{dict.common.appName}</span>
                 </div>
                 {/* #194: the site nav, from xl up; MobileSiteNav covers smaller widths */}
-                <DesktopSiteNav />
+                <DesktopSiteNav insights={insightsNav} />
               </div>
 
               <div className="flex-1 flex justify-center">
@@ -116,7 +118,7 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
                   <UserButtonDirect afterSignOutUrl={`/${lang}`} />
                 </SignedInDirect>
 
-                <MobileSiteNav />
+                <MobileSiteNav insights={insightsNav} />
               </div>
             </div>
           </div>
@@ -126,7 +128,7 @@ const ClientLayoutContent = React.memo(function ClientLayoutContent({
           >
             <div className="min-h-full flex flex-col">
               <div className="flex-1">{children}</div>
-              <Footer />
+              <Footer insights={insightsNav} />
             </div>
           </div>
         </main>
@@ -141,17 +143,22 @@ export const ClientLayout = React.memo(function ClientLayout({
   lang,
   dict,
   categories,
+  insightsNav = false,
 }: {
   children: React.ReactNode;
   lang: Locale;
   dict: Dictionary;
   categories: Category[];
+  /** #198: the server's INSIGHTS_PREVIEW read; adds the Insights nav link. Omitted when off. */
+  insightsNav?: boolean;
 }) {
   return (
     <ErrorBoundary>
       <I18nProvider dict={dict} lang={lang}>
         <RankingChangesProvider>
-          <ClientLayoutContent categories={categories}>{children}</ClientLayoutContent>
+          <ClientLayoutContent categories={categories} insightsNav={insightsNav}>
+            {children}
+          </ClientLayoutContent>
         </RankingChangesProvider>
       </I18nProvider>
     </ErrorBoundary>

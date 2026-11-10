@@ -17,7 +17,7 @@
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
-export type NavSectionId = "rankings" | "tools" | "news" | "methodology" | "about";
+export type NavSectionId = "rankings" | "tools" | "insights" | "news" | "methodology" | "about";
 
 /** A rendered link: `href` already carries the locale prefix. */
 export interface NavLink {
@@ -76,12 +76,27 @@ export const RANKING_SUB_PAGES: readonly RankingSubPage[] = [
 ];
 
 /** Locale-free paths of the top-level plain links, in display order. */
-const TOP_LEVEL_LINKS: readonly { id: Exclude<NavSectionId, "rankings">; path: string }[] = [
+const TOP_LEVEL_LINKS: readonly { id: Exclude<NavSectionId, "rankings" | "insights">; path: string }[] = [
   { id: "tools", path: "/tools" },
   { id: "news", path: "/news" },
   { id: "methodology", path: "/methodology" },
   { id: "about", path: "/about" },
 ];
+
+/**
+ * #198: the Insights hub link. Proposal M5-7's nav puts it between Tools and
+ * News. Its label is English in every locale, as the Insights body is (#156).
+ */
+const INSIGHTS_LINK = { id: "insights", path: "/insights", label: "Insights", after: "tools" } as const;
+
+/** Options for `buildSiteNav`. */
+export interface SiteNavOptions {
+  /**
+   * #198: true only when the server read `INSIGHTS_PREVIEW` as on. The
+   * Insights pages 404 while it is off, so the link is absent by default.
+   */
+  insights?: boolean;
+}
 
 /** Every locale-free path the nav renders; the live-route test checks each one. */
 export function liveNavPaths(): string[] {
@@ -99,12 +114,16 @@ export function localizedHref(lang: Locale, path: string): string {
 /**
  * The menus in display order, with locale-prefixed hrefs.
  * `rankingPages` defaults to `RANKING_SUB_PAGES`; tests pass a variant.
+ * #198: `options.insights` adds the Insights link after Tools; without it the
+ * menus are exactly the #194 menus.
  * Postcondition: every `href` starts with `/${lang}/`; no `live: false` entry appears.
+ * Test: `tests/unit/site-nav-194.test.tsx`, `tests/unit/insights-launch-198.test.tsx`.
  */
 export function buildSiteNav(
   lang: Locale,
   dict: Dictionary,
-  rankingPages: readonly RankingSubPage[] = RANKING_SUB_PAGES
+  rankingPages: readonly RankingSubPage[] = RANKING_SUB_PAGES,
+  options: SiteNavOptions = {}
 ): NavMenu[] {
   const rankings: NavMenu = {
     id: "rankings",
@@ -115,7 +134,7 @@ export function buildSiteNav(
       label: page.label(dict),
     })),
   };
-  return [
+  const menus: NavMenu[] = [
     rankings,
     ...TOP_LEVEL_LINKS.map((link) => ({
       id: link.id,
@@ -123,6 +142,15 @@ export function buildSiteNav(
       href: localizedHref(lang, link.path),
     })),
   ];
+  if (options.insights) {
+    const at = menus.findIndex((menu) => menu.id === INSIGHTS_LINK.after) + 1;
+    menus.splice(at, 0, {
+      id: INSIGHTS_LINK.id,
+      label: INSIGHTS_LINK.label,
+      href: localizedHref(lang, INSIGHTS_LINK.path),
+    });
+  }
+  return menus;
 }
 
 function stripLocale(pathname: string, lang: Locale): string {
@@ -140,6 +168,8 @@ export function currentSection(pathname: string, lang: Locale): NavSectionId | n
   const path = trimTrailingSlash(stripLocale(pathname, lang));
   const within = (base: string) => path === base || path.startsWith(`${base}/`);
   if (within("/rankings") || within("/trending")) return "rankings";
+  // #198: matches only a link that is rendered; with the flag off no menu has this id.
+  if (within(INSIGHTS_LINK.path)) return INSIGHTS_LINK.id;
   for (const link of TOP_LEVEL_LINKS) {
     if (within(link.path)) return link.id;
   }
