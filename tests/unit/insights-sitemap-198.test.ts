@@ -127,8 +127,16 @@ describe("Insights feed links in the page head (#198)", () => {
       week: "2026-W44",
       content: "# T\n\nBody.",
       createdAt: new Date("2026-11-02T07:31:00.000Z"),
+      // #198: the permalink metadata dates its `article` Open Graph from the stored row.
+      generatedAt: new Date("2026-11-02T07:31:00.000Z"),
     });
-    monthly.getStoredSummary.mockResolvedValue({ period: "2026-10", content: "# T\n\nBody.", metadata: {} });
+    monthly.getStoredSummary.mockResolvedValue({
+      period: "2026-10",
+      content: "# T\n\nBody.",
+      metadata: {},
+      createdAt: new Date("2026-11-01T08:00:00.000Z"),
+      generatedAt: new Date("2026-11-01T08:05:00.000Z"),
+    });
     const metas = await Promise.all([
       import("../../app/[lang]/insights/page").then((m) => m.generateMetadata(params({ lang: "fr" }))),
       import("../../app/[lang]/insights/weekly/[week]/page").then((m) =>
