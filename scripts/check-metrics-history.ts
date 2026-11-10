@@ -16,7 +16,8 @@
  *   repository is public). Errors print a fixed message or the error class name.
  *   Exit 0: pass. Exit 3: a check failed. Exit 1: an error, including a failed query.
  * Test: `tests/unit/metrics-check-report-95.test.ts` (`executeCheck` arms),
- *   `tests/unit/metrics-cron-config-95.test.ts` (source contract). Run by
+ *   `tests/unit/metrics-cron-config-95.test.ts` (source contract),
+ *   `tests/unit/metrics-part-coverage-pglite-95.test.ts` (PART_COVERAGE_QUERY on PGlite). Run by
  *   `.github/workflows/check-metrics-history.yml`.
  *
  * Usage: npx tsx scripts/check-metrics-history.ts [--date=YYYY-MM-DD | --scheduled]
@@ -62,13 +63,16 @@ export const FLAT_QUERY =
 
 // #95: per part, the eligible tools (see COVERAGE_FLOOR) and how many of them carry the
 // part's key on the checked date. $3 is GITHUB_URL_PATHS, the collector's own URL fields.
+// #95: the previous collection is per part: the latest earlier date holding that part. An
+// off-day row (open-weight run, shard re-run) must not zero eligibility for the other parts.
 export const PART_COVERAGE_QUERY =
   "SELECT p.part AS part, count(*)::int AS eligible, " +
   "(count(*) FILTER (WHERE jsonb_typeof(cur.metrics -> p.part) = 'object'))::int AS recorded " +
   "FROM tools t CROSS JOIN unnest($2::text[]) AS p(part) " +
   "LEFT JOIN tool_metrics_history cur ON cur.tool_id = t.id AND cur.collected_date = $1::date " +
   "LEFT JOIN tool_metrics_history prev ON prev.tool_id = t.id " +
-  "AND prev.collected_date = (SELECT max(collected_date) FROM tool_metrics_history WHERE collected_date < $1::date) " +
+  "AND prev.collected_date = (SELECT max(h.collected_date) FROM tool_metrics_history h " +
+  "WHERE h.collected_date < $1::date AND jsonb_typeof(h.metrics -> p.part) = 'object') " +
   "WHERE jsonb_typeof(prev.metrics -> p.part) = 'object' " +
   "OR (p.part = 'github' AND EXISTS (SELECT 1 FROM unnest($3::text[]) AS g(path) " +
   "WHERE jsonb_typeof(t.data #> string_to_array(g.path, '.')) = 'string' " +
