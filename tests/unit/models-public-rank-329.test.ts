@@ -24,6 +24,7 @@ const state = vi.hoisted(() => ({
   client: null as unknown,
   current: {} as Record<string, unknown>,
   tools: {} as Record<string, Record<string, unknown>>,
+  statusReadFails: false,
 }));
 
 vi.mock("server-only", () => ({}));
@@ -46,12 +47,14 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
       return null;
     }
     async findColumnStatuses(ids: string[]) {
+      if (state.statusReadFails) throw new Error("fixture: tools.status read failed");
       return new Map(ids.map((id) => [id, "active"] as [string, string]));
     }
   },
 }));
 
 import { GET as currentGET } from "../../app/api/rankings/current/route";
+import { GET as rankingsGET } from "../../app/api/rankings/route";
 import { createFakeRankingsDb, type FakeToolRow, rankingRow } from "../../lib/services/__fixtures__/fake-rankings-db";
 import { loadCurrentRankings } from "../../lib/rankings/current-rankings";
 import { gateStoredEntries, renumberPrevious } from "../../lib/rankings/metric-gated-board";
@@ -66,6 +69,7 @@ beforeEach(() => {
   state.client = null;
   state.current = {};
   state.tools = {};
+  state.statusReadFails = false;
   clearCache();
   vi.spyOn(console, "warn").mockImplementation(() => {});
   vi.spyOn(console, "log").mockImplementation(() => {});
@@ -156,9 +160,9 @@ describe("per-list publish leaves unmeasured models off the stored board (#329)"
 describe("GET /api/rankings/current?list=model (#329)", () => {
   beforeEach(() => vi.stubEnv("NODE_ENV", "production"));
 
-  function seedStored51() {
+  function seedStored51(measured: ReadonlySet<string> = MEASURED) {
     for (const id of MODEL_IDS) {
-      state.tools[id] = { id, db_id: id, slug: `${id}-slug`, name: `Tool ${id}`, kind: "model", category: "llm", status: "active", info: {}, ...(MEASURED.has(id) ? METRIC : {}) };
+      state.tools[id] = { id, db_id: id, slug: `${id}-slug`, name: `Tool ${id}`, kind: "model", category: "llm", status: "active", info: {}, ...(measured.has(id) ? METRIC : {}) };
     }
     state.current["model"] = {
       id: "model-row",
@@ -193,5 +197,30 @@ describe("GET /api/rankings/current?list=model (#329)", () => {
     expect(board.rankings.map((r) => [r.tool.slug, r.rank, r.previousRank, r.rankChange])).toEqual(
       rows.map((r) => [r.tool_slug, r.position, r.movement.previous_position, r.movement.change])
     );
+  });
+
+  // #329: the current route's list_meta once reported 0 metric rows (pending, not indexable) for 16.
+  const meta = async (route: (r: Request) => Promise<Response>, path: string) => {
+    const res = await route(new Request(`https://example.test${path}?list=model`));
+    const body = await res.json();
+    return { status: res.status, meta: (body.data ?? body).list_meta };
+  };
+
+  it.each([
+    ["16 metric rows", MEASURED, { entry_count: 16, metric_row_count: 16, metrics_pending_note: false, indexable: true }],
+    ["0 metric rows", new Set<string>(), { entry_count: 0, metric_row_count: 0, metrics_pending_note: true, indexable: false }],
+  ])("with %s list_meta matches /api/rankings", async (_label, measured, expected) => {
+    seedStored51(measured);
+    const current = await meta(currentGET, "/api/rankings/current");
+    expect(current.status).toBe(200);
+    expect(current.meta).toMatchObject(expected);
+    expect(current.meta).toEqual((await meta(rankingsGET, "/api/rankings")).meta);
+  });
+
+  it("a failed tools.status read is a 500 on both routes, never a board reported as measured", async () => {
+    seedStored51();
+    state.statusReadFails = true;
+    expect((await meta(currentGET, "/api/rankings/current")).status).toBe(500);
+    expect((await meta(rankingsGET, "/api/rankings")).status).toBe(500);
   });
 });
