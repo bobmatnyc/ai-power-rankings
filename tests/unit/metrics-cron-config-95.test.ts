@@ -7,7 +7,8 @@
  * What: parses vercel.json and checks, per part, that the collect-metrics
  *   entries name shards exactly 0..of-1 with `of` = SHARD_COUNTS[part], each on
  *   the 1st, each starting early enough that its 300 s maxDuration ends before
- *   `0 8 1 * *`; that the total stays within Vercel's 100-cron cap; and that
+ *   `0 8 1 * *`, with no two shards' 5-minute windows overlapping (#95: six
+ *   github shards); that the total stays within Vercel's 100-cron cap; and that
  *   the check workflow runs on one monthly schedule and by dispatch, read
  *   only; and the check report fails on a missing or not-ok shard while
  *   printing counts only.
@@ -72,6 +73,15 @@ describe("#95 vercel.json metrics-history shards", () => {
   it("no two shards start in the same minute", () => {
     const minutes = shards.map((s) => minuteOfFirst(s.schedule));
     expect(new Set(minutes).size).toBe(minutes.length);
+  });
+
+  // #95: six github shards; no shard may start inside another's 300 s maxDuration window.
+  it("github has 6 shards and no two shards' 5-minute windows overlap", () => {
+    expect(SHARD_COUNTS.github).toBe(6);
+    const minutes = shards.map((s) => minuteOfFirst(s.schedule)).sort((a, b) => a - b);
+    for (let i = 1; i < minutes.length; i++) {
+      expect((minutes[i] as number) - (minutes[i - 1] as number)).toBeGreaterThanOrEqual(5);
+    }
   });
 
   it("stays within Vercel's 100 cron jobs per project", () => {

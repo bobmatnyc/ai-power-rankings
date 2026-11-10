@@ -13,6 +13,8 @@
  *   failed, so recorded + not_found + failed + skipped_timeout = attempted
  *   always holds. The result is then written to the ledger; a ledger throw
  *   is reported, not hidden. It writes no other table.
+ *   #95: an adapter whose `degraded()` gives a reason (github without its token) ends
+ *   `partial` with that reason in `error`, even when every tool was recorded.
  * Test: `tests/unit/metrics-collect-shard-95.test.ts`
  */
 
@@ -209,6 +211,12 @@ export async function runMetricsShard(request: ShardRequest, deps: ShardDeps): P
     }
 
     if (counts.failed > 0 || counts.skipped_timeout > 0) status = "partial";
+    // #95: a degraded run (github without its token) keeps its rows but is never `ok`.
+    const degraded = adapter.degraded?.() ?? null;
+    if (degraded !== null) {
+      status = "partial";
+      error = error === null ? degraded : `${error}; ${degraded}`;
+    }
   } catch (fatal) {
     status = "failed";
     error = message(fatal);

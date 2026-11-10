@@ -4,10 +4,12 @@
  * Why: the CLI and the collect-metrics cron route share one class, so both use
  *   the same matching heuristics. The only changes are a per-fetch timeout and
  *   a request-budget guard (no rate-limit sleep) and 403/429 failures (tokenless mode, #95).
+ *   #95: a 404 on the repo call throws GitHubRepoNotFoundError, which the cron adapter
+ *   records as not_found. The cron adapter in registry.ts reads the token env var.
  * What: see scripts/collect-github-metrics.ts for the CLI that drives it.
  *   #95: URL discovery also reads the fields the app stores a repo in (`GITHUB_URL_PATHS`).
  * Test: `tests/unit/metrics-collectors-95.test.ts`, `tests/unit/metrics-github-tokenless-95.test.ts`,
- *   `tests/unit/metrics-collection-health-95.test.ts`
+ *   `tests/unit/metrics-collection-health-95.test.ts`, `tests/unit/metrics-github-token-shards-95.test.ts`
  */
 
 import { type CollectorOptions, fetchSignal } from "./fetch-signal";
@@ -47,6 +49,17 @@ export class GitHubRateLimitError extends Error {
   }
 }
 
+/**
+ * #95: a 404 on `GET /repos/{owner}/{repo}`: the stored repo URL names no repo. The adapter
+ * records the tool `not_found`, as pypi does a 404. A 404 on any later call stays a failure.
+ */
+export class GitHubRepoNotFoundError extends Error {
+  constructor(owner: string, repo: string) {
+    super(`GitHub repo not found: ${owner}/${repo}`);
+    this.name = "GitHubRepoNotFoundError";
+  }
+}
+
 /** #95: rate-limit state read from response headers. `null` until a response reports it. */
 export interface GitHubRateLimit {
   remaining: number | null;
@@ -75,7 +88,7 @@ export class GitHubMetricsCollector {
   private signal: AbortSignal | undefined;
 
   constructor(token: string | undefined, options: CollectorOptions = {}) {
-    // #95: an absent or blank token means unauthenticated mode (owner ruling A9e).
+    // #95: an absent or blank token means unauthenticated mode (owner ruling A9e; D99 allows a token).
     this.token = (token ?? "").trim();
     this.signal = options.signal;
   }
@@ -190,8 +203,9 @@ export class GitHubMetricsCollector {
 
   /**
    * Make GitHub API request. A 403 or 429 throws GitHubRateLimitError; it is never a value.
+   * #95: `notFound` is thrown on a 404 when given; without it a 404 is a plain failure.
    */
-  private async githubRequest(endpoint: string): Promise<any> {
+  private async githubRequest(endpoint: string, notFound?: () => Error): Promise<any> {
     // #95: no sleep on a low budget; the budget guard stops the run instead of waiting out a reset.
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       signal: fetchSignal(this.signal),
@@ -212,6 +226,9 @@ export class GitHubMetricsCollector {
         retryAfter === null ? response.statusText : `retry-after ${retryAfter}s`
       );
     }
+
+    // #95: only the caller that passes `notFound` (the repo call) turns a 404 into not_found.
+    if (response.status === 404 && notFound) throw notFound();
 
     if (!response.ok) {
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
@@ -250,10 +267,14 @@ export class GitHubMetricsCollector {
   /**
    * Collect all metrics for a repository; throws on any failed call (#95).
    * Without a token only `GET /repos/{o}/{r}` runs and the commit and contributor fields are absent.
+   * #95: a 404 on the repo call throws GitHubRepoNotFoundError.
    */
   async fetchMetrics(owner: string, repo: string): Promise<GitHubMetrics> {
     console.log(`   Fetching repo data...`);
-    const repoData = await this.githubRequest(`/repos/${owner}/${repo}`);
+    const repoData = await this.githubRequest(
+      `/repos/${owner}/${repo}`,
+      () => new GitHubRepoNotFoundError(owner, repo)
+    );
 
     const metrics: GitHubMetrics = {
       stars: repoData.stargazers_count || 0,
