@@ -26,11 +26,16 @@ vi.mock("../../lib/db/repositories/rankings.repository", () => ({
 }));
 
 const TOOLS: Record<string, { id: string; slug: string; name: string; kind: string; status: string }> = {};
+// #329: every fixture model carries a Vals TB 4.0 figure, so the metric-gated models board keeps it.
+const CODING_METRIC = {
+  metrics: { terminal_bench: 50 },
+  metrics_provenance: { terminal_bench: { source: "https://www.vals.ai/benchmarks/terminal-bench-4" } },
+};
 vi.mock("../../lib/db/repositories/tools.repository", () => ({
   ToolsRepository: class {
     async findById(id: string) {
       const t = TOOLS[id];
-      return t ? { ...t, db_id: t.id, category: "other", info: {} } : null;
+      return t ? { ...t, db_id: t.id, category: "other", info: {}, ...CODING_METRIC } : null;
     }
     async findColumnStatuses(ids: string[]) {
       return new Map(ids.flatMap((id) => (TOOLS[id] ? [[id, TOOLS[id].status] as [string, string]] : [])));

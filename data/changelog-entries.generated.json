@@ -1243,6 +1243,28 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-c23377110578",
+    "version": "Unreleased",
+    "date": "2026-11-10T00:54:49.000Z",
+    "dateSource": "commit",
+    "section": "Changed",
+    "scope": "rankings",
+    "title": "the Models list shows only models that carry a coding metric (a Vals Terminal-Bench 4.0 figure with provenance)",
+    "description": "the Models list shows only models that carry a coding metric (a Vals Terminal-Bench 4.0 figure with provenance). An unmeasured model's neutral benchmark base would rank it above measured models below 42.5%, so `loadCurrentRankings` leaves it off the models board and ranks the rest 1..n; `list_meta.entry_count` is the filtered count and `metric_row_count` is unchanged. With no metric row, `/api/rankings?list=model` returns an empty board flagged `metrics_pending_note`, and the page stays hidden (D6e). Scoring and the stored snapshot are unchanged; the harness and productivity lists are unaffected. Tests: `tests/unit/models-list-metric-filter-329.test.ts` (#329)",
+    "changeType": "improvement"
+  },
+  {
+    "id": "unreleased-01976e3ef5b7",
+    "version": "Unreleased",
+    "date": "2026-11-10T01:09:19.731Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "rankings",
+    "title": "every public model rank counts measured models only",
+    "description": "every public model rank counts measured models only. The per-list publish stores only models that carry a coding metric (scores unchanged; previous ranks renumbered among them), and the readers of a stored board apply the same gate until that publish runs: the model tool page (rank, \"of N\", change and alternatives), `/api/rankings/current?list=model` and `/api/tools/[slug]/json`. An unmeasured model's tool page shows it as not in the current rankings. A filtered models board renumbers its previous ranks, so it never shows a move counted on the unfiltered board. The harness and productivity lists are unchanged. Tests: `tests/unit/models-public-rank-329.test.ts`, `tests/unit/tool-profile-193.test.tsx`, `tests/unit/tool-json-rank-185.test.ts` (#329)",
+    "changeType": "improvement"
+  },
+  {
     "id": "unreleased-7784d26eb94f",
     "version": "Unreleased",
     "date": "2026-11-09T21:16:58.000Z",

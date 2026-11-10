@@ -56,6 +56,8 @@ import {
 } from "@/lib/ranking-algorithm-v76";
 import {
   COMBINED_LIST,
+  hasCodingMetric,
+  isMetricGatedList,
   listOfTool,
   listTier,
   RANKING_LISTS,
@@ -355,7 +357,8 @@ interface RankingBoard {
  * #186: one board per list. Each list ranks only the tools `listOfTool()` puts in it,
  * so no tool is ranked in two lists; a tool in no list (kind `other`, an image or video
  * model) is ranked nowhere. Previous ranks come from the list's current row, else the
- * combined board renumbered within the list.
+ * combined board renumbered within the list. #329: a metric-gated list (models) holds only
+ * tools with a coding metric (`hasCodingMetric`), its previous ranks renumbered among them.
  */
 async function listBoards(
   scoredTools: RankingSourceTool[],
@@ -365,10 +368,16 @@ async function listBoards(
   const previousRows = await Promise.all(RANKING_LISTS.map((list) => persistence.loadCurrentRankings(list)));
   const combinedRanks = buildPreviousRankMap(combinedPrevious);
   return RANKING_LISTS.map((list, index) => {
-    const members = scoredTools.filter((tool) => listOfTool(tool.kind, tool.data?.["modality"]) === list);
+    const listed = scoredTools.filter((tool) => listOfTool(tool.kind, tool.data?.["modality"]) === list);
+    // #329: a metric-gated list (models) stores measured tools only; scoring is unchanged, and the
+    // previous ranks are renumbered among them so the first filtered board shows no 51-row moves.
+    const gated = isMetricGatedList(list);
+    const members = gated ? listed.filter((tool) => hasCodingMetric(tool.data)) : listed;
     const listRow = previousRows[index];
     const previousRankMap = listRow
-      ? buildPreviousRankMap(listRow.data)
+      ? gated
+        ? renumberWithinList(buildPreviousRankMap(listRow.data), members.map((tool) => tool.id))
+        : buildPreviousRankMap(listRow.data)
       : renumberWithinList(combinedRanks, members.map((tool) => tool.id));
     return { list, sourceTools: members, previousRankMap };
   });

@@ -18,6 +18,8 @@ const state = vi.hoisted(() => ({
   boards: {} as Record<string, unknown>,
   reads: [] as unknown[],
   failing: false,
+  /** #329: board tools with no coding metric. */
+  unmeasured: new Set<string>(),
 }));
 
 vi.mock("server-only", () => ({}));
@@ -29,10 +31,21 @@ vi.mock("../../lib/db/connection", () => {
   });
   return { getDb: () => chain };
 });
+const METRIC = vi.hoisted(() => ({
+  metrics: { terminal_bench: 50 },
+  metrics_provenance: { terminal_bench: { source: "https://www.vals.ai/benchmarks/terminal-bench-4" } },
+}));
 vi.mock("../../lib/db/repositories/tools.repository", () => ({
   ToolsRepository: class {
     async findBySlug() {
       return state.tool;
+    }
+    // #329: the models board keeps measured models only; a board tool carries a figure unless listed in `unmeasured`.
+    async findByIds(ids: string[]) {
+      return ids.map((id) => ({ id, slug: `${id}-slug`, name: `Tool ${id}`, ...(state.unmeasured.has(id) ? {} : METRIC) }));
+    }
+    async findBySlugs() {
+      return [];
     }
   },
 }));
@@ -71,6 +84,7 @@ beforeEach(() => {
   };
   state.reads = [];
   state.failing = false;
+  state.unmeasured = new Set();
   vi.spyOn(console, "error").mockImplementation(() => {});
   vi.spyOn(console, "warn").mockImplementation(() => {});
 });
@@ -89,6 +103,14 @@ describe("GET /api/tools/[slug]/json rank (#185)", () => {
     expect(status).toBe(200);
     expect(body.ranking).toMatchObject({ list: "model", rank: 2 });
     expect(state.reads).toEqual(["model"]);
+  });
+
+  // #329: the models board lists measured models only, so the rank is counted among them.
+  it("#329: an unmeasured model ahead of it is not counted; an unmeasured model is unranked", async () => {
+    state.unmeasured = new Set(["m1"]);
+    expect((await get()).body.ranking).toMatchObject({ list: "model", rank: 1 });
+    state.unmeasured = new Set(["m2"]);
+    expect((await get()).body.ranking).toBeNull();
   });
 
   it("a tool in no list is unranked and makes no ranking read", async () => {

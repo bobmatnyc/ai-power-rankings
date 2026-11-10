@@ -34,9 +34,23 @@ vi.mock("../../lib/db/repositories/rankings.repository", () => ({
 
 type FixtureTool = { id: string; slug: string; name: string; kind: string; modality?: string };
 
+/** #329: a Vals TB 4.0 figure with provenance, so the row stays on the metric-gated models board. */
+const CODING_METRIC = {
+  metrics: { terminal_bench: 50 },
+  metrics_provenance: { terminal_bench: { source: "https://www.vals.ai/benchmarks/terminal-bench-4" } },
+};
+
 const TOOLS: Record<string, FixtureTool> = {};
-function tool(id: string, kind: string, modality?: string): FixtureTool {
-  const t = { id, slug: `${id}-slug`, name: `Tool ${id}`, kind, ...(modality ? { modality } : {}) };
+// #329: a model carries a coding metric unless `measured` is false; the models board lists only those.
+function tool(id: string, kind: string, modality?: string, measured = true): FixtureTool {
+  const t = {
+    id,
+    slug: `${id}-slug`,
+    name: `Tool ${id}`,
+    kind,
+    ...(modality ? { modality } : {}),
+    ...(kind === "model" && measured ? CODING_METRIC : {}),
+  };
   TOOLS[id] = t;
   return t;
 }
@@ -295,10 +309,12 @@ describe("GET /api/rankings (#186)", () => {
     expect(body.list).toBe("model");
   });
 
-  it("D53: list_meta reports 9 models by thirds and 10 with the normal tiers; the models list is noindex at both sizes", async () => {
-    expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 9, indexable: false, tier_scheme: "thirds" });
+  // #329: was "the models list is noindex at both sizes", when no fixture model carried a metric;
+  // every model here now carries one, so 10 active measured models meet D63 and index.
+  it("D53: list_meta reports 9 models by thirds and noindex, and 10 measured models with the normal tiers, indexed", async () => {
+    expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 9, indexable: false, tier_scheme: "thirds", metric_row_count: 9 });
     current.rows = allRows([...MODELS, EXTRA_MODEL]);
-    expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 10, indexable: false, tier_scheme: "standard" });
+    expect((await get("?list=model")).body.list_meta).toMatchObject({ entry_count: 10, indexable: true, tier_scheme: "standard", metric_row_count: 10 });
   });
 
   it("D54: only the productivity response carries the provisional-note flag", async () => {

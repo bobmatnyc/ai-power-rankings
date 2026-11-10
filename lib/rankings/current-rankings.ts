@@ -9,6 +9,7 @@ import {
   listTier,
   type RankingList,
 } from "@/lib/rankings/lists";
+import { renumberPrevious } from "@/lib/rankings/metric-gated-board";
 import { modelVersion } from "@/lib/rankings/model-version";
 
 export interface CurrentListBoard {
@@ -35,10 +36,12 @@ export interface CurrentListBoard {
  * sorts by stored rank and renumbers 1..n with tiers, keeping the stored
  * movement. #329: for a metric-gated list (models) `metricRowCount` counts the
  * board rows whose `tools.status` column is `active` and whose tool carries a
- * coding metric (`hasCodingMetric`), for the index rule. Throws when a
- * database read throws.
+ * coding metric (`hasCodingMetric`), for the index rule, and the board keeps
+ * only rows whose tool carries a coding metric, ranked 1..n with previous ranks
+ * renumbered among them; with none it is empty. Throws when a database read throws.
  * Test: `tests/unit/home-live-rankings-192.test.tsx`,
- *   `tests/unit/rankings-per-list-read-186.test.ts`.
+ *   `tests/unit/rankings-per-list-read-186.test.ts`,
+ *   `tests/unit/models-list-metric-filter-329.test.ts`, `tests/unit/models-public-rank-329.test.ts`.
  */
 export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LIST): Promise<CurrentListBoard | null> {
   // #185: the list's own row or nothing; no fallback to the combined board.
@@ -77,7 +80,14 @@ export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LI
   members.sort((a, b) => (a.row.rank || 999) - (b.row.rank || 999));
 
   const metricRowCount = isMetricGatedList(list) ? countMetricRows(members.map((m) => ({ status: statusOf(m), codingMetric: m.codingMetric }))) : 0;
-  return { list, snapshot, rankings: rankWithinList(members.map((m) => m.row)), metricRowCount };
+  // #329: a metric-gated list ranks only rows with a coding metric; an unmeasured row's neutral
+  // benchmark base would rank it above measured rows, so it is left off the board (option c, Dfe).
+  if (!isMetricGatedList(list)) return { list, snapshot, rankings: rankWithinList(members.map((m) => m.row)), metricRowCount };
+  const board = members.filter((m) => m.codingMetric).map((m) => m.row);
+  // #329: previous ranks renumbered among the measured rows, so no move is counted on the unfiltered board.
+  const moves = renumberPrevious(board.map((row) => (typeof row.previousRank === "number" && row.previousRank > 0 ? row.previousRank : null)));
+  const moved = board.map((row, i) => ({ ...row, previousRank: moves[i]!.previous, rankChange: moves[i]!.change }));
+  return { list, snapshot, rankings: rankWithinList(moved), metricRowCount };
 }
 
 /** #329 PURE: rows that count toward the D63 index threshold: `tools.status` column active AND a coding metric. */

@@ -5,6 +5,7 @@ import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import { listOfTool } from "@/lib/rankings/lists";
+import { gateBoardEntries } from "@/lib/rankings/metric-gated-board";
 import { entryRank, matchesTool, rankingEntries } from "@/lib/tools/ranking-entry";
 import { loggers } from "@/lib/logger";
 import { describeReadError, readToolLinks, type ToolLinkEntry } from "@/lib/tools/tool-links";
@@ -65,7 +66,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       if (currentRankings) {
         // #193: the tool page's server profile block reads the same row through
         // the same helpers, so the header rank and the block's rank agree.
-        const toolRanking: any = rankingEntries(currentRankings.data).find((r) =>
+        // #329: a metric-gated list (models) ranks measured models only, as on the board; an
+        // unmeasured model finds no row and its rank stays null.
+        const entries = await gateBoardEntries(toolList!, rankingEntries(currentRankings.data), toolsRepo);
+        const toolRanking: any = entries.find((r) =>
           matchesTool(r, { id: tool.id, slug, name: tool.name })
         );
 
