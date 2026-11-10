@@ -58,5 +58,7 @@ Valuation and funding alone describe a company, not the product's usage.
 - ChatGPT base_price, Grok official pricing, Manus dollar prices: not read from a vendor page. Fields left null or marked low confidence.
 - news_mentions for all nine: needs the site's news corpus (database).
 - Gemini 1 billion MAU (August 2026), Mistral ARR and user estimates, Manus Meta deal status after June 2026, Grok S-1 text, Genspark total funding ($485M vs $545M vs $645M by source): seen only in search snippets or conflicting pages.
+- Grok pricing (D84 #5): the owner set every grok-app pricing field (pricing_model, base_price, free_tier, enterprise_pricing) to null, because the only source was the 2026-07 eesel.ai third-party page and xAI may have changed its plans on 2026-10-12. The loader writes no pricing for grok-app; the row stays in 0033. D84 keeps the low-confidence figures (Grok valuation, Hermes funding and valuation, Manus valuation, Notion ARR) as they are, marked `confidence: low` in metrics_provenance.
 - Currency: Mistral figures are EUR. Everything else is USD.
+- EUR vs USD gap: the loader stores Mistral's funding and valuation as the EUR numbers with `currency: "EUR"` in metrics_provenance, but the ranking engine reads every money figure as USD. No effect while mistral-vibe stays inactive; convert or refuse non-USD figures before it is ever activated.
 - Month-granularity as_of values (Grok users, Manus valuation, Notion ARR) use the month end.
