@@ -60,6 +60,16 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
     async findBySlugs() {
       return [];
     }
+    // #329: the model list's metric-row count reads the joined tools and the tools.status column.
+    async findById(id: string) {
+      return (await this.findByIds([id]))[0] ?? null;
+    }
+    async findBySlug() {
+      return null;
+    }
+    async findColumnStatuses(ids: string[]) {
+      return new Map(ids.map((id) => [id, "active"] as [string, string]));
+    }
   },
 }));
 
