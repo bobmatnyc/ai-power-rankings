@@ -449,9 +449,11 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
   methodologyV8: {
     metaTitle: "",
     metaDescription: "",
+    metaDescriptionModelsPending: "",
     title: "",
     intro: "",
     listsHeading: "",
+    listsHeadingModelsPending: "",
     listsBody: "",
     listsBodyModelsPending: "",
     listsDefault: "",

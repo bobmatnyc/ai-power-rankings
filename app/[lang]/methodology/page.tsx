@@ -4,7 +4,7 @@ import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { INDEX_MIN_ENTRIES, listHasProvisionalNote, RANKING_LISTS, rankingListPath } from "@/lib/rankings/lists";
 import { FACTOR_KEYS, loadCheckedInScoringProfiles } from "@/lib/scoring-profiles";
-import { visibleRankingLists } from "@/lib/rankings/model-page-visibility";
+import { isModelPageVisible, visibleRankingLists } from "@/lib/rankings/model-page-visibility";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 
 /**
@@ -50,12 +50,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // #185: a translated page: self canonical and hreflang for every locale.
   const alternates = localizedAlternates(lang, "/methodology");
   const title = text.metaTitle.replace("{version}", version());
+  // D6e: the meta and OG description must not say models are ranked while the page is hidden.
+  const description = (await isModelPageVisible()) ? text.metaDescription : text.metaDescriptionModelsPending;
   return {
     title,
-    description: text.metaDescription,
+    description,
     openGraph: {
       title,
-      description: text.metaDescription,
+      description,
       type: "website",
       url: alternates.canonical,
       locale: canonicalLocale(lang),
@@ -87,7 +89,7 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
         <h1>{text.title}</h1>
         <p>{text.intro.replace("{version}", version())}</p>
 
-        <h2>{text.listsHeading}</h2>
+        <h2>{linkedLists.includes("model") ? text.listsHeading : text.listsHeadingModelsPending}</h2>
         {/* D6e: do not say models are ranked while the models page is hidden. */}
         <p>{linkedLists.includes("model") ? text.listsBody : text.listsBodyModelsPending}</p>
         <ul>

@@ -713,9 +713,11 @@
   "methodologyV8": {
     "metaTitle": "Ranking methodology (v{version}) - AI Power Rankings",
     "metaDescription": "How the AI Power Rankings rank models, coding harnesses and productivity tools in separate lists, with a scoring profile for each kind.",
+    "metaDescriptionModelsPending": "How the AI Power Rankings rank coding harnesses and productivity tools in separate lists, with a scoring profile for each kind. Models will be listed once model metrics are collected.",
     "title": "How the rankings work",
     "intro": "Version {version} of the AI Power Rankings ranks each kind of tool in its own list and scores each kind with its own weights.",
     "listsHeading": "Three lists",
+    "listsHeadingModelsPending": "Two lists",
     "listsBody": "Models, coding harnesses and productivity tools are ranked in separate lists. A tool is ranked in one list at most, and its rank, tier and change are counted within that list. Ranks are not compared across lists.",
     "listsBodyModelsPending": "Coding harnesses and productivity tools are ranked in separate lists. Models will be listed once model metrics are collected. A tool is ranked in one list at most, and its rank, tier and change are counted within that list. Ranks are not compared across lists.",
     "listsDefault": "The main rankings page shows the coding harnesses list.",

@@ -52,6 +52,13 @@ describe("D6e models copy follows the visibility signal", () => {
     expect(JSON.stringify(generalFAQs)).toContain(MODELS_RANKED);
   });
 
+  it("hidden: no FAQ answer says models are ranked (guards the string replace)", () => {
+    for (const faq of generalFAQsFor(false)) {
+      expect(faq.answer).not.toMatch(/Models, coding harnesses/i);
+      expect(faq.answer).not.toMatch(/models are ranked/i);
+    }
+  });
+
   it("the methodology card follows the signal", () => {
     const dict = en as unknown as Dictionary;
     const hidden = renderToStaticMarkup(<AlgorithmInfoCard lang="en" dict={dict} modelsListed={false} />);
@@ -63,11 +70,13 @@ describe("D6e models copy follows the visibility signal", () => {
   });
 
   it.each(readdirSync(join(__dirname, "..", "..", "i18n", "dictionaries")).filter((f) => f.endsWith(".json")))(
-    "%s carries listsBodyModelsPending",
+    "%s carries the ModelsPending methodology keys",
     (file) => {
       const dict = JSON.parse(readFileSync(join(__dirname, "..", "..", "i18n", "dictionaries", file), "utf-8"));
-      expect(dict.methodologyV8.listsBodyModelsPending).toBeTruthy();
-      expect(dict.methodologyV8.listsBodyModelsPending).not.toBe(dict.methodologyV8.listsBody);
+      for (const key of ["listsBody", "metaDescription", "listsHeading"]) {
+        expect(dict.methodologyV8[`${key}ModelsPending`]).toBeTruthy();
+        expect(dict.methodologyV8[`${key}ModelsPending`]).not.toBe(dict.methodologyV8[key]);
+      }
     },
   );
 });

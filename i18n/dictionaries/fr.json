@@ -713,9 +713,11 @@
   "methodologyV8": {
     "metaTitle": "Méthodologie du classement (v{version}) - AI Power Rankings",
     "metaDescription": "Comment les AI Power Rankings classent les modèles, les harnais de code et les outils de productivité dans des listes distinctes, avec un profil de notation pour chaque type.",
+    "metaDescriptionModelsPending": "Comment les AI Power Rankings classent les harnais de code et les outils de productivité dans des listes distinctes, avec un profil de notation pour chaque type. Les modèles seront listés une fois les métriques de modèles collectées.",
     "title": "Comment les classements sont établis",
     "intro": "La version {version} des AI Power Rankings classe chaque type d'outil dans sa propre liste et note chaque type avec ses propres pondérations.",
     "listsHeading": "Trois listes",
+    "listsHeadingModelsPending": "Deux listes",
     "listsBody": "Les modèles, les harnais de code et les outils de productivité sont classés dans des listes distinctes. Un outil figure dans une liste au plus, et son rang, son niveau et son évolution sont calculés dans cette liste. Les rangs ne se comparent pas d'une liste à l'autre.",
     "listsBodyModelsPending": "Les harnais de code et les outils de productivité sont classés dans des listes distinctes. Les modèles seront listés une fois les métriques de modèles collectées. Un outil figure dans une liste au plus, et son rang, son niveau et son évolution sont calculés dans cette liste. Les rangs ne se comparent pas d'une liste à l'autre.",
     "listsDefault": "La page principale des classements affiche la liste des harnais de code.",

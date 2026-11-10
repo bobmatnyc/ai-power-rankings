@@ -719,9 +719,11 @@
   "methodologyV8": {
     "metaTitle": "순위 산정 방법론 (v{version}) - AI Power Rankings",
     "metaDescription": "AI Power Rankings가 모델, 코딩 하네스, 생산성 도구를 별도의 목록에서 순위를 매기고 종류별 채점 프로필을 사용하는 방법.",
+    "metaDescriptionModelsPending": "AI Power Rankings가 코딩 하네스와 생산성 도구를 별도의 목록에서 순위를 매기고 종류별 채점 프로필을 사용하는 방법. 모델은 모델 지표가 수집되면 목록에 오릅니다.",
     "title": "순위 산정 방식",
     "intro": "AI Power Rankings 버전 {version}은 도구 종류마다 별도의 목록에서 순위를 매기고, 종류마다 고유한 가중치로 채점합니다.",
     "listsHeading": "세 가지 목록",
+    "listsHeadingModelsPending": "두 가지 목록",
     "listsBody": "모델, 코딩 하네스, 생산성 도구는 별도의 목록에서 순위가 매겨집니다. 한 도구는 최대 한 목록에만 오르며, 순위·티어·변동은 그 목록 안에서 계산됩니다. 목록 간에는 순위를 비교하지 않습니다.",
     "listsBodyModelsPending": "코딩 하네스와 생산성 도구는 별도의 목록에서 순위가 매겨집니다. 모델은 모델 지표가 수집되면 목록에 오릅니다. 한 도구는 최대 한 목록에만 오르며, 순위·티어·변동은 그 목록 안에서 계산됩니다. 목록 간에는 순위를 비교하지 않습니다.",
     "listsDefault": "순위 메인 페이지에는 코딩 하네스 목록이 표시됩니다.",

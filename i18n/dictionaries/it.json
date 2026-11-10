@@ -719,9 +719,11 @@
   "methodologyV8": {
     "metaTitle": "Metodologia della classifica (v{version}) - AI Power Rankings",
     "metaDescription": "Come AI Power Rankings classifica modelli, harness di programmazione e strumenti di produttività in liste separate, con un profilo di punteggio per ogni tipo.",
+    "metaDescriptionModelsPending": "Come AI Power Rankings classifica harness di programmazione e strumenti di produttività in liste separate, con un profilo di punteggio per ogni tipo. I modelli saranno elencati quando le metriche dei modelli saranno raccolte.",
     "title": "Come nascono le classifiche",
     "intro": "La versione {version} di AI Power Rankings classifica ogni tipo di strumento in una lista propria e valuta ogni tipo con pesi propri.",
     "listsHeading": "Tre liste",
+    "listsHeadingModelsPending": "Due liste",
     "listsBody": "Modelli, harness di programmazione e strumenti di produttività sono classificati in liste separate. Uno strumento compare al massimo in una lista, e la sua posizione, il livello e la variazione sono calcolati all'interno di quella lista. Le posizioni non si confrontano tra liste diverse.",
     "listsBodyModelsPending": "Gli strumenti di programmazione e gli strumenti di produttività sono classificati in liste separate. I modelli saranno elencati quando le metriche dei modelli saranno raccolte. Uno strumento compare al massimo in una lista, e la sua posizione, il livello e la variazione sono calcolati all'interno di quella lista. Le posizioni non si confrontano tra liste diverse.",
     "listsDefault": "La pagina principale delle classifiche mostra la lista degli harness di programmazione.",

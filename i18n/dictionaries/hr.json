@@ -719,9 +719,11 @@
   "methodologyV8": {
     "metaTitle": "Metodologija poretka (v{version}) - AI Power Rankings",
     "metaDescription": "Kako AI Power Rankings rangira modele, alate za kodiranje i alate za produktivnost na zasebnim popisima, s profilom ocjenjivanja za svaku vrstu.",
+    "metaDescriptionModelsPending": "Kako AI Power Rankings rangira alate za kodiranje i alate za produktivnost na zasebnim popisima, s profilom ocjenjivanja za svaku vrstu. Modeli će biti navedeni kad se prikupe metrike modela.",
     "title": "Kako nastaju poretci",
     "intro": "Verzija {version} AI Power Rankingsa rangira svaku vrstu alata na vlastitom popisu i ocjenjuje svaku vrstu vlastitim težinama.",
     "listsHeading": "Tri popisa",
+    "listsHeadingModelsPending": "Dva popisa",
     "listsBody": "Modeli, alati za kodiranje i alati za produktivnost rangiraju se na zasebnim popisima. Alat je rangiran na najviše jednom popisu, a njegov rang, razina i promjena računaju se unutar tog popisa. Rangovi se ne uspoređuju među popisima.",
     "listsBodyModelsPending": "Alati za kodiranje i alati za produktivnost rangiraju se na zasebnim popisima. Modeli će biti navedeni kad se prikupe metrike modela. Alat je rangiran na najviše jednom popisu, a njegov rang, razina i promjena računaju se unutar tog popisa. Rangovi se ne uspoređuju među popisima.",
     "listsDefault": "Glavna stranica poretka prikazuje popis alata za kodiranje.",
