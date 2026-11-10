@@ -98,10 +98,11 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe("#95 no GITHUB_TOKEN", () => {
+// #95: the token env name is METRICS_GITHUB_TOKEN (owner ruling D99).
+describe("#95 no METRICS_GITHUB_TOKEN", () => {
   it.each([[undefined], [""], ["   "]])("token %j: runs, sends no Authorization, fetches only /repos", async (token) => {
     const calls = stubFetch(() => ok(REPO_BODY, { "x-ratelimit-remaining": "59", "x-ratelimit-reset": String(HOUR_AHEAD), "x-ratelimit-limit": "60" }));
-    const { store, result } = await runShard([tool("alpha")], { GITHUB_TOKEN: token });
+    const { store, result } = await runShard([tool("alpha")], { METRICS_GITHUB_TOKEN: token });
 
     expect(result.error).toBeNull();
     expect(result.status).toBe("ok");
@@ -124,7 +125,7 @@ describe("#95 no GITHUB_TOKEN", () => {
             ? ok([{}])
             : ok(REPO_BODY)
     );
-    const { store, result } = await runShard([tool("alpha")], { GITHUB_TOKEN: "tok" });
+    const { store, result } = await runShard([tool("alpha")], { METRICS_GITHUB_TOKEN: "tok" });
 
     expect(result.status).toBe("ok");
     expect(calls.every((c) => c.authorization === "Bearer tok")).toBe(true);
@@ -172,7 +173,7 @@ describe("#95 403 and 429 are failures, never a 0", () => {
             ? ok([{}])
             : ok(REPO_BODY, { "x-ratelimit-remaining": "4990", "x-ratelimit-reset": String(HOUR_AHEAD) })
     );
-    const { store, result } = await runShard([tool("alpha")], { GITHUB_TOKEN: "tok" });
+    const { store, result } = await runShard([tool("alpha")], { METRICS_GITHUB_TOKEN: "tok" });
     expect(store.rows.size).toBe(0);
     expect(result.counts).toMatchObject({ recorded: 0, failed: 1 });
     expect(result.status).toBe("partial");
@@ -190,7 +191,7 @@ describe("#95 request budget guard", () => {
       return url.includes("/commits") || url.includes("/contributors") ? ok([{}], headers) : ok(REPO_BODY, headers);
     });
     const tools = ["alpha", "beta", "gamma", "delta"].map(tool);
-    const { store, result } = await runShard(tools, { GITHUB_TOKEN: "tok" }, 500);
+    const { store, result } = await runShard(tools, { METRICS_GITHUB_TOKEN: "tok" }, 500);
 
     expect(store.rows.size).toBe(1);
     expect(result.counts).toMatchObject({ attempted: 4, recorded: 1, failed: 0, not_found: 0, skipped_timeout: 3 });
