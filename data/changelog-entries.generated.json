@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-366760c8f7ef",
+    "version": "Unreleased",
+    "date": "2026-11-10T02:24:32.209Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "seo",
+    "title": "an unprefixed section path keeps its section when it is localized",
+    "description": "an unprefixed section path keeps its section when it is localized. The #191 pattern rule dropped the first segment of every unprefixed path, so `/tools/cursor` 308'd to `/en/cursor` (404); it now 308s once to `/en/tools/cursor`, and `/news/<slug>` and `/rankings/<x>` likewise. The sections are the `app/[lang]` route directories (`LOCALIZED_SECTIONS` in `lib/seo/url-table.ts`). The signed table's non-locale rows, including `/rankings/news` and the `/rankings/best-*` rows, resolve as before. Tests: `tests/unit/url-table-section-redirect-414.test.ts` (#414)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-e588662acce3",
     "version": "Unreleased",
     "date": "2026-11-10T00:57:58.000Z",
@@ -134,8 +145,8 @@
   {
     "id": "unreleased-c8e98e6320ea",
     "version": "Unreleased",
-    "date": "2026-11-10T02:11:31.407Z",
-    "dateSource": "build",
+    "date": "2026-11-10T02:16:07.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "seo",
     "title": "the 10 /<lang>/tools/openai-codex-cli rows of the URL table answer one 308 to /<lang>/tools/openai-codex",

@@ -9,7 +9,8 @@
  * `isNoindexToolSlug` feed the sitemap and the tool-page robots tag. A row whose
  * destination page does not exist yet (`PENDING_TARGETS`) is held: its source
  * is served exactly as before until that page ships.
- * Test: `tests/unit/url-table-191.test.ts`.
+ * Test: `tests/unit/url-table-191.test.ts`,
+ *   `tests/unit/url-table-section-redirect-414.test.ts`.
  */
 import rows from "@/data/url-table-191.json";
 import { locales } from "@/i18n/config";
@@ -60,6 +61,42 @@ export const RESERVED_FIRST_SEGMENTS: ReadonlySet<string> = new Set([
   "uploads",
 ]);
 
+/**
+ * #414: the URL-level first segments of `app/[lang]` (route-group children
+ * included). An unprefixed path under one of these is a real page, so the
+ * pattern rule keeps the segment. The middleware cannot read the file system;
+ * `tests/unit/url-table-section-redirect-414.test.ts` holds this list equal to
+ * the `app/[lang]` directories.
+ */
+export const LOCALIZED_SECTIONS: ReadonlySet<string> = new Set([
+  "about",
+  "admin",
+  "best-ai-app-builders",
+  "best-ai-code-editors",
+  "best-ai-coding-tools",
+  "best-autonomous-agents",
+  "best-code-review-tools",
+  "best-devops-assistants",
+  "best-ide-assistants",
+  "best-open-source-frameworks",
+  "best-testing-tools",
+  "clerk-debug",
+  "contact",
+  "dashboard",
+  "insights",
+  "methodology",
+  "news",
+  "privacy",
+  "rankings",
+  "sign-in",
+  "sign-up",
+  "terms",
+  "tools",
+  "trending",
+  "unauthorized",
+  "whats-new",
+]);
+
 function pathOf(url: string): string {
   const q = url.indexOf("?");
   return q === -1 ? url : url.slice(0, q);
@@ -89,6 +126,15 @@ const HELD_SOURCES: ReadonlySet<string> = new Set(
   redirectRows
     .filter((row) => isLocaleFirst(row.source) && isPendingTarget(row.destination))
     .map((row) => row.source)
+);
+
+/**
+ * #414: path parts of the non-locale 308 rows (`/rankings/news`). These are
+ * junk-prefix sources even when the prefix is a section, so they keep the
+ * strip rule and resolve as signed.
+ */
+const PREFIX_ROW_SOURCES: ReadonlySet<string> = new Set(
+  redirectRows.filter((row) => !isLocaleFirst(row.source)).map((row) => pathOf(row.source))
 );
 
 /**
@@ -127,12 +173,18 @@ export function resolveTableRedirect(pathname: string): string | null {
   return LITERAL_REDIRECTS.get(english) ?? english;
 }
 
-/** #191 Q-A85-1: `/en/<rest>` for a path whose first segment is not a locale nor reserved, else null. */
+/**
+ * #191 Q-A85-1: `/en/<rest>` for a path whose first segment is not a locale nor
+ * reserved, else null. #414: a section first segment is kept (`/en/<path>`)
+ * unless the path is a signed non-locale row.
+ */
 function patternEnglishPath(path: string): string | null {
   const segments = path.split("/").slice(1);
   const first = segments[0] ?? "";
   if (segments.length < 2 || LOCALE_SET.has(first)) return null;
   if (RESERVED_FIRST_SEGMENTS.has(first.toLowerCase()) || /^[._]|[.%]/.test(first)) return null;
+  // #414: `/tools/cursor` is an unprefixed page, not a junk prefix; keep `tools`.
+  if (LOCALIZED_SECTIONS.has(first) && !PREFIX_ROW_SOURCES.has(path)) return `/en${path}`;
   return `/en/${segments.slice(1).join("/")}`;
 }
 
