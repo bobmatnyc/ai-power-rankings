@@ -193,7 +193,7 @@ function StatCard({
  * Main content component for the trending page.
  * Handles data fetching, state management, and user interactions.
  */
-export function TrendingPageContent({ lang }: TrendingPageContentProps) {
+export function TrendingPageContent({ lang, dictionary }: TrendingPageContentProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialTimeRange = parseTimeRange(searchParams.get("months"));
@@ -511,7 +511,14 @@ export function TrendingPageContent({ lang }: TrendingPageContentProps) {
       </div>
 
       {/* Main Chart */}
-      <TrendingChart data={trendingData} height={500} showLegend={true} maxTools={15} />
+      {/* T76: the line at the first per-list period carries a localized label. */}
+      <TrendingChart
+        data={trendingData}
+        height={500}
+        showLegend={true}
+        maxTools={15}
+        boundaryLabel={dictionary?.trending?.methodChangeLabel}
+      />
 
       {/* Statistics Cards */}
       {statistics && (

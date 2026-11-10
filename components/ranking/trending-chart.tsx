@@ -46,8 +46,23 @@ const loadRechartsComponents = async () => {
     Tooltip: recharts.Tooltip,
     Legend: recharts.Legend,
     ResponsiveContainer: recharts.ResponsiveContainer,
+    ReferenceLine: recharts.ReferenceLine,
   };
 };
+
+/**
+ * The chart `date` of the method-change boundary, or null when there is nothing to mark.
+ *
+ * T76: the boundary is marked only when the visible periods hold combined periods and the
+ * first per-list period itself, so a per-list-only history or window draws no line.
+ */
+export function methodBoundaryDate(data: TrendingAnalysisResult): string | null {
+  const boundary = data.metadata.first_list_period;
+  if (!boundary) return null;
+  if (!data.period_sources?.some((p) => p.source === "combined")) return null;
+  const point = data.chart_data.find((p) => p.period === boundary);
+  return point ? point.date : null;
+}
 
 export interface TrendingChartProps {
   /** Trending analysis data from the API */
@@ -60,6 +75,8 @@ export interface TrendingChartProps {
   maxTools?: number;
   /** Custom CSS class name */
   className?: string;
+  /** T76: label of the line at the first per-list period, e.g. "v8 per-list method" */
+  boundaryLabel?: string;
 }
 
 interface ChartComponents {
@@ -79,6 +96,8 @@ interface ChartComponents {
   Legend: React.ComponentType<any>;
   // biome-ignore lint/suspicious/noExplicitAny: External library type
   ResponsiveContainer: React.ComponentType<any>;
+  // biome-ignore lint/suspicious/noExplicitAny: External library type
+  ReferenceLine: React.ComponentType<any>;
 }
 
 /**
@@ -195,6 +214,7 @@ export function TrendingChart({
   showLegend = true,
   maxTools = 15,
   className = "",
+  boundaryLabel = "v8 per-list method",
 }: TrendingChartProps) {
   const [chartComponents, setChartComponents] = useState<ChartComponents | null>(null);
   const [visibleTools, setVisibleTools] = useState<Set<string>>(new Set());
@@ -274,8 +294,17 @@ export function TrendingChart({
     );
   }
 
-  const { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } =
-    chartComponents;
+  const {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    ReferenceLine,
+  } = chartComponents;
+  const boundaryDate = methodBoundaryDate(data);
 
   return (
     <ChartWrapper>
@@ -323,6 +352,20 @@ export function TrendingChart({
                   label={{ value: "Ranking Position", angle: -90, position: "insideLeft" }}
                 />
                 <Tooltip content={<CustomTooltip />} />
+                {boundaryDate && (
+                  // T76: marks where the history changes from combined to per-list boards.
+                  <ReferenceLine
+                    x={boundaryDate}
+                    stroke="hsl(var(--ds-text-paper-subtle))"
+                    strokeDasharray="4 4"
+                    label={{
+                      value: boundaryLabel,
+                      position: "insideTopLeft",
+                      fontSize: 11,
+                      fill: "hsl(var(--ds-text-paper-subtle))",
+                    }}
+                  />
+                )}
 
                 {displayTools.map((tool, index) => {
                   const isVisible = visibleTools.has(tool.tool_id);

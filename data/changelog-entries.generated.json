@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-e588662acce3",
+    "version": "Unreleased",
+    "date": "2026-11-10T00:50:16.303Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "rankings",
+    "title": "the trending chart shows the monthly history again",
+    "description": "the trending chart shows the monthly history again. Since #185 the coding-harness history read only its per-list boards, which start at the first v8 publish (2026-11), so \"All Time\" showed one month. The harness history now adds the legacy combined board of each earlier month; a month with a per-list board always uses it. The model and productivity histories still start at their first per-list board. `/api/rankings/trending` adds `period_sources` (each period's `combined` or `list` source) and `metadata.first_list_period`, and the chart draws a labelled \"v8 per-list method\" line at that period. A failed combined read is a no-store 500, as a failed list read is. No scoring change. Tests: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/trending-chart-boundary-t76.test.tsx` (T76)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-ec2ee34831cd",
     "version": "Unreleased",
     "date": "2026-11-08T16:30:26.000Z",
@@ -827,7 +838,7 @@
   {
     "id": "unreleased-a1ee35e04fd4",
     "version": "Unreleased",
-    "date": "2026-11-09T22:04:38.000Z",
+    "date": "2026-11-09T22:22:56.000Z",
     "dateSource": "commit",
     "section": "Added",
     "scope": "admin",
