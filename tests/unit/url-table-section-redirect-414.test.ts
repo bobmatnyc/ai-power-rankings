@@ -67,8 +67,9 @@ describe("#414 unprefixed section paths", () => {
     }
   });
 
-  it("leave single-segment, locale-prefixed and reserved paths alone", () => {
-    for (const path of ["/tools", "/news", "/en/tools/cursor", "/sign-in/factor-one", "/api/tools/cline"]) {
+  // #417: bare `/tools` and `/news` now 308; see url-table-bare-section-417.test.ts.
+  it("leave locale-prefixed and reserved paths alone", () => {
+    for (const path of ["/en/tools/cursor", "/sign-in/factor-one", "/api/tools/cline"]) {
       expect(resolveTableRedirect(path), path).toBeNull();
     }
   });
