@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-663be054dff7",
+    "version": "Unreleased",
+    "date": "2026-11-10T20:45:05.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "seo",
+    "title": "the Perplexity tool pages (/<lang>/tools/perplexity) are indexable",
+    "description": "the Perplexity tool pages (`/<lang>/tools/perplexity`) are indexable. The ten `noindex` rows for the slug leave `data/url-table-191.json` (589 rows to 579, noindex rows 311 to 301; the 278 redirect rows are unchanged), so the pages drop their robots noindex, enter the sitemap in every locale and appear in `/api/tools` like other active tools. `perplexity-computer` and every other slug keep their rows. Owner ruling D84. Tests: `tests/unit/url-table-197-release.test.ts`, `tests/unit/url-table-191.test.ts` (#197)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-f6333f16e995",
     "version": "Unreleased",
     "date": "2026-11-10T03:06:17.000Z",

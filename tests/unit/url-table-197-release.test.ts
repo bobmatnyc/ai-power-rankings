@@ -136,3 +136,13 @@ describe("released alias targets (D6e guard)", () => {
     }
   });
 });
+
+// #197 (D84): perplexity is an active productivity tool, so its ten locale noindex rows left the
+// table. perplexity-computer keeps its own row; only the exact slug `perplexity` is released.
+describe("#197 perplexity is indexable", () => {
+  it("is not a noindex slug and has no table row in any locale", () => {
+    expect(isNoindexToolSlug("perplexity")).toBe(false);
+    expect(URL_TABLE_ROWS.filter((row) => row.source.endsWith("/tools/perplexity"))).toHaveLength(0);
+    expect(isNoindexToolSlug("perplexity-computer")).toBe(true);
+  });
+});
