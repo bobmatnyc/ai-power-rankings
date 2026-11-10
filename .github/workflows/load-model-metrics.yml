@@ -23,6 +23,12 @@ name: Load model metrics (#329)
 # has confirmed that no parent-company figures sit on model rows. The metrics-only write may run
 # earlier; it changes no status.
 #
+# Sequencing (#329, Dfe): run the per-list publish immediately after a metrics write applies.
+# Until it runs, the stored models board still ranks every model; the readers show only measured
+# models, renumbered, but the stored board, its scores and its movement are the pre-metrics run's.
+# After the publish, check `/api/rankings?list=model` (measured rows only, ranks 1..n,
+# metric_row_count as expected) before the models page's 300 s ISR revalidate serves it.
+#
 # Recovery (D98): before any write dispatch, the owner creates a named Neon branch of production
 # (name pattern: pre-model-metrics-YYYYMMDD) and records its name and UTC time. Rollback is a
 # restore from that branch.

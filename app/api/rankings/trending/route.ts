@@ -30,7 +30,9 @@ import {
 } from "@/lib/trending-analyzer";
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import cacheInstance from "@/lib/memory-cache";
-import { parseListQuery, RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
+import { isMetricGatedList, parseListQuery, RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
+import { gateStoredEntries, measuredPredicate } from "@/lib/rankings/metric-gated-board";
+import type { RawRankingEntry } from "@/lib/tools/ranking-entry";
 import {
   type MergedHistory,
   mergeTrendingHistory,
@@ -60,6 +62,17 @@ async function readHistoricalRankings(list: RankingList): Promise<MergedHistory<
         ? toRankingPeriods(await rankingsRepository.findAll())
         : [];
     const merged = mergeTrendingHistory(listPeriods, combinedPeriods);
+
+    // #329: a metric-gated list's history shows measured models only, in every period.
+    // One tools lookup covers all periods; a failed lookup throws to the 500 below.
+    if (isMetricGatedList(list)) {
+      // Both types describe the same stored JSONB rows.
+      const raw = (p: RankingPeriod) => p.rankings as unknown as RawRankingEntry[];
+      const isMeasured = await measuredPredicate(merged.periods.flatMap(raw));
+      for (const p of merged.periods) {
+        p.rankings = gateStoredEntries(list, raw(p), isMeasured) as unknown as RankingPeriod["rankings"];
+      }
+    }
 
     loggers.api.info("Loaded ranking history", {
       list,
@@ -152,7 +165,8 @@ function toRankingPeriods(allRankings: StoredRankingRow[] | null | undefined): R
  *   `period_sources` gives each period's source (`combined` | `list`) and
  *   `metadata.first_list_period` the boundary. A failed combined read is the same 500,
  *   never a 200 holding only the per-list periods.
- * Test: `tests/unit/rankings-current-trending-185.test.ts`.
+ * #329: a metric-gated list's periods hold measured models only; a failed tools lookup is 500.
+ * Test: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/trending-metric-gate-329.test.ts`.
  *
  * Response Format:
  * ```json

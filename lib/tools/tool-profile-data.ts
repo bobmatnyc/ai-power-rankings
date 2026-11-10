@@ -13,34 +13,43 @@
  * existing invalidation also clears it). A tool in no list (`list` null) gets an
  * empty current period without a read, so its page shows "unranked". A failed
  * read resolves `null` and is not cached; the block then shows its
- * "unavailable" text and the page still renders. Read-only.
- * Test: `tests/unit/tool-profile-193.test.tsx` ("cached ranking read", "#185").
+ * "unavailable" text and the page still renders. Read-only. #329: a metric-gated
+ * list's periods hold only measured tools (`gateBoardEntries`), ranked 1..n as on the board.
+ * Test: `tests/unit/tool-profile-193.test.tsx` ("cached ranking read", "#185"),
+ *   `tests/unit/models-public-rank-329.test.ts`.
  */
 import { unstable_cache } from "next/cache";
 import { rankingsRepository, type RankingData } from "@/lib/db/repositories/rankings.repository";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
-import { rankingEntries } from "./ranking-entry";
+import { gateBoardEntries, gateStoredEntries } from "@/lib/rankings/metric-gated-board";
+import { rankingEntries, type RawRankingEntry } from "./ranking-entry";
 import { toProfileEntry, type ProfileRankingData, type ProfileSnapshot } from "./tool-profile";
 
 /** Matches `revalidate` in `app/[lang]/tools/[slug]/page.tsx`. */
 export const TOOL_PROFILE_REVALIDATE_SECONDS = 1800;
 
-const toSnapshot = (row: RankingData): ProfileSnapshot => ({
+const toSnapshot = (row: RankingData, entries: RawRankingEntry[] = rankingEntries(row.data)): ProfileSnapshot => ({
   period: row.period,
   algorithmVersion: row.algorithm_version,
-  entries: rankingEntries(row.data).map(toProfileEntry),
+  entries: entries.map(toProfileEntry),
 });
 
 async function readRankingData(list: RankingList): Promise<ProfileRankingData> {
+  const toolsRepo = new ToolsRepository();
   const [currentRow, active] = await Promise.all([
     rankingsRepository.getCurrentRankings(list),
-    new ToolsRepository().findByStatus("active"),
+    toolsRepo.findByStatus("active"),
   ]);
   const previousRow = currentRow ? await rankingsRepository.getLatestBefore(currentRow.period, list) : null;
+  // #329: a metric-gated list (models) shows the board's measured-only ranks; the previous period is
+  // renumbered among the same tools, so rank, "of N", change and alternatives match the board.
+  const current = currentRow ? await gateBoardEntries(list, rankingEntries(currentRow.data), toolsRepo) : [];
+  const onBoard = (entry: RawRankingEntry) =>
+    current.some((c) => (c["tool_id"] && c["tool_id"] === entry["tool_id"]) || (c["tool_slug"] && c["tool_slug"] === entry["tool_slug"]));
   return {
-    current: currentRow ? toSnapshot(currentRow) : null,
-    previous: previousRow ? toSnapshot(previousRow) : null,
+    current: currentRow ? toSnapshot(currentRow, current) : null,
+    previous: previousRow ? toSnapshot(previousRow, gateStoredEntries(list, rankingEntries(previousRow.data), onBoard)) : null,
     activeTools: active.map((tool) => ({ slug: tool.slug, name: tool.name, category: tool.category })),
   };
 }
@@ -49,7 +58,7 @@ async function readRankingData(list: RankingList): Promise<ProfileRankingData> {
 const readRankingDataCached = Object.fromEntries(
   RANKING_LISTS.map((list) => [
     list,
-    unstable_cache(() => readRankingData(list), ["tool-profile-ranking-data", "v2", list], {
+    unstable_cache(() => readRankingData(list), ["tool-profile-ranking-data", "v3", list], {
       revalidate: TOOL_PROFILE_REVALIDATE_SECONDS,
       // CACHE_TAGS.RANKINGS and .TOOLS in lib/cache/invalidation.service.ts, spelled
       // out because importing that module starts the memory cache's cleanup timer.
