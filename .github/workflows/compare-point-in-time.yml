@@ -19,6 +19,9 @@ name: Compare point-in-time metrics (read-only)
 #     JSON carry aggregates and counts only: no tool name, slug, id or metric value.
 #     `--per-tool` is never passed here. Errors print a fixed message or a class name.
 #   - No artifact is uploaded; the aggregates JSON goes to the summary and is deleted.
+#   - #95: the same aggregates-only text is also printed to the step log, because the job
+#     summary cannot be read without a signed-in browser. The log carries nothing the
+#     summary does not.
 #
 # Dispatch-only on purpose: never on a schedule, push or pull request.
 
@@ -95,6 +98,9 @@ jobs:
           status=0
           npx tsx scripts/compare-point-in-time.ts "--period=${PERIODS}" "${date_flag[@]}" --out=compare.json > summary.md || status=$?
           if [ "$status" -eq 0 ]; then
+            # #95: the same aggregates-only block also goes to the step log (stdout), because
+            # the job summary cannot be read without a signed-in browser. `tee -a` makes the
+            # log text identical to the summary text, byte for byte.
             {
               echo '## Point-in-time metrics off vs on (read-only, aggregates only)'
               echo ''
@@ -106,7 +112,7 @@ jobs:
               cat compare.json
               echo '```'
               echo '</details>'
-            } >> "$GITHUB_STEP_SUMMARY"
+            } | tee -a "$GITHUB_STEP_SUMMARY"
           else
             echo "Result: ERROR (exit ${status})"
             echo "Result: ERROR (exit ${status}); see the step log (errors are redacted)." >> "$GITHUB_STEP_SUMMARY"
