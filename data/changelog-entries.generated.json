@@ -112,12 +112,23 @@
   {
     "id": "unreleased-4ba16c5f5fcb",
     "version": "Unreleased",
-    "date": "2026-11-10T01:28:51.877Z",
-    "dateSource": "build",
+    "date": "2026-11-10T01:36:33.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "data",
     "title": "OpenAI Codex is ranked as one tool (ar-Te2/T76)",
     "description": "OpenAI Codex is ranked as one tool (ar-Te2/T76). `openai-codex-cli` merges into `openai-codex` through the D90 merge path: `scripts/merge-duplicate-tools.ts --set codex` (`scripts/codex-merge.ts`) and the `merge_set: codex` input of the merge-duplicate-tools workflow, whose apply needs `confirm: merge-codex-cli`. The apply checks both rows first (data ids 40 and 24, kind harness, statuses), retires the CLI row as a `redirect` to `openai-codex`, moves its links and metrics history, and gives the survivor the CLI's benchmark figures and technical facts, a current description and website (`https://chatgpt.com/codex`), GitHub stars (134,417 for `openai/codex`, fetched 2026-11-10) and npm downloads (96,036,077 for `@openai/codex`, 2026-10-10 to 2026-11-08) with provenance, and a recount of its 12-month news mentions. The dry run writes nothing and prints each field decision and the harness board before and after, scored by the v8.1 publish code. The URL table 308s `/<lang>/tools/openai-codex-cli` to `/<lang>/tools/openai-codex`, and both ToolMappers and the Terminal-Bench mapping credit `openai-codex`. No weight or scoring code changes; the data changes only when the workflow is dispatched. Tests: `tests/unit/codex-merge-t76.test.ts`, `tests/unit/merge-duplicate-tools-workflow-d96.test.ts`, `tests/unit/url-table-191.test.ts`, `lib/terminal-bench-mapping.test.ts`, `lib/services/article-ingestion.tool-detection.test.ts`",
+    "changeType": "fix"
+  },
+  {
+    "id": "unreleased-0657b1c9f5fe",
+    "version": "Unreleased",
+    "date": "2026-11-10T01:44:34.629Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "data",
+    "title": "the Codex merge replaces the 2021 Codex text it kept on openai-codex",
+    "description": "the Codex merge replaces the 2021 Codex text it kept on `openai-codex`. The tagline and summary (\"AI system that translates natural language to code\") become \"OpenAI's coding agent for the terminal, code editors and the cloud\", the summary adding that the Codex CLI is open source and Codex is available with ChatGPT plans and through the OpenAI API; `pricing_model` and `info.business.pricing_model` change from `api-based` to the CLI row's `open-source`, other business fields unchanged. A field is replaced only when it holds the 2021 wording or is empty (`planCurrentText`, `scripts/codex-merge.ts`). On a pair already merged, the `merge_set: codex` dry run prints the correction and its apply (`confirm: merge-codex-cli`) writes only it; a corrected row is a no-op. Test: `tests/unit/codex-merge-t76.test.ts`",
     "changeType": "fix"
   },
   {

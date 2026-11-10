@@ -24,8 +24,11 @@ import {
   checkCodexRows,
   CODEX_DESCRIPTION,
   CODEX_FETCHED,
+  CODEX_SUMMARY,
+  CODEX_TAGLINE,
   CODEX_WEBSITE,
   countNewsMentions,
+  planCurrentText,
   planSurvivorData,
 } from "../../scripts/codex-merge";
 import { mergedTools } from "../../scripts/codex-merge-board";
@@ -35,6 +38,8 @@ import { chainDb, MIGRATION_FILES, readMigration } from "./fixtures/migration-ch
 import { pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
 
 const NOW = new Date("2026-11-10T12:00:00Z");
+/** The 2021 Codex model wording the live survivor carries (merge-duplicate-tools dry run 42737045766). */
+const CODEX_2021_TEXT = "AI system that translates natural language to code";
 const FINGERPRINT = "sha256:0123456789abcdef";
 
 /** openai-codex as the public API shows it (2026-11-10), plus an unsourced user count. */
@@ -186,8 +191,19 @@ describe("planSurvivorData (field by field)", () => {
     expect(data.info.technical.language_support).toHaveLength(12); // the CLI's nine are all in the survivor's twelve
     // The survivor's non-empty fields stay; its features are not replaced by the CLI's empty list.
     expect(data.info.features).toHaveLength(4);
-    expect(data.info.business).toEqual((survivorData()["info"] as any).business);
+    // Codex merge (D35): only the 2021 pricing model changes; the other business keys stay.
+    expect(data.info.business).toEqual({ ...(survivorData()["info"] as any).business, pricing_model: "open-source" });
     expect(data.merged_from).toEqual(["openai-codex-cli"]);
+  });
+
+  // Codex merge (D35): the merge must not keep the 2021 Codex API text.
+  it("replaces the 2021 tagline, summary and pricing with today's product text", () => {
+    expect(JSON.stringify(data)).not.toContain(CODEX_2021_TEXT);
+    expect([data.pricing_model, data.info.business.pricing_model]).toEqual(["open-source", "open-source"]);
+    expect([data.tagline, data.info.summary]).toEqual([CODEX_TAGLINE, CODEX_SUMMARY]);
+    expect(plan.decisions).toContain(`  field tagline: set to ${JSON.stringify(CODEX_TAGLINE)} (was the 2021 wording ${JSON.stringify(CODEX_2021_TEXT)})`);
+    expect(plan.decisions).toContain('  field info.business.pricing_model: set to "open-source" (was the 2021 wording "api-based")');
+    expect(plan.decisions.filter((l) => /field (tagline|pricing_model|info\.summary|info\.business): survivor kept/.test(l))).toEqual([]);
   });
 
   it("names every decision and mutates neither input", () => {
@@ -232,6 +248,19 @@ describe("planSurvivorData (field by field)", () => {
     expect(after.confidenceMultiplier).toBeGreaterThan(before.confidenceMultiplier);
     expect(after.factorScores["developerAdoption"]).toBeGreaterThan(before.factorScores["developerAdoption"]!);
     expect(after.overallScore).toBeGreaterThan(before.overallScore);
+  });
+});
+
+describe("planCurrentText (Codex merge, D35)", () => {
+  it("keeps text that is not the 2021 wording, and plans nothing on a corrected row", () => {
+    const edited = survivorData();
+    edited["tagline"] = "Edited by hand";
+    const p = planCurrentText(edited);
+    expect(p.data["tagline"]).toBe("Edited by hand");
+    expect(p.changed).toEqual(["info.summary", "pricing_model", "info.business.pricing_model"]);
+    expect(planCurrentText(p.data).changed).toEqual([]);
+    expect(edited["tagline"]).toBe("Edited by hand"); // input not mutated
+    expect((edited["info"] as any).summary).toBe(CODEX_2021_TEXT);
   });
 });
 
@@ -442,5 +471,40 @@ describe("runMerge --set codex on the migration chain", () => {
     const dry = await run({ mode: "dry-run" });
     expect(dry.code).toBe(0);
     expect(dry.log).toContain("codex: guards passed; state already-merged");
+    expect(dry.log).toContain("codex: openai-codex text check: nothing to change");
+    expect(survivor!.data.tagline).toBe(CODEX_TAGLINE);
+  });
+
+  // Codex merge (D35): a row merged before the text rule shipped still carries the 2021 text.
+  it("corrects the 2021 text on an already-merged row: dry run writes nothing, apply once, re-run no-op", async () => {
+    await db.query(
+      `UPDATE public."tools" SET data = jsonb_set(jsonb_set(jsonb_set(data || $1::jsonb, '{info,summary}', $2::jsonb), '{info,business,pricing_model}', '"api-based"'), '{info,business,free_tier}', 'false')
+        WHERE slug = 'openai-codex'`,
+      [JSON.stringify({ tagline: CODEX_2021_TEXT, pricing_model: "api-based" }), JSON.stringify(CODEX_2021_TEXT)]
+    );
+    const stale = await snapshot(db);
+    const dry = await run({ mode: "dry-run" });
+    expect(dry.code).toBe(0);
+    for (const s of dry.statements) expect(s.trim()).toMatch(/^SELECT\b/);
+    expect(await snapshot(db)).toEqual(stale);
+    expect(dry.log).toContain("codex: openai-codex text check: would set tagline, info.summary, pricing_model, info.business.pricing_model");
+
+    const file = path.join(dir, "backup-3.json");
+    expect((await run({ mode: "backup", file })).code).toBe(0);
+    const applied = await run({ mode: "apply", backupFile: file });
+    expect(applied.code).toBe(0);
+    expect(applied.log.slice(-2)).toEqual([
+      "codex: openai-codex text corrected: tagline, info.summary, pricing_model, info.business.pricing_model",
+      "--apply: committed (already merged, text corrected)",
+    ]);
+    const after = (await db.query<{ data: Record<string, any> }>(`SELECT data FROM public."tools" WHERE slug = 'openai-codex'`)).rows[0]!.data;
+    expect([after.tagline, after.info.summary, after.pricing_model]).toEqual([CODEX_TAGLINE, CODEX_SUMMARY, "open-source"]);
+    expect(after.info.business).toMatchObject({ pricing_model: "open-source", free_tier: false, enterprise_pricing: true });
+    expect(after.metrics.github_stars).toBe(134417); // the merged metrics stay
+
+    const corrected = await snapshot(db);
+    const again = await run({ mode: "apply", backupFile: file });
+    expect(again.log.at(-1)).toBe("--apply: committed (no-op, already merged)");
+    expect(await snapshot(db)).toEqual(corrected);
   });
 });

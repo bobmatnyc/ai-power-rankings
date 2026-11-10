@@ -15,7 +15,9 @@
  *   and returns one decision line per field. `countNewsMentions` counts the 12-month news
  *   corpus with the site's own tagging (`articleToolTags`), with the CLI row as a redirect,
  *   so an article tagged to either row counts once. `codexPatch` writes the planned data
- *   inside the D90 apply transaction and reads it back.
+ *   inside the D90 apply transaction and reads it back. Codex merge (D35): `planCurrentText`
+ *   replaces the survivor's 2021 tagline, summary and pricing, in the merge and, on an
+ *   already-merged pair, as a correction of its own.
  * Test: `tests/unit/codex-merge-t76.test.ts`.
  */
 
@@ -64,6 +66,19 @@ export const CODEX_DESCRIPTION =
 
 /** The product page OpenAI's own README links; openai.com/codex answers 403 to a non-browser client. */
 export const CODEX_WEBSITE = "https://chatgpt.com/codex";
+
+// Codex merge (D35): the survivor's tagline, info.summary and pricing are the 2021 Codex API's.
+/** The 2021 Codex model wording the survivor carries in `tagline` and `info.summary`. */
+export const CODEX_2021_TEXT = "AI system that translates natural language to code";
+/** The 2021 Codex API pricing the survivor carries in `pricing_model` and `info.business.pricing_model`. */
+export const CODEX_2021_PRICING = "api-based";
+/** Today's tagline, drawn from `CODEX_DESCRIPTION`. */
+export const CODEX_TAGLINE = "OpenAI's coding agent for the terminal, code editors and the cloud";
+/** Today's summary: `CODEX_TAGLINE`, the open-source CLI, and how Codex is bought. No prices. */
+export const CODEX_SUMMARY =
+  `${CODEX_TAGLINE}. The Codex CLI is open source; Codex is available with ChatGPT plans and through the OpenAI API.`;
+/** The CLI row's `info.business.pricing_model`. */
+export const CODEX_PRICING_MODEL = "open-source";
 
 type Data = Record<string, unknown>;
 
@@ -163,8 +178,63 @@ const OWN_TOP_KEYS = new Set([
   "id", "slug", "name", "status", "category", "kind", "logo_url", "created_at", "updated_at",
   "info", "metrics", "business_metrics_provenance", "metrics_provenance", "description", "website_url",
   "redirect_to", "redirect_reason", "previous_status", "merged_from", "merge_reason",
+  // Codex merge (D35): written by `planCurrentText`, not by the fill.
+  "tagline", "pricing_model",
 ]);
-const OWN_INFO_KEYS = new Set(["metrics", "description", "website", "technical"]);
+// Codex merge (D35): `summary` and `business` are written by `planCurrentText`, not by the fill.
+const OWN_INFO_KEYS = new Set(["metrics", "description", "website", "technical", "summary", "business"]);
+
+export interface TextPlan {
+  data: Data;
+  decisions: string[];
+  /** The fields set, e.g. `tagline`, `info.business.pricing_model`; empty when nothing changes. */
+  changed: string[];
+}
+
+/**
+ * Codex merge (D35): replaces the 2021 Codex API text the survivor keeps.
+ *
+ * Why: the survivor's `tagline` and `info.summary` say "AI system that translates natural
+ *   language to code" and its pricing is "api-based": the 2021 model, not today's coding agent.
+ * What: pure. `tagline` and `info.summary` set to `CODEX_TAGLINE` and `CODEX_SUMMARY`, and
+ *   `pricing_model` and `info.business.pricing_model` to `CODEX_PRICING_MODEL`, each only when
+ *   the stored value is the 2021 wording or empty; any other value is kept. Other
+ *   `info.business` keys stay; an empty `info.business` starts from the CLI's (`cli`). Used by
+ *   the merge (`planSurvivorData`) and, on an already-merged pair, by the dry run and apply,
+ *   so a row merged before this rule existed is corrected; a corrected row plans no change.
+ * Test: `tests/unit/codex-merge-t76.test.ts` ("planCurrentText").
+ */
+export function planCurrentText(survivorData: Data, cli: Data = {}): TextPlan {
+  const data = structuredClone(survivorData);
+  const decisions: string[] = [];
+  const changed: string[] = [];
+  const info = (data["info"] = structuredClone(obj(data["info"]))) as Data;
+  const cliBusiness = obj(obj(cli["info"])["business"]);
+  const business = (info["business"] = structuredClone(isEmpty(info["business"]) ? cliBusiness : obj(info["business"]))) as Data;
+  if (isEmpty(obj(survivorData["info"])["business"]) && !isEmpty(cliBusiness)) {
+    changed.push("info.business");
+    decisions.push(`  field info.business: cli ${show(cliBusiness)} (survivor empty)`);
+  }
+  const fields: Array<[string, Data, string, string, string]> = [
+    ["tagline", data, "tagline", CODEX_2021_TEXT, CODEX_TAGLINE],
+    ["info.summary", info, "summary", CODEX_2021_TEXT, CODEX_SUMMARY],
+    ["pricing_model", data, "pricing_model", CODEX_2021_PRICING, CODEX_PRICING_MODEL],
+    ["info.business.pricing_model", business, "pricing_model", CODEX_2021_PRICING, CODEX_PRICING_MODEL],
+  ];
+  for (const [field, node, key, stale, current] of fields) {
+    const was = node[key];
+    if (was === current) {
+      decisions.push(`  field ${field}: already current ${show(was)}`);
+    } else if (isEmpty(was) || was === stale) {
+      node[key] = current;
+      changed.push(field);
+      decisions.push(`  field ${field}: set to ${show(current)} (was ${isEmpty(was) ? "empty" : `the 2021 wording ${show(was)}`})`);
+    } else {
+      decisions.push(`  field ${field}: survivor kept ${show(was)} (not the 2021 wording)`);
+    }
+  }
+  return { data, decisions, changed };
+}
 
 export interface SurvivorPlan {
   data: Data;
@@ -194,6 +264,7 @@ export interface SurvivorInputs {
  *   else the survivor's stays. A value moves with its provenance entries.
  * - `info.technical`: the CLI's value per key (the survivor's block describes the 2021 Codex
  *   model), except `language_support`, the union of both lists.
+ * - `tagline`, `info.summary`, `pricing_model`, `info.business`: `planCurrentText` (Codex merge, D35).
  * - Every other top-level and `info` field: the survivor's, or the CLI's when the survivor's is empty.
  */
 export function planSurvivorData(survivor: ToolRow, old: ToolRow, inputs: SurvivorInputs): SurvivorPlan {
@@ -295,6 +366,11 @@ export function planSurvivorData(survivor: ToolRow, old: ToolRow, inputs: Surviv
   fill(info, oldInfo, OWN_INFO_KEYS, "info.");
   fill(data, from, OWN_TOP_KEYS, "");
 
+  // Codex merge (D35): the 2021 tagline, summary and pricing give way to today's product.
+  const text = planCurrentText(data, from);
+  Object.assign(data, text.data);
+  decisions.push(...text.decisions);
+
   data["merged_from"] = [...mergedFrom(survivor), CODEX_OLD.slug];
   data["merge_reason"] = `${CODEX_RULING}: ${CODEX_OLD.slug} merged into ${CODEX_SURVIVOR.slug}`;
   say("merged_from", `adds ${CODEX_OLD.slug} (the re-run marker)`);
@@ -364,7 +440,13 @@ export async function codexDryRun(
     return { ok: false, survivorData: null };
   }
   log(`codex: guards passed; state ${check.state}`);
-  if (check.state === "already-merged") return { ok: true, survivorData: null };
+  if (check.state === "already-merged") {
+    // Codex merge (D35): a row merged before `planCurrentText` existed still has the 2021 text.
+    const text = planCurrentText(check.survivor.data ?? {}, check.old.data ?? {});
+    log(`codex: ${CODEX_SURVIVOR.slug} text check: ${text.changed.length > 0 ? `would set ${text.changed.join(", ")}` : "nothing to change"}`);
+    for (const line of text.decisions) log(line);
+    return { ok: true, survivorData: text.changed.length > 0 ? text.data : null };
+  }
   const news = countNewsMentions(await loadNewsInputs(q, now));
   log(`codex: news mentions (12 months): ${CODEX_SURVIVOR.slug} ${news.survivor}, ${CODEX_OLD.slug} ${news.old}, merged ${news.merged}`);
   const plan = planSurvivorData(check.survivor, check.old, { newsMentions: news.merged, asOf: day(now) });
@@ -389,17 +471,26 @@ const ROWS_SQL = `SELECT id::text AS id, slug, status, kind, data FROM public."t
 
 /**
  * The apply's survivor write, run by `applyMerge` inside its transaction. Re-checks the
- * guards on locked rows, writes the planned data, and reads it back. Writes nothing when
- * the pair is already merged; throws `MergeRefusedError` on any unexpected state.
+ * guards on locked rows, writes the planned data, and reads it back. On an already-merged
+ * pair it writes only `planCurrentText`'s correction (Codex merge, D35), and nothing when
+ * that plans no change; throws `MergeRefusedError` on any unexpected state.
  */
-export function codexPatch(now: Date): (tx: Queryable) => Promise<void> {
+export function codexPatch(now: Date, log: (line: string) => void = () => {}): (tx: Queryable) => Promise<void> {
   return async (tx) => {
     const rows = (await tx.query(ROWS_SQL, [[CODEX_SURVIVOR.slug, CODEX_OLD.slug]])).rows as ToolRow[];
     const check = checkCodexRows(rows);
     if (!check.ok) throw new MergeRefusedError(`codex guard: ${check.problems.join("; ")}`);
-    if (check.state === "already-merged") return;
-    const news = countNewsMentions(await loadNewsInputs(tx, now));
-    const { data } = planSurvivorData(check.survivor, check.old, { newsMentions: news.merged, asOf: day(now) });
+    let data: Data;
+    if (check.state === "already-merged") {
+      // Codex merge (D35): correct the 2021 text on a row merged before this rule existed.
+      const correction = planCurrentText(check.survivor.data ?? {}, check.old.data ?? {});
+      if (correction.changed.length === 0) return;
+      data = correction.data;
+      log(`codex: ${CODEX_SURVIVOR.slug} text corrected: ${correction.changed.join(", ")}`);
+    } else {
+      const news = countNewsMentions(await loadNewsInputs(tx, now));
+      data = planSurvivorData(check.survivor, check.old, { newsMentions: news.merged, asOf: day(now) }).data;
+    }
     const text = JSON.stringify(data);
     await tx.query(`UPDATE public."tools" SET data = $2::jsonb, updated_at = now() WHERE id = $1::uuid AND status = 'active'`, [
       check.survivor.id,

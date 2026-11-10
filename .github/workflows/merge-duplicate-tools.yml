@@ -31,6 +31,9 @@ name: Merge duplicate tools (D90)
 # GitHub stars and npm downloads. Its apply needs `confirm: merge-codex-cli`. Its dry run also
 # prints the guards, the survivor's field decisions and the harness scores before and after
 # (slugs, ranks and scores; the public site shows the same figures). The default set is d90.
+# Codex merge (D35): on an already-merged pair, the codex set's dry run prints and its apply
+# writes only the replacement of the survivor's 2021 tagline, summary and pricing
+# (`planCurrentText`); a corrected row is a no-op.
 #
 # Test: tests/unit/merge-duplicate-tools-workflow-d96.test.ts, tests/unit/codex-merge-t76.test.ts.
 
