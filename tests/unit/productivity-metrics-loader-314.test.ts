@@ -17,6 +17,7 @@ import path from "node:path";
 import type { PGlite } from "@electric-sql/pglite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ModelSeedDb } from "../../lib/db/repositories/model-seed-writer";
+import { RankingEngineV76 } from "../../lib/ranking-algorithm-v76";
 import { PRODUCTIVITY_SLUGS } from "../../lib/db/repositories/productivity-metrics-seed";
 import { runMigrations } from "../../scripts/apply-migrations";
 import { runProductivityLoad } from "../../scripts/load-productivity-metrics";
@@ -107,12 +108,18 @@ describe("#314 load-productivity-metrics: 0027 -> loader -> 0033", () => {
       expect(data["info"]["website"], slug).toBe(start[slug]!.data["info"]["website"]);
       expect(data["info"]["description"], slug).toBe(FILE["tools"][slug]["info"]["description"]);
       expect(data["info"]["features"], slug).toEqual(FILE["tools"][slug]["info"]["features"]);
+      // #314 (#241): the same fields at the top level of data, where the engine reads them.
+      expect(data["description"], slug).toBe(FILE["tools"][slug]["info"]["description"]);
+      expect(data["features"], slug).toEqual(FILE["tools"][slug]["info"]["features"]);
+      expect(data["company"], slug).toBe(FILE["tools"][slug]["info"]["company"]);
     }
     expect(loaded["grok-app"]!.data["metrics_provenance"]["valuation"]).toMatchObject({ scope: "parent", confidence: "low", source_type: "third_party" });
     expect(loaded["hermes-agent"]!.data["metrics_provenance"]["github.stars"]).toMatchObject({ scope: "product", as_of: "2026-11-10" });
     expect(loaded["mistral-vibe"]!.data["metrics_provenance"]["funding"]).toMatchObject({ currency: "EUR", scope: "parent" });
     // A null in the file is "not stated": chatgpt's base_price is not written.
     expect(loaded["chatgpt"]!.data["info"]["business"]).toEqual({ pricing_model: "freemium", free_tier: true });
+    // D84 #5: grok-app pricing is null in the file, so no pricing is written.
+    expect(loaded["grok-app"]!.data["info"]["business"]).toBeUndefined();
     const others = Object.keys(loaded).filter((s) => !NINE.includes(s as never));
     expect(others.map((s) => loaded[s])).toEqual(others.map((s) => start[s]));
 
@@ -126,6 +133,18 @@ describe("#314 load-productivity-metrics: 0027 -> loader -> 0033", () => {
       expect(after[slug]!.status, slug).toBe("inactive");
       expect(Object.keys(after[slug]!.data["metrics"]).length, slug).toBeGreaterThan(0);
     }
+  });
+
+  it("the engine reads the top-level fields: a loaded row scores higher innovation than the same row without them", async () => {
+    expect((await load(FILE_TEXT, true)).code).toBe(0);
+    const { data } = (await table())["chatgpt"]!;
+    const { description: _d, features: _f, company: _c, ...infoOnly } = data;
+    const innovation = (d: Json) =>
+      new RankingEngineV76().calculateToolScore(
+        { tool_id: "t", name: "ChatGPT", slug: "chatgpt", category: "productivity", status: "active", info: d, metrics: d["metrics"] } as never,
+        new Date("2026-11-10")
+      ).factorScores.innovation;
+    expect(innovation(data)).toBeGreaterThan(innovation(infoOnly));
   });
 
   it("is a no-op on a re-run", async () => {

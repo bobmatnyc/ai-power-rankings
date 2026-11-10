@@ -88,7 +88,8 @@ function rowRefusal(entry: ProductivityToolEntry, row: ExistingRow | undefined):
 
 /**
  * The row's data after the write: every metric value at its path, every provenance entry
- * replaced whole, and the info fields the file states. Every other key is kept. Pure.
+ * replaced whole, and the info fields the file states (description, features and company both
+ * under data.info and at the top level of data). Every other key is kept. Pure.
  */
 export function mergeProductivityData(data: Json, entry: ProductivityToolEntry): Json {
   const metrics: Json = { ...((data["metrics"] as Json | undefined) ?? {}) };
@@ -101,13 +102,21 @@ export function mergeProductivityData(data: Json, entry: ProductivityToolEntry):
     provenance[m.path] = { ...m.provenance };
   }
   const info: Json = { ...((data["info"] as Json | undefined) ?? {}) };
-  if (entry.info.description !== undefined) info["description"] = entry.info.description;
-  if (entry.info.features !== undefined) info["features"] = [...entry.info.features];
-  if (entry.info.company !== undefined) info["company"] = entry.info.company;
+  // #314: the same three fields also go to the top level of data. These rows hold data.info, so
+  // the engine treats them as double-nested and reads description, features and company at
+  // data.* (ranking-algorithm-v76.ts:296,300,304); it folds only business and technical from
+  // data.info (#241). Fixing that in the engine would move other boards, so the loader writes both.
+  const top: Json = {};
+  if (entry.info.description !== undefined) info["description"] = top["description"] = entry.info.description;
+  if (entry.info.features !== undefined) {
+    info["features"] = [...entry.info.features];
+    top["features"] = [...entry.info.features];
+  }
+  if (entry.info.company !== undefined) info["company"] = top["company"] = entry.info.company;
   if (Object.keys(entry.info.business).length > 0) {
     info["business"] = { ...((info["business"] as Json | undefined) ?? {}), ...entry.info.business };
   }
-  return { ...data, metrics, metrics_provenance: provenance, info };
+  return { ...data, ...top, metrics, metrics_provenance: provenance, info };
 }
 
 const RECURSE_KEYS = new Set(["metrics", "metrics_provenance", "info", "business", "github", "pypi"]);

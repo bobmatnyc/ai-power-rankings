@@ -152,7 +152,7 @@
     },
     "grok-app": {
       "include_in_0033": true,
-      "include_reason": "users (product, via press on the SpaceX filing) + funding (xAI statement, parent) + valuation (press, parent) verified. Pricing is third-party only; users and valuation are medium/low confidence.",
+      "include_reason": "users (product, via press on the SpaceX filing) + funding (xAI statement, parent) + valuation (press, parent) verified. Pricing was third-party only and is null under owner ruling D84 #5; users and valuation are medium/low confidence.",
       "metrics": {
         "users": {
           "value": 117000000, "unit": "monthly active users", "scope": "product", "as_of": "2026-03-31",
@@ -181,7 +181,8 @@
         "features": ["Chat with real-time web and X search", "Imagine image and video generation", "Aurora text-to-image model", "DeepSearch", "Think (reasoning) mode", "Voice mode (Grok Voice)", "Companions", "Image and PDF understanding", "Grok in X", "Grok Build terminal coding agent (SuperGrok)"],
         "features_source": {"source_url": "https://en.wikipedia.org/wiki/Grok_(chatbot)", "source_type": "third_party", "as_of": "2026-11-10",
           "note": "x.ai/grok returned 403 and grok.com shows only a chat box. Features are from Wikipedia's article; first 100,000 characters read."},
-        "business": {"pricing_model": "freemium", "base_price": 30, "free_tier": true, "enterprise_pricing": null},
+        "business": {"pricing_model": null, "base_price": null, "free_tier": null, "enterprise_pricing": null},
+        "business_ruling": "Owner ruling D84 #5: every pricing field is null because the only source is the 2026-07 third-party page below (it gave freemium, base_price 30, free_tier true). The loader writes no pricing for this row.",
         "business_source": {"source_url": "https://www.eesel.ai/blog/grok-4-5-pricing", "source_type": "third_party", "as_of": "2026-07-09",
           "quote": "Grok (Free) $0; SuperGrok $30.00 per month (page last edited July 9, 2026, attributes prices to grok.com/supergrok)",
           "confidence": "low",
