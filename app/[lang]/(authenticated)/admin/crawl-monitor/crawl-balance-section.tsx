@@ -37,6 +37,8 @@ export default function CrawlBalanceSection({ reloadKey }: { reloadKey: number }
   useEffect(() => {
     let cancelled = false;
     setError(null);
+    // #394: drop the previous check, so a failed reload never leaves a stale comparison on screen.
+    setCheck(null);
     fetch("/api/admin/crawl-monitor/balances", { credentials: "same-origin", cache: "no-store" })
       .then(async (res) => {
         const body = (await res.json().catch(() => ({}))) as { success?: boolean; data?: BalanceCheckSummary; error?: string };
