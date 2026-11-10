@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import NextDynamic from "next/dynamic";
 import Link from "next/link";
 import { SignupUpdatesButton } from "@/components/auth/signup-updates-button";
+import { HomeInsightSlot } from "@/components/insights/home-insight-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -231,6 +232,8 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
         {/* T-033 What's New Modal */}
         <WhatsNewModalClient />
         <main className="min-h-screen">
+        {/* #198: the "This week" card follows the hero only while INSIGHTS_PREVIEW is on; off, the slot renders the hero alone */}
+        <HomeInsightSlot lang={lang}>
         {/* Hero Section */}
         <section className="relative overflow-hidden">
           {/* Background gradient */}
@@ -297,6 +300,7 @@ export default async function Home({ params }: PageProps): Promise<React.JSX.Ele
             />
           </div>
         </section>
+        </HomeInsightSlot>
 
         {/* Categories Overview - Lazy loaded for better initial performance */}
         <LazySection fallbackHeight="600px">

@@ -1,11 +1,18 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
+import { insightsPreviewEnabled } from "@/app/[lang]/insights/preview-gate";
+import { ArticleTemplate } from "@/components/news/article-template";
 import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { toMetaDescription } from "@/lib/article-summary";
-import { type NewsArticleTool, type NewsArticleView, loadNewsArticle } from "@/lib/news-article";
+import {
+  type NewsArticleDetail,
+  type NewsArticleTool,
+  type NewsArticleView,
+  loadNewsArticle,
+} from "@/lib/news-article";
 import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
 // #368: ISR with the 60-second window the /api/news fetch used; slugs render on first request.
@@ -29,11 +36,14 @@ type DetailProps = Parameters<typeof NewsDetailContent>[0];
  * regeneration that hits a database error keeps serving the cached article
  * instead of caching a 404 for a real one.
  */
-const fetchArticle = cache(async (slug: string): Promise<{ article: NewsArticleView; tool: NewsArticleTool | null }> => {
-  const detail = await loadNewsArticle(slug, "/[lang]/news/[slug]");
-  if (!detail) notFound();
-  return { article: detail.article, tool: detail.tool };
-});
+const fetchArticle = cache(
+  async (slug: string): Promise<{ article: NewsArticleView; tool: NewsArticleTool | null; tools: NewsArticleDetail["tools"] }> => {
+    const detail = await loadNewsArticle(slug, "/[lang]/news/[slug]");
+    if (!detail) notFound();
+    // #198: `tools` (one tag per kind, #187) feeds the Article template only.
+    return { article: detail.article, tool: detail.tool, tools: detail.tools };
+  }
+);
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, slug } = await params;
@@ -92,7 +102,16 @@ export default async function NewsArticlePage({ params }: PageProps): Promise<Re
   const dict = await getDictionary(lang as Locale);
 
   // Fetch the article data
-  const { article, tool } = await fetchArticle(slug);
+  const { article, tool, tools } = await fetchArticle(slug);
+
+  // #198: the Article template replaces the detail view only while INSIGHTS_PREVIEW is on.
+  if (insightsPreviewEnabled()) {
+    return (
+      <main className="container mx-auto max-w-3xl px-4 py-8">
+        <ArticleTemplate lang={lang} article={article} tool={tool} tools={tools} />
+      </main>
+    );
+  }
 
   return (
     <main className="px-3 md:px-6 py-8 max-w-7xl mx-auto">

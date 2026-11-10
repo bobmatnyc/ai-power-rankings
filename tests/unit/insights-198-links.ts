@@ -2,15 +2,22 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative, sep } from "node:path";
 
 /**
+ * #198: files outside the Insights tree that name `/insights` behind `INSIGHTS_PREVIEW`.
+ * The nav model renders the link only with `{ insights: true }`; the flag-off
+ * proof is `tests/unit/insights-launch-198.test.tsx`.
+ */
+const FLAG_GATED_LINKERS = ["lib/navigation/site-nav.ts"];
+
+/**
  * Source files outside the Insights route and templates that link to `/insights` (#198).
  *
  * Why: #198: every Insights slice must stay unlinked until launch, so each
  * slice's test runs the same scan.
  * What: walks `app`, `components`, `lib`, `i18n`, `contexts`, `hooks` and `src`
  * for a quoted `/insights...` path, or one after a template `${...}` segment,
- * and returns the matching files outside `app/[lang]/insights/` and
- * `components/insights/`. Also returns the number of files scanned, so a
- * caller can show the scan read something.
+ * and returns the matching files outside `app/[lang]/insights/`,
+ * `components/insights/` and `FLAG_GATED_LINKERS`. Also returns the number of
+ * files scanned, so a caller can show the scan read something.
  * Test: `tests/unit/insights-weekly-198.test.tsx`, `tests/unit/insights-monthly-198.test.tsx`.
  */
 export function insightsLinksOutsideInsights(): { scanned: number; linking: string[] } {
@@ -23,6 +30,7 @@ export function insightsLinksOutsideInsights(): { scanned: number; linking: stri
     (file) =>
       !file.startsWith("app/[lang]/insights/") &&
       !file.startsWith("components/insights/") &&
+      !FLAG_GATED_LINKERS.includes(file) &&
       link.test(readFileSync(join(root, file), "utf8"))
   );
   return { scanned: sources.length, linking };

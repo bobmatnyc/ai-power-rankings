@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { insightsNavProps } from "@/app/[lang]/insights/preview-gate";
 import { GoogleAnalytics } from "@/components/analytics/GoogleAnalytics";
 import { ClientLayout } from "@/components/layout/client-layout";
 import { isLocale, type Locale } from "@/i18n/config";
@@ -83,7 +84,8 @@ export default async function LanguageLayout({
     // Font variables are already set in the root layout with inline styles
     return (
       <>
-        <ClientLayout lang={lang as Locale} dict={dict} categories={categories}>
+        {/* #198: insightsNavProps() is {} while INSIGHTS_PREVIEW is off, so the props are unchanged */}
+        <ClientLayout lang={lang as Locale} dict={dict} categories={categories} {...insightsNavProps()}>
           {children}
         </ClientLayout>
 
