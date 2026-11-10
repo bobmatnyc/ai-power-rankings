@@ -74,8 +74,14 @@ export function gateStoredEntries(
   });
 }
 
-/** Whether each entry's tool (by stored `tool_id`, else `tool_slug`) carries a coding metric. */
-async function measuredPredicate(entries: RawRankingEntry[], repo: ToolsRepository): Promise<(entry: RawRankingEntry) => boolean> {
+/**
+ * Whether each entry's tool (by stored `tool_id`, else `tool_slug`) carries a coding metric.
+ * Exported so a reader of many boards (the trending route) looks the tools up once (#329).
+ */
+export async function measuredPredicate(
+  entries: RawRankingEntry[],
+  repo: ToolsRepository = new ToolsRepository()
+): Promise<(entry: RawRankingEntry) => boolean> {
   const str = (value: unknown) => (typeof value === "string" && value ? value : null);
   const ids = [...new Set(entries.flatMap((e) => str(e["tool_id"]) ?? []))];
   const byKey = new Map<string, unknown>();
