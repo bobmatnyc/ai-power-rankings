@@ -1,0 +1,115 @@
+name: Compare point-in-time metrics (read-only)
+
+# Why: #95 — the cron publish may pass `usePointInTimeMetrics: true` only after the
+# owner reviews a measured off/on diff of the per-list boards for the period to publish
+# (docs/research/95-steps-7-9-plan.md, PR A). The DATABASE_URL repository secret is the
+# only route to the real rows, so the compare runs here.
+#
+# What: a manual dispatch from main that runs scripts/compare-point-in-time.ts for the
+# given period(s). Per list (harness, model, productivity) the job summary shows the
+# rank and score diff (moved count, max and median rank move, top-10 changes), the
+# freshness status, the fallbackTools and skippedLeaves counts and per-part history
+# coverage (github, pypi, npm, vscode), plus the ledger totals. It writes nothing:
+#   - Every statement is a single SELECT inside a READ ONLY Postgres transaction whose
+#     transaction_read_only is probed first; a probe that is not `on` aborts the run
+#     (lib/rankings/point-in-time-compare-source.ts). Both scoring runs are dry-runs; the
+#     port's write methods throw. No migration, no publish, no cron route.
+#   - The secret reaches the step only through `env:`, never through `run:` text.
+#   - #95: the repository is public and the history is private. The summary and the
+#     JSON carry aggregates and counts only: no tool name, slug, id or metric value.
+#     `--per-tool` is never passed here. Errors print a fixed message or a class name.
+#   - No artifact is uploaded; the aggregates JSON goes to the summary and is deleted.
+#
+# Dispatch-only on purpose: never on a schedule, push or pull request.
+
+on:
+  workflow_dispatch:
+    inputs:
+      periods:
+        description: 'Period(s) to compare, YYYY-MM, comma-separated (e.g. 2026-11 or 2026-11,2026-12).'
+        type: string
+        required: true
+      date:
+        description: 'Scoring clock as YYYY-MM-DD for both runs. Empty means now (UTC).'
+        type: string
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  compare:
+    name: point-in-time off vs on
+    # #95: main only. A dispatch on any other ref skips the job before checkout.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Dispatch inputs reach the shell only through `env:` and are shape-checked.
+      - name: Validate inputs
+        env:
+          PERIODS: ${{ inputs.periods }}
+          SCORING_DATE: ${{ inputs.date }}
+        run: |
+          set -uo pipefail
+          if [[ ! "$PERIODS" =~ ^[0-9]{4}-[0-9]{2}(,[0-9]{4}-[0-9]{2})*$ ]]; then
+            echo "::error::periods must be YYYY-MM, comma-separated, no spaces"
+            exit 1
+          fi
+          if [ -n "$SCORING_DATE" ] && [[ ! "$SCORING_DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+            echo "::error::date must be YYYY-MM-DD or empty"
+            exit 1
+          fi
+
+      # stdout is the aggregates summary; a fixed error line goes to stderr. NODE_ENV=test
+      # keeps the app's connection module from loading dotenv files; LOG_LEVEL=silent and
+      # the script's silenced console keep library logs out of the public log.
+      - name: Compare (read-only)
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          PERIODS: ${{ inputs.periods }}
+          SCORING_DATE: ${{ inputs.date }}
+          NODE_ENV: test
+          LOG_LEVEL: silent
+        run: |
+          set -uo pipefail
+          date_flag=()
+          if [ -n "$SCORING_DATE" ]; then
+            date_flag=("--date=${SCORING_DATE}")
+          fi
+          status=0
+          npx tsx scripts/compare-point-in-time.ts "--period=${PERIODS}" "${date_flag[@]}" --out=compare.json > summary.md || status=$?
+          if [ "$status" -eq 0 ]; then
+            {
+              echo '## Point-in-time metrics off vs on (read-only, aggregates only)'
+              echo ''
+              cat summary.md
+              echo ''
+              echo '<details><summary>Aggregates JSON</summary>'
+              echo ''
+              echo '```json'
+              cat compare.json
+              echo '```'
+              echo '</details>'
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "Result: ERROR (exit ${status})"
+            echo "Result: ERROR (exit ${status}); see the step log (errors are redacted)." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          rm -f summary.md compare.json
+          exit "$status"

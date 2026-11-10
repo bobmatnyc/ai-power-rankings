@@ -1,0 +1,48 @@
+{
+  "$comment": "#95: synthetic rows for scripts/compare-point-in-time.ts. Live tools.data puts alpha first on the harness board; the 2026-11-01 history puts charlie first. dune has no history (fallback). bravo carries one flagged leaf (skipped).",
+  "tools": [
+    { "id": "00000000-0000-4000-8000-000000000001", "name": "Alpha", "slug": "alpha", "category": "code-editor", "status": "active", "kind": "harness",
+      "data": { "metrics": { "vscode": { "installs": 60000000 }, "github": { "stars": 50000 } } } },
+    { "id": "00000000-0000-4000-8000-000000000002", "name": "Bravo", "slug": "bravo", "category": "code-editor", "status": "active", "kind": "harness",
+      "data": { "metrics": { "npm": { "downloads_last_month": 1000000 } } } },
+    { "id": "00000000-0000-4000-8000-000000000003", "name": "Charlie", "slug": "charlie", "category": "code-editor", "status": "active", "kind": "harness",
+      "data": { "metrics": { "vscode": { "installs": 1000 } } } },
+    { "id": "00000000-0000-4000-8000-000000000004", "name": "Dune", "slug": "dune", "category": "code-editor", "status": "active", "kind": "harness",
+      "data": { "metrics": { "vscode": { "installs": 500000 } } } },
+    { "id": "00000000-0000-4000-8000-000000000005", "name": "Mike Model", "slug": "mike-model", "category": "llm", "status": "active", "kind": "model",
+      "data": { "metrics": { "terminal_bench": 50, "github": { "stars": 100 } },
+                "metrics_provenance": { "terminal_bench": { "source": "https://www.vals.ai/benchmarks/terminal-bench-4" } } } },
+    { "id": "00000000-0000-4000-8000-000000000006", "name": "November Model", "slug": "november-model", "category": "llm", "status": "active", "kind": "model",
+      "data": { "metrics": { "terminal_bench": 40 },
+                "metrics_provenance": { "terminal_bench": { "source": "https://www.vals.ai/benchmarks/terminal-bench-4" } } } },
+    { "id": "00000000-0000-4000-8000-000000000007", "name": "Oscar", "slug": "oscar", "category": "productivity", "status": "active", "kind": "productivity",
+      "data": { "metrics": { "npm": { "downloads_last_month": 10 } } } },
+    { "id": "00000000-0000-4000-8000-000000000008", "name": "Papa", "slug": "papa", "category": "productivity", "status": "active", "kind": "productivity",
+      "data": { "metrics": { "npm": { "downloads_last_month": 5000000 } } } },
+    { "id": "00000000-0000-4000-8000-000000000009", "name": "Quebec", "slug": "quebec", "category": "code-editor", "status": "inactive", "kind": "harness",
+      "data": { "metrics": {} } }
+  ],
+  "currentRankings": {},
+  "history": [
+    { "tool_id": "00000000-0000-4000-8000-000000000001", "period": "2026-11", "collected_date": "2026-11-01",
+      "metrics": { "vscode": { "installs": { "value": 1000, "source": "vscode-marketplace", "as_of": "2026-11-01" } } } },
+    { "tool_id": "00000000-0000-4000-8000-000000000002", "period": "2026-11", "collected_date": "2026-11-01",
+      "metrics": { "npm": { "downloads_last_month": { "value": 1000000, "source": "npm", "as_of": "2026-11-01" },
+                            "weekly": { "value": "n/a", "source": "npm", "as_of": "2026-11-01", "flags": ["non_numeric"] } } } },
+    { "tool_id": "00000000-0000-4000-8000-000000000003", "period": "2026-11", "collected_date": "2026-11-01",
+      "metrics": { "vscode": { "installs": { "value": 60000000, "source": "vscode-marketplace", "as_of": "2026-11-01" } } } },
+    { "tool_id": "00000000-0000-4000-8000-000000000005", "period": "2026-11", "collected_date": "2026-11-01",
+      "metrics": { "github": { "stars": { "value": 120, "source": "github", "as_of": "2026-11-01" } } } },
+    { "tool_id": "00000000-0000-4000-8000-000000000007", "period": "2026-11", "collected_date": "2026-11-01",
+      "metrics": { "npm": { "downloads_last_month": { "value": 9000000, "source": "npm", "as_of": "2026-11-01" } } } },
+    { "tool_id": "00000000-0000-4000-8000-000000000008", "period": "2026-11", "collected_date": "2026-11-01",
+      "metrics": { "npm": { "downloads_last_month": { "value": 5000000, "source": "npm", "as_of": "2026-11-01" } } } }
+  ],
+  "ledger": [
+    { "collected_date": "2026-11-01", "collector": "github", "attempted": 9, "recorded": 1, "flagged": 0, "not_found": 8, "failed": 0, "skipped_timeout": 0 },
+    { "collected_date": "2026-11-01", "collector": "pypi", "attempted": 9, "recorded": 0, "flagged": 0, "not_found": 5, "failed": 0, "skipped_timeout": 4 },
+    { "collected_date": "2026-11-01", "collector": "npm", "attempted": 5, "recorded": 3, "flagged": 1, "not_found": 2, "failed": 0, "skipped_timeout": 0 },
+    { "collected_date": "2026-11-01", "collector": "npm", "attempted": 4, "recorded": 0, "flagged": 0, "not_found": 4, "failed": 0, "skipped_timeout": 0 },
+    { "collected_date": "2026-11-01", "collector": "vscode", "attempted": 9, "recorded": 2, "flagged": 0, "not_found": 7, "failed": 0, "skipped_timeout": 0 }
+  ]
+}
