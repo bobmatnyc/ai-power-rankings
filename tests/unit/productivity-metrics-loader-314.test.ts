@@ -18,9 +18,14 @@ import type { PGlite } from "@electric-sql/pglite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ModelSeedDb } from "../../lib/db/repositories/model-seed-writer";
 import { RankingEngineV76 } from "../../lib/ranking-algorithm-v76";
-import { PRODUCTIVITY_SLUGS } from "../../lib/db/repositories/productivity-metrics-seed";
+import { PRODUCTIVITY_SLUGS, parseProductivityMetrics } from "../../lib/db/repositories/productivity-metrics-seed";
+import {
+  applyProductivityPlans,
+  PRODUCTIVITY_METRICS_SELECT_SQL,
+  planProductivityMetrics,
+} from "../../lib/db/repositories/productivity-metrics-writer";
 import { runMigrations } from "../../scripts/apply-migrations";
-import { runProductivityLoad } from "../../scripts/load-productivity-metrics";
+import { loadProductivityMetrics, runProductivityLoad } from "../../scripts/load-productivity-metrics";
 import { chainDb, MIGRATION_FILES, REPO_ROOT, readMigration } from "./fixtures/migration-chain-183";
 import { pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
 
@@ -194,6 +199,40 @@ describe("#314 load-productivity-metrics: 0027 -> loader -> 0033", () => {
     expect(res.log).toContain("REFUSED: notion-ai: slug is held by a harness row, not productivity");
     expect(res.log).toContain("apply: nothing written because a row was refused");
     expect(await table()).toEqual(start);
+  });
+
+  // #314: the staleness arm of applyProductivityPlans. Removing its row-count check lets the
+  // transaction commit the other rows and this test fails.
+  it("applyProductivityPlans throws and the transaction writes nothing when a planned row changed", async () => {
+    const plans = await planProductivityMetrics(asDb(db), parseProductivityMetrics(FILE_TEXT));
+    expect(plans.every((p) => p.outcome === "update")).toBe(true);
+    const second = plans[1]!.slug;
+    await db.query(`UPDATE public."tools" SET data = data || '{"note": "admin edit"}'::jsonb WHERE slug = $1`, [second]);
+    const snapshot = await table();
+    await expect(asDb(db).transaction((tx) => applyProductivityPlans(tx, plans))).rejects.toThrow(`${second}: row changed since planning`);
+    expect(await table()).toEqual(snapshot);
+  });
+
+  // #314: the rollback catch of loadProductivityMetrics. A row changes between the plan's SELECT
+  // and the write; removing the catch makes the call reject instead of returning 1.
+  it("loadProductivityMetrics returns 1 with 'apply: rolled back' when the write fails", async () => {
+    const real = asDb(db);
+    const racing: ModelSeedDb = {
+      query: async (text, params) => {
+        const res = await real.query(text, params);
+        if (text === PRODUCTIVITY_METRICS_SELECT_SQL) {
+          await db.query(`UPDATE public."tools" SET data = data || '{"note": "admin edit"}'::jsonb WHERE slug = 'manus'`);
+        }
+        return res;
+      },
+      transaction: real.transaction,
+    };
+    const log: string[] = [];
+    const code = await loadProductivityMetrics(racing, parseProductivityMetrics(FILE_TEXT), { apply: true }, (l) => log.push(l));
+    const snapshot = await table();
+    expect(code).toBe(1);
+    expect(log.at(-1)).toMatch(/^apply: rolled back, nothing written: manus: row changed since planning/);
+    expect(Object.values(snapshot).filter((r) => r.data["metrics"] !== undefined)).toEqual([]);
   });
 
   it("0033 activates exactly the file's include_in_0033 tools", () => {
