@@ -99,9 +99,9 @@ describe("the committed map", () => {
 
   it("ships every 308 row except those whose destination page is missing", () => {
     // D6e: released; the 60 rows of the six D58 aliases ship again (91 + 60, 177 - 60).
-    // ar-Te2/T76: the 10 openai-codex-cli rows are held until the merge is applied and published.
-    expect(shipped).toHaveLength(151);
-    expect(held).toHaveLength(127);
+    // ar-Te2/T76: the 10 openai-codex-cli rows are released too (151 + 10, 127 - 10).
+    expect(shipped).toHaveLength(161);
+    expect(held).toHaveLength(117);
     const perMajor = /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/;
     expect(shipped.filter((row) => perMajor.test(row.destination))).toHaveLength(60);
     expect(held.filter((row) => perMajor.test(row.destination))).toHaveLength(0);
@@ -110,15 +110,24 @@ describe("the committed map", () => {
     expect(shipped.length + held.length).toBe(redirectRows.length);
   });
 
-  it("holds the 10 openai-codex-cli rows until the Codex merge is published", async () => {
+  it("ships the 10 openai-codex-cli rows as 308 to openai-codex after the Codex merge", async () => {
     const cliRows = redirectRows.filter((row) => /^\/[a-z]{2}\/tools\/openai-codex-cli$/.test(row.source));
     expect(cliRows).toHaveLength(10);
+    const sources = new Set(redirectRows.map((row) => row.source));
+    const noindexSources = new Set(noindexRows.map((row) => row.source));
     for (const row of cliRows) {
-      expect(held).toContain(row);
-      expect(resolveTableRedirect(row.source)).toBeNull();
+      const locale = row.source.split("/")[1];
+      const target = `/${locale}/tools/openai-codex`;
+      expect(row.destination).toBe(target);
+      expect(shipped).toContain(row);
+      expect(resolveTableRedirect(row.source)).toBe(target);
       const res = await run(row.source);
-      expect(res.status).toBe(200);
-      expect(location(res)).toBeNull();
+      expect(res.status).toBe(308);
+      expect(location(res)).toBe(target);
+      // No chain and no noindexed landing: the target is neither a 308 source nor a noindex row.
+      expect(sources.has(target), target).toBe(false);
+      expect(resolveTableRedirect(target), target).toBeNull();
+      expect(noindexSources.has(target), target).toBe(false);
     }
   });
 

@@ -123,12 +123,23 @@
   {
     "id": "unreleased-0657b1c9f5fe",
     "version": "Unreleased",
-    "date": "2026-11-10T01:44:34.629Z",
-    "dateSource": "build",
+    "date": "2026-11-10T01:51:20.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "data",
     "title": "the Codex merge replaces the 2021 Codex text it kept on openai-codex",
     "description": "the Codex merge replaces the 2021 Codex text it kept on `openai-codex`. The tagline and summary (\"AI system that translates natural language to code\") become \"OpenAI's coding agent for the terminal, code editors and the cloud\", the summary adding that the Codex CLI is open source and Codex is available with ChatGPT plans and through the OpenAI API; `pricing_model` and `info.business.pricing_model` change from `api-based` to the CLI row's `open-source`, other business fields unchanged. A field is replaced only when it holds the 2021 wording or is empty (`planCurrentText`, `scripts/codex-merge.ts`). On a pair already merged, the `merge_set: codex` dry run prints the correction and its apply (`confirm: merge-codex-cli`) writes only it; a corrected row is a no-op. Test: `tests/unit/codex-merge-t76.test.ts`",
+    "changeType": "fix"
+  },
+  {
+    "id": "unreleased-c8e98e6320ea",
+    "version": "Unreleased",
+    "date": "2026-11-10T02:11:31.407Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "seo",
+    "title": "the 10 /<lang>/tools/openai-codex-cli rows of the URL table answer one 308 to /<lang>/tools/openai-codex",
+    "description": "the 10 `/<lang>/tools/openai-codex-cli` rows of the URL table answer one 308 to `/<lang>/tools/openai-codex`. The Codex merge is applied and published (runs 42738932628, 42739081839), so the `PENDING_TARGETS` hold on `openai-codex` is removed and the 10 sources leave the sitemap as shipped redirect sources. Tests: `tests/unit/url-table-191.test.ts` (#410)",
     "changeType": "fix"
   },
   {
