@@ -158,10 +158,12 @@ function trimTrailingSlash(pathname: string): string {
  * What: a literal row answers its destination. Otherwise the Q-A85-1 rule: a
  * path of two or more segments whose first segment is not a locale (and not
  * reserved) goes to `/en/<rest>`, or straight on to that path's own table
- * destination, so no source needs two table hops (D31). A path that lands on a
+ * destination, so no source needs two table hops (D31). #417: a bare section
+ * path (`/news`) goes to `/en/news`. A path that lands on a
  * held row answers null. The caller drops the query string: the table lists
  * each destination in full.
- * Test: `tests/unit/url-table-191.test.ts`.
+ * Test: `tests/unit/url-table-191.test.ts`,
+ *   `tests/unit/url-table-bare-section-417.test.ts`.
  */
 export function resolveTableRedirect(pathname: string): string | null {
   const path = trimTrailingSlash(pathname);
@@ -176,13 +178,16 @@ export function resolveTableRedirect(pathname: string): string | null {
 /**
  * #191 Q-A85-1: `/en/<rest>` for a path whose first segment is not a locale nor
  * reserved, else null. #414: a section first segment is kept (`/en/<path>`)
- * unless the path is a signed non-locale row.
+ * unless the path is a signed non-locale row. #417: a single segment answers only
+ * when it is a section.
  */
 function patternEnglishPath(path: string): string | null {
   const segments = path.split("/").slice(1);
   const first = segments[0] ?? "";
-  if (segments.length < 2 || LOCALE_SET.has(first)) return null;
+  if (LOCALE_SET.has(first)) return null;
   if (RESERVED_FIRST_SEGMENTS.has(first.toLowerCase()) || /^[._]|[.%]/.test(first)) return null;
+  // #417: a bare section (`/news`) is the `[lang]` segment and 404s; send it to `/en/news`. Other single segments stay.
+  if (segments.length < 2) return LOCALIZED_SECTIONS.has(first) ? `/en/${first}` : null;
   // #414: `/tools/cursor` is an unprefixed page, not a junk prefix; keep `tools`.
   if (LOCALIZED_SECTIONS.has(first) && !PREFIX_ROW_SOURCES.has(path)) return `/en${path}`;
   return `/en/${segments.slice(1).join("/")}`;
