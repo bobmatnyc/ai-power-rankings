@@ -10,8 +10,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
  * What: mocks the rankings repository with a current combined row and current and
  *   historical rows per list, recording every list read, and calls both GET handlers.
  *   Checks the default list, a named list by id and by slug, 400 on a bad list, 404 for
- *   a list with no current row, 500 on a failed read, and that the combined rows and
- *   the combined `findAll()` are never read.
+ *   a list with no current row, 500 on a failed read, and that `/current` never reads
+ *   the combined rows. T76: the harness trending history adds the combined periods
+ *   before its first per-list period, each tagged with its source; a per-list period
+ *   wins over a combined one; the model list reads no combined rows; a failed combined
+ *   read is a 500, never a per-list-only 200.
  * Test: `npx vitest run tests/unit/rankings-current-trending-185.test.ts`. No network.
  */
 
@@ -39,6 +42,7 @@ vi.mock("../../lib/db/repositories/rankings.repository", () => ({
     },
     findAll: async () => {
       repo.findAllCalls++;
+      if (repo.failing === "combined") throw new Error("fixture: combined read failed");
       return repo.history["combined"] ?? [];
     },
   },
@@ -179,26 +183,47 @@ describe("GET /api/rankings/current (#185 H1)", () => {
   });
 });
 
-describe("GET /api/rankings/trending (#185 H1)", () => {
+describe("GET /api/rankings/trending (#185 H1, T76)", () => {
+  const request = (query = "") =>
+    trendingGET(new Request(`https://example.test/api/rankings/trending${query}`) as never);
   const get = async (query = "") => {
-    const response = await trendingGET(new Request(`https://example.test/api/rankings/trending${query}`) as never);
+    const response = await request(query);
     return { status: response.status, body: await response.json() };
   };
+  const toolIds = (body: { tools: Array<{ tool_id: string }> }) => body.tools.map((t) => t.tool_id).sort();
+  // T76: the combined rows are read only through `findAll()`, never as a list read.
+  const noCombinedListRead = () => expect(repo.reads.filter((r) => r.endsWith(":combined"))).toEqual([]);
+  const monthsFrom = (start: string, count: number) =>
+    Array.from({ length: count }, (_, i) => {
+      const d = new Date(`${start}-01T00:00:00Z`);
+      d.setUTCMonth(d.getUTCMonth() + i);
+      return d.toISOString().slice(0, 7);
+    });
 
-  it("with no list it analyzes the coding-harness history only", async () => {
+  it("with no list it analyzes the harness history, with the combined periods before its first board", async () => {
     const { status, body } = await get();
     expect(status).toBe(200);
     expect(body.list).toBe("harness");
-    expect(body.periods).toEqual(["2026-11"]);
-    expect(body.tools.map((t: { tool_id: string }) => t.tool_id).sort()).toEqual(HARNESS);
-    noCombinedRead();
+    expect(body.periods).toEqual(["2026-09", "2026-10", "2026-11"]);
+    expect(body.period_sources).toEqual([
+      { period: "2026-09", source: "combined" },
+      { period: "2026-10", source: "combined" },
+      { period: "2026-11", source: "list" },
+    ]);
+    expect(body.metadata.first_list_period).toBe("2026-11");
+    expect(toolIds(body)).toEqual(expect.arrayContaining(HARNESS));
+    expect(repo.findAllCalls).toBe(1);
+    noCombinedListRead();
   });
 
-  it("?list=models analyzes the model history", async () => {
+  it("?list=models analyzes the model history and reads no combined rows", async () => {
     const { status, body } = await get("?list=models&months=all");
     expect(status).toBe(200);
     expect(body.list).toBe("model");
-    expect(body.tools.map((t: { tool_id: string }) => t.tool_id).sort()).toEqual(MODELS);
+    expect(body.periods).toEqual(["2026-11"]);
+    expect(body.period_sources).toEqual([{ period: "2026-11", source: "list" }]);
+    expect(body.metadata.first_list_period).toBe("2026-11");
+    expect(toolIds(body)).toEqual(MODELS);
     noCombinedRead();
   });
 
@@ -225,7 +250,7 @@ describe("GET /api/rankings/trending (#185 H1)", () => {
     repo.failing = null;
     const next = await get();
     expect(next.status).toBe(200);
-    expect(next.body.periods).toEqual(["2026-11"]);
+    expect(next.body.periods).toEqual(["2026-09", "2026-10", "2026-11"]);
   });
 
   it("a list with no stored boards is an empty 200 with a warning", async () => {
@@ -234,5 +259,70 @@ describe("GET /api/rankings/trending (#185 H1)", () => {
     expect(body.list).toBe("productivity");
     expect(body.periods).toEqual([]);
     expect(body.warning).toBeTruthy();
+    noCombinedRead();
+  });
+
+  it("a harness with no per-list board has no boundary, so no combined history", async () => {
+    repo.history.harness = [];
+    const { status, body } = await get();
+    expect(status).toBe(200);
+    expect(body.periods).toEqual([]);
+    expect(body.metadata.first_list_period).toBeNull();
+    noCombinedRead();
+  });
+
+  it("combined 2025-06..2026-10 and per-list 2026-11 are 18 periods, and the etag counts them", async () => {
+    repo.history.combined = [];
+    const before = await request();
+    expect(before.headers.get("ETag")).toBe('"trending-harness-1-all"');
+
+    clearCache();
+    const combined = monthsFrom("2025-06", 17);
+    expect(combined[combined.length - 1]).toBe("2026-10");
+    repo.history.combined = combined.reverse().map((p) => row("combined", p, COMBINED, false));
+    const response = await request();
+    expect(response.headers.get("Cache-Control")).toBe("public, max-age=3600, s-maxage=3600");
+    expect(response.headers.get("ETag")).toBe('"trending-harness-18-all"');
+
+    const body = await response.json();
+    expect(body.periods).toEqual([...monthsFrom("2025-06", 17), "2026-11"]);
+    expect(body.metadata.total_periods).toBe(18);
+    expect(body.metadata.date_range).toEqual({ start: "2025-06", end: "2026-11" });
+    expect(body.metadata.first_list_period).toBe("2026-11");
+    expect(body.period_sources.map((p: { source: string }) => p.source)).toEqual([
+      ...Array(17).fill("combined"),
+      "list",
+    ]);
+    expect(body.period_sources.map((p: { period: string }) => p.period)).toEqual(body.periods);
+  });
+
+  it("when combined and per-list both hold 2026-11, the per-list board wins and the period appears once", async () => {
+    repo.history.combined = [row("combined", "2026-11", COMBINED), row("combined", "2026-10", COMBINED, false)];
+    const { body } = await get();
+    expect(body.periods).toEqual(["2026-10", "2026-11"]);
+    expect(body.period_sources).toEqual([
+      { period: "2026-10", source: "combined" },
+      { period: "2026-11", source: "list" },
+    ]);
+    const latest = body.chart_data[body.chart_data.length - 1];
+    expect(latest.period).toBe("2026-11");
+    // The combined 2026-11 board ranks m1 first; the harness board ranks h1 first.
+    expect(latest.h1).toBe(1);
+    expect(latest.m1).toBeNull();
+  });
+
+  it("a failed combined read is a no-store 500, never a per-list-only 200, and is not cached", async () => {
+    repo.failing = "combined";
+    const response = await request();
+    expect(response.status).toBe(500);
+    expect(response.headers.get("Cache-Control")).toBe("no-store");
+    const body = await response.json();
+    expect(body.periods).toBeUndefined();
+    expect(body.tools).toBeUndefined();
+
+    repo.failing = null;
+    const next = await get();
+    expect(next.status).toBe(200);
+    expect(next.body.periods).toEqual(["2026-09", "2026-10", "2026-11"]);
   });
 });

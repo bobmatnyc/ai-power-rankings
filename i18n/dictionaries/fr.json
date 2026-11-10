@@ -192,7 +192,8 @@
     "title": "Historique des classements des outils IA",
     "description": "Découvrez comment les outils IA ont évolué dans le temps. Suivez les étoiles montantes, les leaders établis et les évolutions du marché dans le paysage IA en rapide évolution.",
     "aboutTitle": "À propos des tendances historiques",
-    "aboutDescription": "Ce graphique montre comment les outils IA sont entrés et sortis du top 10 au fil du temps. Les outils apparaissant plus haut sur le graphique (plus proches du #1) performent mieux."
+    "aboutDescription": "Ce graphique montre comment les outils IA sont entrés et sortis du top 10 au fil du temps. Les outils apparaissant plus haut sur le graphique (plus proches du #1) performent mieux.",
+    "methodChangeLabel": "Méthode v8 par liste"
   },
   "footer": {
     "quickLinks": "Liens rapides",

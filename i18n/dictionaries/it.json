@@ -192,7 +192,8 @@
     "title": "Storico delle classifiche degli strumenti AI",
     "description": "Esplora come gli strumenti AI hanno performato nel tempo. Segui le stelle nascenti, i leader affermati e i cambiamenti di mercato nel panorama AI in rapida evoluzione.",
     "aboutTitle": "Informazioni sui trend storici",
-    "aboutDescription": "Questo grafico mostra come gli strumenti AI sono entrati e usciti dalla top 10 nel tempo. Gli strumenti che appaiono più in alto nel grafico (più vicini al #1) stanno performando meglio."
+    "aboutDescription": "Questo grafico mostra come gli strumenti AI sono entrati e usciti dalla top 10 nel tempo. Gli strumenti che appaiono più in alto nel grafico (più vicini al #1) stanno performando meglio.",
+    "methodChangeLabel": "Metodo v8 per lista"
   },
   "footer": {
     "quickLinks": "Link Rapidi",

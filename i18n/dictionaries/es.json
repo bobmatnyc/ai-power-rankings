@@ -192,7 +192,8 @@
     "title": "Historial de Clasificaciones de Herramientas IA",
     "description": "Explora cómo han evolucionado las herramientas IA a lo largo del tiempo. Rastrea las estrellas emergentes, los líderes consolidados y los cambios del mercado en el dinámico panorama de la IA.",
     "aboutTitle": "Sobre las Tendencias Históricas",
-    "aboutDescription": "Este gráfico muestra cómo las herramientas IA han entrado y salido del top 10 de clasificaciones a lo largo del tiempo. Las herramientas que aparecen más arriba en el gráfico (más cercanas al #1) tienen mejor rendimiento."
+    "aboutDescription": "Este gráfico muestra cómo las herramientas IA han entrado y salido del top 10 de clasificaciones a lo largo del tiempo. Las herramientas que aparecen más arriba en el gráfico (más cercanas al #1) tienen mejor rendimiento.",
+    "methodChangeLabel": "Método v8 por lista"
   },
   "footer": {
     "quickLinks": "Enlaces rápidos",

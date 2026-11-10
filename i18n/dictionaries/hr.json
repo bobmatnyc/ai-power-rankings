@@ -192,7 +192,8 @@
     "title": "Povijesna rangiranja AI alata",
     "description": "Istraži kako su AI alati performirali kroz vrijeme. Prati zvijezde u usponu, etablirane lidere i pomake na tržištu u brzo razvijajućem AI landscapeu.",
     "aboutTitle": "O Povijesnim Trendovima",
-    "aboutDescription": "Ovaj grafikon pokazuje kako su AI alati ulazili i izlazili iz top 10 rangiranja kroz vrijeme. Alati koji se pojavljuju više na grafikonu (bliže #1) performiraju bolje."
+    "aboutDescription": "Ovaj grafikon pokazuje kako su AI alati ulazili i izlazili iz top 10 rangiranja kroz vrijeme. Alati koji se pojavljuju više na grafikonu (bliže #1) performiraju bolje.",
+    "methodChangeLabel": "v8 metoda po listi"
   },
   "footer": {
     "quickLinks": "Brzi linkovi",

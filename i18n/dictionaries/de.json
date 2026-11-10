@@ -192,7 +192,8 @@
     "title": "Historische KI-Tool-Rankings",
     "description": "Verfolge, wie KI-Tools sich über Zeit entwickelt haben. Beobachte aufsteigende Stars, etablierte Marktführer und Marktverschiebungen in der sich schnell entwickelnden KI-Landschaft.",
     "aboutTitle": "Über historische Trends",
-    "aboutDescription": "Diese Grafik zeigt, wie KI-Tools im Laufe der Zeit in die Top-10-Rankings ein- und ausgestiegen sind. Tools weiter oben in der Grafik (näher an #1) schneiden besser ab."
+    "aboutDescription": "Diese Grafik zeigt, wie KI-Tools im Laufe der Zeit in die Top-10-Rankings ein- und ausgestiegen sind. Tools weiter oben in der Grafik (näher an #1) schneiden besser ab.",
+    "methodChangeLabel": "v8-Methode je Liste"
   },
   "rankings": {
     "asOf": "Rankings vom {date}",

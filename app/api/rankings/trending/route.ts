@@ -31,98 +31,110 @@ import {
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import cacheInstance from "@/lib/memory-cache";
 import { parseListQuery, RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
+import {
+  type MergedHistory,
+  mergeTrendingHistory,
+  usesCombinedFallback,
+} from "@/lib/rankings/trending-history";
+
+type StoredRankingRow = Awaited<ReturnType<typeof rankingsRepository.findAll>>[number];
 
 /**
- * Reads all historical ranking periods of one list from the database.
+ * Reads the ranking history of one list from the database.
  *
- * #185: the history of a list is its own stored boards (`findAllForList`), so it
- * starts at the list's first per-list publish; the legacy combined rows are not read.
- *
- * IMPLEMENTATION NOTE: We fetch all rankings from PostgreSQL and transform
- * them to the RankingPeriod format expected by the trending analyzer.
- * The database stores rankings in JSONB format with the structure:
- * { period: "2025-09", data: { rankings: [...] } }
+ * Why: #185 made a list's history its own stored boards, which start at the first v8
+ *   publish (2026-11). T76: the coding-harness history before that exists only as the
+ *   legacy combined boards, so the chart showed one period.
+ * What: reads the list's boards (`findAllForList`). For a list in
+ *   `COMBINED_FALLBACK_LISTS` that has at least one board, it also reads the combined
+ *   boards (`findAll`) and keeps those earlier than the list's first board. Each period
+ *   carries its source. Any failed read throws, so a partial history is never served.
+ * Test: `tests/unit/rankings-current-trending-185.test.ts`
  */
-async function readHistoricalRankings(list: RankingList): Promise<RankingPeriod[]> {
+async function readHistoricalRankings(list: RankingList): Promise<MergedHistory<RankingPeriod>> {
   try {
-    // #185: one list's boards only; never the combined board.
-    const allRankings = await rankingsRepository.findAllForList(list);
+    const listPeriods = toRankingPeriods(await rankingsRepository.findAllForList(list));
+    // T76: history spans the combined-to-per-list boundary
+    const combinedPeriods =
+      usesCombinedFallback(list) && listPeriods.length > 0
+        ? toRankingPeriods(await rankingsRepository.findAll())
+        : [];
+    const merged = mergeTrendingHistory(listPeriods, combinedPeriods);
 
-    if (!allRankings || allRankings.length === 0) {
-      loggers.api.warn("No rankings found in database");
-      return [];
-    }
-
-    // Transform database format to RankingPeriod format
-    const periods: RankingPeriod[] = allRankings
-      .map((ranking) => {
-        try {
-          // Extract rankings array from JSONB data
-          // The data structure can be either:
-          // 1. { rankings: [...] } - nested structure
-          // 2. [...] - direct array
-          // 3. { period: "...", rankings: [...] } - full structure
-          let rankings;
-          if (Array.isArray(ranking.data)) {
-            rankings = ranking.data;
-          } else if (ranking.data && Array.isArray(ranking.data.rankings)) {
-            rankings = ranking.data.rankings;
-          } else {
-            loggers.api.warn("Invalid ranking data structure", {
-              period: ranking.period,
-              dataType: typeof ranking.data,
-            });
-            return null;
-          }
-
-          // Validate that rankings is a proper array
-          if (!Array.isArray(rankings) || rankings.length === 0) {
-            loggers.api.warn("No rankings array found", { period: ranking.period });
-            return null;
-          }
-
-          // Transform rankings to ensure tool_name is present
-          // Database stores tool_slug, but trending analyzer expects tool_name
-          const transformedRankings = rankings.map((entry: any) => {
-            return {
-              ...entry,
-              tool_name: entry.tool_name || entry.tool_slug || entry.tool_id,
-              position: entry.position || entry.rank,
-            };
-          });
-
-          return {
-            period: ranking.period,
-            date: ranking.period, // Use period as date
-            rankings: transformedRankings,
-            algorithm_version: ranking.algorithm_version,
-          } as RankingPeriod;
-        } catch (error) {
-          loggers.api.error("Failed to transform ranking data", {
-            period: ranking.period,
-            error,
-          });
-          return null;
-        }
-      })
-      .filter((p): p is RankingPeriod => p !== null);
-
-    loggers.api.info("Successfully loaded historical rankings from database", {
-      periodsCount: periods.length,
-      dateRange:
-        periods.length > 0
-          ? {
-              start: Math.min(...periods.map((p) => new Date(p.period).getTime())),
-              end: Math.max(...periods.map((p) => new Date(p.period).getTime())),
-            }
-          : null,
+    loggers.api.info("Loaded ranking history", {
+      list,
+      periodsCount: merged.periods.length,
+      combinedPeriods: merged.periods.filter((p) => p.source === "combined").length,
+      firstListPeriod: merged.firstListPeriod,
     });
-
-    return periods;
+    return merged;
   } catch (error) {
     loggers.api.error("Failed to read historical rankings from database", { error });
     throw new Error("Unable to load historical ranking data");
   }
+}
+
+/**
+ * Transforms stored ranking rows to the `RankingPeriod` format of the trending analyzer.
+ * A row whose JSONB data holds no rankings array is logged and left out.
+ */
+function toRankingPeriods(allRankings: StoredRankingRow[] | null | undefined): RankingPeriod[] {
+  if (!allRankings || allRankings.length === 0) {
+    return [];
+  }
+
+  return allRankings
+    .map((ranking) => {
+      try {
+        // Extract rankings array from JSONB data
+        // The data structure can be either:
+        // 1. { rankings: [...] } - nested structure
+        // 2. [...] - direct array
+        // 3. { period: "...", rankings: [...] } - full structure
+        let rankings;
+        if (Array.isArray(ranking.data)) {
+          rankings = ranking.data;
+        } else if (ranking.data && Array.isArray(ranking.data.rankings)) {
+          rankings = ranking.data.rankings;
+        } else {
+          loggers.api.warn("Invalid ranking data structure", {
+            period: ranking.period,
+            dataType: typeof ranking.data,
+          });
+          return null;
+        }
+
+        // Validate that rankings is a proper array
+        if (!Array.isArray(rankings) || rankings.length === 0) {
+          loggers.api.warn("No rankings array found", { period: ranking.period });
+          return null;
+        }
+
+        // Transform rankings to ensure tool_name is present
+        // Database stores tool_slug, but trending analyzer expects tool_name
+        const transformedRankings = rankings.map((entry: any) => {
+          return {
+            ...entry,
+            tool_name: entry.tool_name || entry.tool_slug || entry.tool_id,
+            position: entry.position || entry.rank,
+          };
+        });
+
+        return {
+          period: ranking.period,
+          date: ranking.period, // Use period as date
+          rankings: transformedRankings,
+          algorithm_version: ranking.algorithm_version,
+        } as RankingPeriod;
+      } catch (error) {
+        loggers.api.error("Failed to transform ranking data", {
+          period: ranking.period,
+          error,
+        });
+        return null;
+      }
+    })
+    .filter((p): p is RankingPeriod => p !== null);
 }
 
 /**
@@ -136,6 +148,10 @@ async function readHistoricalRankings(list: RankingList): Promise<RankingPeriod[
  *   harnesses. Unknown, empty or conflicting is 400.
  *
  * #185: a failed read is 500 with no cached body; it is never an empty 200.
+ * T76: the harness history includes the combined boards before its first per-list board.
+ *   `period_sources` gives each period's source (`combined` | `list`) and
+ *   `metadata.first_list_period` the boundary. A failed combined read is the same 500,
+ *   never a 200 holding only the per-list periods.
  * Test: `tests/unit/rankings-current-trending-185.test.ts`.
  *
  * Response Format:
@@ -160,10 +176,12 @@ async function readHistoricalRankings(list: RankingList): Promise<RankingPeriod[
  *       "3": null  // not in top 10 this period
  *     }
  *   ],
+ *   "period_sources": [{ "period": "2025-01", "source": "combined" }, ...],
  *   "metadata": {
  *     "total_periods": 8,
  *     "date_range": { "start": "2025-01", "end": "2025-08" },
- *     "top_tools_count": 15
+ *     "top_tools_count": 15,
+ *     "first_list_period": "2025-08"
  *   }
  * }
  * ```
@@ -223,9 +241,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     // Load historical ranking data
-    let periods;
+    let history: MergedHistory<RankingPeriod>;
     try {
-      periods = await readHistoricalRankings(list);
+      history = await readHistoricalRankings(list);
     } catch (readError) {
       loggers.api.error("Failed to read historical rankings", {
         list,
@@ -239,6 +257,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       );
     }
 
+    const periods = history.periods;
     if (periods.length === 0) {
       loggers.api.warn("No historical rankings found in database");
 
@@ -248,10 +267,12 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
           periods: [],
           tools: [],
           chart_data: [],
+          period_sources: [],
           metadata: {
             total_periods: 0,
             date_range: { start: "", end: "" },
             top_tools_count: 0,
+            first_list_period: null,
           },
           warning: "No historical ranking data available",
         },
@@ -266,7 +287,17 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const filtered =
       timeRange === "all" ? trendingData : filterTrendingDataByTimeRange(trendingData, timeRange);
     // #185: the response names the list whose history it holds.
-    const finalData = { list, ...filtered };
+    // T76: each period names its source, and the metadata names the method-change boundary.
+    const sourceOf = new Map(periods.map((p) => [p.period, p.source]));
+    const finalData = {
+      list,
+      ...filtered,
+      period_sources: filtered.periods.map((period) => ({
+        period,
+        source: sourceOf.get(period),
+      })),
+      metadata: { ...filtered.metadata, first_list_period: history.firstListPeriod },
+    };
 
     // Store in cache (1 hour TTL)
     cacheInstance.set(cacheKey, finalData, 3600000); // 1 hour in milliseconds
