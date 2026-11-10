@@ -333,19 +333,19 @@
       "include_reason": "users and valuation (vendor) and ARR (third-party estimate) verified; plans and AI inclusion verified on notion.com/pricing. Users figure is 14 months old.",
       "metrics": {
         "users": {
-          "value": 100000000, "unit": "users (Notion workspace, not Notion AI only)", "scope": "product", "as_of": "2024-09-03",
+          "value": 100000000, "unit": "users (Notion workspace, not Notion AI only)", "scope": "parent", "as_of": "2024-09-03",
           "source_url": "https://www.notion.com/blog/100-million-of-you",
           "source_type": "vendor", "quote": "Last month, Notion passed 100M users!", "confidence": "medium",
           "note": "Notion overall, not the AI feature. Registered users, not active. Stale: no newer vendor count found."
         },
         "valuation": {
-          "value": 11000000000, "currency": "USD", "unit": "employee tender valuation", "scope": "product", "as_of": "2026-01-26",
+          "value": 11000000000, "currency": "USD", "unit": "employee tender valuation", "scope": "parent", "as_of": "2026-01-26",
           "source_url": "https://www.notion.com/blog/gic-sequoia-index-purchase-notion-shares",
           "source_type": "vendor", "quote": "for a total tender of around $270M at an $11B valuation", "confidence": "high",
           "note": "A secondary share sale, not a primary raise."
         },
         "monthly_arr": {
-          "value": 865000000, "currency": "USD", "unit": "ARR, Sacra estimate", "scope": "product", "as_of": "2026-07-31",
+          "value": 865000000, "currency": "USD", "unit": "ARR, Sacra estimate", "scope": "parent", "as_of": "2026-07-31",
           "source_url": "https://sacra.com/research/notion-at-865m-year-growing-82-yoy/",
           "source_type": "third_party_estimate", "attributed_to": "Sacra",
           "quote": "Sacra estimates Notion hit $865M annual recurring revenue (ARR) in July 2026, up 82% year-over-year.", "confidence": "low",

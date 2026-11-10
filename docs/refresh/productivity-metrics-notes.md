@@ -20,7 +20,7 @@ Valuation and funding alone describe a company, not the product's usage.
 | hermes-agent | yes | GitHub stars, PyPI downloads, funding/valuation (low confidence) |
 | manus | yes | ARR (vendor), valuation, funding |
 | microsoft-copilot | yes | two Microsoft parent figures; no consumer-only figure exists |
-| notion-ai | yes | users (stale), valuation, ARR estimate |
+| notion-ai | yes | users (stale), valuation, ARR estimate; all three scope parent (they cover all of Notion, not Notion AI) |
 | gemini-app | no | only one figure (950M MAU, vendor). One short of the threshold; the owner can waive it |
 | mistral-vibe | no | only company valuation and funding; no usage figure |
 
