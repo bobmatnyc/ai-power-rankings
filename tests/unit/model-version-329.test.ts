@@ -51,6 +51,12 @@ function paramsOf(node: any): unknown[] {
 const uuid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 const STAMP = new Date("2026-01-01T00:00:00Z");
 
+// #329: a Vals TB 4.0 figure with provenance; the models board lists only rows that carry one.
+const CODING_METRIC = {
+  metrics: { terminal_bench: 50 },
+  metrics_provenance: { terminal_bench: { source: "https://www.vals.ai/benchmarks/terminal-bench-4" } },
+};
+
 function tool(n: number, slug: string, kind: string, data: Record<string, unknown>) {
   return {
     id: uuid(n),
@@ -61,7 +67,7 @@ function tool(n: number, slug: string, kind: string, data: Record<string, unknow
     kind,
     companyId: null,
     // The description names a version that must never be read.
-    data: { id: `legacy-${slug}`, info: { description: "Version: from-prose" }, ...data },
+    data: { id: `legacy-${slug}`, info: { description: "Version: from-prose" }, ...CODING_METRIC, ...data },
     createdAt: STAMP,
     updatedAt: STAMP,
   };
