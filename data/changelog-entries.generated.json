@@ -913,6 +913,17 @@
     "changeType": "feature"
   },
   {
+    "id": "unreleased-f495731afd73",
+    "version": "Unreleased",
+    "date": "2026-11-10T21:46:30.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "rankings",
+    "title": "the point-in-time compare workflow also prints its aggregates-only summary to the step log, identical to the job…",
+    "description": "the point-in-time compare workflow also prints its aggregates-only summary to the step log, identical to the job summary, because the job summary cannot be read without a signed-in browser. No per-tool value, secret or env value is printed (#95)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-dc77cbf7f38a",
     "version": "Unreleased",
     "date": "2026-11-10T01:03:08.000Z",
