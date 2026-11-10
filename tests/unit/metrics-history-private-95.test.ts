@@ -11,6 +11,7 @@
  *   #95 steps 4-5: ranking regeneration reads the history (point-in-time scoring and
  *   the freshness guard), so under lib/ its read modules and the ranking service are
  *   allowed too; under app/ only cron and admin routes may import that service at runtime.
+ *   #95 PR A: the read-only point-in-time compare modules are allowed under lib/; no app/ file imports them.
  * Test: `npx vitest run tests/unit/metrics-history-private-95.test.ts`
  */
 
@@ -50,8 +51,17 @@ describe("#95 metrics history is private", () => {
       "lib/metrics-history/point-in-time.ts",
       "lib/metrics-history/read.ts",
       "lib/metrics-history/store.ts",
+      // #95 PR A: the read-only off/on compare, run only by scripts/compare-point-in-time.ts.
+      "lib/rankings/point-in-time-compare-source.ts",
+      "lib/rankings/point-in-time-compare.ts",
       "lib/services/ranking-generation.service.ts",
     ]);
+  });
+
+  it("#95 PR A: no file under app/ imports the point-in-time compare", () => {
+    const compareImport = /from "@\/lib\/rankings\/point-in-time-compare(-source)?"/;
+    const importers = sourceFiles("app").filter((file) => compareImport.test(readFileSync(path.join(ROOT, file), "utf8")));
+    expect(importers).toEqual([]);
   });
 
   it("#95: only cron and admin routes import the regen service at runtime", () => {
