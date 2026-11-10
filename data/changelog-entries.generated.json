@@ -101,8 +101,8 @@
   {
     "id": "unreleased-366760c8f7ef",
     "version": "Unreleased",
-    "date": "2026-11-10T02:24:32.209Z",
-    "dateSource": "build",
+    "date": "2026-11-10T02:31:21.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "seo",
     "title": "an unprefixed section path keeps its section when it is localized",
@@ -1285,6 +1285,17 @@
     "title": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside…",
     "description": "v7.9 — blend Terminal-Bench (terminal-bench 2.1) into the agentic-capability factor as a second benchmark alongside SWE-bench (best scaffold+model row per tool via a hand-curated allowlist, tunable `TB_BLEND_WEIGHT` default 0.4, no factor-weight change); wired matched `terminal_bench` leaves into `data/historical-metrics/2026-06.json` with full provenance and a curated source capture at `data/historical-metrics/sources/terminal-bench-2.1.json`",
     "changeType": "feature"
+  },
+  {
+    "id": "unreleased-6045cd61c5d8",
+    "version": "Unreleased",
+    "date": "2026-11-10T02:48:09.168Z",
+    "dateSource": "build",
+    "section": "Changed",
+    "scope": "trending",
+    "title": "the coding-harness trending chart shows only harness tools in its older months",
+    "description": "the coding-harness trending chart shows only harness tools in its older months. Those months come from the legacy combined boards, which ranked models and productivity tools too; `/api/rankings/trending` now keeps only the tools whose `tools.kind` puts them in the harness list (`listOfTool()`, as the per-list board does) and renumbers their ranks 1..n in stored order. Scores, the per-list months and the model and productivity histories are unchanged. A failed tools lookup is a no-store 500, never the unfiltered history. Display only: no scoring change and no data write. Tests: `tests/unit/trending-harness-only-d1c.test.ts`, `tests/unit/rankings-current-trending-185.test.ts` (D1c)",
+    "changeType": "improvement"
   },
   {
     "id": "unreleased-c23377110578",
