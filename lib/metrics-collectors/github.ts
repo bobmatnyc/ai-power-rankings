@@ -5,7 +5,9 @@
  *   the same matching heuristics. The only changes are a per-fetch timeout and
  *   a request-budget guard (no rate-limit sleep) and 403/429 failures (tokenless mode, #95).
  * What: see scripts/collect-github-metrics.ts for the CLI that drives it.
- * Test: `tests/unit/metrics-collectors-95.test.ts`, `tests/unit/metrics-github-tokenless-95.test.ts`
+ *   #95: URL discovery also reads the fields the app stores a repo in (`GITHUB_URL_PATHS`).
+ * Test: `tests/unit/metrics-collectors-95.test.ts`, `tests/unit/metrics-github-tokenless-95.test.ts`,
+ *   `tests/unit/metrics-collection-health-95.test.ts`
  */
 
 import { type CollectorOptions, fetchSignal } from "./fetch-signal";
@@ -292,40 +294,48 @@ export class GitHubMetricsCollector {
   }
 
   /**
-   * Find all GitHub URLs in tool data
+   * Find all GitHub URLs in tool data, in `GITHUB_URL_PATHS` order.
    */
   findGitHubUrls(toolData: any): string[] {
     const urls: string[] = [];
-
-    // Check common fields
-    const fieldsToCheck = [
-      "github_url",
-      "repository",
-      "source_code_url",
-      "repo_url",
-      "github",
-      "code_repository",
-      "homepage",
-    ];
-
-    for (const field of fieldsToCheck) {
-      const value = toolData[field];
+    for (const path of GITHUB_URL_PATHS) {
+      let value: unknown = toolData;
+      for (const key of path.split(".")) {
+        value = value && typeof value === "object" ? (value as Record<string, unknown>)[key] : undefined;
+      }
       if (typeof value === "string" && value.includes("github.com")) {
         urls.push(value);
       }
     }
-
-    // Check nested info object
-    if (toolData.info && typeof toolData.info === "object") {
-      for (const field of fieldsToCheck) {
-        const value = toolData.info[field];
-        if (typeof value === "string" && value.includes("github.com")) {
-          urls.push(value);
-        }
-      }
-    }
-
     return urls;
   }
 }
+
+const LEGACY_URL_FIELDS = [
+  "github_url",
+  "repository",
+  "source_code_url",
+  "repo_url",
+  "github",
+  "code_repository",
+  "homepage",
+];
+
+/**
+ * Dotted `tools.data` paths searched for a GitHub URL; the first parseable URL wins.
+ * #95: the CLI's original fields (top level, then `info.*`) come first, so a tool that
+ * already resolved keeps its repo. The last four are where the app itself stores a tool's
+ * repo (`github_repo`, `info.links.github`, `info.github_repo`, `info.technical.github_repo`;
+ * read by `app/api/tools/[slug]/json/route.ts` and `scripts/migrate-tool-data-to-top-level.ts`).
+ * The collector never looked there, so the 2026-11-01 run found a URL for 4 of 193 tools.
+ * The metrics-history check counts eligible tools from this same list.
+ */
+export const GITHUB_URL_PATHS: readonly string[] = [
+  ...LEGACY_URL_FIELDS,
+  ...LEGACY_URL_FIELDS.map((field) => `info.${field}`),
+  "github_repo",
+  "info.github_repo",
+  "info.links.github",
+  "info.technical.github_repo",
+];
 

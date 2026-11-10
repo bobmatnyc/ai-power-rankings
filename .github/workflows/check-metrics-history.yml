@@ -9,7 +9,7 @@ name: Check metrics history (read-only)
 # summary. Scheduled at 06:00 UTC on the 2nd, it checks the current month's
 # collection (collected_date YYYY-MM-01 UTC, via --scheduled); a manual dispatch
 # checks the `date` input, or today when empty. It writes nothing anywhere:
-#   - The script sends four SELECTs inside one READ ONLY Postgres transaction;
+#   - The script sends five SELECTs inside one READ ONLY Postgres transaction;
 #     Postgres rejects any write there. It never calls the cron route or a migration.
 #   - The existing repository database secret reaches the step only through `env:`,
 #     never through `run:` text, and is never printed.
@@ -17,11 +17,14 @@ name: Check metrics history (read-only)
 #   - No artifact is uploaded.
 #   - #95: the repository is public and the history is private, so the log and the
 #     summary carry counts, dates and part names only: rows per collected_date,
-#     coverage against the tool count, the ledger status and counts per shard, and
+#     coverage against the tool count, per-part coverage of eligible tools, the
+#     ledger status and counts per shard, and
 #     unchanged-value counts per part. No tool name, slug, id or metric value.
 # Exit 0: pass (WARN lines allowed). Exit 3: a shard is missing or not ok, or a part
-# attempted tools and recorded none, or coverage is under a set floor (none is set
-# yet: coverage only WARNs). Exit 1: an error, including a failed query.
+# attempted tools and recorded none, or a part recorded fewer of its eligible tools
+# than its coverage floor (#95: defaults in COVERAGE_FLOOR, lib/metrics-history/
+# check-report.ts; the repository variable METRICS_COVERAGE_FLOOR overrides them).
+# Exit 1: an error, including a failed query or a malformed floor.
 # Exit 1 and 3 fail the job, and the failed-workflow email is the alert. There is
 # no issue, no other channel and no retry.
 #
@@ -91,6 +94,7 @@ jobs:
       - name: Check (read-only)
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          METRICS_COVERAGE_FLOOR: ${{ vars.METRICS_COVERAGE_FLOOR }}
           CHECK_DATE: ${{ inputs.date }}
           EVENT_NAME: ${{ github.event_name }}
           NODE_ENV: test

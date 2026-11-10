@@ -93,7 +93,7 @@ describe("#95 check-metrics-history", () => {
     skipped_timeout: 0,
   });
   const allOk = COLLECTOR_PARTS.flatMap((part) => [...Array(SHARD_COUNTS[part]).keys()].map((s) => ok(part, s)));
-  const rest = { coverage: { tools: 50, rows: 40 }, previousDate: null, flat: [] };
+  const rest = { coverage: { tools: 50, rows: 40 }, previousDate: null, flat: [], partCoverage: [] };
 
   it("passes when every configured shard has an ok row, printing counts only", () => {
     const { exitCode, report } = renderMetricsHistoryReport({
@@ -146,8 +146,9 @@ describe("#95 check-metrics-history", () => {
     expect(script).toContain("{ readOnly: true }");
     expect(script.match(/sql\.transaction\(/g)).toHaveLength(1);
     expect(script).toContain("for (const query of QUERIES) assertSelectOnly(query);");
-    expect(script).toMatch(/QUERIES = \[ROWS_QUERY, LEDGER_QUERY, COVERAGE_QUERY, FLAT_QUERY\]/);
+    // #95 PR C: PART_COVERAGE_QUERY joins QUERIES (per-part coverage floor).
+    expect(script).toMatch(/QUERIES = \[ROWS_QUERY, LEDGER_QUERY, COVERAGE_QUERY, FLAT_QUERY, PART_COVERAGE_QUERY\]/);
     // Every SQL constant in the script is in QUERIES.
-    expect(script.match(/^export const \w+_QUERY =/gm)).toHaveLength(4);
+    expect(script.match(/^export const \w+_QUERY =/gm)).toHaveLength(5);
   });
 });
