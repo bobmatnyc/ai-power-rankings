@@ -99,15 +99,27 @@ describe("the committed map", () => {
 
   it("ships every 308 row except those whose destination page is missing", () => {
     // D6e: released; the 60 rows of the six D58 aliases ship again (91 + 60, 177 - 60).
-    // ar-Te2/T76: plus the 10 openai-codex-cli rows, whose target page exists.
-    expect(shipped).toHaveLength(161);
-    expect(held).toHaveLength(117);
+    // ar-Te2/T76: the 10 openai-codex-cli rows are held until the merge is applied and published.
+    expect(shipped).toHaveLength(151);
+    expect(held).toHaveLength(127);
     const perMajor = /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/;
     expect(shipped.filter((row) => perMajor.test(row.destination))).toHaveLength(60);
     expect(held.filter((row) => perMajor.test(row.destination))).toHaveLength(0);
     // #198: the 20 /whats-new rows wait for /en/insights.
     expect(held.filter((row) => row.destination === "/en/insights")).toHaveLength(20);
     expect(shipped.length + held.length).toBe(redirectRows.length);
+  });
+
+  it("holds the 10 openai-codex-cli rows until the Codex merge is published", async () => {
+    const cliRows = redirectRows.filter((row) => /^\/[a-z]{2}\/tools\/openai-codex-cli$/.test(row.source));
+    expect(cliRows).toHaveLength(10);
+    for (const row of cliRows) {
+      expect(held).toContain(row);
+      expect(resolveTableRedirect(row.source)).toBeNull();
+      const res = await run(row.source);
+      expect(res.status).toBe(200);
+      expect(location(res)).toBeNull();
+    }
   });
 
   it("covers the 17 non-locale rows (Q-A85-1) by the pattern rule, not literal rows", () => {

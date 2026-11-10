@@ -186,11 +186,12 @@ export interface SurvivorInputs {
  * - `description` and `info.description`: `CODEX_DESCRIPTION`; `website_url`, `info.website`
  *   (and `info.links.website` when present): `CODEX_WEBSITE`. The stored text is wrong.
  * - `metrics.github_stars` and `metrics.npm`: the fetched figures with provenance in the
- *   0024 shape (`business_metrics_provenance.fields.<key>`); a stored `metrics.github.stars`,
- *   which the engine reads first, gets the same figure. `metrics.news_mentions`: the merged count.
+ *   0024 shape (`business_metrics_provenance.fields.<key>`); a stored `github.stars` (either
+ *   metrics path), which the engine reads first, gets the same figure at
+ *   `metrics.github`. `metrics.news_mentions`: the merged count.
  * - Every other metric key: the row holding it; when both do, the CLI value wins only when its
- *   provenance `as_of` is newer (a sourced value beats an unsourced one), else the survivor's
- *   stays. A value moves with its provenance entries.
+ *   provenance `as_of` is newer (a sourced value beats an unsourced one) or neither is sourced,
+ *   else the survivor's stays. A value moves with its provenance entries.
  * - `info.technical`: the CLI's value per key (the survivor's block describes the 2021 Codex
  *   model), except `language_support`, the union of both lists.
  * - Every other top-level and `info` field: the survivor's, or the CLI's when the survivor's is empty.
@@ -228,7 +229,8 @@ export function planSurvivorData(survivor: ToolRow, old: ToolRow, inputs: Surviv
       continue;
     }
     const asOf = { mine: provenanceAsOf(survivor.data ?? {}, key), theirs: provenanceAsOf(from, key) };
-    const takeTheirs = !has.mine || (asOf.theirs !== null && (asOf.mine === null || asOf.theirs > asOf.mine));
+    // Both unsourced: the CLI's value, as the survivor's describes the 2021 model.
+    const takeTheirs = !has.mine || (asOf.theirs === null ? asOf.mine === null : asOf.mine === null || asOf.theirs > asOf.mine);
     const why = `survivor ${show(mine[key])} as_of ${asOf.mine ?? "none"}, cli ${show(theirs[key])} as_of ${asOf.theirs ?? "none"}`;
     if (!takeTheirs) {
       say(`metrics.${key}`, `survivor kept (${why})`);
@@ -257,9 +259,11 @@ export function planSurvivorData(survivor: ToolRow, old: ToolRow, inputs: Surviv
     writePath(data, ["business_metrics_provenance", "fields"], key, provenance);
     say(`metrics.${key}`, `set to ${show(value)} from ${String(provenance["source"])} (survivor had ${show(mine[key])}, cli ${show(theirs[key])})`);
   }
-  const github = obj(obj(data["metrics"])["github"]);
+  // Read through the canonical paths, so a github block stored only under info.metrics is found;
+  // the whole block is written top level, where the engine's shallow merge reads it first.
+  const github = obj(canonicalMetrics(data)["github"]);
   if (typeof github["stars"] === "number") {
-    writePath(data, ["metrics", "github"], "stars", CODEX_FETCHED.github_stars.value);
+    writePath(data, ["metrics"], "github", { ...structuredClone(github), stars: CODEX_FETCHED.github_stars.value });
     say("metrics.github.stars", `set to ${CODEX_FETCHED.github_stars.value}; the engine reads it before github_stars (was ${github["stars"]})`);
   }
 
