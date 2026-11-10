@@ -836,6 +836,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-dc77cbf7f38a",
+    "version": "Unreleased",
+    "date": "2026-11-09T22:28:37.000Z",
+    "dateSource": "commit",
+    "section": "Added",
+    "scope": "admin",
+    "title": "provider balance cross-check",
+    "description": "provider balance cross-check. The admin crawl monitor gains \"Provider balance cross-check\": the ledger's spend this UTC month next to each provider's own figure, read live through the new admin-only `GET /api/admin/crawl-monitor/balances` (401/403 before any read or provider call, `Cache-Control: no-store` on every response). OpenRouter (`GET /api/v1/key`: USD used this UTC month, USD left under the key's limit) is compared with the ledger, agreeing within max($0.01, 2%). Tavily (`GET /usage`: credits used this billing cycle, credits left) is shown but not compared, because it does not report the cycle's dates. Jina and Brave publish no balance API and show \"unavailable (no balance API)\". Each provider read is one GET with a 5-second timeout and no retry. A provider with no key shows \"not configured\" and is not called; a rejected key, a timeout, an error status or a missing or non-numeric field shows \"unavailable\" and is never compared, so a failed read never shows as $0 or as in agreement. Keys are read server-side only; the response carries validated numbers and state words, never a key, env name, account id or the provider's error text. Read-only; no migration. Tests: `tests/unit/provider-balance-394.test.ts` (#394)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-a1ee35e04fd4",
     "version": "Unreleased",
     "date": "2026-11-09T22:22:56.000Z",
