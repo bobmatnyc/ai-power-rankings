@@ -717,6 +717,7 @@
     "intro": "Version {version} of the AI Power Rankings ranks each kind of tool in its own list and scores each kind with its own weights.",
     "listsHeading": "Three lists",
     "listsBody": "Models, coding harnesses and productivity tools are ranked in separate lists. A tool is ranked in one list at most, and its rank, tier and change are counted within that list. Ranks are not compared across lists.",
+    "listsBodyModelsPending": "Coding harnesses and productivity tools are ranked in separate lists. Models will be listed once model metrics are collected. A tool is ranked in one list at most, and its rank, tier and change are counted within that list. Ranks are not compared across lists.",
     "listsDefault": "The main rankings page shows the coding harnesses list.",
     "listsExcluded": "Image and video models are not in the models list. Tools of other kinds are not ranked.",
     "smallLists": "A list with fewer than {min} entries uses the tiers S, A and B by thirds and is not indexed by search engines.",

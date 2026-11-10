@@ -717,6 +717,7 @@
     "intro": "La versión {version} de AI Power Rankings clasifica cada tipo de herramienta en su propia lista y puntúa cada tipo con sus propios pesos.",
     "listsHeading": "Tres listas",
     "listsBody": "Los modelos, las herramientas de programación y las herramientas de productividad se clasifican en listas separadas. Una herramienta figura como máximo en una lista, y su posición, su nivel y su cambio se cuentan dentro de esa lista. Las posiciones no se comparan entre listas.",
+    "listsBodyModelsPending": "Las herramientas de programación y las herramientas de productividad se clasifican en listas separadas. Los modelos se incluirán cuando se recopilen las métricas de modelos. Una herramienta figura como máximo en una lista, y su posición, su nivel y su cambio se cuentan dentro de esa lista. Las posiciones no se comparan entre listas.",
     "listsDefault": "La página principal de rankings muestra la lista de herramientas de programación.",
     "listsExcluded": "Los modelos de imagen y de vídeo no están en la lista de modelos. Las herramientas de otros tipos no se clasifican.",
     "smallLists": "Una lista con menos de {min} entradas usa los niveles S, A y B por tercios y los buscadores no la indexan.",

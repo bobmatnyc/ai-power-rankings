@@ -723,6 +723,7 @@
     "intro": "Verzija {version} AI Power Rankingsa rangira svaku vrstu alata na vlastitom popisu i ocjenjuje svaku vrstu vlastitim težinama.",
     "listsHeading": "Tri popisa",
     "listsBody": "Modeli, alati za kodiranje i alati za produktivnost rangiraju se na zasebnim popisima. Alat je rangiran na najviše jednom popisu, a njegov rang, razina i promjena računaju se unutar tog popisa. Rangovi se ne uspoređuju među popisima.",
+    "listsBodyModelsPending": "Alati za kodiranje i alati za produktivnost rangiraju se na zasebnim popisima. Modeli će biti navedeni kad se prikupe metrike modela. Alat je rangiran na najviše jednom popisu, a njegov rang, razina i promjena računaju se unutar tog popisa. Rangovi se ne uspoređuju među popisima.",
     "listsDefault": "Glavna stranica poretka prikazuje popis alata za kodiranje.",
     "listsExcluded": "Modeli za slike i video nisu na popisu modela. Alati drugih vrsta nisu rangirani.",
     "smallLists": "Popis s manje od {min} unosa koristi razine S, A i B po trećinama i tražilice ga ne indeksiraju.",

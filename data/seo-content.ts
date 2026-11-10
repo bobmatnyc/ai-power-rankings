@@ -1,6 +1,7 @@
 /**
  * SEO-optimized content structures for AI Power Rankings
  */
+import { MODELS_PENDING_SENTENCE, rankedListsSentence } from "../lib/rankings/method-answer";
 
 export interface FAQItem {
   id: string;
@@ -23,7 +24,7 @@ export const generalFAQs: FAQItem[] = [
     question: "How are AI tool rankings calculated?",
     answer:
       // #280: v8 ranks each list on its own with a profile per kind; the v7.1 one-board text is gone.
-      "Models, coding harnesses and productivity tools are ranked in separate lists. Each list is scored with the profile for its kind, across 8 factors: <strong>Agentic Capability</strong>, <strong>Innovation</strong>, <strong>Technical Performance</strong>, <strong>Developer Adoption</strong>, <strong>Market Traction</strong>, <strong>Business Sentiment</strong>, <strong>Development Velocity</strong>, and <strong>Platform Resilience</strong>. Ranks are not compared across lists.",
+      `${rankedListsSentence(true)}. Each list is scored with the profile for its kind, across 8 factors: <strong>Agentic Capability</strong>, <strong>Innovation</strong>, <strong>Technical Performance</strong>, <strong>Developer Adoption</strong>, <strong>Market Traction</strong>, <strong>Business Sentiment</strong>, <strong>Development Velocity</strong>, and <strong>Platform Resilience</strong>. Ranks are not compared across lists.`,
     category: "methodology",
   },
   {
@@ -175,3 +176,22 @@ export const contentTemplates = {
     ],
   },
 };
+
+/**
+ * D6e: `generalFAQs` with the lists answer saying models are not ranked yet while the models
+ * page is hidden. `modelsVisible` is `isModelPageVisible()`.
+ */
+export function generalFAQsFor(modelsVisible: boolean): FAQItem[] {
+  if (modelsVisible) return generalFAQs;
+  return generalFAQs.map((faq) =>
+    faq.id === "how-are-rankings-calculated"
+      ? {
+          ...faq,
+          answer: faq.answer.replace(
+            `${rankedListsSentence(true)}.`,
+            `${rankedListsSentence(false)}. ${MODELS_PENDING_SENTENCE}`,
+          ),
+        }
+      : faq,
+  );
+}

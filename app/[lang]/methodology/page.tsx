@@ -88,7 +88,8 @@ export default async function MethodologyPage({ params }: PageProps): Promise<Re
         <p>{text.intro.replace("{version}", version())}</p>
 
         <h2>{text.listsHeading}</h2>
-        <p>{text.listsBody}</p>
+        {/* D6e: do not say models are ranked while the models page is hidden. */}
+        <p>{linkedLists.includes("model") ? text.listsBody : text.listsBodyModelsPending}</p>
         <ul>
           {linkedLists.map((list) => (
             <li key={list}>

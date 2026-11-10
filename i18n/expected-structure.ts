@@ -453,6 +453,7 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
     intro: "",
     listsHeading: "",
     listsBody: "",
+    listsBodyModelsPending: "",
     listsDefault: "",
     listsExcluded: "",
     smallLists: "",
