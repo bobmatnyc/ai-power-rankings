@@ -5,11 +5,13 @@
  *   never ran, ran partially, or recorded nothing is invisible unless someone
  *   reads the ledger. Nobody can reach the production database from a laptop,
  *   so a scheduled workflow runs this and fails (email) on a bad month.
- * What: four SELECTs inside one READ ONLY Postgres transaction: history rows
+ * What: five SELECTs inside one READ ONLY Postgres transaction: history rows
  *   per collected_date; the ledger rows for the checked date; the tool count
- *   and history rows for the date; and, per part, how many tools kept every
+ *   and history rows for the date; per part, how many tools kept every
  *   value since the previous collected_date (compared inside Postgres, so no
- *   value leaves the database). Prints the counts-only report from
+ *   value leaves the database); and, per part, eligible tools and how many of
+ *   them were recorded (#95, floors from `METRICS_COVERAGE_FLOOR` or
+ *   `COVERAGE_FLOOR`). Prints the counts-only report from
  *   `renderMetricsHistoryReport()`: no tool name, slug, id or metric value (the
  *   repository is public). Errors print a fixed message or the error class name.
  *   Exit 0: pass. Exit 3: a check failed. Exit 1: an error, including a failed query.
@@ -23,12 +25,16 @@
 import { neon } from "@neondatabase/serverless";
 import {
   type Coverage,
+  type CoverageFloors,
   type DateCount,
   type FlatCount,
   type LedgerRow,
+  type PartCoverage,
+  parseCoverageFloors,
   renderMetricsHistoryReport,
   resolveCheckDate,
 } from "../lib/metrics-history/check-report";
+import { GITHUB_URL_PATHS } from "../lib/metrics-collectors/github";
 import { COLLECTOR_PARTS } from "../lib/metrics-collectors/registry";
 import { assertSelectOnly, redact } from "../lib/ranking-snapshot-diff";
 
@@ -54,7 +60,22 @@ export const FLAT_QUERY =
   "AND jsonb_typeof(prev.metrics -> p.part) = 'object'" +
   ") AS t GROUP BY part";
 
-export const QUERIES = [ROWS_QUERY, LEDGER_QUERY, COVERAGE_QUERY, FLAT_QUERY] as const;
+// #95: per part, the eligible tools (see COVERAGE_FLOOR) and how many of them carry the
+// part's key on the checked date. $3 is GITHUB_URL_PATHS, the collector's own URL fields.
+export const PART_COVERAGE_QUERY =
+  "SELECT p.part AS part, count(*)::int AS eligible, " +
+  "(count(*) FILTER (WHERE jsonb_typeof(cur.metrics -> p.part) = 'object'))::int AS recorded " +
+  "FROM tools t CROSS JOIN unnest($2::text[]) AS p(part) " +
+  "LEFT JOIN tool_metrics_history cur ON cur.tool_id = t.id AND cur.collected_date = $1::date " +
+  "LEFT JOIN tool_metrics_history prev ON prev.tool_id = t.id " +
+  "AND prev.collected_date = (SELECT max(collected_date) FROM tool_metrics_history WHERE collected_date < $1::date) " +
+  "WHERE jsonb_typeof(prev.metrics -> p.part) = 'object' " +
+  "OR (p.part = 'github' AND EXISTS (SELECT 1 FROM unnest($3::text[]) AS g(path) " +
+  "WHERE jsonb_typeof(t.data #> string_to_array(g.path, '.')) = 'string' " +
+  "AND (t.data #>> string_to_array(g.path, '.')) LIKE '%github.com%')) " +
+  "GROUP BY p.part";
+
+export const QUERIES = [ROWS_QUERY, LEDGER_QUERY, COVERAGE_QUERY, FLAT_QUERY, PART_COVERAGE_QUERY] as const;
 
 export interface Statement {
   text: string;
@@ -91,11 +112,19 @@ export async function executeCheck(deps: {
   argv: readonly string[];
   now: Date;
   connectionString: string | undefined;
+  /** `METRICS_COVERAGE_FLOOR`; see `parseCoverageFloors`. */
+  coverageFloorSpec?: string | undefined;
   connect?: (connectionString: string) => RunReadOnly;
 }): Promise<{ exitCode: number; stdout: string; stderr: string }> {
   try {
     const { connectionString } = deps;
     if (!connectionString) throw new CheckError("the database connection variable is not set");
+    let coverageFloor: CoverageFloors;
+    try {
+      coverageFloor = parseCoverageFloors(deps.coverageFloorSpec);
+    } catch (error) {
+      throw new CheckError(error instanceof Error ? error.message : "bad coverage floor");
+    }
     let date: string;
     try {
       date = resolveCheckDate(deps.argv, deps.now);
@@ -110,6 +139,7 @@ export async function executeCheck(deps: {
       { text: LEDGER_QUERY, params: [date] },
       { text: COVERAGE_QUERY, params: [date] },
       { text: FLAT_QUERY, params: [date, [...COLLECTOR_PARTS]] },
+      { text: PART_COVERAGE_QUERY, params: [date, [...COLLECTOR_PARTS], [...GITHUB_URL_PATHS]] },
     ]);
     if (!Array.isArray(results) || results.length !== QUERIES.length) {
       throw new CheckError("the transaction returned the wrong number of results");
@@ -127,6 +157,11 @@ export async function executeCheck(deps: {
       compared: count(r.compared),
       unchanged: count(r.unchanged),
     }));
+    const partCoverage = rowsOf<PartCoverage>(results[4]).map((r) => ({
+      part: String(r.part),
+      eligible: count(r.eligible),
+      recorded: count(r.recorded),
+    }));
     const previousDate = rowsPerDate.map((r) => r.collected_date).find((d) => d < date) ?? null;
 
     const { exitCode, report } = renderMetricsHistoryReport({
@@ -136,6 +171,8 @@ export async function executeCheck(deps: {
       coverage,
       previousDate,
       flat,
+      partCoverage,
+      coverageFloor,
     });
     return { exitCode, stdout: `${report}\n`, stderr: "" };
   } catch (error: unknown) {
@@ -155,7 +192,12 @@ if (process.argv[1]?.endsWith("check-metrics-history.ts")) {
   for (const method of ["log", "info", "warn", "error", "debug"] as const) {
     console[method] = quiet;
   }
-  void executeCheck({ argv: process.argv, now: new Date(), connectionString: process.env[CONNECTION_VAR] }).then(
+  void executeCheck({
+    argv: process.argv,
+    now: new Date(),
+    connectionString: process.env[CONNECTION_VAR],
+    coverageFloorSpec: process.env["METRICS_COVERAGE_FLOOR"],
+  }).then(
     ({ exitCode, stdout, stderr }) => {
       process.stdout.write(stdout);
       if (stderr) process.stderr.write(stderr);
