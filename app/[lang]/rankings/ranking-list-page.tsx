@@ -4,7 +4,7 @@ import Script from "next/script";
 import { Suspense } from "react";
 import RankingsGrid from "@/components/ranking/rankings-grid";
 import { FAQSection, QuickAnswerBox } from "@/components/seo";
-import { generalFAQs } from "@/data/seo-content";
+import { generalFAQsFor } from "@/data/seo-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { generateRankingOGImageUrl } from "@/lib/og-utils";
@@ -151,7 +151,9 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
   // Generate structured data
   // #153: JSON-LD names the production origin, never the VERCEL_URL host.
   const structuredDataBaseUrl = siteOrigin();
-  const methodAnswer = rankingMethodAnswer(header.version);
+  // D6e: the answer text, its JSON-LD and the FAQ follow the same gate as the links.
+  const modelsVisible = navLists.includes("model");
+  const methodAnswer = rankingMethodAnswer(header.version, modelsVisible);
   const faqSchema = generateRankingFAQSchema(methodAnswer);
   const breadcrumbs = [
     { name: "Home", url: "/" },
@@ -229,6 +231,7 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
             initialRankings={initialRankings as Parameters<typeof RankingsGrid>[0]["initialRankings"]}
             list={list}
             header={header}
+            modelsListed={modelsVisible}
           />
         </Suspense>
 
@@ -241,7 +244,7 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
           {/* FAQ Section */}
           <FAQSection
             title="AI Tool Rankings FAQ"
-            faqs={generalFAQs}
+            faqs={generalFAQsFor(modelsVisible)}
             defaultOpen={["what-are-ai-tool-rankings", "how-are-rankings-calculated"]}
           />
         </aside>

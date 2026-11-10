@@ -1567,10 +1567,13 @@
   "methodologyV8": {
     "metaTitle": "排名方法 (v{version}) - AI Power Rankings",
     "metaDescription": "AI Power Rankings 如何在不同的列表中对模型、编程工具和生产力工具排名，并为每种类型使用评分方案。",
+    "metaDescriptionModelsPending": "AI Power Rankings 如何在不同的列表中对编程工具和生产力工具排名，并为每种类型使用评分方案。模型将在收集到模型指标后列出。",
     "title": "排名的工作方式",
     "intro": "AI Power Rankings 第 {version} 版将每类工具放在各自的列表中排名，并为每一类使用各自的权重评分。",
     "listsHeading": "三个列表",
+    "listsHeadingModelsPending": "两个列表",
     "listsBody": "模型、编程工具和生产力工具在不同的列表中排名。一个工具最多出现在一个列表中，其名次、等级和变化都在该列表内计算。不同列表之间不比较名次。",
+    "listsBodyModelsPending": "编程工具和生产力工具在不同的列表中排名。模型将在收集到模型指标后列出。一个工具最多出现在一个列表中，其名次、等级和变化都在该列表内计算。不同列表之间不比较名次。",
     "listsDefault": "排名主页显示编程工具列表。",
     "listsExcluded": "图像模型和视频模型不在模型列表中。其他类型的工具不参与排名。",
     "smallLists": "条目少于 {min} 个的列表按三等分使用 S、A、B 等级，且不被搜索引擎收录。",

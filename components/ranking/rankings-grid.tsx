@@ -83,6 +83,8 @@ interface RankingsGridProps {
   list?: RankingList;
   /** #305: the published ranking's `algorithm.version` and `published_at`, from the server. */
   header?: { version?: string | null; publishedAt?: string | null };
+  /** D6e: false while the models page is hidden; the methodology card then says models are pending. */
+  modelsListed?: boolean;
 }
 
 /** #186: `/api/rankings` for a list; the default list keeps the unqualified URL (D51). */
@@ -99,6 +101,7 @@ function RankingsGridContent({
   initialRankings = [],
   list = DEFAULT_RANKING_LIST,
   header,
+  modelsListed = true,
   searchParams,
 }: RankingsGridProps & { searchParams: URLSearchParams }): React.JSX.Element {
   const router = useRouter();
@@ -379,7 +382,7 @@ function RankingsGridContent({
       )}
 
       {/* Algorithm Info */}
-      <AlgorithmInfoCard lang={lang} dict={dict} />
+      <AlgorithmInfoCard lang={lang} dict={dict} modelsListed={modelsListed} />
     </div>
   );
 }
@@ -390,6 +393,7 @@ export default function RankingsGrid({
   initialRankings,
   list,
   header,
+  modelsListed,
 }: RankingsGridProps): React.JSX.Element {
   // #368: the rankings page is ISR; the boundary keeps the board, not a loading line, in its HTML.
   return (
@@ -401,6 +405,7 @@ export default function RankingsGrid({
           initialRankings={initialRankings}
           list={list}
           header={header}
+          modelsListed={modelsListed}
           searchParams={searchParams}
         />
       )}

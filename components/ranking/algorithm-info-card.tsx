@@ -13,7 +13,16 @@ import type { Dictionary } from "@/i18n/get-dictionary";
  * disagree with the version the board's header shows.
  * Test: `tests/unit/stale-v76-copy-280.test.tsx`.
  */
-export function AlgorithmInfoCard({ lang, dict }: { lang: Locale; dict: Dictionary }): React.JSX.Element {
+export function AlgorithmInfoCard({
+  lang,
+  dict,
+  modelsListed = true,
+}: {
+  lang: Locale;
+  dict: Dictionary;
+  /** D6e: `isModelPageVisible()`; false swaps in the text that says models are not ranked yet. */
+  modelsListed?: boolean;
+}): React.JSX.Element {
   const text = dict.methodologyV8;
   return (
     <Card className="mt-12" data-algorithm-info-card>
@@ -22,7 +31,8 @@ export function AlgorithmInfoCard({ lang, dict }: { lang: Locale; dict: Dictiona
       </CardHeader>
       <CardContent>
         <div className="prose prose-sm text-muted-foreground space-y-2">
-          <p>{text.listsBody}</p>
+          {/* D6e: do not say models are ranked while the models page is hidden. */}
+          <p>{modelsListed ? text.listsBody : text.listsBodyModelsPending}</p>
           <p>{text.profilesBody}</p>
           <Button variant="outline" size="sm" className="mt-4" asChild>
             <Link href={`/${lang}/methodology`}>{dict.rankings.algorithm.viewMethodology}</Link>

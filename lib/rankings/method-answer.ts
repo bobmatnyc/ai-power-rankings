@@ -9,7 +9,10 @@
  *   `version` is the published board's `algorithm.version`; it is formatted with
  *   `formatAlgorithmVersion` and left out when missing or unusable, so the answer never
  *   names a version the board does not carry.
- * Test: `tests/unit/stale-v76-copy-280.test.tsx`.
+ *   D6e: while the models page is hidden (`isModelPageVisible()` false) the first sentence
+ *   says coding harnesses and productivity tools are ranked and models will be listed once
+ *   model metrics are collected; it flips back by itself when the page returns.
+ * Test: `tests/unit/stale-v76-copy-280.test.tsx`, `tests/unit/model-copy-d6e.test.tsx`.
  */
 import { formatAlgorithmVersion } from "./header";
 
@@ -24,11 +27,23 @@ export interface RankingMethodAnswer {
   text: string;
 }
 
-export function rankingMethodAnswer(version: unknown): RankingMethodAnswer {
+/** D6e: the sentence naming which lists are ranked; `modelsVisible` is `isModelPageVisible()`. */
+export function rankedListsSentence(modelsVisible: boolean): string {
+  return modelsVisible
+    ? "Models, coding harnesses and productivity tools are ranked in separate lists"
+    : "Coding harnesses and productivity tools are ranked in separate lists";
+}
+
+/** D6e: appended while the models page is hidden. */
+export const MODELS_PENDING_SENTENCE = "Models will be listed once model metrics are collected.";
+
+export function rankingMethodAnswer(version: unknown, modelsVisible = true): RankingMethodAnswer {
   const label = formatAlgorithmVersion(version);
   const build = (bold: (s: string) => string): string =>
     [
-      `Models, coding harnesses and productivity tools are ranked in separate lists${label ? ` with ${bold(`Algorithm ${label}`)}` : ""}.`,
+      // D6e: say models are ranked only while the models page is shown.
+      `${rankedListsSentence(modelsVisible)}${label ? ` with ${bold(`Algorithm ${label}`)}` : ""}.`,
+      ...(modelsVisible ? [] : [MODELS_PENDING_SENTENCE]),
       `Each list is scored with the profile for its kind, across 8 factors: ${FACTORS}.`,
       "A tool is ranked in one list at most, and ranks are not compared across lists.",
       "Rankings are recalculated monthly.",

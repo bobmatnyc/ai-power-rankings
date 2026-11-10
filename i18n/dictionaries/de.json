@@ -719,10 +719,13 @@
   "methodologyV8": {
     "metaTitle": "Ranking-Methodik (v{version}) - AI Power Rankings",
     "metaDescription": "Wie die AI Power Rankings Modelle, Coding-Harnesses und Produktivitätstools in getrennten Listen ranken, mit einem Bewertungsprofil für jede Art.",
+    "metaDescriptionModelsPending": "Wie die AI Power Rankings Coding-Harnesses und Produktivitätstools in getrennten Listen ranken, mit einem Bewertungsprofil für jede Art. Modelle werden aufgeführt, sobald Modellmetriken erhoben sind.",
     "title": "So entstehen die Rankings",
     "intro": "Version {version} der AI Power Rankings rankt jede Art von Tool in einer eigenen Liste und bewertet jede Art mit eigenen Gewichten.",
     "listsHeading": "Drei Listen",
+    "listsHeadingModelsPending": "Zwei Listen",
     "listsBody": "Modelle, Coding-Harnesses und Produktivitätstools werden in getrennten Listen gerankt. Ein Tool steht in höchstens einer Liste; Rang, Stufe und Veränderung werden innerhalb dieser Liste gezählt. Ränge werden nicht listenübergreifend verglichen.",
+    "listsBodyModelsPending": "Coding-Harnesses und Produktivitätstools werden in getrennten Listen gerankt. Modelle werden aufgeführt, sobald Modellmetriken erhoben sind. Ein Tool steht in höchstens einer Liste; Rang, Stufe und Veränderung werden innerhalb dieser Liste gezählt. Ränge werden nicht listenübergreifend verglichen.",
     "listsDefault": "Die Hauptseite der Rankings zeigt die Liste der Coding-Harnesses.",
     "listsExcluded": "Bild- und Videomodelle sind nicht in der Modellliste. Tools anderer Arten werden nicht gerankt.",
     "smallLists": "Eine Liste mit weniger als {min} Einträgen verwendet die Stufen S, A und B nach Dritteln und wird von Suchmaschinen nicht indexiert.",
