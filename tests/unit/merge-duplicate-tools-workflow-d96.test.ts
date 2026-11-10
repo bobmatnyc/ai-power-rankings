@@ -60,7 +60,10 @@ function assertDryRunDefault(text: string): void {
   expect(code).toMatch(/\n {6}dry_run:\n(?: {8}.*\n)*? {8}type: boolean\n(?: {8}.*\n)*? {8}default: true\n/);
   expect(code).toMatch(/\n {6}confirm:\n(?: {8}.*\n)*? {8}default: ''\n/);
   expect(code).toContain('if [ "$DRY_RUN" != "false" ]; then');
-  expect(code).toContain('if [ "$CONFIRM" != "merge-d90-duplicates" ]; then');
+  // Codex-merge: each set has its own typed confirmation; an unknown set fails in either mode.
+  expect(code).toContain("d90) set_name='d90'; expected='merge-d90-duplicates' ;;");
+  expect(code).toContain("codex) set_name='codex'; expected='merge-codex-cli' ;;");
+  expect(code).toContain('if [ "$CONFIRM" != "$expected" ]; then');
   // Every step that can write is gated on the apply mode.
   expect(code).toMatch(/id: backup\n {8}if: \$\{\{ success\(\) && steps\.mode\.outputs\.mode == 'apply' \}\}/);
   expect(code).toMatch(
@@ -114,7 +117,7 @@ describe("merge-duplicate-tools workflow (D96)", () => {
     const noGuard = text.replace("    if: github.ref == 'refs/heads/main'\n", "");
     const secondApply = `${text.trimEnd()}\n\n      - name: Apply again\n        run: npx tsx scripts/merge-duplicate-tools.ts --apply backup.json\n`;
     const noConfirm = text.replace(
-      /\n {10}if \[ "\$CONFIRM" != "merge-d90-duplicates" \]; then\n(?: {12}.*\n)+? {10}fi\n/,
+      /\n {10}if \[ "\$CONFIRM" != "\$expected" \]; then\n(?: {12}.*\n)+? {10}fi\n/,
       "\n"
     );
     const noBackupGate = text.replace(" && steps.backup.outcome == 'success'", "");
@@ -202,15 +205,31 @@ function runStep(stepId: string, env: Record<string, string>, dir?: string, stub
 
 describe("merge-duplicate-tools workflow step scripts (D96)", () => {
   it.each([
-    ["true", "", 0, "mode=dry-run"],
-    ["true", "merge-d90-duplicates", 0, "mode=dry-run"],
-    ["false", "", 1, ""],
-    ["false", "merge-d90", 1, ""],
-    ["false", "merge-d90-duplicates", 0, "mode=apply"],
-  ])("dry_run=%s confirm=%j exits %i with %j", (dryRun, confirm, code, output) => {
-    const r = runStep("mode", { DRY_RUN: dryRun, CONFIRM: confirm });
+    ["true", "", "", 0, "set=d90\nmode=dry-run"],
+    ["true", "merge-d90-duplicates", "d90", 0, "set=d90\nmode=dry-run"],
+    ["false", "", "d90", 1, "set=d90"],
+    ["false", "merge-d90", "d90", 1, "set=d90"],
+    ["false", "merge-d90-duplicates", "d90", 0, "set=d90\nmode=apply"],
+    // Codex-merge (ar-Te2/T76): the codex set has its own confirmation; the other set's string is refused.
+    ["true", "", "codex", 0, "set=codex\nmode=dry-run"],
+    ["false", "merge-d90-duplicates", "codex", 1, "set=codex"],
+    ["false", "merge-codex-cli", "d90", 1, "set=d90"],
+    ["false", "merge-codex-cli", "codex", 0, "set=codex\nmode=apply"],
+    ["true", "", "other", 1, ""],
+  ])("dry_run=%s confirm=%j set=%j exits %i with %j", (dryRun, confirm, set, code, output) => {
+    const r = runStep("mode", { DRY_RUN: dryRun, CONFIRM: confirm, MERGE_SET: set });
     expect(r.code).toBe(code);
     expect(r.read("output.txt").trim()).toBe(output);
+  });
+
+  it("passes the selected set to every script run (Codex-merge)", () => {
+    const code = codeLines(load()).join("\n");
+    expect(code).toMatch(/\n {6}merge_set:\n(?: {8}.*\n)*? {8}type: choice\n(?: {8}.*\n)*? {8}default: d90\n/);
+    for (const step of ["dryrun", "backup", "apply"]) {
+      expect(stepRunScript(load(), step)).toContain('--set "${MERGE_SET:-d90}"');
+      const r = runStep(step, { MERGE_SET: "codex", STUB_BACKUP: "{}", STUB_OUTPUT: "totals: 1 pair(s), 0 unresolved" });
+      expect(r.read("npx.log")).toMatch(/ --set codex\n$/);
+    }
   });
 
   it("drops the database fingerprint line from the dry-run log and keeps the totals", () => {

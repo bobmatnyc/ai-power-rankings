@@ -87,9 +87,10 @@ afterEach(() => {
 
 describe("the committed map", () => {
   it("holds the signed table's 308 and noindex counts, path columns only", () => {
-    expect(redirectRows).toHaveLength(268);
+    // ar-Te2/T76: 268 signed rows plus the 10 locale rows of the Codex CLI merge.
+    expect(redirectRows).toHaveLength(278);
     expect(noindexRows).toHaveLength(311);
-    expect(URL_TABLE_ROWS).toHaveLength(268 + 311);
+    expect(URL_TABLE_ROWS).toHaveLength(278 + 311);
     for (const row of rawRows as object[]) {
       expect(Object.keys(row).sort()).toEqual(["action", "destination", "source"]);
     }
@@ -98,14 +99,27 @@ describe("the committed map", () => {
 
   it("ships every 308 row except those whose destination page is missing", () => {
     // D6e: released; the 60 rows of the six D58 aliases ship again (91 + 60, 177 - 60).
+    // ar-Te2/T76: the 10 openai-codex-cli rows are held until the merge is applied and published.
     expect(shipped).toHaveLength(151);
-    expect(held).toHaveLength(117);
+    expect(held).toHaveLength(127);
     const perMajor = /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/;
     expect(shipped.filter((row) => perMajor.test(row.destination))).toHaveLength(60);
     expect(held.filter((row) => perMajor.test(row.destination))).toHaveLength(0);
     // #198: the 20 /whats-new rows wait for /en/insights.
     expect(held.filter((row) => row.destination === "/en/insights")).toHaveLength(20);
     expect(shipped.length + held.length).toBe(redirectRows.length);
+  });
+
+  it("holds the 10 openai-codex-cli rows until the Codex merge is published", async () => {
+    const cliRows = redirectRows.filter((row) => /^\/[a-z]{2}\/tools\/openai-codex-cli$/.test(row.source));
+    expect(cliRows).toHaveLength(10);
+    for (const row of cliRows) {
+      expect(held).toContain(row);
+      expect(resolveTableRedirect(row.source)).toBeNull();
+      const res = await run(row.source);
+      expect(res.status).toBe(200);
+      expect(location(res)).toBeNull();
+    }
   });
 
   it("covers the 17 non-locale rows (Q-A85-1) by the pattern rule, not literal rows", () => {

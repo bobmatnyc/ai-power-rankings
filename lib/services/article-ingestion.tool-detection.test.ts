@@ -50,8 +50,8 @@ describe("ToolMapper - Tool Detection and Normalization", () => {
     });
 
     it("should handle tool names with fuzzy matching", () => {
-      // "GPT-5-Codex" contains "Codex" which matches "OpenAI Codex CLI"
-      expect(ToolMapper.normalizeTool("GPT-5-Codex")).toBe("OpenAI Codex CLI");
+      // "GPT-5-Codex" contains "Codex" which matches "OpenAI Codex" (ar-Te2/T76 merged the CLI row into it)
+      expect(ToolMapper.normalizeTool("GPT-5-Codex")).toBe("OpenAI Codex");
 
       // Truly unknown tools should be preserved
       expect(ToolMapper.normalizeTool("Some Unknown Tool")).toBe("Some Unknown Tool");
@@ -226,8 +226,8 @@ describe("ToolMapper - Tool Detection and Normalization", () => {
       const testCases = [
         // OpenAI tools
         { input: "ChatGPT", expected: "ChatGPT Canvas" },
-        { input: "OpenAI Codex", expected: "OpenAI Codex CLI" },
-        { input: "Codex", expected: "OpenAI Codex CLI" },
+        { input: "OpenAI Codex", expected: "OpenAI Codex" },
+        { input: "Codex", expected: "OpenAI Codex" },
 
         // Anthropic tools
         // #314: Claude Artifacts is now Claude.AI; the old name and the domain form both map to it.
@@ -278,5 +278,13 @@ describe("ToolMapper - Tool Detection and Normalization", () => {
 describe("tool-mapper.service ToolMapper - Claude.AI aliases (#314)", () => {
   it.each(["Claude.AI", "claude.ai", "Claude Artifacts", "claude artifacts"])("maps %s to Claude.AI", (input) => {
     expect(ServiceToolMapper.normalizeTool(input)).toBe("Claude.AI");
+  });
+});
+
+// ar-Te2/T76: the Codex CLI row is merged into OpenAI Codex, so both mappers send every Codex name there.
+describe("both ToolMappers - Codex names land on OpenAI Codex (ar-Te2/T76)", () => {
+  it.each(["OpenAI Codex", "openai codex", "Codex", "OpenAI Codex CLI", "Codex CLI", "GPT-5-Codex"])("maps %s to OpenAI Codex", (input) => {
+    expect(ToolMapper.normalizeTool(input)).toBe("OpenAI Codex");
+    expect(ServiceToolMapper.normalizeTool(input)).toBe("OpenAI Codex");
   });
 });

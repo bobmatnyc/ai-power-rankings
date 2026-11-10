@@ -36,8 +36,8 @@ describe("Tool Detection Integration Tests", () => {
     });
 
     it("should preserve unknown tools like GPT-5-Codex with fuzzy matching behavior", () => {
-      // Note: GPT-5-Codex contains "Codex" which fuzzy matches to "OpenAI Codex CLI"
-      expect(ToolMapper.normalizeTool("GPT-5-Codex")).toBe("OpenAI Codex CLI");
+      // Note: GPT-5-Codex contains "Codex" which fuzzy matches to "OpenAI Codex" (ar-Te2/T76 merged the CLI row into it)
+      expect(ToolMapper.normalizeTool("GPT-5-Codex")).toBe("OpenAI Codex");
 
       // Truly unknown tools are preserved
       expect(ToolMapper.normalizeTool("Unknown Future Tool")).toBe("Unknown Future Tool");
