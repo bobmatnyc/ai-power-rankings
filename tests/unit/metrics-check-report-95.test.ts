@@ -11,9 +11,12 @@
  */
 
 import { describe, expect, it } from "vitest";
+import { GITHUB_URL_PATHS } from "../../lib/metrics-collectors/github";
 import { COLLECTOR_PARTS, SHARD_COUNTS } from "../../lib/metrics-collectors/registry";
 import {
+  COVERAGE_FLOOR,
   type LedgerRow,
+  parseCoverageFloors,
   type ReportInput,
   renderMetricsHistoryReport,
   resolveCheckDate,
@@ -42,6 +45,7 @@ const input = (over: Partial<ReportInput> = {}): ReportInput => ({
   coverage: { tools: 50, rows: 40 },
   previousDate: null,
   flat: [],
+  partCoverage: [],
   ...over,
 });
 
@@ -79,18 +83,49 @@ describe("#95 renderMetricsHistoryReport checks", () => {
     expect(renderMetricsHistoryReport(input({ ledger })).exitCode).toBe(0);
   });
 
-  it("only WARNs on coverage while no floor is set, and fails under a floor once one is", () => {
-    const low = input({ coverage: { tools: 50, rows: 1 } });
-    const warned = renderMetricsHistoryReport(low);
-    expect(warned.exitCode).toBe(0);
-    expect(warned.report).toContain("Coverage: 1 of 50 tools have a history row (2%)");
-    expect(warned.report).toContain("WARN: no coverage floor is set");
-    expect(warned.report).toMatch(/Result: PASS$/);
+  // #95 PR C: this test changed on purpose. The single all-tools floor (null, WARN only) is
+  // replaced by a per-part floor over eligible tools; the all-tools line is informational.
+  it("does not fail on low all-tools coverage: a tool with no identifier is not a miss", () => {
+    const { exitCode, report } = renderMetricsHistoryReport(input({ coverage: { tools: 50, rows: 1 } }));
+    expect(exitCode).toBe(0);
+    expect(report).toContain("Coverage: 1 of 50 tools have a history row (2%)");
+    expect(report).toContain("github: 0 of 0 eligible (n/a) no eligible tools");
+    expect(report).toMatch(/Result: PASS$/);
+  });
 
-    const floored = renderMetricsHistoryReport({ ...low, coverageFloor: 0.5 });
-    expect(floored.exitCode).toBe(3);
-    expect(floored.report).toContain("Result: FAIL (coverage under the floor)");
-    expect(renderMetricsHistoryReport({ ...input(), coverageFloor: 0.5 }).exitCode).toBe(0);
+  it("fails a part whose recorded share of eligible tools is under its floor", () => {
+    // The 2026-11-01 github shape once its URLs are eligible: 4 recorded of (say) 120.
+    const partCoverage = [
+      { part: "github", eligible: 120, recorded: 4 },
+      { part: "npm", eligible: 159, recorded: 150 },
+    ];
+    const { exitCode, report } = renderMetricsHistoryReport(input({ partCoverage }));
+    expect(exitCode).toBe(3);
+    expect(report).toContain("github: 4 of 120 eligible (3%) FAIL under the floor of 80%");
+    expect(report).toContain("npm: 150 of 159 eligible (94%) ok, floor 90%");
+    expect(report).toContain("Result: FAIL (1 part(s) under the coverage floor)");
+
+    const off = { ...COVERAGE_FLOOR, github: null };
+    const unfloored = renderMetricsHistoryReport(input({ partCoverage, coverageFloor: off }));
+    expect(unfloored.exitCode).toBe(0);
+    expect(unfloored.report).toContain("github: 4 of 120 eligible (3%) no floor");
+  });
+
+  it("passes at exactly the floor", () => {
+    const partCoverage = [{ part: "pypi", eligible: 10, recorded: 9 }];
+    expect(renderMetricsHistoryReport(input({ partCoverage })).exitCode).toBe(0);
+    const below = [{ part: "pypi", eligible: 10, recorded: 8 }];
+    expect(renderMetricsHistoryReport(input({ partCoverage: below })).exitCode).toBe(3);
+  });
+
+  it("parses METRICS_COVERAGE_FLOOR", () => {
+    expect(parseCoverageFloors(undefined)).toEqual(COVERAGE_FLOOR);
+    expect(parseCoverageFloors("  ")).toEqual(COVERAGE_FLOOR);
+    expect(parseCoverageFloors("off")).toEqual({ github: null, pypi: null, npm: null, vscode: null });
+    expect(parseCoverageFloors("github=0.5, npm=off")).toEqual({ ...COVERAGE_FLOOR, github: 0.5, npm: null });
+    expect(() => parseCoverageFloors("rubygems=0.5")).toThrow("METRICS_COVERAGE_FLOOR");
+    expect(() => parseCoverageFloors("github=1.5")).toThrow("from 0 to 1");
+    expect(() => parseCoverageFloors("github")).toThrow("METRICS_COVERAGE_FLOOR");
   });
 
   it("WARNs per part on flat values without failing, and says so on the first month", () => {
@@ -140,6 +175,7 @@ const goodResults = () => [
   allOk.map((r) => ({ ...r, ...poison, error: `${SLUG} returned ${VALUE}` })),
   [{ tools: 50, rows: 40, ...poison }],
   [{ part: "npm", compared: 4, unchanged: 3, ...poison }],
+  [{ part: "npm", eligible: 4, recorded: 4, ...poison }],
 ];
 
 const run = (results: unknown[] | Error, argv = ["--scheduled"]) => {
@@ -167,13 +203,31 @@ describe("#95 executeCheck", () => {
     expect(db.calls[0].map((s) => s.text)).toEqual([...QUERIES]);
     for (const s of db.calls[0]) expect(() => assertSelectOnly(s.text)).not.toThrow();
     expect(db.calls[0][1].params).toEqual(["2026-11-01"]);
+    // #95: the part-coverage query reads the collector's own GitHub URL fields.
+    expect(db.calls[0][4].params).toEqual(["2026-11-01", [...COLLECTOR_PARTS], [...GITHUB_URL_PATHS]]);
+  });
+
+  it("reports per-part coverage and errors on a malformed METRICS_COVERAGE_FLOOR before any query", async () => {
+    expect((await run(goodResults()).out).stdout).toContain("npm: 4 of 4 eligible (100%) ok, floor 90%");
+    const db = fakeDb(goodResults());
+    const bad = await executeCheck({
+      argv: ["--scheduled"],
+      now: new Date("2026-11-02T06:00:00Z"),
+      connectionString: CONN,
+      coverageFloorSpec: "github=2",
+      connect: db.connect,
+    });
+    expect(bad.exitCode).toBe(1);
+    expect(bad.stderr).toContain("from 0 to 1");
+    expect(db.calls).toHaveLength(0);
   });
 
   it.each([
     ["a query that throws", new Error(`relation missing near ${SLUG} ${VALUE} ${CONN}`)],
     ["a transaction with no results", [] as unknown[]],
-    ["a coverage query with no row", [[], [], [], []]],
-    ["a coverage count that is not a number", [[], [], [{ tools: "x", rows: 1 }], []]],
+    ["a coverage query with no row", [[], [], [], [], []]],
+    ["a coverage count that is not a number", [[], [], [{ tools: "x", rows: 1 }], [], []]],
+    ["a part-coverage count that is not a number", [[], [], [{ tools: 1, rows: 1 }], [], [{ part: "npm", eligible: "x", recorded: 1 }]]],
   ])("fails the job on %s instead of passing", async (_label, results) => {
     const { exitCode, stdout, stderr } = await run(results).out;
     expect(exitCode).toBe(1);
