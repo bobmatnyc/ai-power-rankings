@@ -121,10 +121,13 @@ export class ToolMapper {
     "gpt-4o": "ChatGPT Canvas",
     "gpt-4-turbo": "ChatGPT Canvas",
     chatgpt: "ChatGPT Canvas",
-    "openai codex": "OpenAI Codex CLI",
-    codex: "OpenAI Codex CLI",
+    // Codex-merge: ar-Te2/T76 merged the Codex CLI row into OpenAI Codex; every Codex name lands there.
+    "openai codex": "OpenAI Codex",
+    "openai codex cli": "OpenAI Codex",
+    "codex cli": "OpenAI Codex",
+    codex: "OpenAI Codex",
     "gpt-5": "ChatGPT Canvas", // Future model
-    "gpt-5-codex": "OpenAI Codex CLI", // Future model
+    "gpt-5-codex": "OpenAI Codex", // Future model
 
     // Anthropic variations
     claude: "Claude Code",
@@ -223,7 +226,7 @@ export class ToolMapper {
     "Google Gemini Code Assist",
     "Replit Agent",
     "Zed",
-    "OpenAI Codex CLI",
+    "OpenAI Codex",
     "Devin",
     "Continue",
     "Claude.AI", // #314: was "Claude Artifacts"
@@ -610,7 +613,7 @@ Your task is to analyze articles and extract structured information about AI too
 
 Focus on:
 1. Identifying ALL AI tools, models, and services mentioned - USE SPECIFIC PRODUCT NAMES when possible:
-   - For OpenAI: "ChatGPT Canvas" for their code editor, "GPT-4" for the model, "OpenAI Codex CLI" for Codex
+   - For OpenAI: "ChatGPT Canvas" for their code editor, "GPT-4" for the model, "OpenAI Codex" for Codex
    - For Anthropic: "Claude Code" for their coding tool, "Claude 3.5" for the model, "Claude.AI" for the Claude assistant app (formerly Claude Artifacts)
    - For Google: "Google Gemini Code Assist" for code assistance, "Google Jules" for their agent, "Gemini" for the model
    - For GitHub/Microsoft: "GitHub Copilot" (not just "Copilot"), "Microsoft IntelliCode"

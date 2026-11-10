@@ -17,10 +17,13 @@ export class ToolMapper {
     "gpt-4-turbo": "ChatGPT Canvas",
     chatgpt: "ChatGPT Canvas",
     "chatgpt canvas": "ChatGPT Canvas",
-    "openai codex": "OpenAI Codex CLI",
-    codex: "OpenAI Codex CLI",
+    // Codex-merge: ar-Te2/T76 merged the Codex CLI row into OpenAI Codex; every Codex name lands there.
+    "openai codex": "OpenAI Codex",
+    "openai codex cli": "OpenAI Codex",
+    "codex cli": "OpenAI Codex",
+    codex: "OpenAI Codex",
     "gpt-5": "ChatGPT Canvas", // Future model
-    "gpt-5-codex": "OpenAI Codex CLI", // Future model
+    "gpt-5-codex": "OpenAI Codex", // Future model
     "gpt-3.5": "ChatGPT Canvas",
     "gpt-3": "ChatGPT Canvas",
     "openai": "ChatGPT Canvas",
@@ -263,7 +266,7 @@ export class ToolMapper {
     "Google Gemini Code Assist",
     "Replit Agent",
     "Zed",
-    "OpenAI Codex CLI",
+    "OpenAI Codex",
     "Devin",
     "Continue",
     "Claude.AI", // #314: was "Claude Artifacts"

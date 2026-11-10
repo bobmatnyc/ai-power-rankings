@@ -36,6 +36,24 @@ export const D90_OLD_SLUGS = [
   "moltbot",
 ] as const;
 
+// Codex-merge: ar-Te2/T76 merges the Codex CLI row into OpenAI Codex through this same path.
+export const CODEX_OLD_SLUGS = ["openai-codex-cli"] as const;
+
+/** A named group of old slugs merged by one ruling; `--set` picks one, D90 is the default. */
+export interface MergeSet {
+  id: "d90" | "codex";
+  /** Ruling label written into `data.redirect_reason` and the backup. */
+  ruling: string;
+  oldSlugs: readonly string[];
+  /** The typed confirmation the workflow needs before an apply. */
+  confirm: string;
+}
+
+export const MERGE_SETS: Readonly<Record<MergeSet["id"], MergeSet>> = {
+  d90: { id: "d90", ruling: "D90", oldSlugs: D90_OLD_SLUGS, confirm: "merge-d90-duplicates" },
+  codex: { id: "codex", ruling: "ar-Te2/T76", oldSlugs: CODEX_OLD_SLUGS, confirm: "merge-codex-cli" },
+};
+
 export const RETIRED_STATUS = "redirect";
 export const BACKUP_KIND = "duplicate-tool-merge-backup";
 export const BACKUP_VERSION = 1;

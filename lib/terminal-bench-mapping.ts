@@ -47,8 +47,8 @@ export interface TerminalBenchRow {
 /**
  * HAND-CURATED allowlist: leaderboard scaffold → ranked `tools.slug`.
  *
- * `Codex` maps to `openai-codex-cli` (OpenAI Codex CLI) — the scaffold IS that
- * product. `Claude Code` maps to its roster slug `claude-code`.
+ * `Codex` maps to `openai-codex` (OpenAI Codex) — the scaffold is the Codex CLI,
+ * which ar-Te2/T76 merged into that row. `Claude Code` maps to its roster slug `claude-code`.
  *
  * NOT included, deliberately (see `EXCLUDED_SCAFFOLDS`): `Cursor CLI` and
  * `Gemini CLI` — likely distinct products from the ranked "Cursor" (the editor)
@@ -58,7 +58,8 @@ export interface TerminalBenchRow {
  */
 export const SCAFFOLD_TO_TOOL_SLUG: Readonly<Record<string, string>> = {
   "Claude Code": "claude-code",
-  Codex: "openai-codex-cli",
+  // Codex-merge: ar-Te2/T76 merged openai-codex-cli into openai-codex; the scaffold credits the survivor.
+  Codex: "openai-codex",
 };
 
 /**

@@ -26,7 +26,13 @@ name: Merge duplicate tools (D90)
 # secret, by name. There is no read-only role.
 # Details: docs/deployment/apply-migrations-workflow.md
 #
-# Test: tests/unit/merge-duplicate-tools-workflow-d96.test.ts.
+# Codex-merge (ar-Te2/T76): `merge_set: codex` runs the same steps with `--set codex`, which
+# merges openai-codex-cli into openai-codex and writes the survivor's merged data and sourced
+# GitHub stars and npm downloads. Its apply needs `confirm: merge-codex-cli`. Its dry run also
+# prints the guards, the survivor's field decisions and the harness scores before and after
+# (slugs, ranks and scores; the public site shows the same figures). The default set is d90.
+#
+# Test: tests/unit/merge-duplicate-tools-workflow-d96.test.ts, tests/unit/codex-merge-t76.test.ts.
 
 on:
   workflow_dispatch:
@@ -37,9 +43,17 @@ on:
         default: true
         required: false
       confirm:
-        description: 'Apply only: type merge-d90-duplicates (with dry_run false). Ignored on a dry run.'
+        description: 'Apply only: type merge-d90-duplicates (set d90) or merge-codex-cli (set codex), with dry_run false. Ignored on a dry run.'
         type: string
         default: ''
+        required: false
+      merge_set:
+        description: 'Which merge: d90 (the seven D90 rows) or codex (openai-codex-cli into openai-codex, ar-Te2/T76).'
+        type: choice
+        options:
+          - d90
+          - codex
+        default: d90
         required: false
 
 # Read-only: this workflow writes to the database, never to the repository or its issues.
@@ -72,26 +86,34 @@ jobs:
         run: npm ci
 
       # Inputs reach the shell only through `env:`. Only dry_run exactly "false" with the
-      # typed confirmation selects apply; dry_run false with any other confirm fails the job
-      # rather than quietly running as a dry run.
+      # typed confirmation of the chosen set selects apply; dry_run false with any other
+      # confirm fails the job rather than quietly running as a dry run. An unknown set fails
+      # in either mode. Later steps read the set from this step's output only.
       - name: Select mode
         id: mode
         env:
           DRY_RUN: ${{ inputs.dry_run }}
           CONFIRM: ${{ inputs.confirm }}
+          MERGE_SET: ${{ inputs.merge_set }}
         run: |
           set -uo pipefail
+          case "${MERGE_SET:-d90}" in
+            d90) set_name='d90'; expected='merge-d90-duplicates' ;;
+            codex) set_name='codex'; expected='merge-codex-cli' ;;
+            *) echo "::error::merge_set must be d90 or codex; nothing was run"; exit 1 ;;
+          esac
+          echo "set=${set_name}" >> "$GITHUB_OUTPUT"
           if [ "$DRY_RUN" != "false" ]; then
             echo "mode=dry-run" >> "$GITHUB_OUTPUT"
-            echo "Mode: dry run (writes nothing)"
+            echo "Mode: dry run (writes nothing), set ${set_name}"
             exit 0
           fi
-          if [ "$CONFIRM" != "merge-d90-duplicates" ]; then
-            echo "::error::dry_run is false but confirm is not merge-d90-duplicates; nothing was run"
+          if [ "$CONFIRM" != "$expected" ]; then
+            echo "::error::dry_run is false but confirm is not ${expected}; nothing was run"
             exit 1
           fi
           echo "mode=apply" >> "$GITHUB_OUTPUT"
-          echo "Mode: apply"
+          echo "Mode: apply, set ${set_name}"
 
       # Always runs, so an apply is preceded by a fresh plan; exit 1 on an unresolved pair
       # stops the job before the backup and the apply.
@@ -100,10 +122,11 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: production
+          MERGE_SET: ${{ steps.mode.outputs.set }}
         run: |
           set -uo pipefail
           status=0
-          npx tsx scripts/merge-duplicate-tools.ts --dry-run > "$RUNNER_TEMP/d90-dry-run.raw" 2>&1 || status=$?
+          npx tsx scripts/merge-duplicate-tools.ts --dry-run --set "${MERGE_SET:-d90}" > "$RUNNER_TEMP/d90-dry-run.raw" 2>&1 || status=$?
           grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/d90-dry-run.raw" > "$RUNNER_TEMP/d90-dry-run.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/d90-dry-run.raw"
           cat "$RUNNER_TEMP/d90-dry-run.txt"
@@ -118,10 +141,11 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: production
+          MERGE_SET: ${{ steps.mode.outputs.set }}
         run: |
           set -uo pipefail
           status=0
-          npx tsx scripts/merge-duplicate-tools.ts --backup "$RUNNER_TEMP/d90-backup.json" > "$RUNNER_TEMP/d90-backup.raw" 2>&1 || status=$?
+          npx tsx scripts/merge-duplicate-tools.ts --backup "$RUNNER_TEMP/d90-backup.json" --set "${MERGE_SET:-d90}" > "$RUNNER_TEMP/d90-backup.raw" 2>&1 || status=$?
           grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/d90-backup.raw" > "$RUNNER_TEMP/d90-backup.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/d90-backup.raw"
           cat "$RUNNER_TEMP/d90-backup.txt"
@@ -140,10 +164,11 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: production
+          MERGE_SET: ${{ steps.mode.outputs.set }}
         run: |
           set -uo pipefail
           status=0
-          npx tsx scripts/merge-duplicate-tools.ts --apply "$RUNNER_TEMP/d90-backup.json" > "$RUNNER_TEMP/d90-apply.raw" 2>&1 || status=$?
+          npx tsx scripts/merge-duplicate-tools.ts --apply "$RUNNER_TEMP/d90-backup.json" --set "${MERGE_SET:-d90}" > "$RUNNER_TEMP/d90-apply.raw" 2>&1 || status=$?
           grep -v -E '^using [A-Z_]+ \(NODE_ENV=' "$RUNNER_TEMP/d90-apply.raw" > "$RUNNER_TEMP/d90-apply.txt" || [ "$?" -eq 1 ] || exit 2
           rm -f "$RUNNER_TEMP/d90-apply.raw"
           cat "$RUNNER_TEMP/d90-apply.txt"
@@ -157,6 +182,7 @@ jobs:
         if: ${{ always() }}
         env:
           MODE: ${{ steps.mode.outputs.mode }}
+          MERGE_SET: ${{ steps.mode.outputs.set }}
           DRY_RUN_OUTCOME: ${{ steps.dryrun.outcome }}
           BACKUP_OUTCOME: ${{ steps.backup.outcome }}
           APPLY_OUTCOME: ${{ steps.apply.outcome }}
@@ -171,6 +197,7 @@ jobs:
             echo '## D90 duplicate-tool merge'
             echo ''
             echo "- Mode: ${mode_label}"
+            echo "- Set: ${MERGE_SET:-not selected}"
             echo "- Dry run: ${DRY_RUN_OUTCOME:-not run}"
             echo "- Backup: ${BACKUP_OUTCOME:-not run}"
             echo "- Apply: ${APPLY_OUTCOME:-not run}"
@@ -186,6 +213,7 @@ jobs:
             echo '```'
             if [ "${MODE:-}" = 'dry-run' ]; then
               echo ''
-              echo "Dry run only. To apply, re-dispatch with \`dry_run: false\` and \`confirm: merge-d90-duplicates\`."
+              if [ "${MERGE_SET:-}" = 'codex' ]; then confirm_hint='merge-codex-cli'; else confirm_hint='merge-d90-duplicates'; fi
+              echo "Dry run only. To apply, re-dispatch with the same \`merge_set\`, \`dry_run: false\` and \`confirm: ${confirm_hint}\`."
             fi
           } >> "$GITHUB_STEP_SUMMARY"

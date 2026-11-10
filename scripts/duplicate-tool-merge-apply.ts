@@ -28,7 +28,8 @@ import {
 export interface MergeBackup {
   kind: typeof BACKUP_KIND;
   version: typeof BACKUP_VERSION;
-  ruling: "D90";
+  /** "D90", or the ruling of another merge set (`MERGE_SETS`). */
+  ruling: string;
   database_fingerprint: string;
   taken_at: string;
   pairs: MergePair[];
@@ -45,7 +46,8 @@ export async function takeBackup(
   q: Queryable,
   pairs: readonly MergePair[],
   fingerprint: string,
-  now: Date = new Date()
+  now: Date = new Date(),
+  ruling = "D90"
 ): Promise<MergeBackup> {
   const slugs = [...new Set(pairs.flatMap((p) => [p.oldSlug, p.newSlug]))];
   const tools = await rowsOf(q, `SELECT to_jsonb(t) AS row FROM public."tools" t WHERE t.slug = ANY($1::text[]) ORDER BY t.slug`, [slugs]);
@@ -65,7 +67,7 @@ export async function takeBackup(
   return {
     kind: BACKUP_KIND,
     version: BACKUP_VERSION,
-    ruling: "D90",
+    ruling,
     database_fingerprint: fingerprint,
     taken_at: now.toISOString(),
     pairs: [...pairs],
@@ -83,8 +85,8 @@ export type BackupVerdict = { ok: true } | { ok: false; reason: string };
  * Why: "refuses to run without a fresh backup" — a stale or foreign backup cannot restore
  *   the rows this apply changes.
  * What: refuses unparseable JSON, another kind or version, another database fingerprint,
- *   a `taken_at` in the future or older than `maxAgeMs`, and any planned row id the
- *   backup does not hold.
+ *   a `taken_at` in the future or older than `maxAgeMs`, any planned row id the
+ *   backup does not hold, and (Codex-merge) a backup taken for another merge set's ruling.
  * Test: `tests/unit/duplicate-tool-merge-d90.test.ts` ("backup gate").
  */
 export function checkBackup(
@@ -92,7 +94,8 @@ export function checkBackup(
   fingerprint: string,
   plan: MergePlan,
   now: Date = new Date(),
-  maxAgeMs: number = MAX_BACKUP_AGE_MS
+  maxAgeMs: number = MAX_BACKUP_AGE_MS,
+  ruling = "D90"
 ): BackupVerdict {
   let backup: Partial<MergeBackup>;
   try {
@@ -102,6 +105,8 @@ export function checkBackup(
   }
   if (backup.kind !== BACKUP_KIND || backup.version !== BACKUP_VERSION) return { ok: false, reason: "the file is not a D90 merge backup" };
   if (backup.database_fingerprint !== fingerprint) return { ok: false, reason: "the backup is from another database" };
+  // Codex-merge: a D90 backup does not license the Codex merge, nor the reverse.
+  if (backup.ruling !== ruling) return { ok: false, reason: `the backup was taken for ${String(backup.ruling)}, not ${ruling}` };
   const age = now.getTime() - Date.parse(String(backup.taken_at));
   if (!Number.isFinite(age) || age < 0 || age > maxAgeMs) {
     return { ok: false, reason: `the backup is not fresh (must be under ${maxAgeMs / 3_600_000} h old)` };
@@ -119,6 +124,17 @@ export function checkBackup(
 }
 
 export class MergeRefusedError extends Error {}
+
+/** Codex-merge: what one merge set adds to the shared apply. D90 passes none of it. */
+export interface ApplyOptions {
+  /** Written into `data.redirect_reason` as "<ruling>: merged into <slug>". Default "D90". */
+  ruling?: string;
+  /**
+   * Runs inside the transaction after the plan and backup checks and before the old
+   * rows are retired. A throw rolls back every write.
+   */
+  patch?: (tx: Queryable, plan: MergePlan) => Promise<void>;
+}
 
 /** Rows still on an old id, or old rows not retired, after the writes; empty when done. */
 export function remainingWork(pairs: readonly MergePair[], state: MergeState): string[] {
@@ -147,8 +163,10 @@ export function remainingWork(pairs: readonly MergePair[], state: MergeState): s
 export async function applyMerge(
   db: MergeDb,
   pairs: readonly MergePair[],
-  readBackupVerdict: (plan: MergePlan) => BackupVerdict
+  readBackupVerdict: (plan: MergePlan) => BackupVerdict,
+  options: ApplyOptions = {}
 ): Promise<MergePlan> {
+  const ruling = options.ruling ?? "D90";
   return db.transaction(async (tx) => {
     const plan = planMerge(pairs, await loadMergeState(tx, pairs, true));
     if (plan.totals.unresolved > 0) throw new MergeRefusedError(`${plan.totals.unresolved} pair(s) unresolved`);
@@ -172,12 +190,13 @@ export async function applyMerge(
     for (const m of metrics.filter((m) => m.action === "repoint")) {
       await tx.query(`UPDATE public."tool_metrics_history" SET tool_id = $2::uuid, updated_at = now() WHERE id = $1::uuid`, [m.rowId, m.newToolId]);
     }
+    if (options.patch) await options.patch(tx, plan);
     for (const p of plan.pairs.filter((p) => p.retire && p.oldId)) {
       await tx.query(
         `UPDATE public."tools" SET status = '${RETIRED_STATUS}', updated_at = now(),
            data = data || jsonb_build_object('redirect_to', $2::text, 'redirect_reason', $3::text, 'previous_status', status)
          WHERE id = $1::uuid AND status <> '${RETIRED_STATUS}'`,
-        [p.oldId, p.newSlug, `D90: merged into ${p.newSlug}`]
+        [p.oldId, p.newSlug, `${ruling}: merged into ${p.newSlug}`]
       );
     }
 
