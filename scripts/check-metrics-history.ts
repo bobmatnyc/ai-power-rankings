@@ -49,14 +49,17 @@ export const COVERAGE_QUERY =
   "SELECT (SELECT count(*) FROM tools)::int AS tools, (SELECT count(*) FROM tool_metrics_history WHERE collected_date = $1::date)::int AS rows";
 // #95: per part, a tool is unchanged when every leaf `value` matches the previous
 // collected_date's (`as_of` is ignored). Only the two counts leave the database.
+// #95: the previous date is per part, as in PART_COVERAGE_QUERY, so an off-day row does
+// not leave the other parts with nothing to compare.
 export const FLAT_QUERY =
   "SELECT part, count(*)::int AS compared, (count(*) FILTER (WHERE same))::int AS unchanged FROM (" +
   "SELECT p.part AS part, " +
   "(SELECT jsonb_object_agg(e.key, e.value -> 'value') FROM jsonb_each(cur.metrics -> p.part) AS e) IS NOT DISTINCT FROM " +
   "(SELECT jsonb_object_agg(e.key, e.value -> 'value') FROM jsonb_each(prev.metrics -> p.part) AS e) AS same " +
-  "FROM tool_metrics_history cur JOIN tool_metrics_history prev ON prev.tool_id = cur.tool_id " +
-  "AND prev.collected_date = (SELECT max(collected_date) FROM tool_metrics_history WHERE collected_date < $1::date) " +
-  "CROSS JOIN unnest($2::text[]) AS p(part) " +
+  "FROM tool_metrics_history cur CROSS JOIN unnest($2::text[]) AS p(part) " +
+  "JOIN tool_metrics_history prev ON prev.tool_id = cur.tool_id " +
+  "AND prev.collected_date = (SELECT max(h.collected_date) FROM tool_metrics_history h " +
+  "WHERE h.collected_date < $1::date AND jsonb_typeof(h.metrics -> p.part) = 'object') " +
   "WHERE cur.collected_date = $1::date AND jsonb_typeof(cur.metrics -> p.part) = 'object' " +
   "AND jsonb_typeof(prev.metrics -> p.part) = 'object'" +
   ") AS t GROUP BY part";

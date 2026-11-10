@@ -1,5 +1,5 @@
 /**
- * #95: the per-part coverage floor's eligibility query on real Postgres (PGlite).
+ * #95: the per-part coverage floor and flat-value queries on real Postgres (PGlite).
  *
  * Why: two writers date history rows on a day other than the 1st: the open-weight
  *   collection (`scripts/collect-open-weight-metrics.ts --apply`) and a manual re-run of a
@@ -8,8 +8,8 @@
  *   the report printed "no eligible tools" with the floor off.
  * What: builds minimal `tools` and `tool_metrics_history` tables, inserts a full collection
  *   on 2026-10-01, an open-weight row on 2026-10-15 and an npm-only re-run row on 2026-10-20,
- *   then runs the real `PART_COVERAGE_QUERY`. Each part must read its own latest earlier
- *   date, and the rendered report must fail the parts nobody recorded on 2026-11-01.
+ *   then runs the real `PART_COVERAGE_QUERY` and `FLAT_QUERY`. Each part must read its own
+ *   latest earlier date, and the rendered report must fail the parts nobody recorded on 2026-11-01.
  * Test: `npx vitest run tests/unit/metrics-part-coverage-pglite-95.test.ts`. No server, no network.
  */
 
@@ -18,7 +18,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GITHUB_URL_PATHS } from "../../lib/metrics-collectors/github";
 import { COLLECTOR_PARTS } from "../../lib/metrics-collectors/registry";
 import { renderMetricsHistoryReport } from "../../lib/metrics-history/check-report";
-import { PART_COVERAGE_QUERY } from "../../scripts/check-metrics-history";
+import { FLAT_QUERY, PART_COVERAGE_QUERY } from "../../scripts/check-metrics-history";
 
 vi.setConfig({ testTimeout: 60_000 });
 
@@ -28,7 +28,7 @@ const C = "00000000-0000-4000-8000-00000000000c";
 
 const leaf = { value: 1, source: "https://example.com", as_of: "2026-10-01" };
 
-describe("PART_COVERAGE_QUERY previous collection (#95)", () => {
+describe("PART_COVERAGE_QUERY and FLAT_QUERY previous collection (#95)", () => {
   let pg: PGlite;
 
   beforeEach(async () => {
@@ -96,5 +96,24 @@ describe("PART_COVERAGE_QUERY previous collection (#95)", () => {
     expect(report).not.toContain("no eligible tools");
     expect(report).toMatch(/pypi: 0 of 1 eligible \(0%\) FAIL/);
     expect(exitCode).toBe(3);
+  });
+
+  it("compares each part with its own latest earlier collection in the flat check", async () => {
+    // B was recorded again on the checked date with October's pypi and vscode values.
+    await pg.query("INSERT INTO tool_metrics_history (tool_id, collected_date, metrics) VALUES ($1, $2, $3::jsonb)", [
+      B,
+      "2026-11-01",
+      JSON.stringify({ pypi: { downloads: leaf }, vscode: { installs: leaf } }),
+    ]);
+    const result = await pg.query<{ part: string; compared: number; unchanged: number }>(FLAT_QUERY, [
+      "2026-11-01",
+      [...COLLECTOR_PARTS],
+    ]);
+    const byPart = Object.fromEntries(result.rows.map((r) => [r.part, { compared: r.compared, unchanged: r.unchanged }]));
+    expect(byPart).toEqual({
+      npm: { compared: 1, unchanged: 1 },
+      pypi: { compared: 1, unchanged: 1 },
+      vscode: { compared: 1, unchanged: 1 },
+    });
   });
 });
