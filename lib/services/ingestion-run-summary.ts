@@ -27,6 +27,8 @@ export interface IngestionRunCounts {
   candidates: number;
   urlDuplicates: number;
   semanticDuplicates: number;
+  /** #366: the part of `semanticDuplicates` dropped as the same event (isSameEvent), not for title similarity. */
+  sameEventDuplicates: number;
   /** Candidates with article content ready for assessment. */
   fetched: number;
   /** Candidates dropped before assessment, including blocked domains. */
@@ -152,6 +154,7 @@ export function emptyRunCounts(): IngestionRunCounts {
     candidates: 0,
     urlDuplicates: 0,
     semanticDuplicates: 0,
+    sameEventDuplicates: 0,
     fetched: 0,
     fetchFailed: 0,
     blockedDomain: 0,
