@@ -1,9 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { loadListBoard } from "@/lib/rankings/list-board";
-import { listFromSlug, type RankingList } from "@/lib/rankings/lists";
-import { isRankingListVisible } from "@/lib/rankings/model-page-visibility";
-import { RankingListPage, rankingListMetadata } from "../ranking-list-page";
+import { RankingListPage, rankingListMetadata, shownRankingList } from "../ranking-list-page";
 
 /**
  * `/<locale>/rankings/<slug>`: one list's ranking page (#186).
@@ -19,19 +15,9 @@ interface PageProps {
   params: Promise<{ lang: string; list: string }>;
 }
 
-/** The list for `slug`, or a 404 for an unknown slug or a hidden models page (D6e). */
-async function shownList(slug: string): Promise<RankingList> {
-  const list = listFromSlug(slug);
-  if (!list) notFound();
-  // D6e: hide model page until model metrics land; a thrown read fails the render (ISR keeps the last good page), see #369
-  if (list === "model") await loadListBoard(list);
-  if (!(await isRankingListVisible(list))) notFound();
-  return list;
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, list: slug } = await params;
-  const list = await shownList(slug);
+  const list = await shownRankingList(slug);
   return rankingListMetadata(lang, list);
 }
 
@@ -43,6 +29,6 @@ export function generateStaticParams(): Array<{ lang: string; list: string }> {
 
 export default async function RankingListRoute({ params }: PageProps): Promise<React.JSX.Element> {
   const { lang, list: slug } = await params;
-  const list = await shownList(slug);
+  const list = await shownRankingList(slug);
   return RankingListPage({ lang, list });
 }

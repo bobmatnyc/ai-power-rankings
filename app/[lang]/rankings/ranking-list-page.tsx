@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import Script from "next/script";
 import { Suspense } from "react";
 import RankingsGrid from "@/components/ranking/rankings-grid";
@@ -12,13 +13,14 @@ import { loadListBoard } from "@/lib/rankings/list-board";
 import {
   DEFAULT_RANKING_LIST,
   INDEX_MIN_ENTRIES,
+  listFromSlug,
   listHasMetricsPendingNote,
   listHasProvisionalNote,
   type RankingList,
   type RankingListMeta,
   rankingListPath,
 } from "@/lib/rankings/lists";
-import { visibleRankingLists } from "@/lib/rankings/model-page-visibility";
+import { isRankingListVisible, visibleRankingLists } from "@/lib/rankings/model-page-visibility";
 import { rankingMethodAnswer } from "@/lib/rankings/method-answer";
 import { createJsonLdScript, generateBreadcrumbSchema, generateRankingFAQSchema } from "@/lib/schema";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
@@ -41,9 +43,27 @@ import { siteOrigin } from "@/lib/site-origin";
  *   D53 short-list note, and the grid seeded with the list's rows.
  *   #368: both read the board through `loadListBoard()` (the database, as
  *   `/api/rankings` does), so the page is ISR with no self-fetch.
+ *   #195: `RankingListPage` with `openWeightOnly` renders the open-weight models board
+ *   (`/rankings/models?open=1`); with no open-weight row it shows `lists.openWeightEmpty`
+ *   and no grid, since an empty grid fetches the full board on the client.
  * Test: `tests/unit/ranking-list-pages-186.test.tsx`,
- *   `tests/unit/seo-canonical-origin.test.ts` (the `/rankings` page).
+ *   `tests/unit/seo-canonical-origin.test.ts` (the `/rankings` page),
+ *   `tests/unit/rankings-open-weight-195.test.ts`.
  */
+
+/**
+ * The list for `slug`, or a 404 for an unknown slug or a hidden models page (D6e).
+ * #195: moved here from `[list]/page.tsx` so the open-weight route shares it (a page
+ * file may export only Next's page fields).
+ */
+export async function shownRankingList(slug: string): Promise<RankingList> {
+  const list = listFromSlug(slug);
+  if (!list) notFound();
+  // D6e: hide model page until model metrics land; a thrown read fails the render (ISR keeps the last good page), see #369
+  if (list === "model") await loadListBoard(list);
+  if (!(await isRankingListVisible(list))) notFound();
+  return list;
+}
 
 /** #329: the board's count of active rows with metrics; 0 (fail closed) when absent or malformed. */
 function metricRowsOf(meta: RankingListMeta | null): number {
@@ -137,11 +157,20 @@ export async function rankingListMetadata(lang: string, list: RankingList): Prom
 }
 
 /** One list's ranking page body (#186). */
-export async function RankingListPage({ lang, list }: { lang: string; list: RankingList }): Promise<React.JSX.Element> {
+export async function RankingListPage({
+  lang,
+  list,
+  openWeightOnly = false,
+}: {
+  lang: string;
+  list: RankingList;
+  openWeightOnly?: boolean;
+}): Promise<React.JSX.Element> {
   const dict = await getDictionary(lang as Locale);
   // #368: read directly, replacing the /api/rankings self-fetch.
   const [{ rankings: initialRankings, meta, header }, navLists] = await Promise.all([
-    loadListBoard(list),
+    // #195: the open-weight board for `?open=1`; the unfiltered page reads as before.
+    openWeightOnly ? loadListBoard(list, true) : loadListBoard(list),
     // D6e: hide model page until model metrics land
     visibleRankingLists(),
   ]);
@@ -218,6 +247,12 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
           </p>
         )}
 
+        {/* #195: an empty open-weight board says so; an empty grid would fetch the full board client-side. */}
+        {openWeightOnly && initialRankings.length === 0 ? (
+          <p data-note="open-weight-empty" className="text-muted-foreground">
+            {listText.openWeightEmpty}
+          </p>
+        ) : (
         <Suspense
           fallback={
             <div className="flex items-center justify-center h-64">
@@ -234,6 +269,7 @@ export async function RankingListPage({ lang, list }: { lang: string; list: Rank
             modelsListed={modelsVisible}
           />
         </Suspense>
+        )}
 
         {/* SEO-Optimized Content Sections */}
         <aside className="mt-12 space-y-8" aria-label="Additional information">

@@ -935,10 +935,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-09076900a243",
+    "version": "Unreleased",
+    "date": "2026-11-11T11:46:56.043Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "rankings",
+    "title": "/[lang]/rankings/models?open=1 ranks only open-weight models (#195)",
+    "description": "`/[lang]/rankings/models?open=1` ranks only open-weight models (#195). It keeps the models board's rows whose `tools.open_weight` column is true, ranked 1..n with previous ranks renumbered among them; a NULL column counts as not open-weight. The middleware rewrites `?open=1` to a static route (`/[lang]/rankings/models/open-weight`, which itself answers a 308 to `?open=1`), so `/rankings/models` stays ISR and reads no `searchParams`. The view's canonical is the unfiltered `/[lang]/rankings/models`, the pattern of the other query-param views (`/tools?category=`, `/trending?months=`), and it is not in the sitemap. With no open-weight model it says \"No open-weight models are ranked yet.\" (`rankings.lists.openWeightEmpty`, all 10 locales) instead of the grid. The unfiltered page, `/api/rankings` and the sitemap are unchanged. Test: `tests/unit/rankings-open-weight-195.test.ts`",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-3c7d66be89c1",
     "version": "Unreleased",
-    "date": "2026-11-11T06:46:01.608Z",
-    "dateSource": "build",
+    "date": "2026-11-11T07:26:34.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "ingestion",
     "title": "news tool mentions map through the tools catalogue, not the hard-coded ToolMapper alias list and fuzzy matcher, which…",
