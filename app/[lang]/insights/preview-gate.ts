@@ -20,6 +20,21 @@ export function insightsPreviewEnabled(env: Record<string, string | undefined> =
   return env.INSIGHTS_PREVIEW === "true";
 }
 
+/**
+ * Whether `/[lang]/news/<slug>` renders the #198 Article template.
+ *
+ * Why: #198: the template rewrites every indexed news page, so it launches on
+ * its own flag, not with `INSIGHTS_PREVIEW` (critic note on #421). The
+ * template reads only the news article, so it needs no Insights code path and
+ * does not require `INSIGHTS_PREVIEW`.
+ * What: true only when `INSIGHTS_ARTICLE_TEMPLATE` is exactly `"true"`, read at
+ * request time. Unset, empty or any other value is off.
+ * Test: `tests/unit/insights-launch-flags-198.test.ts`, `tests/unit/article-template-198.test.tsx`.
+ */
+export function insightsArticleTemplateEnabled(env: Record<string, string | undefined> = process.env): boolean {
+  return env.INSIGHTS_ARTICLE_TEMPLATE === "true";
+}
+
 /** #198: answers 404 (the `[lang]` not-found page) unless the preview flag is on; call before any read. */
 export function requireInsightsPreview(): void {
   if (!insightsPreviewEnabled()) notFound();
@@ -44,6 +59,9 @@ export function insightsNavProps(
 export const INSIGHTS_TITLE = "Insights | AI Power Rankings";
 
 const SITE_NAME = "AI Power Rankings";
+
+// #198: the robots of an Insights page while INSIGHTS_PREVIEW is off.
+const NOINDEX = { index: false, follow: false, googleBot: { index: false, follow: false } };
 
 /** #198: the channel title of each cadence's feed; the feed and the page head share it. */
 export const INSIGHTS_FEED_TITLES = {
@@ -83,22 +101,22 @@ export interface InsightDates {
 }
 
 /**
- * Metadata for an `/[lang]/insights` page while it is a preview.
+ * Metadata for an `/[lang]/insights` page.
  *
- * Why: #198: the preview must stay out of search until #191 releases the
- * held `/whats-new` redirects with the launch, so every Insights page is
- * `noindex`. The body is English in every locale, so it follows the #156
- * English-only rule (an `/en` canonical, no hreflang). The rest is the
- * metadata an indexable page needs, so the launch only drops `robots`.
+ * Why: #198: the pages stay out of search until launch (#384), and the launch
+ * is the `INSIGHTS_PREVIEW` flip, so the flag lifts the noindex. The body is
+ * English in every locale, so it follows the #156 English-only rule (an `/en`
+ * canonical, no hreflang).
  * What: absolute `title`, `description`, `robots` noindex/nofollow (also for
- * googleBot), `englishOnlyAlternates(lang, path)` with `insightsFeedLinks(lang)`
+ * googleBot) only while `insightsPreviewEnabled()` is false and no `robots`
+ * when it is true, `englishOnlyAlternates(lang, path)` with `insightsFeedLinks(lang)`
  * appended to its RSS types, an `openGraph` whose `url` is that canonical,
  * whose `locale` is `en` and whose `siteName` is the site, and a `summary`
  * Twitter card. With `dates` (a weekly or monthly permalink) the Open Graph
  * `type` is `article`, `publishedTime` is `createdAt` and `modifiedTime` the
  * later of `generatedAt` and `createdAt`; without (the hub), `website`.
  * Test: `tests/unit/insights-weekly-198.test.tsx`, `tests/unit/insights-sitemap-198.test.ts`,
- * `tests/unit/insights-launch-198.test.tsx`.
+ * `tests/unit/insights-launch-198.test.tsx`, `tests/unit/insights-launch-flags-198.test.ts`.
  */
 export function insightsPreviewMetadata(
   lang: string,
@@ -121,8 +139,8 @@ export function insightsPreviewMetadata(
   return {
     title: { absolute: title },
     description,
-    // #198: noindex until the Insights launch; see #191 for the held redirects.
-    robots: { index: false, follow: false, googleBot: { index: false, follow: false } },
+    // #198: noindex until the launch; the INSIGHTS_PREVIEW flip is the launch and lifts it (#384).
+    ...(insightsPreviewEnabled() ? {} : { robots: NOINDEX }),
     // #198: indexable metadata; a permalink is a dated article, the hub a website.
     openGraph: dates
       ? {

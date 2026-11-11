@@ -77,10 +77,11 @@ describe("indexable metadata of the Insight pages (#198)", () => {
   it.each([
     ["weekly", "weekly/[week]", { week: "2026-W44" }, "/en/insights/weekly/2026-W44", "Weekly insight: Oct 26 to Nov 1, 2026"],
     ["monthly", "monthly/[month]", { month: "2026-10" }, "/en/insights/monthly/2026-10", "Monthly insight: October 2026"],
-  ])("%s: an article Open Graph and Twitter card, still noindex", async (_c, route, p, path, headline) => {
+  ])("%s: an article Open Graph and Twitter card, indexable with the flag on", async (_c, route, p, path, headline) => {
     const page = await import(`../../app/[lang]/insights/${route}/page`);
     const meta = await page.generateMetadata(params({ lang: "ko", ...p }));
-    expect(meta.robots).toMatchObject({ index: false, follow: false });
+    // #198: the flag flip is the launch and lifts the noindex.
+    expect(meta.robots).toBeUndefined();
     expect(meta.alternates?.canonical).toBe(`${ORIGIN}${path}`);
     expect(meta.openGraph).toMatchObject({
       type: "article",
@@ -118,10 +119,11 @@ describe("indexable metadata of the Insight pages (#198)", () => {
     expect(meta.openGraph).toMatchObject({ modifiedTime: CREATED.toISOString() });
   });
 
-  it("the hub is a website Open Graph, still noindex", async () => {
+  it("the hub is a website Open Graph, indexable with the flag on", async () => {
     const hub = await import("../../app/[lang]/insights/page");
     const meta = await hub.generateMetadata(params({ lang: "en" }));
-    expect(meta.robots).toMatchObject({ index: false, follow: false });
+    // #198: the flag flip is the launch and lifts the noindex.
+    expect(meta.robots).toBeUndefined();
     expect(meta.openGraph).toMatchObject({ type: "website", url: `${ORIGIN}/en/insights` });
   });
 });

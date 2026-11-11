@@ -55,7 +55,7 @@ function monthlyMetadata(lang: string, month: string, report: Awaited<ReturnType
 /**
  * Metadata for `/[lang]/insights/monthly/<month>` (#198).
  *
- * What: `insightsPreviewMetadata()`: noindex, the `/en` canonical, no hreflang,
+ * What: `insightsPreviewMetadata()`: indexable (#198), the `/en` canonical, no hreflang,
  * the month in the title, the report's first sentence as the description and
  * an `article` Open Graph dated by the report.
  * Test: `tests/unit/insights-monthly-198.test.tsx`, `tests/unit/insights-launch-198.test.tsx`.

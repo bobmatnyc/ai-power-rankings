@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
-import { insightsPreviewEnabled } from "@/app/[lang]/insights/preview-gate";
+import { insightsArticleTemplateEnabled } from "@/app/[lang]/insights/preview-gate";
 import { ArticleTemplate } from "@/components/news/article-template";
 import NewsDetailContent from "@/components/news/news-detail-content";
 import type { Locale } from "@/i18n/config";
@@ -104,8 +104,8 @@ export default async function NewsArticlePage({ params }: PageProps): Promise<Re
   // Fetch the article data
   const { article, tool, tools } = await fetchArticle(slug);
 
-  // #198: the Article template replaces the detail view only while INSIGHTS_PREVIEW is on.
-  if (insightsPreviewEnabled()) {
+  // #198: the Article template has its own flag so the Insights launch leaves indexed news pages as they are (#421).
+  if (insightsArticleTemplateEnabled()) {
     return (
       <main className="container mx-auto max-w-3xl px-4 py-8">
         <ArticleTemplate lang={lang} article={article} tool={tool} tools={tools} />

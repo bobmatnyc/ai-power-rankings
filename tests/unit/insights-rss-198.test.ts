@@ -6,7 +6,7 @@ import { insightsLinksOutsideInsights } from "./insights-198-links";
  * The Insights RSS feeds, slice 3 of #198.
  *
  * Why: #198 adds one RSS 2.0 feed per cadence behind the slice 1 flag. With the
- * flag off they 404; with it on they carry `X-Robots-Tag: noindex` (the page-head
+ * flag off they 404 with `X-Robots-Tag: noindex`; with it on (the launch) they carry no `X-Robots-Tag` (the page-head
  * links are in `tests/unit/insights-sitemap-198.test.ts`), and a failed read is a 5xx, never an empty feed.
  * What: calls the real route handlers with the #181 and #182 readers replaced
  * by in-memory fixtures, and parses each feed as XML with jsdom's XML parser,
@@ -96,6 +96,8 @@ describe("Insights RSS flag gate (#198)", () => {
     vi.stubEnv("INSIGHTS_PREVIEW", "");
     const response = await feed(cadence);
     expect(response.status).toBe(404);
+    // #198: noindex stays while the flag is off.
+    expect(response.headers.get("X-Robots-Tag")).toContain("noindex");
     expect(response.headers.get("Content-Type")).not.toContain("rss");
     expect(weekly.listDigests).not.toHaveBeenCalled();
     expect(monthly.listPeriods).not.toHaveBeenCalled();
@@ -110,11 +112,11 @@ describe("Insights RSS flag gate (#198)", () => {
 });
 
 describe("/[lang]/insights/weekly/rss.xml (#198)", () => {
-  it("is valid noindex RSS 2.0 with absolute /en permalinks on the canonical origin, newest first", async () => {
+  it("is valid indexable RSS 2.0 (no X-Robots-Tag) with absolute /en permalinks on the canonical origin, newest first", async () => {
     const response = await feed("weekly", "ko");
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toBe("application/rss+xml; charset=utf-8");
-    expect(response.headers.get("X-Robots-Tag")).toContain("noindex");
+    expect(response.headers.get("X-Robots-Tag")).toBeNull(); // #198: the flag flip is the launch
     const xml = await response.text();
     const doc = parse(xml);
     expect(doc.documentElement.nodeName).toBe("rss");
@@ -177,11 +179,11 @@ describe("/[lang]/insights/weekly/rss.xml (#198)", () => {
 });
 
 describe("/[lang]/insights/monthly/rss.xml (#198)", () => {
-  it("is valid noindex RSS 2.0 with absolute /en permalinks on the canonical origin, newest first", async () => {
+  it("is valid indexable RSS 2.0 (no X-Robots-Tag) with absolute /en permalinks on the canonical origin, newest first", async () => {
     vi.stubEnv("NEXT_PUBLIC_BASE_URL", "https://example.org/");
     const response = await feed("monthly", "de");
     expect(response.status).toBe(200);
-    expect(response.headers.get("X-Robots-Tag")).toContain("noindex");
+    expect(response.headers.get("X-Robots-Tag")).toBeNull(); // #198: the flag flip is the launch
     const doc = parse(await response.text());
     expect(doc.documentElement.getAttribute("version")).toBe("2.0");
     expect(items(doc)).toEqual([
