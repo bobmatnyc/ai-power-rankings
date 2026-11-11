@@ -35,6 +35,8 @@ export async function generateToolMetadata(slug: string, lang: string): Promise<
       updated_at: toolData.updated_at || new Date().toISOString(),
       tags: toolData.tags,
       info: toolData.info as ToolInfo,
+      // #424: the kind picks the title and description wording.
+      kind: (toolData as Record<string, unknown>)["kind"],
     };
 
     // #156: the locale builds the page's own canonical, og:url and hreflang.
