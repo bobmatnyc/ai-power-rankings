@@ -53,7 +53,7 @@ function weeklyMetadata(lang: string, week: string, digest: Awaited<ReturnType<t
 /**
  * Metadata for `/[lang]/insights/weekly/<week>` (#198).
  *
- * What: `insightsPreviewMetadata()`: noindex, the `/en` canonical, the week range
+ * What: `insightsPreviewMetadata()`: indexable (#198), the `/en` canonical, the week range
  * in the title, the digest's first sentence as the description and an
  * `article` Open Graph dated by the digest row.
  * Test: `tests/unit/insights-weekly-198.test.tsx`, `tests/unit/insights-launch-198.test.tsx`.
