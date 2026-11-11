@@ -73,16 +73,15 @@ describe("mapToolMentionsToCatalogue (#187)", () => {
 
   it("leaves a name the catalogue lacks unmapped, never fuzzy-matched to another tool", async () => {
     const { mentions, report } = await mapToolMentionsToCatalogue([
-      mention("Claude"), // ToolMapper sent this to "Claude Code"
-      mention("Google Gemini"), // ToolMapper sent this to "Google Jules"
+      mention("Google Gemini"), // the old fuzzy matcher sent this to "Google Jules"; fuzzy matching is not kept
       mention("Old Tool"), // an inactive row is not a target
       mention("Cursor"),
     ]);
-    expect(mentions.map((m) => m.tool)).toEqual(["Claude", "Google Gemini", "Old Tool", "Cursor"]);
+    expect(mentions.map((m) => m.tool)).toEqual(["Google Gemini", "Old Tool", "Cursor"]);
     expect(report).toMatchObject({
       mapped: 1,
-      unmapped: 3,
-      unmappedNames: ["Claude", "Google Gemini", "Old Tool"],
+      unmapped: 2,
+      unmappedNames: ["Google Gemini", "Old Tool"],
       articleUnmapped: false,
     });
   });
@@ -125,7 +124,7 @@ describe("AIAnalyzer maps the model's tool mentions through the catalogue (#187)
     source: "example.com",
     category: "Code Assistant",
     tags: [],
-    tool_mentions: [mention("cursor"), mention("Claude")],
+    tool_mentions: [mention("cursor"), mention("Google Gemini")],
     company_mentions: [],
     overall_sentiment: 0.1,
     importance_score: 5,
@@ -152,8 +151,8 @@ describe("AIAnalyzer maps the model's tool mentions through the catalogue (#187)
       )
     );
     const result = await new AIAnalyzer().analyzeContent("body");
-    expect(result.tool_mentions.map((m) => m.tool)).toEqual(["Cursor", "Claude"]);
-    expect(result.toolMapping).toMatchObject({ mapped: 1, unmapped: 1, unmappedNames: ["Claude"], articleUnmapped: false });
+    expect(result.tool_mentions.map((m) => m.tool)).toEqual(["Cursor", "Google Gemini"]);
+    expect(result.toolMapping).toMatchObject({ mapped: 1, unmapped: 1, unmappedNames: ["Google Gemini"], articleUnmapped: false });
   });
 });
 
