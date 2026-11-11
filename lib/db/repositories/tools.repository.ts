@@ -3,7 +3,7 @@
  * Handles data access for AI tools from PostgreSQL database
  */
 
-import { asc, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "../connection";
 import { type NewTool, type Tool, tools } from "../schema";
 import { BaseRepository, type QueryOptions } from "./base.repository";
@@ -82,6 +82,27 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       .from(tools)
       .where(inArray(tools.id, uuids));
     return new Map(rows.map((row) => [row.id, row.status]));
+  }
+
+  /**
+   * #195: the row UUIDs among `dbIds` whose `tools.open_weight` COLUMN is true.
+   *
+   * Why: the `?open=1` models board keeps only open-weight models; the column is the
+   *   source (migration 0016), and NULL (unknown) is not open-weight.
+   * What: one query selecting `id` where the id is in `dbIds` (non-UUIDs skipped) and
+   *   `open_weight = true`. Read-only; throws when there is no database or the read fails.
+   * Test: `tests/unit/rankings-open-weight-195.test.ts`.
+   */
+  async findOpenWeightIds(dbIds: string[]): Promise<Set<string>> {
+    const db = getDb();
+    if (!db) throw new Error("Database not connected");
+    const uuids = [...new Set(dbIds.filter(isUuid))];
+    if (uuids.length === 0) return new Set();
+    const rows = await db
+      .select({ id: tools.id })
+      .from(tools)
+      .where(and(inArray(tools.id, uuids), eq(tools.openWeight, true)));
+    return new Set(rows.map((row) => row.id));
   }
 
   /**

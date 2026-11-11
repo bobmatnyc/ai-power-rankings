@@ -219,6 +219,8 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
       smallListNote: "",
       modelsMetricsPendingNote: "",
       empty: "",
+      // #195: the empty /rankings/models?open=1 board
+      openWeightEmpty: "",
     },
     // #280: the card's v7.6 copy is gone; it renders `methodologyV8` text and keeps this link label.
     algorithm: {
