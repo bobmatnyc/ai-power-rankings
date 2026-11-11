@@ -953,7 +953,7 @@ export class RankingsCalculator {
    * Identify new tools and companies from analysis
    */
   identifyNewEntities(
-    analysis: AIAnalysisResult,
+    analysis: AIAnalysisResult & { toolMapping?: ToolMappingReport },
     existingTools: string[],
     existingCompanies: string[]
   ): {
@@ -967,6 +967,10 @@ export class RankingsCalculator {
     for (const mention of analysis.tool_mentions) {
       // #187: the analyzer already mapped the name through the catalogue (see calculateRankingChanges).
       const normalizedToolName = mention.tool;
+      // #187: a name the catalogue lookup left unmapped is counted and logged, never queued as a new
+      // tool (ArticleDatabaseService would insert a pending_review row). Without a report we cannot
+      // show the name mapped, so it is skipped too.
+      if (!analysis.toolMapping || analysis.toolMapping.unmappedNames.includes(mention.tool)) continue;
       if (!existingTools.includes(normalizedToolName) && !existingTools.includes(mention.tool)) {
         // Determine category based on tool name or context
         const category = this.inferToolCategory(mention.tool, mention.context);
@@ -1272,6 +1276,7 @@ export class ArticleIngestionService {
               importance_score: analysis.importance_score,
               overall_sentiment: analysis.overall_sentiment,
               tool_mentions: analysis.tool_mentions,
+              toolMapping: analysis.toolMapping, // #187: lets identifyNewEntities skip unmapped names
               company_mentions: analysis.company_mentions,
               published_date: analysis.published_date,
             },
