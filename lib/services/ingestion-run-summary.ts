@@ -42,6 +42,10 @@ export interface IngestionRunCounts {
   /** Rows actually inserted into the articles table (always 0 on a dry run). */
   added: number;
   ingestFailed: number;
+  /** #187: ingested articles none of whose tool mentions reached a catalogue tool (includes no mentions). */
+  unmappedArticles: number;
+  /** #187: the part of `unmappedArticles` whose catalogue read failed or came back empty. */
+  toolCatalogueFailures: number;
   /** #172: why the `rejected` candidates were rejected; sums to `rejected`. */
   rejectReasons: Record<RejectReason, number>;
   /** #172: how far each rejected candidate's scores fell below the thresholds. */
@@ -164,8 +168,23 @@ export function emptyRunCounts(): IngestionRunCounts {
     passedQuality: 0,
     added: 0,
     ingestFailed: 0,
+    unmappedArticles: 0, // #187
+    toolCatalogueFailures: 0, // #187
     ...classifyAssessments([]),
   };
+}
+
+/**
+ * #187: counts one ingested article's tool mapping into the run counts.
+ * Fail closed: a missing report counts as unmapped, never as mapped.
+ */
+export function noteToolMapping(
+  counts: Pick<IngestionRunCounts, "unmappedArticles" | "toolCatalogueFailures">,
+  report: { articleUnmapped: boolean; catalogueError: string | null } | undefined
+): void {
+  if (report && !report.articleUnmapped) return;
+  counts.unmappedArticles++;
+  if (report?.catalogueError) counts.toolCatalogueFailures++;
 }
 
 /** #367: leads the run's content-fetch failure line (summarizeFailedFetches). */

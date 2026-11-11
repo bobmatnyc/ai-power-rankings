@@ -101,7 +101,7 @@
   {
     "id": "unreleased-deff65b84194",
     "version": "Unreleased",
-    "date": "2026-11-11T06:10:17.000Z",
+    "date": "2026-11-11T06:17:33.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "ingestion",
@@ -922,6 +922,17 @@
     "title": "the daily cron called runDailyDiscovery() with no arguments, so the Tavily days lookback was undefined and omitted from…",
     "description": "the daily cron called `runDailyDiscovery()` with no arguments, so the Tavily `days` lookback was `undefined` and omitted from the request — discovery was relevance-ranked with no date bound at all. It now defaults to the freshness window; an explicit `--days` still wins and widens the gate in step",
     "changeType": "fix"
+  },
+  {
+    "id": "unreleased-a63aff893768",
+    "version": "Unreleased",
+    "date": "2026-11-11T06:28:26.489Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "ingestion",
+    "title": "news tool mentions map through the tools catalogue, not the hard-coded ToolMapper alias list and fuzzy matcher, which…",
+    "description": "news tool mentions map through the tools catalogue, not the hard-coded `ToolMapper` alias list and fuzzy matcher, which is deleted from `lib/services/article-ingestion.service.ts` and `lib/services/tool-mapper.service.ts`. `lib/services/tool-mention-catalogue.ts` looks each mention up by exact, case-insensitive name or slug among active catalogue rows, with retired slugs resolved to their family row; \"Claude\" no longer becomes \"Claude Code\" and \"Google Gemini\" no longer becomes \"Google Jules\". A name the catalogue lacks stays unmapped, as the model gave it. A catalogue read that fails or returns no active rows maps nothing and logs a warning. The run summary gains `unmappedArticles` (ingested articles with no mapped mention) and `toolCatalogueFailures` (the part caused by a failed or empty read). Dedup, quality thresholds and the publish path are unchanged. Tests: `tests/unit/tool-mention-catalogue-187.test.ts` (#187)",
+    "changeType": "feature"
   },
   {
     "id": "unreleased-8d3c9be0148b",
