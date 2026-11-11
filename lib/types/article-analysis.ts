@@ -134,6 +134,7 @@ export interface ValidatedToolMention {
   readonly sentiment: number;
   readonly context: string;
   readonly toolId?: string; // Optional tool ID from database
+  readonly raw_tool?: string; // #187: the model-emitted name before catalogue mapping; absent on old rows
 }
 
 export interface ValidatedCompanyMention {
@@ -235,8 +236,11 @@ export function validateToolMention(mention: unknown): ValidatedToolMention | nu
 
   if (typeof mention === "object" && mention !== null) {
     const mentionObj = mention as any;
+    // #187: carry the raw model-emitted name (#432 alias counts); an old mention without one gets no key.
+    const rawTool = typeof mentionObj.raw_tool === "string" ? mentionObj.raw_tool.trim() : "";
     return {
       name: mentionObj.name || mentionObj.tool_name || mentionObj.tool || "Unknown",
+      ...(rawTool ? { raw_tool: rawTool } : {}),
       relevance: typeof mentionObj.relevance === "number" ? mentionObj.relevance : 0.5,
       sentiment: typeof mentionObj.sentiment === "number" ? mentionObj.sentiment : 0,
       context: typeof mentionObj.context === "string" ? mentionObj.context : "",
