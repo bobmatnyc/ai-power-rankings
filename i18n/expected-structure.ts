@@ -254,6 +254,14 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
       dayAgo: "",
       daysAgo: "",
     },
+    // #198: the Article template's labels, one set per locale.
+    article: {
+      eyebrow: "",
+      tools: "",
+      noContent: "",
+      referencedLinks: "",
+      readOriginal: "",
+    },
   },
   tools: {
     title: "",

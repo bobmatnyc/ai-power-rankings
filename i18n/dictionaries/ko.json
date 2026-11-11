@@ -310,7 +310,14 @@
       "dayAgo": "1일 전",
       "daysAgo": "{count}일 전"
     },
-    "viewSource": "소스 보기"
+    "viewSource": "소스 보기",
+    "article": {
+      "eyebrow": "뉴스",
+      "tools": "이 기사의 도구",
+      "noContent": "콘텐츠가 없습니다",
+      "referencedLinks": "참조 링크",
+      "readOriginal": "{source}에서 원문 읽기"
+    }
   },
   "tools": {
     "title": "AI 코딩 툴",

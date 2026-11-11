@@ -19,6 +19,36 @@ function toolTags(detail: Pick<NewsArticleDetail, 'tool' | 'tools'>): ArticleToo
   return detail.tool ? [{ slug: detail.tool.slug, name: detail.tool.name }] : [];
 }
 
+/** #198: the template's labels, read from `news.article` in the page locale's dictionary (#421 review). */
+export type ArticleLabels = {
+  eyebrow: string;
+  tools: string;
+  noContent: string;
+  referencedLinks: string;
+  /** Carries a `{source}` placeholder for the source name. */
+  readOriginal: string;
+};
+
+/**
+ * #198: `raw` when it is an absolute http(s) URL, else null (#421 review).
+ *
+ * Why: `source_url` is crawled data; a `javascript:`, `data:` or relative value
+ * must not become a clickable source link.
+ * What: parses `raw` with no base, so a relative value fails, and keeps it only
+ * when the protocol is `http:` or `https:`.
+ * Test: `tests/unit/article-template-198.test.tsx` ("source link" cases).
+ */
+export function httpSourceUrl(raw: string | null | undefined): string | null {
+  const value = raw?.trim();
+  if (!value) return null;
+  try {
+    const { protocol } = new URL(value);
+    return protocol === 'http:' || protocol === 'https:' ? value : null;
+  } catch {
+    return null;
+  }
+}
+
 /** #198: an external link opens in a new tab with no opener or referrer; an in-site link stays. */
 function BodyLink({ href, className, children }: AnchorHTMLAttributes<HTMLAnchorElement>) {
   const external = /^https?:\/\//i.test(href ?? '');
@@ -46,27 +76,33 @@ function BodyLink({ href, className, children }: AnchorHTMLAttributes<HTMLAnchor
  * differs from the body, one tag per tool linking `/<lang>/tools/<slug>`, the
  * body without its in-body "Related Links" block, a "Referenced links" list
  * (chrome links filtered, #122), and a "Read the original" link. Markdown
- * renders without `rehype-raw`, so raw HTML in a body renders as text.
+ * renders without `rehype-raw`, so raw HTML in a body renders as text. The
+ * labels come from `labels` (the locale's `news.article`), and the source is
+ * linked only when its URL is http(s).
  * Test: `tests/unit/article-template-198.test.tsx`.
  */
 export function ArticleTemplate({
   lang,
+  labels,
   article,
   tool,
   tools,
-}: Pick<NewsArticleDetail, 'article' | 'tool' | 'tools'> & { lang: string }) {
+}: Pick<NewsArticleDetail, 'article' | 'tool' | 'tools'> & { lang: string; labels: ArticleLabels }) {
   const body = stripRelatedLinksSection(article.content);
   const links = filterChromeLinks(extractExternalLinks(article.content));
   const tags = toolTags({ tool, tools });
   const summary = article.summary?.trim();
   const published = new Date(article.published_date);
+  // #198: any other scheme (javascript:, data:, relative) renders the source as text (#421 review).
+  const sourceUrl = httpSourceUrl(article.source_url);
 
   return (
     <article className="space-y-8" data-template="article">
       <header className="space-y-3 border-b border-ds-border-paper pb-6">
         <p className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
           <Link href={`/${lang}/news`} className="hover:underline">
-            News
+            {/* #198: per-locale labels (#421 review). */}
+            {labels.eyebrow}
           </Link>
         </p>
         <h1 className="text-3xl md:text-4xl font-bold">{article.title}</h1>
@@ -75,8 +111,8 @@ export function ArticleTemplate({
             {formatUtcDate(published, 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
           </time>
           {' · '}
-          {article.source_url ? (
-            <a href={article.source_url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+          {sourceUrl ? (
+            <a href={sourceUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">
               {article.source}
             </a>
           ) : (
@@ -84,7 +120,7 @@ export function ArticleTemplate({
           )}
         </p>
         {tags.length > 0 && (
-          <ul aria-label="Tools in this article" className="flex flex-wrap gap-2">
+          <ul aria-label={labels.tools} className="flex flex-wrap gap-2">
             {tags.map((tag) => (
               <li key={tag.slug}>
                 <Link
@@ -111,14 +147,14 @@ export function ArticleTemplate({
             {body}
           </ReactMarkdown>
         ) : (
-          <p className="text-muted-foreground">No content available</p>
+          <p className="text-muted-foreground">{labels.noContent}</p>
         )}
       </div>
 
       {links.length > 0 && (
         <section aria-labelledby="article-links" className="space-y-3 border-t border-ds-border-paper pt-6">
           <h2 id="article-links" className="text-lg font-semibold">
-            Referenced links
+            {labels.referencedLinks}
           </h2>
           <ul className="space-y-2 text-sm">
             {links.map((link) => (
@@ -132,16 +168,16 @@ export function ArticleTemplate({
         </section>
       )}
 
-      {article.source_url && (
+      {sourceUrl && (
         <footer className="border-t border-ds-border-paper pt-6">
           <a
-            href={article.source_url}
+            href={sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center text-sm text-primary hover:underline"
           >
             <ExternalLink aria-hidden="true" className="mr-2 h-4 w-4" />
-            Read the original at {article.source}
+            {labels.readOriginal.replace('{source}', article.source)}
           </a>
         </footer>
       )}

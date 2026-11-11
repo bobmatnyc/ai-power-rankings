@@ -531,7 +531,14 @@
     "more": "もっと見る",
     "score": "スコア",
     "rank": "ランク",
-    "viewSource": "ソースを見る"
+    "viewSource": "ソースを見る",
+    "article": {
+      "eyebrow": "ニュース",
+      "tools": "この記事のツール",
+      "noContent": "コンテンツがありません",
+      "referencedLinks": "参照リンク",
+      "readOriginal": "{source} で原文を読む"
+    }
   },
   "tools": {
     "title": "AIコーディングツール",
