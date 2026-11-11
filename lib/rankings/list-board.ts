@@ -26,13 +26,16 @@ export interface ListBoard {
  *   `v1.0`, no date). #368: a thrown read is logged and rethrown, so a failed
  *   ISR regeneration keeps the last good page. React `cache()` shares one read
  *   between `generateMetadata` and the page in a render.
+ *   #195: `openWeightOnly` reads the open-weight board (`?open=1`); `meta` then
+ *   counts that board's rows. The unfiltered call passes no option, as before.
  * Test: `tests/unit/ranking-list-pages-186.test.tsx`,
- *   `tests/unit/rankings-list-board-368.test.ts`.
+ *   `tests/unit/rankings-list-board-368.test.ts`, `tests/unit/rankings-open-weight-195.test.ts`.
  */
-export const loadListBoard = cache(async (list: RankingList): Promise<ListBoard> => {
+export const loadListBoard = cache(async (list: RankingList, openWeightOnly = false): Promise<ListBoard> => {
   let current: Awaited<ReturnType<typeof loadCurrentRankings>>;
   try {
-    current = await loadCurrentRankings(list);
+    // #195: the unfiltered read keeps its one-argument call.
+    current = openWeightOnly ? await loadCurrentRankings(list, { openWeightOnly }) : await loadCurrentRankings(list);
   } catch (error) {
     // #368: rethrown, so the ISR page keeps its last good render instead of caching an empty board.
     loggers.ranking.error("Failed to read rankings on server", { error, list });
