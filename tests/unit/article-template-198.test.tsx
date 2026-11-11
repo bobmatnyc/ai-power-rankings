@@ -88,7 +88,8 @@ describe("ArticleTemplate (#198)", () => {
     expect(html.match(/<h1/g)).toHaveLength(1);
     expect(html).toMatch(/<h1[^>]*>Cursor ships a terminal agent<\/h1>/);
     expect(html).toContain('href="/fr/news"');
-    expect(html).toContain('<time dateTime="2026-09-01T00:00:00.000Z">September 1, 2026</time>');
+    // #443: the template renders lang="fr", so the date is French (was a fixed en-US).
+    expect(html).toContain('<time dateTime="2026-09-01T00:00:00.000Z">1 septembre 2026</time>');
     expect(html).toContain('<a href="https://verge.example/cursor" target="_blank" rel="noopener noreferrer"');
   });
 
