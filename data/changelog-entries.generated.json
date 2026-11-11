@@ -99,10 +99,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-deff65b84194",
+    "version": "Unreleased",
+    "date": "2026-11-11T06:10:17.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "ingestion",
+    "title": "the [AutomatedIngestion] Run summary warn line carries sameEventDuplicates, the number of articles dropped because…",
+    "description": "the `[AutomatedIngestion] Run summary` warn line carries `sameEventDuplicates`, the number of articles dropped because `isSameEvent` was true, within the batch or against recent DB articles. It is a subset of `semanticDuplicates`, which is unchanged; each drop counts toward one reason, same event or title similarity. Before, the reason appeared only in info-level per-drop lines that production does not keep, so no live run could show the #366 drops. No dedup decision changes; no schema change. Test: `lib/services/automated-ingestion.same-event-count.test.ts` (#366)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-326d6c160e69",
     "version": "Unreleased",
-    "date": "2026-11-10T22:01:36.579Z",
-    "dateSource": "build",
+    "date": "2026-11-10T22:28:11.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "metrics",
     "title": "the github metrics collector reads its token from METRICS_GITHUB_TOKEN (owner ruling D99: one read-only token for the…",
