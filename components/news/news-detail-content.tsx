@@ -30,6 +30,7 @@ import {
   stripRelatedLinksSection,
 } from "@/lib/article-content-links";
 import { formatUtcDate } from "@/lib/format-utc-date";
+import { httpSourceUrl } from "@/lib/http-url";
 import ArticleScoringImpact from "./article-scoring-impact";
 
 interface NewsArticle {
@@ -289,7 +290,13 @@ export default function NewsDetailContent({
   // SHAPE of a chrome link rather than verifying it) — the only mitigation
   // available for already-stored articles, since new ones are also
   // sanitized at ingestion time (see article-ingestion.service.ts).
-  const externalLinks = filterChromeLinks(extractExternalLinks(article.content));
+  // #442: a referenced link whose URL is not http(s) (data:, javascript:, relative) is left out.
+  const externalLinks = filterChromeLinks(extractExternalLinks(article.content)).flatMap((link) => {
+    const url = httpSourceUrl(link.url);
+    return url ? [{ ...link, url }] : [];
+  });
+  // #442: source_url is crawled data; the View Source button needs an absolute http(s) URL.
+  const sourceUrl = httpSourceUrl(article.source_url);
 
   // Body prose with the redundant in-body "Related Links" block removed, so
   // "Referenced Links" below is the page's only links section.
@@ -681,9 +688,9 @@ export default function NewsDetailContent({
           {/* External Links */}
           <Separator className="my-6" />
           <div className="flex flex-wrap gap-4">
-            {article.source_url && (
+            {sourceUrl && (
               <Button variant="outline" asChild>
-                <a href={article.source_url} target="_blank" rel="noopener noreferrer">
+                <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
                   <ExternalLink className="h-4 w-4 mr-2" />
                   {dict.news?.viewSource || "View Source"}
                 </a>

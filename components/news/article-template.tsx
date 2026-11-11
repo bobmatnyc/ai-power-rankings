@@ -5,6 +5,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { extractExternalLinks, filterChromeLinks, stripRelatedLinksSection } from '@/lib/article-content-links';
 import { formatUtcDate } from '@/lib/format-utc-date';
+// #442: the http(s) check is shared with the news card and the legacy detail view.
+import { httpSourceUrl } from '@/lib/http-url';
 import type { NewsArticleDetail } from '@/lib/news-article';
 
 const PROSE =
@@ -28,27 +30,6 @@ export type ArticleLabels = {
   /** Carries a `{source}` placeholder for the source name. */
   readOriginal: string;
 };
-
-/**
- * #198: `raw` when it is an absolute http(s) URL, else null (#421 review).
- *
- * Why: `source_url` and the body's links are crawled data; a `javascript:`,
- * `data:` or relative value must not become a clickable link.
- * What: parses `raw` with no base, so a relative value fails, and keeps it only
- * when the protocol is `http:` or `https:`.
- * Test: `tests/unit/article-template-198.test.tsx` ("source link" and
- * "referenced links" cases).
- */
-export function httpSourceUrl(raw: string | null | undefined): string | null {
-  const value = raw?.trim();
-  if (!value) return null;
-  try {
-    const { protocol } = new URL(value);
-    return protocol === 'http:' || protocol === 'https:' ? value : null;
-  } catch {
-    return null;
-  }
-}
 
 /** #198: an external link opens in a new tab with no opener or referrer; an in-site link stays. */
 function BodyLink({ href, className, children }: AnchorHTMLAttributes<HTMLAnchorElement>) {
