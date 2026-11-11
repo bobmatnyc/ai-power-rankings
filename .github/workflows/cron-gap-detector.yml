@@ -20,6 +20,9 @@ name: Ingestion gap detector
 # running scripts/trigger-ingestion.ts from a laptop.
 #
 # #363: a second job, check-weekly-digest-gap, watches the weekly-digest cron the same way.
+#
+# #395: a third job, check-crawl-spend, opens one `spend-alert` issue per UTC month when
+# month-to-date provider spend reaches vars.CRAWL_SPEND_ALERT_USD_MONTH. Notify only.
 on:
   schedule:
     # 09:00 UTC — 3h after the 06:00 UTC daily-news cron, so a missed daily run is caught
@@ -631,3 +634,71 @@ jobs:
         run: node scripts/check-weekly-digest-gap.mjs
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+  # #395: month-to-date crawl spend soft alert. Its own job, so it never changes the
+  # ingestion job's result, never reaches its ingestion-alert issue, and a passing gap run
+  # (which closes only ingestion-alert issues by title) never closes a spend-alert issue.
+  # Notifies only: nothing here stops or throttles a crawl. A disabled threshold
+  # (vars.CRAWL_SPEND_ALERT_USD_MONTH unset, empty, non-numeric or <= 0) logs one line and
+  # passes; a database read failure fails THIS job red (the failed-workflow email) and
+  # nothing else. At or over the threshold the script writes spend-alert.json and the next
+  # step opens one `spend-alert` issue per UTC month — never a comment, never a close.
+  check-crawl-spend:
+    name: Check month-to-date crawl spend
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check crawl spend
+        id: spend
+        run: node scripts/check-crawl-spend.mjs
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          CRAWL_SPEND_ALERT_USD_MONTH: ${{ vars.CRAWL_SPEND_ALERT_USD_MONTH }}
+
+      # Dedupe calls spendIssueExistsForMonth() from the script itself, so the tested rule is
+      # the one that runs: any spend-alert issue for this month, open or closed, means no action.
+      - name: Open spend-alert issue for the month
+        if: ${{ steps.spend.outputs.alert == 'true' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { spendIssueExistsForMonth, ALERT_FILE } = await import(
+              `${process.env.GITHUB_WORKSPACE}/scripts/check-crawl-spend.mjs`
+            );
+            const alert = JSON.parse(fs.readFileSync(ALERT_FILE, 'utf8'));
+            const LABEL = 'spend-alert';
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              labels: LABEL,
+              per_page: 100,
+            });
+            if (spendIssueExistsForMonth(issues, alert.month)) {
+              core.info(`A spend-alert issue for ${alert.month} already exists; no action.`);
+              return;
+            }
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const created = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: alert.title,
+              body: `${alert.body}\n\n**Run:** ${runUrl}`,
+              labels: [LABEL],
+            });
+            core.info(`Opened spend-alert issue #${created.data.number}`);
