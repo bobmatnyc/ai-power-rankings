@@ -18,24 +18,11 @@ import { MarkdownToolbar } from "@/components/admin/markdown-toolbar";
 import { EnhancedMarkdownPreview } from "@/components/admin/enhanced-markdown-preview";
 import { useAutoSave, formatTimeSince } from "@/hooks/use-auto-save";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
+import { type AdminEditArticle, buildAdminEditBody } from "@/lib/admin-news-edit"; // #434
+import { toolMentionNames } from "@/lib/tool-mention-shape"; // #434
 
-interface NewsArticle {
-  id: string;
-  slug: string;
-  title: string;
-  summary?: string;
-  content: string;
-  author?: string;
-  published_date: string;
-  source?: string;
-  source_url?: string;
-  tags?: string[];
-  tool_mentions?: string[];
-  created_at: string;
-  updated_at: string;
-  category?: string;
-  importance_score?: number;
-}
+// #434: the GET route returns this shape (lib/admin-news-edit.ts).
+type NewsArticle = AdminEditArticle;
 
 interface RankingPreviewData {
   articleId: string;
@@ -112,30 +99,10 @@ export default function EditNewsPage() {
   const { lastSaved, saving: autoSaving, error: autoSaveError } = useAutoSave({
     interval: 30000, // 30 seconds
     enabled: id !== "new" && hasUnsavedChanges,
-    data: article ? {
-      ...article,
-      title,
-      content,
-      summary,
-      author,
-      published_date: publishedDate ? new Date(publishedDate).toISOString() : new Date().toISOString(),
-      source,
-      source_url: sourceUrl || null,
-      category,
-      tags: tags
-        ? tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean)
-        : [],
-      tool_mentions: toolMentions
-        ? toolMentions
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean)
-        : [],
-      importance_score: importanceScore,
-    } : undefined,
+    // #434: one body builder for auto-save and save.
+    data: article
+      ? buildAdminEditBody(article, { title, content, summary, author, publishedDate, source, sourceUrl, category, tags, toolMentions, importanceScore })
+      : undefined,
     onSave: async (data) => {
       if (id === "new") return; // Don't auto-save new articles
 
@@ -181,7 +148,8 @@ export default function EditNewsPage() {
       setSourceUrl(article.source_url || "");
       setCategory(article.category || "");
       setTags(article.tags?.join(", ") || "");
-      setToolMentions(article.tool_mentions?.join(", ") || "");
+      // #434: mention objects ({ tool, raw_tool }) show their tool name, as strings do.
+      setToolMentions(toolMentionNames(article.tool_mentions).join(", "));
       setImportanceScore(article.importance_score || 5);
       setHasUnsavedChanges(false);
     } catch (err) {
@@ -321,29 +289,10 @@ export default function EditNewsPage() {
     setSuccess(false);
 
     try {
+      if (!article) throw new Error("Article not loaded");
+      // #434: tool_mentions goes as names; the PUT route keeps each stored mention's shape.
       const updatedArticle = {
-        ...article,
-        title,
-        content,
-        summary,
-        author,
-        published_date: publishedDate ? new Date(publishedDate).toISOString() : new Date().toISOString(),
-        source,
-        source_url: sourceUrl || null,
-        category,
-        tags: tags
-          ? tags
-              .split(",")
-              .map((t) => t.trim())
-              .filter(Boolean)
-          : [],
-        tool_mentions: toolMentions
-          ? toolMentions
-              .split(",")
-              .map((t) => t.trim())
-              .filter(Boolean)
-          : [],
-        importance_score: importanceScore,
+        ...buildAdminEditBody(article, { title, content, summary, author, publishedDate, source, sourceUrl, category, tags, toolMentions, importanceScore }),
         updated_at: new Date().toISOString(),
       };
 

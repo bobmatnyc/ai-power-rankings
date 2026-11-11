@@ -99,10 +99,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-9d544a183ea7",
+    "version": "Unreleased",
+    "date": "2026-11-11T18:21:53.154Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "news",
+    "title": "the admin saveAsArticle write in /api/admin/news/analyze stores tool mentions as the objects the catalogue mapping…",
+    "description": "the admin `saveAsArticle` write in `/api/admin/news/analyze` stores tool mentions as the objects the catalogue mapping returns (`tool`, `raw_tool`, context, sentiment, relevance), as automated ingestion does, instead of bare name strings, so its rows count toward the #432 alias counts. The readers accept both shapes: the news detail view resolves an object mention's `tool` to a tool link (it threw on objects and showed none), the admin edit page lists string and object mentions by name and saves them (its GET now returns the snake_case fields the page reads, and its PUT maps those fields to columns, so tool mentions, published date, source, source URL and importance score load and save; a save keeps each stored mention's shape, and a newly typed name is stored as `{ tool, raw_tool }` on a row that holds objects, else as a string), and the name lookups (`NewsRepository.searchByToolName`, `getArticlesByToolMention`, `/api/tools/[slug]/json`) match string, `{tool}` and `{name}` mentions through one shared condition (`lib/db/tool-mention-match.ts`). Existing string rows are unchanged and still render and match; no migration or backfill. Tests: `tests/unit/tool-mention-shape-434.test.ts`, `tests/unit/admin-news-edit-434.test.ts` (#434)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-cc5e584b887b",
     "version": "Unreleased",
-    "date": "2026-11-11T17:45:14.424Z",
-    "dateSource": "build",
+    "date": "2026-11-11T17:50:47.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "news",
     "title": "the news card on tool pages and the legacy news detail view link a crawled URL only when it is an absolute http: or…",
