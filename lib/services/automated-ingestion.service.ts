@@ -121,6 +121,9 @@ export const SEMANTIC_DUPLICATE_NEAR_IDENTICAL_OVERLAP = 0.8;
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
+// #366: the reason duplicateReason() returns for an isSameEvent drop; counted in the run summary.
+const SAME_EVENT_REASON = "same event";
+
 /**
  * Why: A stale source date must not reach the insert path as healthy yield —
  * see FRESHNESS_WINDOW_DAYS.
@@ -1117,7 +1120,8 @@ export class AutomatedIngestionService {
       const recentArticles = await this.getRecentArticleTitles(7); // Last 7 days
       const newArticles = await this.filterSemanticDuplicates(
         articlesWithoutUrlDuplicates,
-        recentArticles
+        recentArticles,
+        runCounts
       );
       articlesSkippedSemantic = articlesWithoutUrlDuplicates.length - newArticles.length;
       runCounts.semanticDuplicates = articlesSkippedSemantic; // #172
@@ -1894,11 +1898,13 @@ export class AutomatedIngestionService {
    *
    * @param articles - Articles to check for duplicates
    * @param existingArticles - Recently published articles from DB (last 7 days)
+   * @param runCounts - Receives `sameEventDuplicates`, the drops whose reason was "same event"
    * @returns Filtered list with semantic duplicates removed
    */
   private async filterSemanticDuplicates(
     articles: SearchResult[],
-    existingArticles: DatedTitle[]
+    existingArticles: DatedTitle[],
+    runCounts: Pick<IngestionRunCounts, "sameEventDuplicates"> = emptyRunCounts()
   ): Promise<SearchResult[]> {
     const similarityThreshold = 0.35; // 35% weighted similarity triggers duplicate detection
     // Note: Uses weighted algorithm (40% word overlap + 60% key feature overlap)
@@ -1917,8 +1923,12 @@ export class AutomatedIngestionService {
     const duplicateReason = (article: SearchResult, other: DatedTitle): string | null => {
       const similarity = this.calculateTitleSimilarity(article.title, other.title);
       if (similarity >= similarityThreshold) return `title similarity ${similarity.toFixed(2)}`;
-      if (isSameEvent(article, other)) return "same event";
+      if (isSameEvent(article, other)) return SAME_EVENT_REASON;
       return null;
+    };
+    // #366: each drop counts toward exactly one reason; "same event" feeds the run summary.
+    const countSameEvent = (reason: string): void => {
+      if (reason === SAME_EVENT_REASON) runCounts.sameEventDuplicates++;
     };
 
     for (const article of articles) {
@@ -1929,6 +1939,7 @@ export class AutomatedIngestionService {
         const reason = duplicateReason(article, existing);
         if (reason) {
           isDuplicate = true;
+          countSameEvent(reason);
           loggers.api.info("[AutomatedIngestion] Semantic duplicate detected (vs DB)", {
             newTitle: article.title.substring(0, 80),
             existingTitle: existing.title.substring(0, 80),
@@ -1945,6 +1956,7 @@ export class AutomatedIngestionService {
           const reason = duplicateReason(article, seen);
           if (reason) {
             isDuplicate = true;
+            countSameEvent(reason);
             loggers.api.info("[AutomatedIngestion] Semantic duplicate detected (within batch)", {
               newTitle: article.title.substring(0, 80),
               firstTitle: seen.title.substring(0, 80),
