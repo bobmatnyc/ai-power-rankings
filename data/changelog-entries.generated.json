@@ -99,10 +99,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-cc5e584b887b",
+    "version": "Unreleased",
+    "date": "2026-11-11T17:45:14.424Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "news",
+    "title": "the news card on tool pages and the legacy news detail view link a crawled URL only when it is an absolute http: or…",
+    "description": "the news card on tool pages and the legacy news detail view link a crawled URL only when it is an absolute `http:` or `https:` URL. A `source_url` with any other value (`javascript:`, `data:`, a relative path) renders no \"View Source\" link, and a \"Referenced Links\" entry with such a URL is left out of the list, as in the Article template. The check (`httpSourceUrl`) moves from `components/news/article-template.tsx` to `lib/http-url.ts`, and all three views use it. Tests: `tests/unit/news-http-href-442.test.tsx` (#442)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-11974759bec3",
     "version": "Unreleased",
-    "date": "2026-11-11T14:14:09.769Z",
-    "dateSource": "build",
+    "date": "2026-11-11T14:29:43.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "ingestion",
     "title": "news tool mentions no longer credit a product for a model, vendor or common-word name (owner ruling D35)",

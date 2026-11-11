@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { ToolIcon } from "@/components/ui/tool-icon";
 import { formatUtcDate } from "@/lib/format-utc-date";
+import { httpSourceUrl } from "@/lib/http-url";
 
 export interface NewsItem {
   id: string;
@@ -34,6 +35,8 @@ interface NewsCardProps {
 }
 
 export function NewsCard({ item }: NewsCardProps) {
+  // #442: source_url is crawled data; link it only when it is an absolute http(s) URL.
+  const sourceUrl = httpSourceUrl(item.source_url);
   const getEventColor = (eventType: string) => {
     switch (eventType) {
       case "milestone":
@@ -172,9 +175,9 @@ export function NewsCard({ item }: NewsCardProps) {
 
           {/* Action Links */}
           <div className="ml-auto">
-            {item.source_url && (
+            {sourceUrl && (
               <Button variant="ghost" size="sm" asChild>
-                <a href={item.source_url} target="_blank" rel="noopener noreferrer">
+                <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
                   View Source
                   <ExternalLink className="h-3 w-3 ml-1" />
                 </a>
