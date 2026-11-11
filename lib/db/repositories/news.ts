@@ -8,6 +8,7 @@ import { and, desc, eq, getTableColumns, gte, lte, type SQL, sql } from "drizzle
 import { getDb } from "../connection";
 import { articles, type Article } from "../article-schema";
 import { type NewsEventType, newsEventTypeSql } from "../news-event-type";
+import { toolMentionMatches } from "../tool-mention-match"; // #434
 
 // Type for the news article format expected by the frontend
 interface NewsArticle {
@@ -447,9 +448,8 @@ export class NewsRepository {
         .where(
           and(
             eq(articles.status, "active"),
-            sql`${articles.toolMentions}::jsonb @> ${JSON.stringify([{ name: toolName }])}::jsonb OR
-                ${articles.toolMentions}::jsonb @> ${JSON.stringify([toolName])}::jsonb OR
-                ${articles.title} ILIKE ${`%${toolName}%`}`
+            // #434: match string, {tool} and {name} mentions; {tool} objects never matched before.
+            sql`${toolMentionMatches(articles.toolMentions, toolName)} OR ${articles.title} ILIKE ${`%${toolName}%`}`
           )
         )
         .orderBy(desc(articles.publishedDate))

@@ -816,8 +816,8 @@ export async function POST(request: NextRequest) {
         sourceName: analysis.source || "Unknown",
         sourceUrl,
         tags: analysis.key_topics || [],
-        // #187: this path stores bare name strings, which cannot hold raw_tool; readers expect strings here, so the shape is kept.
-        toolMentions: analysis.tool_mentions?.map((tm: any) => tm.tool) || [],
+        // #434: store the mention objects mapToolMentionsToCatalogue returned above (tool + raw_tool), as ingestion does.
+        toolMentions: analysis.tool_mentions || [],
         category: "AI News",
         importanceScore: analysis.importance_score || 5,
         status: "active",

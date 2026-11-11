@@ -9,6 +9,7 @@ import {
   articles,
 } from "@/lib/db/article-schema";
 import { getDb } from "@/lib/db/connection";
+import { toolMentionMatches } from "@/lib/db/tool-mention-match"; // #434
 
 type DbInstance = ReturnType<typeof getDb>;
 
@@ -36,7 +37,8 @@ export class ArticlesQueryRepository {
     const result = await this.db
       ?.select()
       .from(articles)
-      .where(sqlTag`${articles.toolMentions} @> ${JSON.stringify([{ tool: toolName }])}`)
+      // #434: string-form rows (old admin saves) match as well as {tool} objects.
+      .where(toolMentionMatches(articles.toolMentions, toolName))
       .orderBy(desc(articles.publishedDate));
     return result || [];
   }

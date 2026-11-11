@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
+import { type StoredToolMention, toolMentionName } from "@/lib/tool-mention-shape"; // #434
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -43,7 +44,7 @@ interface NewsArticle {
   source?: string;
   source_url?: string;
   tags?: string[];
-  tool_mentions?: string[];
+  tool_mentions?: StoredToolMention[]; // #434: bare names (old rows) or mention objects
   created_at: string;
   updated_at: string;
 }
@@ -73,6 +74,31 @@ interface ToolMention {
   website?: string;
 }
 
+/**
+ * The catalogue tools the first five stored mentions name, in mention order.
+ *
+ * Why: #434 — `saveAsArticle` now stores mention objects, and this view called
+ * `mention.toLowerCase()`, which threw on an object and showed no mentions.
+ * What: each mention's name (a string, or an object's `tool`/`name`) matches a
+ * tool by id when all digits, else by case-insensitive name or by slug. A
+ * mention that matches nothing is skipped.
+ * Test: `tests/unit/tool-mention-shape-434.test.ts`.
+ */
+export function resolveMentionedTools(mentions: readonly unknown[], allTools: readonly Tool[]): ToolMention[] {
+  const found: ToolMention[] = [];
+  for (const mention of mentions.slice(0, 5)) {
+    const name = toolMentionName(mention); // #434: both stored shapes
+    if (!name) continue;
+    const tool = /^\d+$/.test(name)
+      ? allTools.find((t) => t.id === name)
+      : allTools.find(
+          (t) => t.name.toLowerCase() === name.toLowerCase() || t.slug === name.toLowerCase().replace(/\s+/g, "-")
+        );
+    if (tool) found.push({ id: tool.id, slug: tool.slug, name: tool.name, website: tool.info?.website });
+  }
+  return found;
+}
+
 export default function NewsDetailContent({
   article,
   tool,
@@ -94,36 +120,8 @@ export default function NewsDetailContent({
           throw new Error("Failed to fetch tools");
         }
 
-        const allTools = await response.json();
-        const mentions: ToolMention[] = [];
-
-        for (const mention of article.tool_mentions.slice(0, 5)) {
-          let foundTool = null;
-
-          // Check if it's an ID (numeric string) or a name
-          if (/^\d+$/.test(mention)) {
-            // It's an ID, find by ID
-            foundTool = allTools.find((t: Tool) => t.id === mention);
-          } else {
-            // It's a name, find by name or slug
-            foundTool = allTools.find(
-              (t: Tool) =>
-                t.name.toLowerCase() === mention.toLowerCase() ||
-                t.slug === mention.toLowerCase().replace(/\s+/g, "-")
-            );
-          }
-
-          if (foundTool) {
-            mentions.push({
-              id: foundTool.id,
-              slug: foundTool.slug,
-              name: foundTool.name,
-              website: foundTool.info?.website,
-            });
-          }
-        }
-
-        setToolMentions(mentions);
+        const allTools: Tool[] = await response.json();
+        setToolMentions(resolveMentionedTools(article.tool_mentions, allTools));
       } catch (error) {
         console.error("Failed to fetch tool mentions:", error);
       }

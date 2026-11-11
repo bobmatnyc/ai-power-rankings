@@ -1,6 +1,7 @@
 import { NewsRepository } from "@/lib/db/repositories/news";
 import { loadNewsToolCatalogueOrNull } from "@/lib/news-tool-catalogue";
 import { articleToolTags, primaryArticleTool } from "@/lib/news-tool-resolver";
+import type { StoredToolMention } from "@/lib/tool-mention-shape"; // #434
 
 /** An article in the shape `/api/news/[slug]` returns and the article page renders. */
 export interface NewsArticleView {
@@ -13,7 +14,7 @@ export interface NewsArticleView {
   source: string;
   source_url: string | null;
   tags: string[];
-  tool_mentions: string[];
+  tool_mentions: StoredToolMention[]; // #434: bare names (old rows) or mention objects
   created_at: string;
   updated_at: string;
 }
