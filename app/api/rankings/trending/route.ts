@@ -31,7 +31,7 @@ import {
 import { rankingsRepository } from "@/lib/db/repositories/rankings.repository";
 import cacheInstance from "@/lib/memory-cache";
 import { isMetricGatedList, listOfTool, parseListQuery, RANKING_LISTS, type RankingList } from "@/lib/rankings/lists";
-import { gateStoredEntries, measuredPredicate, toolLookup } from "@/lib/rankings/metric-gated-board";
+import { dropNoindexEntries, gateStoredEntries, measuredPredicate, toolLookup } from "@/lib/rankings/metric-gated-board";
 import type { RawRankingEntry } from "@/lib/tools/ranking-entry";
 import {
   keepCombinedMembers,
@@ -67,6 +67,14 @@ async function readHistoricalRankings(list: RankingList): Promise<MergedHistory<
     const merged = mergeTrendingHistory(listPeriods, combinedPeriods);
     // Both types describe the same stored JSONB rows.
     const raw = (p: RankingPeriod) => p.rankings as unknown as RawRankingEntry[];
+
+    // #197: no period ranks a noindex tool; keyed on the stored `tool_slug`, so a list
+    // that is not metric-gated still reads no tools. The rest are renumbered.
+    const storedSlug = (entry: RawRankingEntry) =>
+      typeof entry["tool_slug"] === "string" ? entry["tool_slug"] : undefined;
+    for (const p of merged.periods) {
+      p.rankings = dropNoindexEntries(raw(p), storedSlug) as unknown as RankingPeriod["rankings"];
+    }
 
     // D1c: the combined boards ranked every kind of tool; their months show only this
     // list's tools (`listOfTool`, as the per-list boards), renumbered. A failed tools
@@ -181,7 +189,9 @@ function toRankingPeriods(allRankings: StoredRankingRow[] | null | undefined): R
  *   `metadata.first_list_period` the boundary. A failed combined read is the same 500,
  *   never a 200 holding only the per-list periods.
  * #329: a metric-gated list's periods hold measured models only; a failed tools lookup is 500.
- * Test: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/trending-metric-gate-329.test.ts`.
+ * #197: no period holds a tool whose stored slug is noindex.
+ * Test: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/trending-metric-gate-329.test.ts`,
+ *   `tests/unit/rankings-noindex-197.test.ts`.
  *
  * Response Format:
  * ```json

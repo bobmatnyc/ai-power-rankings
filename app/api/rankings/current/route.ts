@@ -6,7 +6,7 @@ import { loggers } from "@/lib/logger";
 import cacheInstance, { CACHE_TTL } from "@/lib/memory-cache";
 import { isMetricGatedList, parseListQuery, RANKING_LISTS, rankingListMeta } from "@/lib/rankings/lists";
 import { boardFromSnapshot } from "@/lib/rankings/current-rankings";
-import { gateBoardEntries } from "@/lib/rankings/metric-gated-board";
+import { dropNoindexEntries, gateBoardEntries, toolLookup } from "@/lib/rankings/metric-gated-board";
 // #269: single shared helper; reads factors from their camelCase stored keys.
 import { deriveCompleteScores } from "@/lib/rankings/derive-complete-scores";
 
@@ -22,8 +22,10 @@ import { deriveCompleteScores } from "@/lib/rankings/derive-complete-scores";
  *   never reads the combined row. The body keeps its shape and adds `data.list` and
  *   `data.list_meta`. Cached in memory per list. #329: a metric-gated list keeps only
  *   measured models, renumbered (`gateBoardEntries`), and `list_meta.metric_row_count`
- *   comes from `boardFromSnapshot()`, the count `/api/rankings` reports.
- * Test: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/models-public-rank-329.test.ts`.
+ *   comes from `boardFromSnapshot()`, the count `/api/rankings` reports. #197: a tool whose
+ *   slug is noindex is left out and the rest renumbered (`dropNoindexEntries`).
+ * Test: `tests/unit/rankings-current-trending-185.test.ts`, `tests/unit/models-public-rank-329.test.ts`,
+ *   `tests/unit/rankings-noindex-197.test.ts`.
  */
 // #186: Next.js route exports require a non-optional Request
 export async function GET(request: Request) {
@@ -101,6 +103,14 @@ export async function GET(request: Request) {
             rankings = rankingsData["data"];
           }
         }
+        // #197: a noindex tool leaves the board before ranks and the metric gate, keyed on the
+        // joined tool's slug (else the stored one), the slug /api/rankings filters on.
+        const toolOf = await toolLookup(rankings, toolsRepo);
+        const slugOf = (entry: Record<string, unknown>) => {
+          const slug = toolOf(entry)?.["slug"] ?? entry["tool_slug"];
+          return typeof slug === "string" ? slug : undefined;
+        };
+        rankings = dropNoindexEntries(rankings, slugOf);
         // #329: a metric-gated list (models) lists measured models only, ranked 1..n as on /api/rankings.
         rankings = await gateBoardEntries(list, rankings, toolsRepo);
 
