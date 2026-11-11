@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { adminEditBodyToUpdates, toAdminEditArticle } from "@/lib/admin-news-edit";
 import { requireAdmin } from "@/lib/api-auth";
 import { ArticlesRepository } from "@/lib/db/repositories/articles.repository";
 import { loggers } from "@/lib/logger";
@@ -23,9 +24,10 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: "Article not found" }, { status: 404 });
     }
 
+    // #434: the edit page reads snake_case keys; the raw drizzle row is camelCase.
     return NextResponse.json({
       success: true,
-      article,
+      article: toAdminEditArticle(article),
     });
   } catch (error) {
     loggers.api.error("Error in admin/news/[id] GET", { error });
@@ -47,6 +49,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
   try {
     const { id } = await params;
     const body = await request.json();
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json({ error: "Invalid body" }, { status: 400 });
+    }
     const articlesRepo = new ArticlesRepository();
 
     // Check if article exists
@@ -60,9 +65,15 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Title is required" }, { status: 400 });
     }
 
+    // #434: map the page's snake_case fields to columns; drizzle `.set` ignores unknown keys.
+    const mapped = adminEditBodyToUpdates(body, existingArticle);
+    if ("error" in mapped) {
+      return NextResponse.json({ error: mapped.error }, { status: 400 });
+    }
+
     // Update the article
     const updatedArticle = await articlesRepo.updateArticle(id, {
-      ...body,
+      ...mapped.updates,
       updatedAt: new Date(),
     });
 
@@ -70,7 +81,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({
       success: true,
-      article: updatedArticle,
+      article: updatedArticle ? toAdminEditArticle(updatedArticle) : null,
     });
   } catch (error) {
     loggers.api.error("Error in admin/news/[id] PUT", { error });
