@@ -4,76 +4,60 @@
  * Why: the old `ToolMapper` classes (two copies, `article-ingestion.service.ts` and
  * `tool-mapper.service.ts`) turned model, vendor and variant names into one tool's
  * name, and those names feed ranking changes. Dropping them would move public scores,
- * so every alias is kept and keeps its old target.
+ * so every alias was kept with its old target, except where the owner ruled (#432).
  * What: lower-cased, trimmed alias -> the target tool's NAME as the old mapper wrote
  * it. The lookup resolves the target to a catalogue row by name or slug; a target
  * that is not an active row leaves the mention unmapped (see `tool-mention-catalogue.ts`).
  * The list is the union of both old copies; they never disagreed on a shared key.
- * A `// suspect:` comment marks an alias that maps to a different product than the
- * name says. The mapping is unchanged; the owner decides whether to correct it.
- * Test: `tests/unit/tool-mention-aliases-187.test.ts`.
+ * #432 (owner ruling D35): 34 suspect aliases (model, vendor and common-word names)
+ * are dropped, so they map only when the raw name is a catalogue name or slug; 8 Claude
+ * aliases map to the Claude model rows or Claude.AI. The per-alias table is on #432.
+ * Test: `tests/unit/tool-mention-aliases-187.test.ts`,
+ * `tests/unit/tool-mention-aliases-432.test.ts`.
  */
 export const TOOL_ALIASES: Readonly<Record<string, string>> = {
   // OpenAI
-  "gpt-4": "ChatGPT Canvas", // suspect: a model name, mapped to a product
-  "gpt-4o": "ChatGPT Canvas", // suspect: a model name, mapped to a product
-  "gpt-4-turbo": "ChatGPT Canvas", // suspect: a model name, mapped to a product
-  chatgpt: "ChatGPT Canvas", // suspect: the ChatGPT app, mapped to its Canvas feature
+  // #432: the GPT model names, "chatgpt" and "openai" are dropped; none names the Canvas feature.
   "chatgpt canvas": "ChatGPT Canvas",
   // Codex-merge: ar-Te2/T76 merged the Codex CLI row into OpenAI Codex; every Codex name lands there.
   "openai codex": "OpenAI Codex",
   "openai codex cli": "OpenAI Codex",
   "codex cli": "OpenAI Codex",
   codex: "OpenAI Codex",
-  "gpt-5": "ChatGPT Canvas", // suspect: a model name, mapped to a product
   "gpt-5-codex": "OpenAI Codex",
-  "gpt-3.5": "ChatGPT Canvas", // suspect: a model name, mapped to a product
-  "gpt-3": "ChatGPT Canvas", // suspect: a model name, mapped to a product
-  openai: "ChatGPT Canvas", // suspect: the vendor, mapped to one of its products
 
   // Anthropic
-  claude: "Claude Code", // suspect: the model family, mapped to the coding harness
-  "claude 3": "Claude Code", // suspect: a model name, mapped to the coding harness
-  "claude 3.5": "Claude Code", // suspect: a model name, mapped to the coding harness
-  "claude 3.5 sonnet": "Claude Code", // suspect: a model name, mapped to the coding harness
-  "claude sonnet": "Claude Code", // suspect: a model name, mapped to the coding harness
-  "claude opus": "Claude Code", // suspect: a model name, mapped to the coding harness
-  "claude haiku": "Claude Code", // suspect: a model name, mapped to the coding harness
+  // #432: a Claude model name maps to its model row, not Claude Code; "claude", "claude 3",
+  // "claude 3.5", "claude 4" and "anthropic" name no tier and are dropped.
+  "claude 3.5 sonnet": "Claude Sonnet",
+  "claude sonnet": "Claude Sonnet",
+  "claude opus": "Claude Opus",
+  "claude haiku": "claude-haiku", // #432: the slug; the row name carries the version ("Claude Haiku 5.5")
   // #314: Claude Artifacts is renamed Claude.AI (slug claude-artifacts kept); the old name still maps to it.
   "claude artifacts": "Claude.AI",
   "claude.ai": "Claude.AI",
   "claude ai": "Claude.AI",
-  "claude canvas": "Claude Code", // suspect: Canvas/Artifacts is a Claude.AI feature, not Claude Code
+  "claude canvas": "Claude.AI", // #432: Canvas/Artifacts is a Claude.AI feature, not Claude Code
   "claude code": "Claude Code",
-  "claude 4": "Claude Code", // suspect: a model name, mapped to the coding harness
-  "claude 4 sonnet": "Claude Code", // suspect: a model name, mapped to the coding harness
-  "claude opus 4": "Claude Code", // suspect: a model name, mapped to the coding harness
-  "claude opus 4.1": "Claude Code", // suspect: a model name, mapped to the coding harness
-  anthropic: "Claude Code", // suspect: the vendor, mapped to one of its products
+  "claude 4 sonnet": "Claude Sonnet",
+  "claude opus 4": "Claude Opus",
+  "claude opus 4.1": "Claude Opus",
 
   // Google
-  gemini: "Google Gemini Code Assist", // suspect: the model family, mapped to the code-assist product
-  "gemini pro": "Google Gemini Code Assist", // suspect: a model name, mapped to the code-assist product
-  "gemini ultra": "Google Gemini Code Assist", // suspect: a model name, mapped to the code-assist product
+  // #432: Gemini model names, "google ai" and "bard" are dropped; none names Code Assist.
   "gemini code": "Google Gemini Code Assist",
-  "gemini 1.5": "Google Gemini Code Assist", // suspect: a model name, mapped to the code-assist product
-  "gemini 2.0": "Google Gemini Code Assist", // suspect: a model name, mapped to the code-assist product
-  "gemini 2.5": "Google Gemini Code Assist", // suspect: a model name, mapped to the code-assist product
-  "gemini 2.5 pro": "Google Gemini Code Assist", // suspect: a model name, mapped to the code-assist product
   "gemini code assist": "Google Gemini Code Assist",
   jules: "Google Jules",
   "google jules": "Google Jules",
   "project jules": "Google Jules",
-  "google ai": "Google Gemini Code Assist", // suspect: the vendor's AI umbrella, mapped to one product
-  bard: "Google Gemini Code Assist", // suspect: Bard was the chatbot, not a code assistant
 
   // GitHub/Microsoft
+  // #432: "microsoft copilot" (the Microsoft 365 assistant) is dropped.
   copilot: "GitHub Copilot",
   "github copilot": "GitHub Copilot",
   "copilot x": "GitHub Copilot",
   "copilot chat": "GitHub Copilot",
   "copilot workspace": "GitHub Copilot",
-  "microsoft copilot": "GitHub Copilot", // suspect: Microsoft Copilot is the Microsoft 365 assistant, not GitHub Copilot
   "vs code copilot": "GitHub Copilot",
 
   // Amazon
@@ -84,14 +68,13 @@ export const TOOL_ALIASES: Readonly<Record<string, string>> = {
   "amazon codewhisperer": "Amazon Q Developer",
 
   // Other tools
+  // #432: company names and common words ("agent 3", "cognition", "sourcegraph", "magic",
+  // "pieces", "sweep", "menlo", "factory", "genie", ...) are dropped; the specific forms stay.
   replit: "Replit Agent",
   "replit agent": "Replit Agent",
   "replit ai": "Replit Agent",
   ghostwriter: "Replit Agent",
-  "agent 3": "Replit Agent", // suspect: a generic name, taken to be Replit's Agent 3
   "replit agent 3": "Replit Agent",
-  cognition: "Devin", // suspect: the company (it also owns Windsurf), mapped to one product
-  "cognition ai": "Devin", // suspect: the company (it also owns Windsurf), mapped to one product
   devin: "Devin",
   "devin ai": "Devin",
   cursor: "Cursor",
@@ -109,7 +92,6 @@ export const TOOL_ALIASES: Readonly<Record<string, string>> = {
   "tabnine ai": "Tabnine",
   cody: "Sourcegraph Cody",
   "sourcegraph cody": "Sourcegraph Cody",
-  sourcegraph: "Sourcegraph Cody", // suspect: the company, mapped to one product
   continue: "Continue",
   "continue dev": "Continue",
   "continue.dev": "Continue",
@@ -153,32 +135,25 @@ export const TOOL_ALIASES: Readonly<Record<string, string>> = {
   "sourcery ai": "Sourcery",
   diffblue: "Diffblue Cover",
   "diffblue cover": "Diffblue Cover",
-  magic: "Magic", // suspect: a common word, taken to be Magic.dev
   "magic.dev": "Magic",
   "magic ai": "Magic",
   supermaven: "Supermaven",
   "super maven": "Supermaven",
-  pieces: "Pieces", // suspect: a common word, taken to be Pieces for Developers
   "pieces for developers": "Pieces",
   "pieces app": "Pieces",
   bito: "Bito",
   "bito ai": "Bito",
   mutable: "Mutable",
   "mutable ai": "Mutable",
-  sweep: "Sweep", // suspect: a common word, taken to be Sweep AI
   "sweep ai": "Sweep",
-  menlo: "Menlo", // suspect: a common word, taken to be the AI tool
-  "menlo security": "Menlo", // suspect: Menlo Security is a web-security company, not an AI coding tool
   phind: "Phind",
   "phind.com": "Phind",
   perplexity: "Perplexity",
   "perplexity ai": "Perplexity",
-  factory: "Factory", // suspect: a common word, taken to be Factory AI
   "factory ai": "Factory",
   poolside: "Poolside",
   "poolside ai": "Poolside",
   cosine: "Cosine Genie",
-  genie: "Cosine Genie", // suspect: "Genie" is also other vendors' products (e.g. Databricks Genie)
   "cosine genie": "Cosine Genie",
 };
 
