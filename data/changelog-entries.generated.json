@@ -101,12 +101,23 @@
   {
     "id": "unreleased-9d544a183ea7",
     "version": "Unreleased",
-    "date": "2026-11-11T18:21:53.154Z",
-    "dateSource": "build",
+    "date": "2026-11-11T18:28:24.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "news",
     "title": "the admin saveAsArticle write in /api/admin/news/analyze stores tool mentions as the objects the catalogue mapping…",
     "description": "the admin `saveAsArticle` write in `/api/admin/news/analyze` stores tool mentions as the objects the catalogue mapping returns (`tool`, `raw_tool`, context, sentiment, relevance), as automated ingestion does, instead of bare name strings, so its rows count toward the #432 alias counts. The readers accept both shapes: the news detail view resolves an object mention's `tool` to a tool link (it threw on objects and showed none), the admin edit page lists string and object mentions by name and saves them (its GET now returns the snake_case fields the page reads, and its PUT maps those fields to columns, so tool mentions, published date, source, source URL and importance score load and save; a save keeps each stored mention's shape, and a newly typed name is stored as `{ tool, raw_tool }` on a row that holds objects, else as a string), and the name lookups (`NewsRepository.searchByToolName`, `getArticlesByToolMention`, `/api/tools/[slug]/json`) match string, `{tool}` and `{name}` mentions through one shared condition (`lib/db/tool-mention-match.ts`). Existing string rows are unchanged and still render and match; no migration or backfill. Tests: `tests/unit/tool-mention-shape-434.test.ts`, `tests/unit/admin-news-edit-434.test.ts` (#434)",
+    "changeType": "fix"
+  },
+  {
+    "id": "unreleased-df672226696e",
+    "version": "Unreleased",
+    "date": "2026-11-11T18:28:55.819Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "news",
+    "title": "the Article template prints the publication date in the route locale (1 septembre 2026 on /fr/, 2026年9月1日 on /ja/); it…",
+    "description": "the Article template prints the publication date in the route locale (`1 septembre 2026` on `/fr/`, `2026年9月1日` on `/ja/`); it was en-US on every locale. The date stays on its UTC day (#239). `<html lang>` is still `en` on every locale; that change is not shipped yet. Tests: `tests/unit/article-dates-443.test.tsx`, `tests/unit/article-template-198.test.tsx` (#443)",
     "changeType": "fix"
   },
   {
