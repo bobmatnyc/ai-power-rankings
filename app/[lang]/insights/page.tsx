@@ -25,7 +25,7 @@ type PageProps = { params: Promise<{ lang: string }> };
  * Metadata for the `/[lang]/insights` hub (#198).
  *
  * What: 404 when the flag is off; otherwise `insightsPreviewMetadata()` for
- * `/insights` (noindex, `/en` canonical). Reads nothing.
+ * `/insights` (indexable, `/en` canonical; #198: the flag lifts the noindex). Reads nothing.
  * Test: `tests/unit/insights-weekly-198.test.tsx`.
  */
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

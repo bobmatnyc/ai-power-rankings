@@ -14,8 +14,8 @@ import { INSIGHTS_FEED_TITLES, insightsPreviewEnabled, monthlyInsightPath, weekl
  * Why: #198 slice 3: proposal M5-7 asks for "RSS per cadence". The feeds sit
  * beside the pages they list, at `/{lang}/insights/weekly/rss.xml` and
  * `/{lang}/insights/monthly/rss.xml`, the `<section>/rss.xml` shape of the news
- * and What's New feeds. Like the pages they are a preview: behind
- * `INSIGHTS_PREVIEW`, `X-Robots-Tag: noindex`; each Insights page head
+ * and What's New feeds. Like the pages they sit behind `INSIGHTS_PREVIEW`,
+ * whose flip is the launch, so the feed carries no `X-Robots-Tag` (#198); each Insights page head
  * advertises them while the flag is on (`insightsFeedLinks`). This module lives under the route
  * directory so no file outside `/insights` names an Insights URL.
  * What: `buildInsightsRssFeed` renders one RSS 2.0 document; every text node
@@ -122,7 +122,7 @@ async function monthlyItems(): Promise<InsightsRssItem[]> {
 
 // #198: the same CDN window as the news and What's New feeds.
 const FEED_CACHE_CONTROL = 'public, s-maxage=300, stale-while-revalidate=1800';
-// #198: a preview feed stays out of search, like the noindex pages.
+// #198: the 404 and 503 text responses stay out of search; the 200 feed carries no X-Robots-Tag.
 const ROBOTS = 'noindex, nofollow';
 
 function textResponse(status: number, message: string): Response {
@@ -136,11 +136,11 @@ function textResponse(status: number, message: string): Response {
  * The GET of `/{lang}/insights/<cadence>/rss.xml` (#198).
  *
  * What: 404 when `INSIGHTS_PREVIEW` is off, before any read, and for a locale
- * outside `i18n/config`. Otherwise reads the cadence's rows and returns the
- * feed with `X-Robots-Tag: noindex, nofollow`. A failed read is a 503 marked
+ * outside `i18n/config`, with `X-Robots-Tag: noindex, nofollow`. Otherwise reads
+ * the cadence's rows and returns the feed with no `X-Robots-Tag`. A failed read is a 503 marked
  * `no-store`, never an empty 200 the CDN would keep as the feed. No rows
  * stored gives a valid feed with no items.
- * Test: `tests/unit/insights-rss-198.test.ts`.
+ * Test: `tests/unit/insights-rss-198.test.ts`, `tests/unit/insights-launch-flags-198.test.ts`.
  */
 export async function insightsFeedResponse(cadence: InsightsCadence, lang: string): Promise<Response> {
   if (!insightsPreviewEnabled()) return textResponse(404, 'Not Found');
@@ -163,8 +163,8 @@ export async function insightsFeedResponse(cadence: InsightsCadence, lang: strin
     status: 200,
     headers: {
       'Content-Type': 'application/rss+xml; charset=utf-8',
+      // #198: the feed is served only with INSIGHTS_PREVIEW on, which is the launch, so no X-Robots-Tag.
       'Cache-Control': FEED_CACHE_CONTROL,
-      'X-Robots-Tag': ROBOTS,
     },
   });
 }

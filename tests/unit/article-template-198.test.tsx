@@ -127,11 +127,13 @@ function articleElement(node: ReactNode): ReactElement | undefined {
   return articleElement(props["children"] as ReactNode);
 }
 
-describe("the news article page and INSIGHTS_PREVIEW (#198)", () => {
+describe("the news article page and INSIGHTS_ARTICLE_TEMPLATE (#198)", () => {
   const params = { params: Promise.resolve({ lang: "fr", slug: "cursor-launch" }) };
 
-  it.each([undefined, "", "false", "1", "TRUE"])("INSIGHTS_PREVIEW=%j: the existing detail view, same props", async (flag) => {
-    vi.stubEnv("INSIGHTS_PREVIEW", flag);
+  it.each([undefined, "", "false", "1", "TRUE"])("INSIGHTS_ARTICLE_TEMPLATE=%j: the existing detail view, same props, even with INSIGHTS_PREVIEW on", async (flag) => {
+    // #198: the template has its own flag; INSIGHTS_PREVIEW alone no longer swaps it.
+    vi.stubEnv("INSIGHTS_PREVIEW", "true");
+    vi.stubEnv("INSIGHTS_ARTICLE_TEMPLATE", flag);
     const page = await import("../../app/[lang]/news/[slug]/page");
     const element = articleElement(await page.default(params));
     expect((element?.type as { name?: string }).name).toBe("NewsDetailContent");
@@ -139,8 +141,8 @@ describe("the news article page and INSIGHTS_PREVIEW (#198)", () => {
     expect(renderToStaticMarkup((await page.default(params)) as ReactElement)).not.toContain('data-template="article"');
   });
 
-  it("INSIGHTS_PREVIEW=true: the Article template with the per-kind tool tags", async () => {
-    vi.stubEnv("INSIGHTS_PREVIEW", "true");
+  it("INSIGHTS_ARTICLE_TEMPLATE=true: the Article template with the per-kind tool tags", async () => {
+    vi.stubEnv("INSIGHTS_ARTICLE_TEMPLATE", "true");
     const page = await import("../../app/[lang]/news/[slug]/page");
     const element = articleElement(await page.default(params));
     expect(element?.type).toBe(ArticleTemplate);
@@ -149,9 +151,9 @@ describe("the news article page and INSIGHTS_PREVIEW (#198)", () => {
 
   it("keeps the article metadata whatever the flag", async () => {
     const page = await import("../../app/[lang]/news/[slug]/page");
-    vi.stubEnv("INSIGHTS_PREVIEW", "");
+    vi.stubEnv("INSIGHTS_ARTICLE_TEMPLATE", "");
     const off = await page.generateMetadata(params);
-    vi.stubEnv("INSIGHTS_PREVIEW", "true");
+    vi.stubEnv("INSIGHTS_ARTICLE_TEMPLATE", "true");
     expect(await page.generateMetadata(params)).toEqual(off);
     expect(off.robots).toBeUndefined();
   });
