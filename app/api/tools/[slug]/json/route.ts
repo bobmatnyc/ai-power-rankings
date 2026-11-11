@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { NewsRepository } from "@/lib/db/repositories/news";
@@ -10,6 +10,8 @@ import { entryRank, matchesTool, rankingEntries } from "@/lib/tools/ranking-entr
 import { loggers } from "@/lib/logger";
 import { describeReadError, readToolLinks, type ToolLinkEntry } from "@/lib/tools/tool-links";
 import { articles, rankingVersions } from "@/lib/db/schema";
+import { toolMentionMatches } from "@/lib/db/tool-mention-match"; // #434
+import { toolMentionName } from "@/lib/tool-mention-shape"; // #434
 // #269: single shared helper; reads factors from their camelCase stored keys.
 import { deriveCompleteScores } from "@/lib/rankings/derive-complete-scores";
 
@@ -174,10 +176,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       const toolArticles = await db
         .select()
         .from(articles)
-        .where(
-          sql`${articles.toolMentions}::jsonb @> ${JSON.stringify([{ name: tool.name }])}::jsonb OR
-              ${articles.toolMentions}::jsonb @> ${JSON.stringify([tool.name])}::jsonb`
-        )
+        // #434: string, {tool} and {name} mentions all match.
+        .where(toolMentionMatches(articles.toolMentions, tool.name))
         .orderBy(desc(articles.publishedDate))
         .limit(20);
 
@@ -185,10 +185,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         const toolMentions = article.toolMentions as any[];
 
         // Find the specific tool mention data
-        const toolMention = toolMentions?.find((m: any) => {
-          if (typeof m === 'string') return m.toLowerCase() === tool.name.toLowerCase();
-          return m?.name?.toLowerCase() === tool.name.toLowerCase();
-        });
+        // #434: read the name from either shape ({tool} objects were skipped).
+        const toolMention = toolMentions?.find((m: unknown) => toolMentionName(m)?.toLowerCase() === tool.name.toLowerCase());
 
         // If we have metric data in the mention
         if (toolMention && typeof toolMention === 'object' && toolMention.metrics) {
