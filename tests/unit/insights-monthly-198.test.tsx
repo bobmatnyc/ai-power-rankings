@@ -153,10 +153,14 @@ describe("/insights/monthly/<month> (#198)", () => {
     expect(outcome).not.toMatchObject({ error: NOT_FOUND });
   });
 
-  it("is noindex with an /en canonical, no hreflang and the first sentence as description", async () => {
+  it("is indexable with the flag on (noindex with it off), an /en canonical, no hreflang and the first sentence as description", async () => {
     const { generateMetadata } = await monthModule();
     const meta = await generateMetadata(params({ lang: "fr", month: "2026-10" }));
-    expect(meta.robots).toMatchObject({ index: false, follow: false, googleBot: { index: false, follow: false } });
+    // #198: the flag lifts the noindex; with it off the helper keeps it (the page itself 404s).
+    expect(meta.robots).toBeUndefined();
+    vi.stubEnv("INSIGHTS_PREVIEW", "");
+    const { insightsPreviewMetadata } = await import("../../app/[lang]/insights/preview-gate");
+    expect(insightsPreviewMetadata("fr", "/insights/monthly/2026-10", "t", "d").robots).toMatchObject({ index: false, follow: false, googleBot: { index: false, follow: false } });
     expect(meta.alternates?.canonical).toBe(`${ORIGIN}/en/insights/monthly/2026-10`);
     expect(meta.alternates?.languages).toBeUndefined();
     expect(meta.title).toEqual({ absolute: "Monthly insight: October 2026 | Insights | AI Power Rankings" });
