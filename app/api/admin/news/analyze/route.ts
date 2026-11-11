@@ -816,6 +816,7 @@ export async function POST(request: NextRequest) {
         sourceName: analysis.source || "Unknown",
         sourceUrl,
         tags: analysis.key_topics || [],
+        // #187: this path stores bare name strings, which cannot hold raw_tool; readers expect strings here, so the shape is kept.
         toolMentions: analysis.tool_mentions?.map((tm: any) => tm.tool) || [],
         category: "AI News",
         importanceScore: analysis.importance_score || 5,
