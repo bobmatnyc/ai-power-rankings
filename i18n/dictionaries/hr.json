@@ -310,7 +310,14 @@
       "dayAgo": "1 dan prije",
       "daysAgo": "{count} dana prije"
     },
-    "viewSource": "Pogledaj izvor"
+    "viewSource": "Pogledaj izvor",
+    "article": {
+      "eyebrow": "Vijesti",
+      "tools": "Alati u ovom članku",
+      "noContent": "Sadržaj nije dostupan",
+      "referencedLinks": "Navedene poveznice",
+      "readOriginal": "Pročitajte izvornik na {source}"
+    }
   },
   "tools": {
     "title": "AI Coding Alati",

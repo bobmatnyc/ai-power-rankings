@@ -108,7 +108,8 @@ export default async function NewsArticlePage({ params }: PageProps): Promise<Re
   if (insightsArticleTemplateEnabled()) {
     return (
       <main className="container mx-auto max-w-3xl px-4 py-8">
-        <ArticleTemplate lang={lang} article={article} tool={tool} tools={tools} />
+        {/* #198: the template's labels come from the locale's dictionary (#421 review). */}
+        <ArticleTemplate lang={lang} labels={dict.news.article} article={article} tool={tool} tools={tools} />
       </main>
     );
   }
