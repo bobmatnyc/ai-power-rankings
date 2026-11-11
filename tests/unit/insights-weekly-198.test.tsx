@@ -175,10 +175,14 @@ describe("/insights/weekly/<week> (#198)", () => {
     await expect(renderWeek("2026-W44")).rejects.toThrow("connection reset");
   });
 
-  it("is noindex with an /en canonical, no hreflang and the first sentence as description", async () => {
+  it("is indexable with the flag on (noindex with it off), an /en canonical, no hreflang and the first sentence as description", async () => {
     const { generateMetadata } = await weekModule();
     const meta = await generateMetadata(params({ lang: "ko", week: "2026-W44" }));
-    expect(meta.robots).toMatchObject({ index: false, follow: false, googleBot: { index: false, follow: false } });
+    // #198: the flag lifts the noindex; with it off the helper keeps it (the page itself 404s).
+    expect(meta.robots).toBeUndefined();
+    vi.stubEnv("INSIGHTS_PREVIEW", "");
+    const { insightsPreviewMetadata } = await import("../../app/[lang]/insights/preview-gate");
+    expect(insightsPreviewMetadata("ko", "/insights/weekly/2026-W44", "t", "d").robots).toMatchObject({ index: false, follow: false, googleBot: { index: false, follow: false } });
     expect(meta.alternates?.canonical).toBe(`${ORIGIN}/en/insights/weekly/2026-W44`);
     expect(meta.alternates?.languages).toBeUndefined();
     expect(meta.description).toBe("Two agents shipped terminal modes this week.");
@@ -220,10 +224,14 @@ describe("/insights hub (#198)", () => {
     expect(outcome).toMatchObject({ error: expect.objectContaining({ message: "connection reset" }) });
   });
 
-  it("is noindex with an /en canonical and no hreflang", async () => {
+  it("is indexable with the flag on (noindex with it off), an /en canonical and no hreflang", async () => {
     const { generateMetadata } = await hubModule();
     const meta = await generateMetadata(params({ lang: "ja" }));
-    expect(meta.robots).toMatchObject({ index: false, follow: false, googleBot: { index: false, follow: false } });
+    // #198: the flag lifts the noindex; with it off the helper keeps it (the page itself 404s).
+    expect(meta.robots).toBeUndefined();
+    vi.stubEnv("INSIGHTS_PREVIEW", "");
+    const { insightsPreviewMetadata } = await import("../../app/[lang]/insights/preview-gate");
+    expect(insightsPreviewMetadata("ja", "/insights", "t", "d").robots).toMatchObject({ index: false, follow: false, googleBot: { index: false, follow: false } });
     expect(meta.alternates?.canonical).toBe(`${ORIGIN}/en/insights`);
     expect(meta.alternates?.languages).toBeUndefined();
     expect(repo.listDigests).not.toHaveBeenCalled();
