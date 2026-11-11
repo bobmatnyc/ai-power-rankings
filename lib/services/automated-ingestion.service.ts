@@ -52,8 +52,10 @@ import {
   emptyRunCounts,
   FETCH_FAILURE_PREFIX, // #367
   logRunSummary,
+  noteToolMapping, // #187
   type IngestionRunCounts,
 } from "./ingestion-run-summary";
+import type { ToolMappingReport } from "./tool-mention-catalogue"; // #187
 import { loggers } from "@/lib/logger";
 
 // Unified search result type
@@ -1435,6 +1437,18 @@ export class AutomatedIngestionService {
               windowDays: freshnessWindowDays,
             },
           });
+
+          // #187: count an article none of whose tool mentions reached the catalogue; the catalogue
+          // lookup has already logged a failed read at warn level.
+          const toolMapping = (ingestionResult as { toolMapping?: ToolMappingReport }).toolMapping;
+          noteToolMapping(runCounts, toolMapping);
+          if (!toolMapping || toolMapping.articleUnmapped) {
+            loggers.api.warn("[AutomatedIngestion] Article tool mentions unmapped", {
+              url: article.url,
+              unmappedNames: toolMapping?.unmappedNames ?? [],
+              catalogueError: toolMapping?.catalogueError ?? null,
+            });
+          }
 
           if (isDryRun) {
             // In dry run, we get a DryRunResult

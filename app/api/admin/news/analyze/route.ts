@@ -7,7 +7,7 @@ import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { getOpenRouterModel } from "@/lib/services/openrouter-model";
 import { extractJsonObject, readCompletion } from "@/lib/services/llm-completion";
 import { OPENROUTER_USAGE_REQUEST, recordOpenRouterUsage } from "@/lib/services/provider-usage"; // #325
-import { ToolMapper } from "@/lib/services/tool-mapper.service";
+import { mapToolMentionsToCatalogue } from "@/lib/services/tool-mention-catalogue"; // #187
 import { jinaReaderService, type JinaReaderMetadata } from "@/lib/services/jina-reader.service";
 
 // Type definitions for OpenRouter API
@@ -573,13 +573,13 @@ REMINDER: The field name MUST be "tool" (not "name", "tool_name", or anything el
       }
     }
 
-    // Normalize tool names using ToolMapper
+    // #187: map tool names through the tools catalogue (a miss or failed read stays unmapped).
     // Filter out mentions without a tool property
     const validToolMentions = validated.tool_mentions.filter(
       (mention): mention is typeof mention & { tool: string } =>
         typeof mention.tool === 'string' && mention.tool.length > 0
     );
-    const normalizedToolMentions = ToolMapper.processToolMentions(validToolMentions);
+    const { mentions: normalizedToolMentions } = await mapToolMentionsToCatalogue(validToolMentions);
 
     // Add the model name to the response
     return {
@@ -731,8 +731,8 @@ export async function POST(request: NextRequest) {
       // Validate and normalize the preprocessed data
       analysis = {
         ...preprocessedData,
-        // Ensure tool names are normalized even in preprocessed data
-        tool_mentions: ToolMapper.processToolMentions(preprocessedData.tool_mentions || []),
+        // #187: map preprocessed tool names through the catalogue as well
+        tool_mentions: (await mapToolMentionsToCatalogue(preprocessedData.tool_mentions || [])).mentions,
       };
     } else {
       // Normal processing path - extract content and analyze
