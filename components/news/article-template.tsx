@@ -32,11 +32,12 @@ export type ArticleLabels = {
 /**
  * #198: `raw` when it is an absolute http(s) URL, else null (#421 review).
  *
- * Why: `source_url` is crawled data; a `javascript:`, `data:` or relative value
- * must not become a clickable source link.
+ * Why: `source_url` and the body's links are crawled data; a `javascript:`,
+ * `data:` or relative value must not become a clickable link.
  * What: parses `raw` with no base, so a relative value fails, and keeps it only
  * when the protocol is `http:` or `https:`.
- * Test: `tests/unit/article-template-198.test.tsx` ("source link" cases).
+ * Test: `tests/unit/article-template-198.test.tsx` ("source link" and
+ * "referenced links" cases).
  */
 export function httpSourceUrl(raw: string | null | undefined): string | null {
   const value = raw?.trim();
@@ -77,8 +78,9 @@ function BodyLink({ href, className, children }: AnchorHTMLAttributes<HTMLAnchor
  * body without its in-body "Related Links" block, a "Referenced links" list
  * (chrome links filtered, #122), and a "Read the original" link. Markdown
  * renders without `rehype-raw`, so raw HTML in a body renders as text. The
- * labels come from `labels` (the locale's `news.article`), and the source is
- * linked only when its URL is http(s).
+ * labels come from `labels` (the locale's `news.article`); the source and each
+ * referenced link are linked only when the URL is http(s), and a referenced
+ * link with any other URL is left out.
  * Test: `tests/unit/article-template-198.test.tsx`.
  */
 export function ArticleTemplate({
@@ -89,7 +91,11 @@ export function ArticleTemplate({
   tools,
 }: Pick<NewsArticleDetail, 'article' | 'tool' | 'tools'> & { lang: string; labels: ArticleLabels }) {
   const body = stripRelatedLinksSection(article.content);
-  const links = filterChromeLinks(extractExternalLinks(article.content));
+  // #198: a referenced link whose URL is not http(s) (data:, javascript:, relative) is left out of the list.
+  const links = filterChromeLinks(extractExternalLinks(article.content)).flatMap((link) => {
+    const url = httpSourceUrl(link.url);
+    return url ? [{ ...link, url }] : [];
+  });
   const tags = toolTags({ tool, tools });
   const summary = article.summary?.trim();
   const published = new Date(article.published_date);
@@ -177,7 +183,8 @@ export function ArticleTemplate({
             className="inline-flex items-center text-sm text-primary hover:underline"
           >
             <ExternalLink aria-hidden="true" className="mr-2 h-4 w-4" />
-            {labels.readOriginal.replace('{source}', article.source)}
+            {/* #198: a replacer function keeps `$&`, `$1` and `$$` in the source literal. */}
+            {labels.readOriginal.replace('{source}', () => article.source)}
           </a>
         </footer>
       )}

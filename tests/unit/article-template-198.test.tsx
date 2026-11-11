@@ -137,6 +137,9 @@ describe("ArticleTemplate (#198)", () => {
     "/relative/junk",
     "verge.example/cursor",
     "   ",
+    // #198: protocol-relative and tab-split schemes are not http(s) (#421 review).
+    "//host/x",
+    "java\tscript:alert(1)",
   ])("source link: %j renders the source as text and no link to it", (url) => {
     const html = render(withSourceUrl(url));
     expect(html).toContain("<span>The Verge</span>");
@@ -145,11 +148,34 @@ describe("ArticleTemplate (#198)", () => {
     expect(html).not.toContain(`href="${escapeHtml(url)}"`);
   });
 
-  it.each(["http://verge.example/cursor", "https://verge.example/cursor"])("source link: %s links the source and the original", (url) => {
+  it.each([
+    ["http://verge.example/cursor", "http://verge.example/cursor"],
+    ["https://verge.example/cursor", "https://verge.example/cursor"],
+    // #198: an upper-case scheme is still http(s), and surrounding spaces are trimmed (#421 review).
+    ["HTTPS://A.COM", "HTTPS://A.COM"],
+    [" https://a.com ", "https://a.com"],
+  ])("source link: %j links the source and the original as %j", (url, href) => {
     const html = render(withSourceUrl(url));
-    expect(html.match(new RegExp(`<a href="${url}" target="_blank" rel="noopener noreferrer"`, "g"))).toHaveLength(2);
+    expect(html.split(`<a href="${href}" target="_blank" rel="noopener noreferrer"`)).toHaveLength(3);
     expect(html).toContain(">The Verge</a>");
     expect(html).toContain("Read the original at The Verge");
+  });
+
+  // #198: a referenced link with a data: or javascript: URL is left out of the list (#421 review).
+  it("referenced links: lists only the http(s) links, never a data: or javascript: href", () => {
+    const content = "See [d](data:text/html,x), [j](javascript:alert(1)) and [ok](https://ok.example/story).";
+    const html = render({ article: { ...DETAIL.article, content } });
+    const section = html.slice(html.indexOf('aria-labelledby="article-links"'));
+    expect(html).not.toMatch(/href="\s*(data|javascript):/i);
+    expect(section).toContain('<a href="https://ok.example/story" class="text-primary hover:underline break-all" target="_blank" rel="noopener noreferrer">ok</a>');
+    expect(section).not.toContain(">d</a>");
+    expect(section).not.toContain(">j</a>");
+  });
+
+  // #198: the `{source}` substitution is literal, so `$&` in a source is not a replacement pattern (#421 review).
+  it("read the original: a source with `$&`, `$1` or `$$` renders literally", () => {
+    const html = render({ article: { ...DETAIL.article, source: "AT$&T $1 $$" } });
+    expect(html).toContain("Read the original at AT$&amp;T $1 $$</a>");
   });
 });
 
