@@ -14,7 +14,7 @@ import { describe, expect, it } from "vitest";
  * What: (1) walks the repo (skipping dot-directories and build/output dirs) and
  * requires `app/globals.css` to be the only `.css` file, loaded (static or
  * dynamic `import`, `require`, CSS `@import`, `/globals.css` URL) only by
- * `app/layout.tsx`; (2) counts hard-coded colours in `components/` and `app/`
+ * `app/root-document.tsx` (#443); (2) counts hard-coded colours in `components/` and `app/`
  * exactly as docs/refresh/design-audit/one-off-styles.md "Method" describes,
  * less the #190 D2-D4 and Df8 allowlist, and fails above the baseline or on
  * an empty scan; (3) caps the colour literals (`literalCap`) or every counted
@@ -68,12 +68,13 @@ describe("single global stylesheet (#189)", () => {
     expect(GLOBALS_LOADER.test('readFileSync(join(root, "app", "globals.css"))')).toBe(false);
   });
 
-  it("loads globals.css only through the app/layout.tsx import, anywhere in the repo", () => {
+  it("loads globals.css only through the app/root-document.tsx import, anywhere in the repo", () => {
     // #190: the whole repo, not only app/, components/ and lib/.
     const sources = walk(root, (p) => LOADER_SOURCE.test(p)).filter((file) => file !== SELF);
     expect(sources.length, "files scanned for globals.css loaders").toBeGreaterThan(0);
     const readers = sources.filter((file) => GLOBALS_LOADER.test(readFileSync(join(root, file), "utf8")));
-    expect(readers).toEqual(["app/layout.tsx"]);
+    // #443: app/layout.tsx became app/root-document.tsx, which every root layout renders.
+    expect(readers).toEqual(["app/root-document.tsx"]);
   });
 });
 
@@ -180,7 +181,8 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{
       "Df8: no exact token for the sign-up card gradient stops, its blue-200/900 border and mail icon (HSL not exact), the alerts' 20 % dark tints and 800/200 text, or the gray-400/800 dots.",
   },
   {
-    path: /^app\/error\.tsx$/,
+    // #443: app/error.tsx moved to app/[lang]/error.tsx when [lang] became a root layout.
+    path: /^app\/\[lang\]\/error\.tsx$/,
     colourCap: 3,
     reason: "Df8: the card's box-shadow rgba values (no matching --shadow token) and the #111827 heading (only a surface token holds it).",
   },
@@ -190,7 +192,8 @@ const RATCHET_ALLOWLIST: ReadonlyArray<{
     reason: "Df8: renders its own <html> without the root layout, so app/globals.css and the --ds-* tokens may not load.",
   },
   {
-    path: /^app\/not-found\.tsx$/,
+    // #443: app/not-found.tsx's body moved to app/not-found-body.tsx, shared by the global and /design 404s.
+    path: /^app\/not-found-body\.tsx$/,
     colourCap: 4,
     reason: "Df8: the card's box-shadow rgba values, and #111827 / #374151 headings that only surface and border tokens hold.",
   },

@@ -1,4 +1,5 @@
-export default function NotFound() {
+/** The site 404 body, formerly `app/not-found.tsx` (#443: shared by the root layouts that need it). */
+export function NotFoundBody() {
   return (
     <div
       className="bg-ds-surface-paper-muted"

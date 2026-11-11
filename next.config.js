@@ -37,6 +37,8 @@ const nextConfig = {
   },
   // Phase 2 FCP Optimizations + Lighthouse Performance Optimizations
   experimental: {
+    // #443: one root layout per top-level segment, so the unmatched-URL 404 is app/global-not-found.tsx.
+    globalNotFound: true,
     optimizeCss: false, // Still broken in Next.js 15.5.6 - CSS loads as script tags causing SyntaxError
     optimizePackageImports: [
       'lucide-react',

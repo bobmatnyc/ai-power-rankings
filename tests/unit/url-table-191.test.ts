@@ -212,7 +212,8 @@ describe("rows and routes the table leaves alone", () => {
   it("never applies the pattern rule to a top-level app/ or public/ entry", () => {
     const root = join(__dirname, "..", "..");
     const appRoutes = readdirSync(join(root, "app")).filter(
-      (name) => !name.startsWith("[") && statSync(join(root, "app", name)).isDirectory()
+      // #443: a route group such as `(root)` is no URL segment.
+      (name) => !name.startsWith("[") && !name.startsWith("(") && statSync(join(root, "app", name)).isDirectory()
     );
     const publicEntries = readdirSync(join(root, "public"));
     for (const name of [...appRoutes, ...publicEntries]) {

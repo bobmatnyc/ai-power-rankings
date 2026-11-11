@@ -10,10 +10,30 @@ import {
 } from "@/lib/schema";
 import { siteOrigin } from "@/lib/site-origin";
 
-export const metadata: Metadata = {
+/**
+ * The `<html>` document every root layout renders (#443).
+ *
+ * Why: #443: one `app/layout.tsx` rendered `<html lang="en">` for every page,
+ *   and a root layout gets no `[lang]` param, so `/fr/news/<slug>` said `en`.
+ *   Reading the path with `headers()` would make every ISR page dynamic. The
+ *   app now has one root layout per top-level segment (`app/[lang]`,
+ *   `app/(root)`, `app/design`, plus `app/global-not-found.tsx`); each renders
+ *   this document with its own `lang`.
+ * What: `RootDocument` is the former root layout's `<html>`, head scripts,
+ *   site-wide JSON-LD and `<body>`, with `lang` from the caller.
+ *   `rootMetadata` is its former `metadata`; `ROOT_TITLE_TEMPLATE` its title
+ *   template. This module is the only `globals.css` import.
+ * Test: `tests/unit/html-lang-dates-443.test.tsx`,
+ *   `tests/unit/seo-canonical-origin.test.ts`.
+ */
+
+/** The root title template; `app/[lang]/layout.tsx` applies it to its own title (#443). */
+export const ROOT_TITLE_TEMPLATE = "%s | AI Power Rankings";
+
+export const rootMetadata: Metadata = {
   title: {
     default: "AI Power Rankings - Top AI Coding Tools Monthly",
-    template: "%s | AI Power Rankings",
+    template: ROOT_TITLE_TEMPLATE,
   },
   description:
     "Monthly rankings of 50+ AI coding tools. Compare Cursor, GitHub Copilot, Claude & top AI assistants trusted by developers. Updated monthly.",
@@ -47,11 +67,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Note: The lang attribute defaults to "en" but will be updated by locale-specific routes
-  // The suppressHydrationWarning is necessary because the lang attribute may differ
-  // between server and client rendering in internationalized routes
-
+export function RootDocument({ lang, children }: { lang: string; children: React.ReactNode }) {
   // #153: schema markup names the production origin, never the VERCEL_URL host.
   const baseUrl = siteOrigin();
 
@@ -66,7 +82,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const websiteSchema = generateWebsiteSchema(baseUrl);
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    // #443: the caller's locale, e.g. `fr` under /fr/; non-locale roots pass "en".
+    <html lang={lang} suppressHydrationWarning>
       <head>
         {/* Lighthouse Performance: Preload LCP image - single size to avoid attribute issues */}
         <link

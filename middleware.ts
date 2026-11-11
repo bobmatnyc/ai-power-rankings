@@ -1,6 +1,7 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextFetchEvent, NextRequest } from "next/server";
+import { localeNotFoundRewrite } from "./lib/locale-not-found-rewrite";
 import { openWeightRewrite } from "./lib/rankings/open-weight-view";
 import { isApiPath, needsClerk, routeAccess } from "./lib/route-access";
 import { searchKeyRedirect } from "./lib/search-url-keys";
@@ -39,7 +40,8 @@ function authDisabledResponse(): NextResponse | null {
  *   per-user, so no public page was served from the edge cache.
  * What: Runs the #191 table redirect, the #233 search-key strip and the #340
  *   held-source rewrite for every matched path, as before, then the #195
- *   open-weight rewrite (`openWeightRewrite`). A path that
+ *   open-weight rewrite (`openWeightRewrite`), then the #443 site 404 for a
+ *   first segment that is not a locale (`localeNotFoundRewrite`). A path that
  *   `needsClerk()` (API, admin, dashboard, sign-in/up and the rest of the
  *   `(authenticated)` group) then runs `clerkHandler`, unchanged. Any other
  *   path gets the auth-disabled answer or passes through without Clerk.
@@ -62,6 +64,10 @@ export default function middleware(req: NextRequest, event: NextFetchEvent) {
   // #195: `/rankings/models?open=1` is served by its static open-weight route, so the board page stays ISR.
   const openWeight = openWeightRewrite(req);
   if (openWeight) return openWeight;
+
+  // #443: a first segment that is not a locale gets the site 404; the [lang] root layout's notFound() has no boundary above it.
+  const notLocale = routeAccess(req) === "protected" ? null : localeNotFoundRewrite(req);
+  if (notLocale) return notLocale;
 
   // #368: Clerk runs only where auth is used; public pages skip it so the edge can cache them.
   if (needsClerk(req)) return clerkHandler(req, event);

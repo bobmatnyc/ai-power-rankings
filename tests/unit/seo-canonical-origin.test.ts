@@ -157,7 +157,7 @@ const fetchMock = vi.fn(async (input: string | URL | Request) => {
 vi.setConfig({ testTimeout: 60_000 });
 
 // Every module is imported inside a test, after this hook, so import-time env
-// reads (app/layout.tsx's `metadata`) see the simulated Vercel deployment.
+// reads (app/root-document.tsx's `rootMetadata`) see the simulated Vercel deployment.
 beforeEach(() => {
   vi.stubEnv("NEXT_PUBLIC_BASE_URL", undefined);
   vi.stubEnv("NEXTAUTH_URL", undefined);
@@ -323,9 +323,10 @@ const DASHBOARD_PAGES = [
 
 describe("SEO origin on a Vercel deployment (#153)", () => {
   it("root layout metadataBase and site-wide JSON-LD use the production origin", async () => {
-    const mod = await import("../../app/layout");
-    expectProductionUrls(mod.metadata, "app/layout metadata");
-    const blocks = jsonLdIn(mod.default({ children: null }));
+    // #443: the former app/layout.tsx is app/root-document.tsx, rendered by every root layout.
+    const mod = await import("../../app/root-document");
+    expectProductionUrls(mod.rootMetadata, "app/layout metadata");
+    const blocks = jsonLdIn(mod.RootDocument({ lang: "en", children: null }));
     expect(blocks.length).toBe(2);
     expectProductionUrls(blocks, "app/layout JSON-LD");
   });
