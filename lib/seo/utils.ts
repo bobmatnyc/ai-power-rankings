@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { canonicalLocale, localizedAlternates } from "@/lib/seo/alternates";
 import { siteOrigin } from "@/lib/site-origin";
 import { isNoindexToolSlug } from "@/lib/seo/url-table";
+import { toMetaDescription } from "@/lib/article-summary";
 import type { Tool } from "@/types/database";
 
 interface GenerateMetadataProps {
@@ -101,6 +102,23 @@ export function generateMetadata({
   };
 }
 
+/** The meta description ceiling (#179). */
+const TOOL_META_DESCRIPTION_MAX = 160;
+
+const CODING_WORDING = { noun: "AI Coding Tool", plural: "AI coding tools" };
+
+/** Per-kind wording (#424); the kinds are the per-list boards. */
+const KIND_WORDING: Record<string, { noun: string; plural: string }> = {
+  harness: CODING_WORDING,
+  model: { noun: "AI Model", plural: "AI models" },
+  productivity: { noun: "AI Productivity Tool", plural: "AI productivity tools" },
+};
+
+/** Title noun and plural for a tool kind; the coding-tool wording for an unknown or missing kind. */
+function toolKindWording(kind: unknown): { noun: string; plural: string } {
+  return typeof kind === "string" && Object.hasOwn(KIND_WORDING, kind) ? KIND_WORDING[kind]! : CODING_WORDING;
+}
+
 export function generateToolMetadata(tool: Tool, lang: string): Metadata {
   const keywords = [
     tool.name,
@@ -111,7 +129,9 @@ export function generateToolMetadata(tool: Tool, lang: string): Metadata {
     "developer tools",
   ];
 
-  const title = `${tool.name} - AI Coding Tool Review & Rankings`;
+  // #424: the title and description wording follow the tool's kind; an unknown or missing kind keeps the coding-tool wording.
+  const wording = toolKindWording(tool.kind);
+  const title = `${tool.name} - ${wording.noun} Review & Rankings`;
 
   // Safely access nested description with fallbacks to flat structure
   const toolDescription =
@@ -120,7 +140,12 @@ export function generateToolMetadata(tool: Tool, lang: string): Metadata {
     tool.description ||
     "";
 
-  const description = `${toolDescription} Compare ${tool.name} with other AI coding tools. Features, pricing, performance benchmarks, and user reviews.`;
+  // #424: the fixed tail stays whole; only the tool's own text is cut so the result fits the 160-character meta rule (#179).
+  const tail = `Compare ${tool.name} with other ${wording.plural}. Features, pricing, performance benchmarks, and user reviews.`;
+  const lead = toolDescription.trim()
+    ? toMetaDescription(toolDescription, Math.max(0, TOOL_META_DESCRIPTION_MAX - tail.length - 1))
+    : "";
+  const description = lead && lead !== "…" ? `${lead} ${tail}` : tail;
 
   return generateMetadata({
     title,
