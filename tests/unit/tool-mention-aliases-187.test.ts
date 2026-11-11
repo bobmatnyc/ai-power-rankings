@@ -12,6 +12,9 @@ import golden from "../fixtures/tool-mapper-golden-187.json";
  * against a catalogue holding every old target, must return the old output when the
  * old output came from a table (alias or known name). A row the old mapper answered
  * by fuzzy substring or word overlap is not kept: it must come back unmapped.
+ * #432: the fixture's `rulings` block lists the owner's later changes; for those
+ * aliases the expected output is the new target, or for a dropped alias the
+ * catalogue row of that exact name if there is one, else the input unmapped.
  * Test: `npx vitest run tests/unit/tool-mention-aliases-187.test.ts`. No database.
  */
 
@@ -31,6 +34,19 @@ const catalogueOf = (names: string[]) =>
 const targets = [...new Set(Object.values(TOOL_ALIASES))];
 const mention = (tool: string) => ({ tool });
 
+// #432: the owner's rulings override the old output for the aliases they name.
+const ruling = golden.rulings["432"];
+const dropped = new Set<string>(ruling.dropped);
+const retargeted = ruling.retargeted as Record<string, string>;
+const targetCatalogue = catalogueOf(targets);
+/** The output the lookup now owes for `input`, given the old mapper's table output `out`. */
+const rulingOutput = (input: string, out: string): string => {
+  const k = input.trim().toLowerCase();
+  if (Object.hasOwn(retargeted, k)) return targetCatalogue.byKey.get(retargeted[k].toLowerCase())?.name ?? input;
+  if (dropped.has(k)) return targetCatalogue.byKey.get(k)?.name ?? input;
+  return out;
+};
+
 let warn: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
   warn = vi.spyOn(loggers.api, "warn").mockImplementation(() => undefined);
@@ -43,7 +59,7 @@ describe("the alias lookup matches the old mapper's table output (#187)", () => 
     for (const row of rows) {
       const { mentions } = await mapToolMentionsToCatalogue([mention(row.input)], loader);
       const fromTable = row.service.via === "alias" || row.service.via === "known" || row.service.via === "case";
-      const expected = fromTable ? row.service.out : row.input;
+      const expected = fromTable ? rulingOutput(row.input, row.service.out) : row.input;
       if (mentions[0]?.tool !== expected) wrong.push(`${JSON.stringify(row.input)}: got ${mentions[0]?.tool}, want ${expected}`);
     }
     expect(wrong).toEqual([]);
@@ -55,14 +71,20 @@ describe("the alias lookup matches the old mapper's table output (#187)", () => 
     expect(table.length).toBeGreaterThanOrEqual(150);
     for (const row of table) {
       const { mentions } = await mapToolMentionsToCatalogue([mention(row.input)], loader);
-      expect(mentions[0]?.tool, row.input).toBe(row.ingestion.out);
+      expect(mentions[0]?.tool, row.input).toBe(rulingOutput(row.input, row.ingestion.out));
     }
   });
 
-  it("keeps all 153 aliases of the two old copies", () => {
+  // #432: 153 aliases before the ruling, 34 dropped, so 119.
+  it("keeps the 119 aliases of the two old copies that the owner did not drop", () => {
     const tableInputs = new Set(rows.filter((r) => r.service.via !== "fuzzy" && r.service.via !== "none").map((r) => r.input));
-    expect(Object.keys(TOOL_ALIASES)).toHaveLength(153);
+    expect(Object.keys(TOOL_ALIASES)).toHaveLength(119);
     for (const key of Object.keys(TOOL_ALIASES)) expect(tableInputs.has(key), key).toBe(true);
+    for (const key of tableInputs) {
+      const k = key.trim().toLowerCase();
+      if (key === k && !dropped.has(k) && rows.some((r) => r.input === key && r.service.via === "alias"))
+        expect(Object.hasOwn(TOOL_ALIASES, k), k).toBe(true);
+    }
   });
 
   it("does not read a prototype key as an alias", async () => {
@@ -73,14 +95,15 @@ describe("the alias lookup matches the old mapper's table output (#187)", () => 
 
 describe("an alias whose target is not an active catalogue row (#187)", () => {
   it("stays unmapped, is reported and warn-logged, and never falls through to another row", async () => {
-    // The catalogue has a model row named "Claude" but no "Claude Code" row.
-    const loader = async () => catalogueOf(["Claude", "Cursor"]);
-    const { mentions, report } = await mapToolMentionsToCatalogue([mention("Claude"), mention("Cursor")], loader);
-    expect(mentions.map((m) => m.tool)).toEqual(["Claude", "Cursor"]);
+    // #432: "claude" is no longer an alias, so this uses "codex". The catalogue has a row
+    // named "Codex" but no "OpenAI Codex" row.
+    const loader = async () => catalogueOf(["Codex", "Cursor"]);
+    const { mentions, report } = await mapToolMentionsToCatalogue([mention("Codex"), mention("Cursor")], loader);
+    expect(mentions.map((m) => m.tool)).toEqual(["Codex", "Cursor"]);
     expect(report).toMatchObject({
       mapped: 1,
-      unmappedNames: ["Claude"],
-      unresolvedAliases: [{ alias: "claude", target: "Claude Code" }],
+      unmappedNames: ["Codex"],
+      unresolvedAliases: [{ alias: "codex", target: "OpenAI Codex" }],
     });
     expect(warn).toHaveBeenCalledTimes(1);
     expect(String(warn.mock.calls[0]?.[0])).toContain("Alias target is not an active catalogue tool");

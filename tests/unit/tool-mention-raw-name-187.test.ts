@@ -10,6 +10,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  * present when a mapped mention is mapped again (the preprocessed path).
  * `validateToolMention` / `cleanToolMentions`, which shape the stored row,
  * carry `raw_tool` through and add nothing to an old mention without one.
+ * #432: `microsoft copilot` is no longer an alias, so the aliased example is `vs code copilot`.
  * Test: `npx vitest run tests/unit/tool-mention-raw-name-187.test.ts`. No database.
  */
 
@@ -31,9 +32,9 @@ beforeEach(() => {
 
 describe("mapToolMentionsToCatalogue keeps the model-emitted name in raw_tool (#187)", () => {
   it("an aliased mention stores the mapped name and the raw name", async () => {
-    const { mentions, report } = await mapToolMentionsToCatalogue([mention("Microsoft Copilot")], loader);
+    const { mentions, report } = await mapToolMentionsToCatalogue([mention("VS Code Copilot")], loader);
     expect(report.mapped).toBe(1);
-    expect(mentions[0]).toMatchObject({ tool: "GitHub Copilot", raw_tool: "Microsoft Copilot" });
+    expect(mentions[0]).toMatchObject({ tool: "GitHub Copilot", raw_tool: "VS Code Copilot" });
   });
 
   it("an unmapped mention stores raw_tool and keeps its name", async () => {
@@ -51,22 +52,22 @@ describe("mapToolMentionsToCatalogue keeps the model-emitted name in raw_tool (#
   });
 
   it("mapping an already-mapped mention again keeps the first raw_tool", async () => {
-    const first = await mapToolMentionsToCatalogue([mention("Microsoft Copilot")], loader);
+    const first = await mapToolMentionsToCatalogue([mention("VS Code Copilot")], loader);
     const again = await mapToolMentionsToCatalogue(first.mentions, loader);
-    expect(again.mentions[0]).toMatchObject({ tool: "GitHub Copilot", raw_tool: "Microsoft Copilot" });
+    expect(again.mentions[0]).toMatchObject({ tool: "GitHub Copilot", raw_tool: "VS Code Copilot" });
   });
 });
 
 describe("the stored-row shape carries raw_tool (#187)", () => {
   it("validateToolMention preserves raw_tool next to the mapped name", () => {
-    const stored = validateToolMention({ tool: "GitHub Copilot", raw_tool: "Microsoft Copilot", relevance: 0.9, sentiment: 0.2, context: "c" });
-    expect(stored).toEqual({ name: "GitHub Copilot", raw_tool: "Microsoft Copilot", relevance: 0.9, sentiment: 0.2, context: "c" });
+    const stored = validateToolMention({ tool: "GitHub Copilot", raw_tool: "VS Code Copilot", relevance: 0.9, sentiment: 0.2, context: "c" });
+    expect(stored).toEqual({ name: "GitHub Copilot", raw_tool: "VS Code Copilot", relevance: 0.9, sentiment: 0.2, context: "c" });
   });
 
   it("the ingestion write path (map, then cleanToolMentions) stores raw_tool for every mention", async () => {
-    const { mentions } = await mapToolMentionsToCatalogue([mention("Microsoft Copilot"), mention("Unheard Of"), mention("Cursor")], loader);
+    const { mentions } = await mapToolMentionsToCatalogue([mention("VS Code Copilot"), mention("Unheard Of"), mention("Cursor")], loader);
     expect(cleanToolMentions(mentions).map((m) => [m.name, m.raw_tool])).toEqual([
-      ["GitHub Copilot", "Microsoft Copilot"],
+      ["GitHub Copilot", "VS Code Copilot"],
       ["Unheard Of", "Unheard Of"],
       ["Cursor", "Cursor"],
     ]);

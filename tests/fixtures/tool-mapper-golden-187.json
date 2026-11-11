@@ -1,5 +1,56 @@
 {
- "note": "Generated once from the ToolMapper classes on origin/main c2cd51d8: lib/services/article-ingestion.service.ts (ingestion) and lib/services/tool-mapper.service.ts (service). Do not hand-edit.",
+ "note": "Generated once from the ToolMapper classes on origin/main c2cd51d8: lib/services/article-ingestion.service.ts (ingestion) and lib/services/tool-mapper.service.ts (service). Do not hand-edit. The rows stay the old output; owner rulings that change an alias since are listed by issue under rulings.",
+ "rulings": {
+  "432": {
+   "note": "Owner ruling D35 on #432: these aliases leave the table (a dropped name maps only when it is a catalogue name or slug) or map to a new target, written as in TOOL_ALIASES.",
+   "dropped": [
+    "gpt-4",
+    "gpt-4o",
+    "gpt-4-turbo",
+    "chatgpt",
+    "gpt-5",
+    "gpt-3.5",
+    "gpt-3",
+    "openai",
+    "claude",
+    "claude 3",
+    "claude 3.5",
+    "claude 4",
+    "anthropic",
+    "gemini",
+    "gemini pro",
+    "gemini ultra",
+    "gemini 1.5",
+    "gemini 2.0",
+    "gemini 2.5",
+    "gemini 2.5 pro",
+    "google ai",
+    "bard",
+    "microsoft copilot",
+    "agent 3",
+    "cognition",
+    "cognition ai",
+    "sourcegraph",
+    "magic",
+    "pieces",
+    "sweep",
+    "menlo",
+    "menlo security",
+    "factory",
+    "genie"
+   ],
+   "retargeted": {
+    "claude 3.5 sonnet": "Claude Sonnet",
+    "claude sonnet": "Claude Sonnet",
+    "claude 4 sonnet": "Claude Sonnet",
+    "claude opus": "Claude Opus",
+    "claude opus 4": "Claude Opus",
+    "claude opus 4.1": "Claude Opus",
+    "claude haiku": "claude-haiku",
+    "claude canvas": "Claude.AI"
+   }
+  }
+ },
  "rows": [
   {
    "input": "\tGPT-4\n",
