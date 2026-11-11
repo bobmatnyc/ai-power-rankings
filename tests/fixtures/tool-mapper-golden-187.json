@@ -1,0 +1,3998 @@
+{
+ "note": "Generated once from the ToolMapper classes on origin/main c2cd51d8: lib/services/article-ingestion.service.ts (ingestion) and lib/services/tool-mapper.service.ts (service). Do not hand-edit.",
+ "rows": [
+  {
+   "input": "\tGPT-4\n",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "  Claude  ",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "AGENT 3",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "AIDER",
+   "ingestion": {
+    "out": "Aider",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Aider",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "AIDER CHAT",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Aider",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "ALL HANDS",
+   "ingestion": {
+    "out": "OpenHands",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "OpenHands",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "AMAZON CODEWHISPERER",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "AMAZON Q",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "ANTHROPIC",
+   "ingestion": {
+    "out": "ANTHROPIC",
+    "via": "none"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "AUGMENT",
+   "ingestion": {
+    "out": "Augment Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Augment Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "AUGMENT AI",
+   "ingestion": {
+    "out": "Augment Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Augment Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "AUGMENT CODE",
+   "ingestion": {
+    "out": "Augment Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Augment Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "AWS CODEWHISPERER",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Aider",
+   "ingestion": {
+    "out": "Aider",
+    "via": "known"
+   },
+   "service": {
+    "out": "Aider",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Amazon Q Developer",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "known"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Augment Code",
+   "ingestion": {
+    "out": "Augment Code",
+    "via": "known"
+   },
+   "service": {
+    "out": "Augment Code",
+    "via": "known"
+   }
+  },
+  {
+   "input": "BARD",
+   "ingestion": {
+    "out": "BARD",
+    "via": "none"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "BITO",
+   "ingestion": {
+    "out": "BITO",
+    "via": "none"
+   },
+   "service": {
+    "out": "Bito",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "BITO AI",
+   "ingestion": {
+    "out": "BITO AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "Bito",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "BOLT",
+   "ingestion": {
+    "out": "Bolt.new",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Bolt.new",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "BOLT.NEW",
+   "ingestion": {
+    "out": "Bolt.new",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Bolt.new",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Bito",
+   "ingestion": {
+    "out": "Bito",
+    "via": "none"
+   },
+   "service": {
+    "out": "Bito",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Bolt.new",
+   "ingestion": {
+    "out": "Bolt.new",
+    "via": "known"
+   },
+   "service": {
+    "out": "Bolt.new",
+    "via": "known"
+   }
+  },
+  {
+   "input": "CHATGPT",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CHATGPT CANVAS",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "case"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE 3",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE 3.5",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE 3.5 SONNET",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE 4",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE 4 SONNET",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE AI",
+   "ingestion": {
+    "out": "Claude.AI",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude.AI",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE ARTIFACTS",
+   "ingestion": {
+    "out": "Claude.AI",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude.AI",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE CANVAS",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE CODE",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "case"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE DEV",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cline",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE HAIKU",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE OPUS",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE OPUS 4",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE OPUS 4.1",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE SONNET",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE-DEV",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cline",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLAUDE.AI",
+   "ingestion": {
+    "out": "Claude.AI",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude.AI",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CLINE",
+   "ingestion": {
+    "out": "Cline",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Cline",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODE RABBIT",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "CodeRabbit",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODEIUM",
+   "ingestion": {
+    "out": "Windsurf",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Windsurf",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODEIUM WINDSURF",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Windsurf",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODERABBIT",
+   "ingestion": {
+    "out": "CodeRabbit",
+    "via": "alias"
+   },
+   "service": {
+    "out": "CodeRabbit",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODEWHISPERER",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODEX",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODEX CLI",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODIUM AI",
+   "ingestion": {
+    "out": "CODIUM AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODIUMAI",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CODY",
+   "ingestion": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "COGNITION",
+   "ingestion": {
+    "out": "Devin",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Devin",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "COGNITION AI",
+   "ingestion": {
+    "out": "Devin",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Devin",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CONTINUE",
+   "ingestion": {
+    "out": "Continue",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Continue",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CONTINUE DEV",
+   "ingestion": {
+    "out": "Continue",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Continue",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CONTINUE.DEV",
+   "ingestion": {
+    "out": "Continue",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Continue",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "COPILOT",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "COPILOT CHAT",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "COPILOT WORKSPACE",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "COPILOT X",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "COSINE",
+   "ingestion": {
+    "out": "COSINE",
+    "via": "none"
+   },
+   "service": {
+    "out": "Cosine Genie",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "COSINE GENIE",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cosine Genie",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CURSOR",
+   "ingestion": {
+    "out": "Cursor",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Cursor",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CURSOR AI",
+   "ingestion": {
+    "out": "Cursor",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Cursor",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CURSOR EDITOR",
+   "ingestion": {
+    "out": "Cursor",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cursor",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "ChatGPT Canvas",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "known"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Claude Code",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "known"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Claude Opus 4.6",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   }
+  },
+  {
+   "input": "Claude Sonnet 4",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   }
+  },
+  {
+   "input": "Claude.AI",
+   "ingestion": {
+    "out": "Claude.AI",
+    "via": "known"
+   },
+   "service": {
+    "out": "Claude.AI",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Cline",
+   "ingestion": {
+    "out": "Cline",
+    "via": "known"
+   },
+   "service": {
+    "out": "Cline",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Code Rabbit",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "CodeRabbit",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "CodeRabbit",
+   "ingestion": {
+    "out": "CodeRabbit",
+    "via": "known"
+   },
+   "service": {
+    "out": "CodeRabbit",
+    "via": "known"
+   }
+  },
+  {
+   "input": "CodeiumAI",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   }
+  },
+  {
+   "input": "Continue",
+   "ingestion": {
+    "out": "Continue",
+    "via": "known"
+   },
+   "service": {
+    "out": "Continue",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Cosine Genie",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cosine Genie",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Cursor",
+   "ingestion": {
+    "out": "Cursor",
+    "via": "known"
+   },
+   "service": {
+    "out": "Cursor",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Cursor Editor 2",
+   "ingestion": {
+    "out": "Cursor",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cursor",
+    "via": "fuzzy"
+   }
+  },
+  {
+   "input": "DEVIN",
+   "ingestion": {
+    "out": "Devin",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Devin",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "DEVIN AI",
+   "ingestion": {
+    "out": "Devin",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Devin",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "DIFFBLUE",
+   "ingestion": {
+    "out": "Diffblue Cover",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Diffblue Cover",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "DIFFBLUE COVER",
+   "ingestion": {
+    "out": "Diffblue Cover",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Diffblue Cover",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Devin",
+   "ingestion": {
+    "out": "Devin",
+    "via": "known"
+   },
+   "service": {
+    "out": "Devin",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Diffblue Cover",
+   "ingestion": {
+    "out": "Diffblue Cover",
+    "via": "known"
+   },
+   "service": {
+    "out": "Diffblue Cover",
+    "via": "known"
+   }
+  },
+  {
+   "input": "FACTORY",
+   "ingestion": {
+    "out": "FACTORY",
+    "via": "none"
+   },
+   "service": {
+    "out": "Factory",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "FACTORY AI",
+   "ingestion": {
+    "out": "FACTORY AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "Factory",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Factory",
+   "ingestion": {
+    "out": "Factory",
+    "via": "none"
+   },
+   "service": {
+    "out": "Factory",
+    "via": "known"
+   }
+  },
+  {
+   "input": "GEMINI",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GEMINI 1.5",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GEMINI 2.0",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GEMINI 2.5",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GEMINI 2.5 PRO",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GEMINI CODE",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GEMINI CODE ASSIST",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GEMINI PRO",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GEMINI ULTRA",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GENIE",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cosine Genie",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GHOSTWRITER",
+   "ingestion": {
+    "out": "GHOSTWRITER",
+    "via": "none"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GITHUB COPILOT",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GOOGLE AI",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GOOGLE JULES",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Jules",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GPT-3",
+   "ingestion": {
+    "out": "GPT-3",
+    "via": "none"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GPT-3.5",
+   "ingestion": {
+    "out": "GPT-3.5",
+    "via": "none"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GPT-4",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GPT-4-TURBO",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GPT-4.1",
+   "ingestion": {
+    "out": "GPT-4.1",
+    "via": "none"
+   },
+   "service": {
+    "out": "GPT-4.1",
+    "via": "none"
+   }
+  },
+  {
+   "input": "GPT-4O",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GPT-5",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GPT-5-CODEX",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Gemini 2.5 Pro",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "GitHub Copilot",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "known"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Google Gemini",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Jules",
+    "via": "fuzzy"
+   }
+  },
+  {
+   "input": "Google Gemini Code Assist",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "known"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Google Jules",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "known"
+   },
+   "service": {
+    "out": "Google Jules",
+    "via": "known"
+   }
+  },
+  {
+   "input": "INTELLICODE",
+   "ingestion": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "INTELLIJ AI",
+   "ingestion": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "JETBRAINS AI",
+   "ingestion": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "JETBRAINS AI ASSISTANT",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "JULES",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Jules",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "JetBrains AI Assistant",
+   "ingestion": {
+    "out": "JetBrains AI Assistant",
+    "via": "known"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "known"
+   }
+  },
+  {
+   "input": "KIRO",
+   "ingestion": {
+    "out": "Kiro",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Kiro",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "KIRO AI",
+   "ingestion": {
+    "out": "Kiro",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Kiro",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Kimi 2.5",
+   "ingestion": {
+    "out": "Kimi 2.5",
+    "via": "none"
+   },
+   "service": {
+    "out": "Kimi 2.5",
+    "via": "none"
+   }
+  },
+  {
+   "input": "Kiro",
+   "ingestion": {
+    "out": "Kiro",
+    "via": "known"
+   },
+   "service": {
+    "out": "Kiro",
+    "via": "known"
+   }
+  },
+  {
+   "input": "LOVABLE",
+   "ingestion": {
+    "out": "Lovable",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Lovable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "LOVABLE AI",
+   "ingestion": {
+    "out": "Lovable",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Lovable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "LOVABLE.DEV",
+   "ingestion": {
+    "out": "Lovable",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Lovable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Lovable",
+   "ingestion": {
+    "out": "Lovable",
+    "via": "known"
+   },
+   "service": {
+    "out": "Lovable",
+    "via": "known"
+   }
+  },
+  {
+   "input": "MAGIC",
+   "ingestion": {
+    "out": "MAGIC",
+    "via": "none"
+   },
+   "service": {
+    "out": "Magic",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "MAGIC AI",
+   "ingestion": {
+    "out": "MAGIC AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "Magic",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "MAGIC.DEV",
+   "ingestion": {
+    "out": "MAGIC.DEV",
+    "via": "none"
+   },
+   "service": {
+    "out": "Magic",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "MENLO",
+   "ingestion": {
+    "out": "MENLO",
+    "via": "none"
+   },
+   "service": {
+    "out": "Menlo",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "MENLO SECURITY",
+   "ingestion": {
+    "out": "MENLO SECURITY",
+    "via": "none"
+   },
+   "service": {
+    "out": "Menlo",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "MICROSOFT COPILOT",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "MICROSOFT INTELLICODE",
+   "ingestion": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "MUTABLE",
+   "ingestion": {
+    "out": "MUTABLE",
+    "via": "none"
+   },
+   "service": {
+    "out": "Mutable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "MUTABLE AI",
+   "ingestion": {
+    "out": "MUTABLE AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "Mutable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Magic",
+   "ingestion": {
+    "out": "Magic",
+    "via": "none"
+   },
+   "service": {
+    "out": "Magic",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Menlo",
+   "ingestion": {
+    "out": "Menlo",
+    "via": "none"
+   },
+   "service": {
+    "out": "Menlo",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Microsoft IntelliCode",
+   "ingestion": {
+    "out": "Microsoft IntelliCode",
+    "via": "known"
+   },
+   "service": {
+    "out": "Microsoft IntelliCode",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Mistral",
+   "ingestion": {
+    "out": "Mistral",
+    "via": "none"
+   },
+   "service": {
+    "out": "Mistral",
+    "via": "none"
+   }
+  },
+  {
+   "input": "Mutable",
+   "ingestion": {
+    "out": "Mutable",
+    "via": "none"
+   },
+   "service": {
+    "out": "Mutable",
+    "via": "known"
+   }
+  },
+  {
+   "input": "OPEN HANDS",
+   "ingestion": {
+    "out": "OpenHands",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenHands",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "OPENAI",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "OPENAI CODEX",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "OPENAI CODEX CLI",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "OPENHANDS",
+   "ingestion": {
+    "out": "OpenHands",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenHands",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "OpenAI Codex",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "known"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "known"
+   }
+  },
+  {
+   "input": "OpenHands",
+   "ingestion": {
+    "out": "OpenHands",
+    "via": "known"
+   },
+   "service": {
+    "out": "OpenHands",
+    "via": "known"
+   }
+  },
+  {
+   "input": "PERPLEXITY",
+   "ingestion": {
+    "out": "PERPLEXITY",
+    "via": "none"
+   },
+   "service": {
+    "out": "Perplexity",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "PERPLEXITY AI",
+   "ingestion": {
+    "out": "PERPLEXITY AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "Perplexity",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "PHIND",
+   "ingestion": {
+    "out": "PHIND",
+    "via": "none"
+   },
+   "service": {
+    "out": "Phind",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "PHIND.COM",
+   "ingestion": {
+    "out": "PHIND.COM",
+    "via": "none"
+   },
+   "service": {
+    "out": "Phind",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "PIECES",
+   "ingestion": {
+    "out": "PIECES",
+    "via": "none"
+   },
+   "service": {
+    "out": "Pieces",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "PIECES APP",
+   "ingestion": {
+    "out": "PIECES APP",
+    "via": "none"
+   },
+   "service": {
+    "out": "Pieces",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "PIECES FOR DEVELOPERS",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Pieces",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "POOLSIDE",
+   "ingestion": {
+    "out": "POOLSIDE",
+    "via": "none"
+   },
+   "service": {
+    "out": "Poolside",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "POOLSIDE AI",
+   "ingestion": {
+    "out": "POOLSIDE AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "Poolside",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "PROJECT JULES",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Jules",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "PYCHARM AI",
+   "ingestion": {
+    "out": "PYCHARM AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Perplexity",
+   "ingestion": {
+    "out": "Perplexity",
+    "via": "none"
+   },
+   "service": {
+    "out": "Perplexity",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Phind",
+   "ingestion": {
+    "out": "Phind",
+    "via": "none"
+   },
+   "service": {
+    "out": "Phind",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Pieces",
+   "ingestion": {
+    "out": "Pieces",
+    "via": "none"
+   },
+   "service": {
+    "out": "Pieces",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Poolside",
+   "ingestion": {
+    "out": "Poolside",
+    "via": "none"
+   },
+   "service": {
+    "out": "Poolside",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Q DEVELOPER",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "QODO",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "QODO GEN",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Qodo Gen",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "known"
+   },
+   "service": {
+    "out": "Qodo Gen",
+    "via": "known"
+   }
+  },
+  {
+   "input": "REPLIT",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "REPLIT AGENT",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "REPLIT AGENT 3",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "REPLIT AI",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Replit Agent",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "known"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "known"
+   }
+  },
+  {
+   "input": "SNYK",
+   "ingestion": {
+    "out": "Snyk Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Snyk Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "SNYK CODE",
+   "ingestion": {
+    "out": "Snyk Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Snyk Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "SOURCEGRAPH",
+   "ingestion": {
+    "out": "Sourcegraph Cody",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "SOURCEGRAPH CODY",
+   "ingestion": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "SOURCERY",
+   "ingestion": {
+    "out": "Sourcery",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Sourcery",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "SOURCERY AI",
+   "ingestion": {
+    "out": "Sourcery",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Sourcery",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "STACKBLITZ BOLT",
+   "ingestion": {
+    "out": "Bolt.new",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Bolt.new",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "SUPER MAVEN",
+   "ingestion": {
+    "out": "SUPER MAVEN",
+    "via": "none"
+   },
+   "service": {
+    "out": "Supermaven",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "SUPERMAVEN",
+   "ingestion": {
+    "out": "SUPERMAVEN",
+    "via": "none"
+   },
+   "service": {
+    "out": "Supermaven",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "SWEEP",
+   "ingestion": {
+    "out": "SWEEP",
+    "via": "none"
+   },
+   "service": {
+    "out": "Sweep",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "SWEEP AI",
+   "ingestion": {
+    "out": "SWEEP AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "Sweep",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Snyk Code",
+   "ingestion": {
+    "out": "Snyk Code",
+    "via": "known"
+   },
+   "service": {
+    "out": "Snyk Code",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Some Unknown Tool",
+   "ingestion": {
+    "out": "Some Unknown Tool",
+    "via": "none"
+   },
+   "service": {
+    "out": "Some Unknown Tool",
+    "via": "none"
+   }
+  },
+  {
+   "input": "Sourcegraph Cody",
+   "ingestion": {
+    "out": "Sourcegraph Cody",
+    "via": "known"
+   },
+   "service": {
+    "out": "Sourcegraph Cody",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Sourcery",
+   "ingestion": {
+    "out": "Sourcery",
+    "via": "known"
+   },
+   "service": {
+    "out": "Sourcery",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Supermaven",
+   "ingestion": {
+    "out": "Supermaven",
+    "via": "none"
+   },
+   "service": {
+    "out": "Supermaven",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Sweep",
+   "ingestion": {
+    "out": "Sweep",
+    "via": "none"
+   },
+   "service": {
+    "out": "Sweep",
+    "via": "known"
+   }
+  },
+  {
+   "input": "TABNINE",
+   "ingestion": {
+    "out": "Tabnine",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Tabnine",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "TABNINE AI",
+   "ingestion": {
+    "out": "Tabnine",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Tabnine",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Tabnine",
+   "ingestion": {
+    "out": "Tabnine",
+    "via": "known"
+   },
+   "service": {
+    "out": "Tabnine",
+    "via": "known"
+   }
+  },
+  {
+   "input": "Unknown Future Tool",
+   "ingestion": {
+    "out": "Unknown Future Tool",
+    "via": "none"
+   },
+   "service": {
+    "out": "Unknown Future Tool",
+    "via": "none"
+   }
+  },
+  {
+   "input": "V0",
+   "ingestion": {
+    "out": "v0",
+    "via": "alias"
+   },
+   "service": {
+    "out": "v0",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "V0.DEV",
+   "ingestion": {
+    "out": "v0",
+    "via": "alias"
+   },
+   "service": {
+    "out": "v0",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "VERCEL V0",
+   "ingestion": {
+    "out": "v0",
+    "via": "alias"
+   },
+   "service": {
+    "out": "v0",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "VISUAL STUDIO INTELLICODE",
+   "ingestion": {
+    "out": "VISUAL STUDIO INTELLICODE",
+    "via": "none"
+   },
+   "service": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "VS CODE COPILOT",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "WEBSTORM AI",
+   "ingestion": {
+    "out": "WEBSTORM AI",
+    "via": "none"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "WINDSURF",
+   "ingestion": {
+    "out": "Windsurf",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Windsurf",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Windsurf",
+   "ingestion": {
+    "out": "Windsurf",
+    "via": "known"
+   },
+   "service": {
+    "out": "Windsurf",
+    "via": "known"
+   }
+  },
+  {
+   "input": "ZED",
+   "ingestion": {
+    "out": "Zed",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Zed",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "ZED AI",
+   "ingestion": {
+    "out": "Zed",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Zed",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "ZED EDITOR",
+   "ingestion": {
+    "out": "Zed",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Zed",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "Zed",
+   "ingestion": {
+    "out": "Zed",
+    "via": "known"
+   },
+   "service": {
+    "out": "Zed",
+    "via": "known"
+   }
+  },
+  {
+   "input": "agent 3",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "aider",
+   "ingestion": {
+    "out": "Aider",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Aider",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "aider chat",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Aider",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "all hands",
+   "ingestion": {
+    "out": "OpenHands",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "OpenHands",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "amazon codewhisperer",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "amazon q",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "anthropic",
+   "ingestion": {
+    "out": "anthropic",
+    "via": "none"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "augment",
+   "ingestion": {
+    "out": "Augment Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Augment Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "augment ai",
+   "ingestion": {
+    "out": "Augment Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Augment Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "augment code",
+   "ingestion": {
+    "out": "Augment Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Augment Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "aws codewhisperer",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "bard",
+   "ingestion": {
+    "out": "bard",
+    "via": "none"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "bito",
+   "ingestion": {
+    "out": "bito",
+    "via": "none"
+   },
+   "service": {
+    "out": "Bito",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "bito ai",
+   "ingestion": {
+    "out": "bito ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "Bito",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "bolt",
+   "ingestion": {
+    "out": "Bolt.new",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Bolt.new",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "bolt.new",
+   "ingestion": {
+    "out": "Bolt.new",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Bolt.new",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "chatgpt",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "chatgpt canvas",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "case"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude 3",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude 3.5",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude 3.5 sonnet",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude 4",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude 4 sonnet",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude ai",
+   "ingestion": {
+    "out": "Claude.AI",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude.AI",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude artifacts",
+   "ingestion": {
+    "out": "Claude.AI",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude.AI",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude canvas",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude code",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "case"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude dev",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cline",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude haiku",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude opus",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude opus 4",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude opus 4.1",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude sonnet",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude-dev",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cline",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "claude.ai",
+   "ingestion": {
+    "out": "Claude.AI",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Claude.AI",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "cline",
+   "ingestion": {
+    "out": "Cline",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Cline",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "code rabbit",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "CodeRabbit",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "codeium",
+   "ingestion": {
+    "out": "Windsurf",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Windsurf",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "codeium windsurf",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Windsurf",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "coderabbit",
+   "ingestion": {
+    "out": "CodeRabbit",
+    "via": "alias"
+   },
+   "service": {
+    "out": "CodeRabbit",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "codewhisperer",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "codex",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "codex cli",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "codium ai",
+   "ingestion": {
+    "out": "codium ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "codiumai",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "cody",
+   "ingestion": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "cognition",
+   "ingestion": {
+    "out": "Devin",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Devin",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "cognition ai",
+   "ingestion": {
+    "out": "Devin",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Devin",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "continue",
+   "ingestion": {
+    "out": "Continue",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Continue",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "continue dev",
+   "ingestion": {
+    "out": "Continue",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Continue",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "continue.dev",
+   "ingestion": {
+    "out": "Continue",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Continue",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "copilot",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "copilot chat",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "copilot workspace",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "copilot x",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "cosine",
+   "ingestion": {
+    "out": "cosine",
+    "via": "none"
+   },
+   "service": {
+    "out": "Cosine Genie",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "cosine genie",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cosine Genie",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "cursor",
+   "ingestion": {
+    "out": "Cursor",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Cursor",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "cursor ai",
+   "ingestion": {
+    "out": "Cursor",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Cursor",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "cursor editor",
+   "ingestion": {
+    "out": "Cursor",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cursor",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "devin",
+   "ingestion": {
+    "out": "Devin",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Devin",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "devin ai",
+   "ingestion": {
+    "out": "Devin",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Devin",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "diffblue",
+   "ingestion": {
+    "out": "Diffblue Cover",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Diffblue Cover",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "diffblue cover",
+   "ingestion": {
+    "out": "Diffblue Cover",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Diffblue Cover",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "factory",
+   "ingestion": {
+    "out": "factory",
+    "via": "none"
+   },
+   "service": {
+    "out": "Factory",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "factory ai",
+   "ingestion": {
+    "out": "factory ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "Factory",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gemini",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gemini 1.5",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gemini 2.0",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gemini 2.5",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gemini 2.5 pro",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gemini code",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gemini code assist",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gemini pro",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gemini ultra",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "genie",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Cosine Genie",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "ghostwriter",
+   "ingestion": {
+    "out": "ghostwriter",
+    "via": "none"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "github copilot",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "google ai",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Gemini Code Assist",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "google jules",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Jules",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gpt-3",
+   "ingestion": {
+    "out": "gpt-3",
+    "via": "none"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gpt-3.5",
+   "ingestion": {
+    "out": "gpt-3.5",
+    "via": "none"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gpt-4",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gpt-4-turbo",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gpt-4o",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gpt-5",
+   "ingestion": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "gpt-5-codex",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "intellicode",
+   "ingestion": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "intellij ai",
+   "ingestion": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "jetbrains ai",
+   "ingestion": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "jetbrains ai assistant",
+   "ingestion": {
+    "out": "Google Gemini Code Assist",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "jules",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Google Jules",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "kiro",
+   "ingestion": {
+    "out": "Kiro",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Kiro",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "kiro ai",
+   "ingestion": {
+    "out": "Kiro",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Kiro",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "lovable",
+   "ingestion": {
+    "out": "Lovable",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Lovable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "lovable ai",
+   "ingestion": {
+    "out": "Lovable",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Lovable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "lovable.dev",
+   "ingestion": {
+    "out": "Lovable",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Lovable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "magic",
+   "ingestion": {
+    "out": "magic",
+    "via": "none"
+   },
+   "service": {
+    "out": "Magic",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "magic ai",
+   "ingestion": {
+    "out": "magic ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "Magic",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "magic.dev",
+   "ingestion": {
+    "out": "magic.dev",
+    "via": "none"
+   },
+   "service": {
+    "out": "Magic",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "menlo",
+   "ingestion": {
+    "out": "menlo",
+    "via": "none"
+   },
+   "service": {
+    "out": "Menlo",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "menlo security",
+   "ingestion": {
+    "out": "menlo security",
+    "via": "none"
+   },
+   "service": {
+    "out": "Menlo",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "microsoft copilot",
+   "ingestion": {
+    "out": "GitHub Copilot",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "microsoft intellicode",
+   "ingestion": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "mutable",
+   "ingestion": {
+    "out": "mutable",
+    "via": "none"
+   },
+   "service": {
+    "out": "Mutable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "mutable ai",
+   "ingestion": {
+    "out": "mutable ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "Mutable",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "open hands",
+   "ingestion": {
+    "out": "OpenHands",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenHands",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "openai",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "ChatGPT Canvas",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "openai codex",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "openai codex cli",
+   "ingestion": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenAI Codex",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "openhands",
+   "ingestion": {
+    "out": "OpenHands",
+    "via": "alias"
+   },
+   "service": {
+    "out": "OpenHands",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "perplexity",
+   "ingestion": {
+    "out": "perplexity",
+    "via": "none"
+   },
+   "service": {
+    "out": "Perplexity",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "perplexity ai",
+   "ingestion": {
+    "out": "perplexity ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "Perplexity",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "phind",
+   "ingestion": {
+    "out": "phind",
+    "via": "none"
+   },
+   "service": {
+    "out": "Phind",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "phind.com",
+   "ingestion": {
+    "out": "phind.com",
+    "via": "none"
+   },
+   "service": {
+    "out": "Phind",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "pieces",
+   "ingestion": {
+    "out": "pieces",
+    "via": "none"
+   },
+   "service": {
+    "out": "Pieces",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "pieces app",
+   "ingestion": {
+    "out": "pieces app",
+    "via": "none"
+   },
+   "service": {
+    "out": "Pieces",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "pieces for developers",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Pieces",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "poolside",
+   "ingestion": {
+    "out": "poolside",
+    "via": "none"
+   },
+   "service": {
+    "out": "Poolside",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "poolside ai",
+   "ingestion": {
+    "out": "poolside ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "Poolside",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "project jules",
+   "ingestion": {
+    "out": "Google Jules",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Google Jules",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "pycharm ai",
+   "ingestion": {
+    "out": "pycharm ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "q developer",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Amazon Q Developer",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "qodo",
+   "ingestion": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "qodo gen",
+   "ingestion": {
+    "out": "Amazon Q Developer",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Qodo Gen",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "replit",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "replit agent",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "replit agent 3",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "replit ai",
+   "ingestion": {
+    "out": "Replit Agent",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Replit Agent",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "snyk",
+   "ingestion": {
+    "out": "Snyk Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Snyk Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "snyk code",
+   "ingestion": {
+    "out": "Snyk Code",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Snyk Code",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "sourcegraph",
+   "ingestion": {
+    "out": "Sourcegraph Cody",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "sourcegraph cody",
+   "ingestion": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Sourcegraph Cody",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "sourcery",
+   "ingestion": {
+    "out": "Sourcery",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Sourcery",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "sourcery ai",
+   "ingestion": {
+    "out": "Sourcery",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Sourcery",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "stackblitz bolt",
+   "ingestion": {
+    "out": "Bolt.new",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Bolt.new",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "super maven",
+   "ingestion": {
+    "out": "super maven",
+    "via": "none"
+   },
+   "service": {
+    "out": "Supermaven",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "supermaven",
+   "ingestion": {
+    "out": "supermaven",
+    "via": "none"
+   },
+   "service": {
+    "out": "Supermaven",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "sweep",
+   "ingestion": {
+    "out": "sweep",
+    "via": "none"
+   },
+   "service": {
+    "out": "Sweep",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "sweep ai",
+   "ingestion": {
+    "out": "sweep ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "Sweep",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "tabnine",
+   "ingestion": {
+    "out": "Tabnine",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Tabnine",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "tabnine ai",
+   "ingestion": {
+    "out": "Tabnine",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Tabnine",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "v0",
+   "ingestion": {
+    "out": "v0",
+    "via": "known"
+   },
+   "service": {
+    "out": "v0",
+    "via": "known"
+   }
+  },
+  {
+   "input": "v0.dev",
+   "ingestion": {
+    "out": "v0",
+    "via": "alias"
+   },
+   "service": {
+    "out": "v0",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "vercel v0",
+   "ingestion": {
+    "out": "v0",
+    "via": "alias"
+   },
+   "service": {
+    "out": "v0",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "visual studio intellicode",
+   "ingestion": {
+    "out": "visual studio intellicode",
+    "via": "none"
+   },
+   "service": {
+    "out": "Microsoft IntelliCode",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "vs code copilot",
+   "ingestion": {
+    "out": "Claude Code",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "GitHub Copilot",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "webstorm ai",
+   "ingestion": {
+    "out": "webstorm ai",
+    "via": "none"
+   },
+   "service": {
+    "out": "JetBrains AI Assistant",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "windsurf",
+   "ingestion": {
+    "out": "Windsurf",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Windsurf",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "zed",
+   "ingestion": {
+    "out": "Zed",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Zed",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "zed ai",
+   "ingestion": {
+    "out": "Zed",
+    "via": "alias"
+   },
+   "service": {
+    "out": "Zed",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "zed editor",
+   "ingestion": {
+    "out": "Zed",
+    "via": "fuzzy"
+   },
+   "service": {
+    "out": "Zed",
+    "via": "alias"
+   }
+  },
+  {
+   "input": "zzzz",
+   "ingestion": {
+    "out": "zzzz",
+    "via": "none"
+   },
+   "service": {
+    "out": "zzzz",
+    "via": "none"
+   }
+  }
+ ]
+}

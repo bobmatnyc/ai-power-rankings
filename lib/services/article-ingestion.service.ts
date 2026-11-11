@@ -25,6 +25,7 @@ import {
   validateSummary,
 } from "@/lib/article-summary";
 import { jinaReaderService } from "./jina-reader.service";
+import { mapToolMentionsToCatalogue, type ToolMappingReport } from "./tool-mention-catalogue"; // #187
 
 // Validation schemas
 export const ArticleIngestionSchema = z
@@ -110,210 +111,11 @@ const AIAnalysisSchema = z.object({
 
 type AIAnalysisResult = z.infer<typeof AIAnalysisSchema>;
 
-/**
- * Tool name mapping and normalization utilities
- */
-export class ToolMapper {
-  // Map of common variations to canonical database tool names
-  private static readonly TOOL_ALIASES: Record<string, string> = {
-    // OpenAI variations
-    "gpt-4": "ChatGPT Canvas",
-    "gpt-4o": "ChatGPT Canvas",
-    "gpt-4-turbo": "ChatGPT Canvas",
-    chatgpt: "ChatGPT Canvas",
-    // Codex-merge: ar-Te2/T76 merged the Codex CLI row into OpenAI Codex; every Codex name lands there.
-    "openai codex": "OpenAI Codex",
-    "openai codex cli": "OpenAI Codex",
-    "codex cli": "OpenAI Codex",
-    codex: "OpenAI Codex",
-    "gpt-5": "ChatGPT Canvas", // Future model
-    "gpt-5-codex": "OpenAI Codex", // Future model
+// #187: ToolMapper (a hard-coded alias list and fuzzy matcher) is removed; tool mentions map through
+// the tools catalogue in lib/services/tool-mention-catalogue.ts.
 
-    // Anthropic variations
-    claude: "Claude Code",
-    "claude 3": "Claude Code",
-    "claude 3.5": "Claude Code",
-    "claude 3.5 sonnet": "Claude Code",
-    "claude sonnet": "Claude Code",
-    "claude opus": "Claude Code",
-    "claude haiku": "Claude Code",
-    // #314: Claude Artifacts is renamed Claude.AI (slug claude-artifacts kept); the old name still maps to it.
-    "claude artifacts": "Claude.AI",
-    "claude.ai": "Claude.AI",
-    "claude ai": "Claude.AI",
-    "claude canvas": "Claude Code", // Claude's Canvas is part of Claude Code
-
-    // Google variations
-    gemini: "Google Gemini Code Assist",
-    "gemini pro": "Google Gemini Code Assist",
-    "gemini ultra": "Google Gemini Code Assist",
-    "gemini code": "Google Gemini Code Assist",
-    jules: "Google Jules",
-    "google jules": "Google Jules",
-
-    // GitHub/Microsoft variations
-    copilot: "GitHub Copilot",
-    "github copilot": "GitHub Copilot",
-    "copilot x": "GitHub Copilot",
-    "copilot chat": "GitHub Copilot",
-    "copilot workspace": "GitHub Copilot",
-
-    // Amazon variations
-    codewhisperer: "Amazon Q Developer",
-    "amazon q": "Amazon Q Developer",
-    "q developer": "Amazon Q Developer",
-
-    // Other tools
-    replit: "Replit Agent",
-    "replit agent": "Replit Agent",
-    cognition: "Devin",
-    "cognition ai": "Devin",
-    devin: "Devin",
-    cursor: "Cursor",
-    "cursor ai": "Cursor",
-    windsurf: "Windsurf",
-    codeium: "Windsurf", // Codeium is the company behind Windsurf
-    v0: "v0",
-    "v0.dev": "v0",
-    "vercel v0": "v0",
-    aider: "Aider",
-    tabnine: "Tabnine",
-    cody: "Sourcegraph Cody",
-    "sourcegraph cody": "Sourcegraph Cody",
-    continue: "Continue",
-    "continue dev": "Continue",
-    cline: "Cline",
-    openhands: "OpenHands",
-    "open hands": "OpenHands",
-    "jetbrains ai": "JetBrains AI Assistant",
-    "intellij ai": "JetBrains AI Assistant",
-    qodo: "Qodo Gen",
-    codiumai: "Qodo Gen",
-    coderabbit: "CodeRabbit",
-    bolt: "Bolt.new",
-    "bolt.new": "Bolt.new",
-    augment: "Augment Code",
-    "augment code": "Augment Code",
-    lovable: "Lovable",
-    zed: "Zed",
-    "zed ai": "Zed",
-    kiro: "Kiro",
-    snyk: "Snyk Code",
-    "snyk code": "Snyk Code",
-    intellicode: "Microsoft IntelliCode",
-    "microsoft intellicode": "Microsoft IntelliCode",
-    sourcery: "Sourcery",
-    diffblue: "Diffblue Cover",
-    "diffblue cover": "Diffblue Cover",
-  };
-
-  // Known tool names in our database for fuzzy matching
-  private static readonly KNOWN_TOOLS = [
-    "Claude Code",
-    "GitHub Copilot",
-    "Cursor",
-    "ChatGPT Canvas",
-    "v0",
-    "Kiro",
-    "Windsurf",
-    "Google Jules",
-    "Amazon Q Developer",
-    "Lovable",
-    "Aider",
-    "Tabnine",
-    "Bolt.new",
-    "Augment Code",
-    "Google Gemini Code Assist",
-    "Replit Agent",
-    "Zed",
-    "OpenAI Codex",
-    "Devin",
-    "Continue",
-    "Claude.AI", // #314: was "Claude Artifacts"
-    "Sourcegraph Cody",
-    "Cline",
-    "OpenHands",
-    "JetBrains AI Assistant",
-    "Qodo Gen",
-    "CodeRabbit",
-    "Snyk Code",
-    "Microsoft IntelliCode",
-    "Sourcery",
-    "Diffblue Cover",
-  ];
-
-  /**
-   * Normalize a tool name to match database entries
-   */
-  static normalizeTool(toolName: string): string {
-    if (!toolName) return toolName;
-
-    // First check if it's already a known tool name
-    if (ToolMapper.KNOWN_TOOLS.includes(toolName)) {
-      return toolName;
-    }
-
-    // Check aliases (case-insensitive)
-    const lowerName = toolName.toLowerCase().trim();
-    const aliasMatch = ToolMapper.TOOL_ALIASES[lowerName];
-    if (aliasMatch) {
-      return aliasMatch;
-    }
-
-    // Try fuzzy matching for partial matches
-    const fuzzyMatch = ToolMapper.fuzzyMatch(toolName);
-    if (fuzzyMatch) {
-      return fuzzyMatch;
-    }
-
-    // Return original if no match found (might be a new tool)
-    return toolName;
-  }
-
-  /**
-   * Fuzzy match a tool name against known tools
-   */
-  private static fuzzyMatch(toolName: string): string | null {
-    const lowerName = toolName.toLowerCase();
-
-    // Check if any known tool name contains the input or vice versa
-    for (const knownTool of ToolMapper.KNOWN_TOOLS) {
-      const lowerKnown = knownTool.toLowerCase();
-
-      // Check if the known tool contains the input or vice versa
-      if (lowerKnown.includes(lowerName) || lowerName.includes(lowerKnown)) {
-        return knownTool;
-      }
-
-      // Check if they share significant words (for multi-word tools)
-      const inputWords = lowerName.split(/\s+/);
-      const knownWords = lowerKnown.split(/\s+/);
-      const significantWords = inputWords.filter((w) => w.length > 3);
-      const matchingWords = significantWords.filter((w) =>
-        knownWords.some((kw) => kw.includes(w) || w.includes(kw))
-      );
-
-      // If more than half of significant words match, consider it a match
-      if (significantWords.length > 0 && matchingWords.length >= significantWords.length / 2) {
-        return knownTool;
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * Process tool mentions from AI analysis and normalize names
-   */
-  static processToolMentions(
-    mentions: AIAnalysisResult["tool_mentions"]
-  ): AIAnalysisResult["tool_mentions"] {
-    return mentions.map((mention) => ({
-      ...mention,
-      tool: ToolMapper.normalizeTool(mention.tool),
-    }));
-  }
-}
+/** An analysis with the model id and the catalogue mapping report (#187). */
+type AnalyzedArticle = AIAnalysisResult & { model: string; toolMapping: ToolMappingReport };
 
 /**
  * Content Extraction Service
@@ -578,7 +380,7 @@ export class AIAnalyzer {
       links?: Array<{ href: string; text: string }>;
     },
     options: { validateSummary?: boolean } = {}
-  ): Promise<AIAnalysisResult & { model: string }> {
+  ): Promise<AnalyzedArticle> {
     let result = await this.requestAnalysis(content, metadata);
     if (options.validateSummary === false) return result;
     let failures = validateSummary(result.summary);
@@ -604,7 +406,7 @@ export class AIAnalyzer {
       author?: string;
       links?: Array<{ href: string; text: string }>;
     }
-  ): Promise<AIAnalysisResult & { model: string }> {
+  ): Promise<AnalyzedArticle> {
     console.log("[AIAnalyzer] Starting content analysis");
 
     // #179: both prompts state the summary rule only through SUMMARY_PROMPT_RULE.
@@ -862,11 +664,10 @@ Return ONLY the JSON object above with actual data. No additional text or explan
         model: modelName,
       });
 
-      // Normalize tool names using our mapping system
-      result = {
-        ...result,
-        tool_mentions: ToolMapper.processToolMentions(result.tool_mentions),
-      };
+      // #187: map tool names through the tools catalogue; a miss or a failed read stays unmapped.
+      const mapped = await mapToolMentionsToCatalogue(result.tool_mentions);
+      result = { ...result, tool_mentions: mapped.mentions };
+      const toolMapping = mapped.report;
 
       // #122: deterministic gate on the model's own Related Links block,
       // independent of prompt compliance (see sanitizeRelatedLinksBlock in
@@ -893,6 +694,7 @@ Return ONLY the JSON object above with actual data. No additional text or explan
       return {
         ...result,
         model: modelName, // #172: report the id actually called, not a hardcoded label
+        toolMapping, // #187: what the catalogue lookup did, for the run summary
       };
     } catch (error) {
       console.error("[AIAnalyzer] Analysis failed:", error);
@@ -957,8 +759,9 @@ export class RankingsCalculator {
 
     // Process each tool mention
     for (const mention of analysis.tool_mentions) {
-      // Normalize the tool name before searching
-      const normalizedToolName = ToolMapper.normalizeTool(mention.tool);
+      // #187: the analyzer already mapped the name through the catalogue; an unmapped name is
+      // searched as given (exact match only), never alias- or fuzzy-matched to another tool.
+      const normalizedToolName = mention.tool;
       console.log(
         `[RankingsCalculator] Looking for tool: "${mention.tool}" -> normalized: "${normalizedToolName}"`
       );
@@ -1150,7 +953,7 @@ export class RankingsCalculator {
    * Identify new tools and companies from analysis
    */
   identifyNewEntities(
-    analysis: AIAnalysisResult,
+    analysis: AIAnalysisResult & { toolMapping?: ToolMappingReport },
     existingTools: string[],
     existingCompanies: string[]
   ): {
@@ -1162,8 +965,12 @@ export class RankingsCalculator {
 
     // Check for new tools
     for (const mention of analysis.tool_mentions) {
-      // Normalize tool name before checking
-      const normalizedToolName = ToolMapper.normalizeTool(mention.tool);
+      // #187: the analyzer already mapped the name through the catalogue (see calculateRankingChanges).
+      const normalizedToolName = mention.tool;
+      // #187: a name the catalogue lookup left unmapped is counted and logged, never queued as a new
+      // tool (ArticleDatabaseService would insert a pending_review row). Without a report we cannot
+      // show the name mapped, so it is skipped too.
+      if (!analysis.toolMapping || analysis.toolMapping.unmappedNames.includes(mention.tool)) continue;
       if (!existingTools.includes(normalizedToolName) && !existingTools.includes(mention.tool)) {
         // Determine category based on tool name or context
         const category = this.inferToolCategory(mention.tool, mention.context);
@@ -1213,6 +1020,15 @@ export class RankingsCalculator {
 
     return "other";
   }
+}
+
+/**
+ * Attaches the catalogue mapping report to an ingestion result, non-enumerably so it never
+ * reaches a serialized response or a DB write (#187). The automated run reads it for its summary.
+ */
+function withToolMapping<T extends object>(result: T, report: ToolMappingReport | undefined): T {
+  Object.defineProperty(result, "toolMapping", { value: report, enumerable: false, configurable: true });
+  return result;
 }
 
 /**
@@ -1438,7 +1254,7 @@ export class ArticleIngestionService {
           },
         };
 
-        return dryRunResult;
+        return withToolMapping(dryRunResult, analysis.toolMapping);
       } else {
         // Full ingestion: delegate to ArticleDatabaseService
         // This service handles all database operations, transactions, and error handling
@@ -1460,6 +1276,7 @@ export class ArticleIngestionService {
               importance_score: analysis.importance_score,
               overall_sentiment: analysis.overall_sentiment,
               tool_mentions: analysis.tool_mentions,
+              toolMapping: analysis.toolMapping, // #187: lets identifyNewEntities skip unmapped names
               company_mentions: analysis.company_mentions,
               published_date: analysis.published_date,
             },
@@ -1480,7 +1297,7 @@ export class ArticleIngestionService {
         const savedArticle = await dbService.ingestArticle(preprocessedInput);
 
         // The stored what's-new summary is kept; only an admin regenerates it (#160).
-        return savedArticle as IngestedArticle;
+        return withToolMapping(savedArticle as IngestedArticle, analysis.toolMapping);
       }
     } catch (error) {
       console.error("[ArticleIngestion] Error:", error);
