@@ -99,9 +99,20 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-436cf49636c0",
+    "version": "Unreleased",
+    "date": "2026-11-11T06:40:13.927Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "seo",
+    "title": "the tool page title and meta description follow the tool's kind (#424)",
+    "description": "the tool page title and meta description follow the tool's kind (#424). The title read \"<name> - AI Coding Tool Review & Rankings\" for every tool, so ChatGPT (productivity) was titled as a coding tool. It now reads \"AI Model\" for a `model` tool and \"AI Productivity Tool\" for a `productivity` tool, and the description's \"Compare <name> with other ...\" clause names the matching kind. A `harness` tool, and a tool with an unknown or missing kind, keep the coding-tool wording. The description is at most 160 characters (#179): only the tool's own text is cut, never the fixed clause. Canonical, hreflang and the sitemap are unchanged. `tests/unit/tool-meta-by-kind-424.test.ts` covers each kind and the fallback.",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-deff65b84194",
     "version": "Unreleased",
-    "date": "2026-11-11T06:10:17.000Z",
+    "date": "2026-11-11T06:17:33.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "ingestion",
