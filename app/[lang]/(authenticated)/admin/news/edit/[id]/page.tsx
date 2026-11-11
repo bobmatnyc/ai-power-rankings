@@ -18,6 +18,7 @@ import { MarkdownToolbar } from "@/components/admin/markdown-toolbar";
 import { EnhancedMarkdownPreview } from "@/components/admin/enhanced-markdown-preview";
 import { useAutoSave, formatTimeSince } from "@/hooks/use-auto-save";
 import { useUnsavedChangesWarning } from "@/hooks/use-unsaved-changes-warning";
+import { type StoredToolMention, toolMentionNames } from "@/lib/tool-mention-shape"; // #434
 
 interface NewsArticle {
   id: string;
@@ -30,7 +31,7 @@ interface NewsArticle {
   source?: string;
   source_url?: string;
   tags?: string[];
-  tool_mentions?: string[];
+  tool_mentions?: StoredToolMention[]; // #434: bare names or mention objects
   created_at: string;
   updated_at: string;
   category?: string;
@@ -181,7 +182,8 @@ export default function EditNewsPage() {
       setSourceUrl(article.source_url || "");
       setCategory(article.category || "");
       setTags(article.tags?.join(", ") || "");
-      setToolMentions(article.tool_mentions?.join(", ") || "");
+      // #434: mention objects ({ tool, raw_tool }) show their tool name, as strings do.
+      setToolMentions(toolMentionNames(article.tool_mentions).join(", "));
       setImportanceScore(article.importance_score || 5);
       setHasUnsavedChanges(false);
     } catch (err) {

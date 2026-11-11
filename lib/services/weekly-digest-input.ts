@@ -17,6 +17,7 @@
 import { createHash } from "node:crypto";
 import { toMetaDescription, validateSummary } from "@/lib/article-summary";
 import type { ChangelogEntry } from "@/lib/data/changelog-generator";
+import { toolMentionNames } from "@/lib/tool-mention-shape"; // #434
 import { DIGEST_WORDS, type DigestTier } from "@/lib/weekly-digest-validate";
 import { type IsoWeekWindow, weekRangeLabel } from "@/lib/weekly-digest-window";
 
@@ -75,11 +76,8 @@ export function articleSummaryForPrompt(article: Pick<DigestArticle, "title" | "
 
 /** Tool names an article mentions: `toolMentions` holds `{ tool }` objects or plain names. */
 export function toolNamesOf(article: Pick<DigestArticle, "toolMentions">): string[] {
-  if (!Array.isArray(article.toolMentions)) return [];
-  const names = article.toolMentions
-    .map((m: unknown) => (typeof m === "string" ? m : (m as { tool?: unknown } | null)?.tool))
-    .filter((n): n is string => typeof n === "string" && n.trim() !== "");
-  return [...new Set(names)];
+  // #434: one shared reader for both stored shapes.
+  return [...new Set(toolMentionNames(article.toolMentions))];
 }
 
 /**
