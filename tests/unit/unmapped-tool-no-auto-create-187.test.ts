@@ -38,7 +38,7 @@ import type { ToolMappingReport } from "../../lib/services/tool-mention-catalogu
 const mention = (tool: string) => ({ tool, context: "c", sentiment: 0, relevance: 1 });
 
 function report(over: Partial<ToolMappingReport>): ToolMappingReport {
-  return { mapped: 0, unmapped: 0, unmappedNames: [], catalogueError: null, articleUnmapped: true, ...over };
+  return { mapped: 0, unmapped: 0, unmappedNames: [], catalogueError: null, articleUnmapped: true, unresolvedAliases: [], ...over };
 }
 
 async function ingest(toolMentions: ReturnType<typeof mention>[], toolMapping?: ToolMappingReport) {
