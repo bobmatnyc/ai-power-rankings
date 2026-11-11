@@ -17,7 +17,8 @@ import { closeDb, getDb } from "@/lib/db/connection";
 import { tools } from "@/lib/db/schema";
 import { articles, articleRankingsChanges } from "@/lib/db/article-schema";
 import { eq, gte, and, sql } from "drizzle-orm";
-import { ArticleIngestionService, AIAnalyzer, ContentExtractor, RankingsCalculator, ToolMapper } from "@/lib/services/article-ingestion.service";
+import { ArticleIngestionService, AIAnalyzer, ContentExtractor, RankingsCalculator } from "@/lib/services/article-ingestion.service";
+import { mapToolMentionsToCatalogue } from "@/lib/services/tool-mention-catalogue"; // #187
 
 interface ToolScoreFactors {
   marketTraction: number;
@@ -184,9 +185,10 @@ async function processArticle(
     const changesToSave: any[] = [];
     let articleAffectedTools = 0;
 
-    for (const mention of toolMentions) {
-      // Normalize tool name
-      const normalizedName = ToolMapper.normalizeTool(mention.tool);
+    // #187: map the names through the tools catalogue; an unmapped name is looked up as given.
+    const { mentions: mappedMentions } = await mapToolMentionsToCatalogue(toolMentions);
+    for (const mention of mappedMentions) {
+      const normalizedName = mention.tool;
 
       // Find tool in database by name
       const toolResults = await db
