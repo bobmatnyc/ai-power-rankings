@@ -101,8 +101,8 @@
   {
     "id": "unreleased-436cf49636c0",
     "version": "Unreleased",
-    "date": "2026-11-11T06:40:13.927Z",
-    "dateSource": "build",
+    "date": "2026-11-11T06:50:28.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "seo",
     "title": "the tool page title and meta description follow the tool's kind (#424)",
