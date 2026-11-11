@@ -45,12 +45,24 @@ export interface CurrentListBoard {
  *   `tests/unit/rankings-per-list-read-186.test.ts`,
  *   `tests/unit/models-list-metric-filter-329.test.ts`, `tests/unit/models-public-rank-329.test.ts`,
  *   `tests/unit/rankings-noindex-197.test.ts`.
+ * #195: with `openWeightOnly`, the board keeps only rows whose `tools.open_weight` column
+ * is true (`findOpenWeightIds`), ranked 1..n with previous ranks renumbered among them;
+ * `metricRowCount` stays the whole board's. Without it, no open-weight read is made.
+ * Test: `tests/unit/rankings-open-weight-195.test.ts`.
  */
-export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LIST): Promise<CurrentListBoard | null> {
+export async function loadCurrentRankings(
+  list: RankingList = DEFAULT_RANKING_LIST,
+  options: BoardOptions = {}
+): Promise<CurrentListBoard | null> {
   // #185: the list's own row or nothing; no fallback to the combined board.
   const snapshot = await rankingsRepository.getCurrentRankings(list);
   if (!snapshot) return null;
-  return boardFromSnapshot(list, snapshot);
+  return boardFromSnapshot(list, snapshot, options);
+}
+
+/** #195: `openWeightOnly` keeps only rows whose tool's `tools.open_weight` column is true. */
+export interface BoardOptions {
+  openWeightOnly?: boolean;
 }
 
 /**
@@ -58,7 +70,11 @@ export async function loadCurrentRankings(list: RankingList = DEFAULT_RANKING_LI
  * `/api/rankings/current` takes `metricRowCount` from the same count as `/api/rankings`.
  * Throws when a tools read throws (fails closed: no count, no board).
  */
-export async function boardFromSnapshot(list: RankingList, snapshot: RankingData): Promise<CurrentListBoard> {
+export async function boardFromSnapshot(
+  list: RankingList,
+  snapshot: RankingData,
+  options: BoardOptions = {}
+): Promise<CurrentListBoard> {
   const rankingsData = snapshot.data;
   let rankings = [];
 
@@ -93,16 +109,24 @@ export async function boardFromSnapshot(list: RankingList, snapshot: RankingData
   members.sort((a, b) => (a.row.rank || 999) - (b.row.rank || 999));
 
   const metricRowCount = isMetricGatedList(list) ? countMetricRows(members.map((m) => ({ status: statusOf(m), codingMetric: m.codingMetric }))) : 0;
+  // #195: the open-weight view keeps only rows whose open_weight column is true; the count above stays the whole board's.
+  const shown = options.openWeightOnly ? await openWeightMembers(members, toolsRepo) : members;
   // #329: a metric-gated list ranks only rows with a coding metric; an unmeasured row's neutral
   // benchmark base would rank it above measured rows, so it is left off the board (option c, Dfe).
   if (!isMetricGatedList(list)) {
-    const rows = members.map((m) => m.row);
+    const rows = shown.map((m) => m.row);
     // #197: with a noindex row dropped, previous ranks are renumbered among the rest, as `/api/rankings/current` does.
-    return { list, snapshot, rankings: rankWithinList(members.length < listed.length ? withRenumberedMoves(rows) : rows), metricRowCount };
+    return { list, snapshot, rankings: rankWithinList(shown.length < listed.length ? withRenumberedMoves(rows) : rows), metricRowCount };
   }
   // #329: previous ranks renumbered among the measured rows, so no move is counted on the unfiltered board.
-  const board = withRenumberedMoves(members.filter((m) => m.codingMetric).map((m) => m.row));
+  const board = withRenumberedMoves(shown.filter((m) => m.codingMetric).map((m) => m.row));
   return { list, snapshot, rankings: rankWithinList(board), metricRowCount };
+}
+
+/** #195: the members whose tool's `tools.open_weight` column is true, in board order; a failed read throws. */
+async function openWeightMembers(members: FormattedRanking[], toolsRepo: ToolsRepository): Promise<FormattedRanking[]> {
+  const open = await toolsRepo.findOpenWeightIds(members.flatMap((m) => (m.dbId ? [m.dbId] : [])));
+  return members.filter((m) => m.dbId !== undefined && open.has(m.dbId));
 }
 
 /** PURE: rows in board order with previous rank and rank change renumbered among them (`renumberPrevious`). */
