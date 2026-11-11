@@ -93,8 +93,10 @@ describe("#417 bare section paths", () => {
     }
   });
 
-  it("pass an unknown single segment through the middleware", async () => {
+  it("send an unknown single segment to the site 404 (no table redirect)", async () => {
+    // #443: was a pass-through to the [lang] layout's notFound(), which as a root layout has no boundary above it.
     const res = await run("/foo");
-    expect(res.headers.get("x-middleware-next")).toBe("1");
+    expect(res.headers.get("location")).toBeNull();
+    expect(new URL(res.headers.get("x-middleware-rewrite") ?? "http://x/").pathname).toBe("/en/__not-found");
   });
 });

@@ -7,6 +7,12 @@ import { isLocale, type Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { STATIC_CATEGORIES } from "@/lib/data/static-categories";
 import { newsRssAlternateTypes } from "@/lib/seo/alternates";
+import { ROOT_TITLE_TEMPLATE, RootDocument, rootMetadata } from "../root-document";
+
+/** `title` under the root template, as Next.js applied it when `app/layout.tsx` was this layout's parent (#443). */
+function rootTitled(title: string): string {
+  return ROOT_TITLE_TEMPLATE.replace(/%s/g, title);
+}
 
 export async function generateMetadata({
   params,
@@ -24,8 +30,10 @@ export async function generateMetadata({
     const dict = await getDictionary(lang);
     console.log("[Layout] generateMetadata: Dictionary loaded:", !!dict);
 
+    // #443: this is a root layout now, so it carries the former root metadata itself.
     return {
-      title: dict.seo?.title || `${dict.common.appName} - ${dict.common.appDescription}`,
+      ...rootMetadata,
+      title: rootTitled(dict.seo?.title || `${dict.common.appName} - ${dict.common.appDescription}`),
       description: dict.seo?.description || dict.home.methodology.algorithmDescription,
       keywords: dict.seo?.keywords?.split(", ") || [],
       // #150: the feed's own origin (siteOrigin()), never VERCEL_URL.
@@ -40,7 +48,8 @@ export async function generateMetadata({
     console.error("[Layout] generateMetadata: Error stack:", error instanceof Error ? error.stack : "No stack");
     // Return minimal metadata on error
     return {
-      title: "AI Power Rankings",
+      ...rootMetadata,
+      title: rootTitled("AI Power Rankings"),
       description: "Comprehensive rankings of AI coding tools and assistants",
     };
   }
@@ -78,12 +87,9 @@ export default async function LanguageLayout({
     const categories = STATIC_CATEGORIES;
     console.log("[Layout] LanguageLayout: Static categories loaded:", categories.length);
 
-    // IMPORTANT: Do NOT render <html> or <body> tags in nested layouts
-    // Only the root layout (/app/layout.tsx) should have these
-    // The lang attribute should be set server-side in the root layout
-    // Font variables are already set in the root layout with inline styles
+    // #443: this is the root layout for every /{lang}/ route, so `<html lang>` is the route locale.
     return (
-      <>
+      <RootDocument lang={lang}>
         {/* #198: insightsNavProps() is {} while INSIGHTS_PREVIEW is off, so the props are unchanged */}
         <ClientLayout lang={lang as Locale} dict={dict} categories={categories} {...insightsNavProps()}>
           {children}
@@ -91,28 +97,31 @@ export default async function LanguageLayout({
 
         {/* Google Analytics only - other analytics are in root layout */}
         <GoogleAnalytics />
-      </>
+      </RootDocument>
     );
   } catch (error) {
     console.error("[Layout] LanguageLayout: Critical error in layout:", error);
     console.error("[Layout] LanguageLayout: Error stack:", error instanceof Error ? error.stack : "No stack");
     console.error("[Layout] LanguageLayout: Error type:", error?.constructor?.name);
 
-    // Return a minimal error layout without HTML/body tags
+    // #443: a root layout must render <html>; `lang` passed the isLocale() guard above.
+    const { lang } = await params;
     return (
-      <div className="min-h-screen p-8">
-        <h1 className="text-2xl font-bold text-ds-danger-fixed mb-4">Layout Error</h1>
-        <p className="text-ds-text-paper-muted mb-2">An error occurred while rendering the layout.</p>
-        <details className="mt-4 p-4 bg-ds-surface-paper-sunken rounded">
-          <summary className="cursor-pointer font-semibold">Error Details</summary>
-          <pre className="mt-2 whitespace-pre-wrap text-sm">
-            {error instanceof Error ? error.message : String(error)}
-          </pre>
-        </details>
-        <div className="mt-8">
-          {children}
+      <RootDocument lang={lang}>
+        <div className="min-h-screen p-8">
+          <h1 className="text-2xl font-bold text-ds-danger-fixed mb-4">Layout Error</h1>
+          <p className="text-ds-text-paper-muted mb-2">An error occurred while rendering the layout.</p>
+          <details className="mt-4 p-4 bg-ds-surface-paper-sunken rounded">
+            <summary className="cursor-pointer font-semibold">Error Details</summary>
+            <pre className="mt-2 whitespace-pre-wrap text-sm">
+              {error instanceof Error ? error.message : String(error)}
+            </pre>
+          </details>
+          <div className="mt-8">
+            {children}
+          </div>
         </div>
-      </div>
+      </RootDocument>
     );
   }
 }

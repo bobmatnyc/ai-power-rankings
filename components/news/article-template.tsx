@@ -53,7 +53,7 @@ function BodyLink({ href, className, children }: AnchorHTMLAttributes<HTMLAnchor
  * so the template keeps the stored body (`rewritten_content`) and shows the
  * 80-120 word summary, the source link and the tool tags the proposal names.
  * What: an `article` with a header (a "News" eyebrow linking the news hub, the
- * title as the page's only h1, the UTC publication date and the source,
+ * title as the page's only h1, the UTC publication date in `lang` and the source,
  * linked when the article has a source URL), the summary as a lead when it
  * differs from the body, one tag per tool linking `/<lang>/tools/<slug>`, the
  * body without its in-body "Related Links" block, a "Referenced links" list
@@ -95,7 +95,8 @@ export function ArticleTemplate({
         <h1 className="text-3xl md:text-4xl font-bold">{article.title}</h1>
         <p className="text-sm text-muted-foreground">
           <time dateTime={published.toISOString()}>
-            {formatUtcDate(published, 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            {/* #443: the route locale, not a fixed en-US; formatUtcDate keeps the UTC day (#239). */}
+            {formatUtcDate(published, lang, { year: 'numeric', month: 'long', day: 'numeric' })}
           </time>
           {' · '}
           {sourceUrl ? (

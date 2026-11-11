@@ -99,10 +99,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-6461ee963529",
+    "version": "Unreleased",
+    "date": "2026-11-11T18:21:15.463Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "i18n",
+    "title": "every /{lang}/ page, news articles included, sets <html lang> to its route locale (fr, ja, zh, ...); it was en on every…",
+    "description": "every `/{lang}/` page, news articles included, sets `<html lang>` to its route locale (`fr`, `ja`, `zh`, ...); it was `en` on every locale. The Article template prints the publication date in the route locale, still on its UTC day (#239). `app/[lang]/layout.tsx` is now a root layout: the former `app/layout.tsx` is `app/root-document.tsx`, which `app/[lang]`, `app/(root)` (the `/` redirect), `app/design` and `app/global-not-found.tsx` (`experimental.globalNotFound`) each render; those non-locale roots keep `lang=\"en\"`, and `/api`, `robots.txt` and `sitemap.xml` render no layout. A dot-free path whose first segment is not a locale (`/pricing`) is rewritten by the middleware to the site 404, since the layout's #340 `notFound()` no longer has a not-found boundary above it. Tests: `tests/unit/html-lang-dates-443.test.tsx` (#443)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-cc5e584b887b",
     "version": "Unreleased",
-    "date": "2026-11-11T17:45:14.424Z",
-    "dateSource": "build",
+    "date": "2026-11-11T17:50:47.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "news",
     "title": "the news card on tool pages and the legacy news detail view link a crawled URL only when it is an absolute http: or…",
