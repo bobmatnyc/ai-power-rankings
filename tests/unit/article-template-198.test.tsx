@@ -1,7 +1,9 @@
 import { isValidElement, type ReactElement, type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ArticleTemplate } from "../../components/news/article-template";
+import { ArticleTemplate, type ArticleLabels } from "../../components/news/article-template";
+import en from "../../i18n/dictionaries/en.json";
+import { locales } from "../../i18n/config";
 import type { NewsArticleDetail } from "../../lib/news-article";
 
 /**
@@ -59,8 +61,16 @@ const DETAIL: NewsArticleDetail = {
   ],
 };
 
-const render = (detail: Partial<NewsArticleDetail> = {}) =>
-  renderToStaticMarkup(<ArticleTemplate lang="fr" {...DETAIL} {...detail} />);
+const EN_LABELS: ArticleLabels = en.news.article;
+
+const render = (detail: Partial<NewsArticleDetail> = {}, labels: ArticleLabels = EN_LABELS) =>
+  renderToStaticMarkup(<ArticleTemplate lang="fr" labels={labels} {...DETAIL} {...detail} />);
+
+/** #198: text as `renderToStaticMarkup` escapes it, so a label with `'` or `&` still matches. */
+const escapeHtml = (text: string) =>
+  text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#x27;");
+
+const withSourceUrl = (source_url: string | null) => ({ article: { ...DETAIL.article, source_url } });
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -116,6 +126,84 @@ describe("ArticleTemplate (#198)", () => {
     expect(html).not.toContain("Read the original");
     expect(html).toContain("<span>The Verge</span>");
   });
+
+  // #198: the source is linked only for an http(s) URL (#421 review).
+  it.each([
+    "javascript:alert(1)",
+    " JavaScript:alert(document.cookie)",
+    "data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==",
+    "vbscript:msgbox(1)",
+    "ftp://verge.example/cursor",
+    "/relative/junk",
+    "verge.example/cursor",
+    "   ",
+    // #198: protocol-relative and tab-split schemes are not http(s) (#421 review).
+    "//host/x",
+    "java\tscript:alert(1)",
+  ])("source link: %j renders the source as text and no link to it", (url) => {
+    const html = render(withSourceUrl(url));
+    expect(html).toContain("<span>The Verge</span>");
+    expect(html).not.toContain("Read the original");
+    expect(html).not.toMatch(/href="(javascript|data|vbscript|ftp):/i);
+    expect(html).not.toContain(`href="${escapeHtml(url)}"`);
+  });
+
+  it.each([
+    ["http://verge.example/cursor", "http://verge.example/cursor"],
+    ["https://verge.example/cursor", "https://verge.example/cursor"],
+    // #198: an upper-case scheme is still http(s), and surrounding spaces are trimmed (#421 review).
+    ["HTTPS://A.COM", "HTTPS://A.COM"],
+    [" https://a.com ", "https://a.com"],
+  ])("source link: %j links the source and the original as %j", (url, href) => {
+    const html = render(withSourceUrl(url));
+    expect(html.split(`<a href="${href}" target="_blank" rel="noopener noreferrer"`)).toHaveLength(3);
+    expect(html).toContain(">The Verge</a>");
+    expect(html).toContain("Read the original at The Verge");
+  });
+
+  // #198: a referenced link with a data: or javascript: URL is left out of the list (#421 review).
+  it("referenced links: lists only the http(s) links, never a data: or javascript: href", () => {
+    const content = "See [d](data:text/html,x), [j](javascript:alert(1)) and [ok](https://ok.example/story).";
+    const html = render({ article: { ...DETAIL.article, content } });
+    const section = html.slice(html.indexOf('aria-labelledby="article-links"'));
+    expect(html).not.toMatch(/href="\s*(data|javascript):/i);
+    expect(section).toContain('<a href="https://ok.example/story" class="text-primary hover:underline break-all" target="_blank" rel="noopener noreferrer">ok</a>');
+    expect(section).not.toContain(">d</a>");
+    expect(section).not.toContain(">j</a>");
+  });
+
+  // #198: the `{source}` substitution is literal, so `$&` in a source is not a replacement pattern (#421 review).
+  it("read the original: a source with `$&`, `$1` or `$$` renders literally", () => {
+    const html = render({ article: { ...DETAIL.article, source: "AT$&T $1 $$" } });
+    expect(html).toContain("Read the original at AT$&amp;T $1 $$</a>");
+  });
+});
+
+describe("ArticleTemplate labels per locale (#198)", () => {
+  // #198: each locale renders its own `news.article` labels, never the English ones (#421 review).
+  it.each(locales)("%s: renders the locale's own labels", async (locale) => {
+    const dict = (await import(`../../i18n/dictionaries/${locale}.json`)).default as { news: { article: ArticleLabels } };
+    const labels = dict.news.article;
+    expect(Object.keys(labels).sort(), `${locale} has every label`).toEqual(Object.keys(EN_LABELS).sort());
+    if (locale !== "en") {
+      for (const key of Object.keys(EN_LABELS) as (keyof ArticleLabels)[]) {
+        expect(labels[key], `${locale}.news.article.${key} is translated`).not.toBe(EN_LABELS[key]);
+      }
+    }
+    expect(labels.readOriginal).toContain("{source}");
+
+    const html = render({}, labels);
+    expect(html).toContain(`href="/fr/news" class="hover:underline">${escapeHtml(labels.eyebrow)}</a>`);
+    expect(html).toContain(`aria-label="${escapeHtml(labels.tools)}"`);
+    expect(html).toContain(`>${escapeHtml(labels.referencedLinks)}</h2>`);
+    expect(html).toContain(escapeHtml(labels.readOriginal.replace("{source}", "The Verge")));
+    expect(render({ article: { ...DETAIL.article, content: "" } }, labels)).toContain(`>${escapeHtml(labels.noContent)}</p>`);
+    if (locale !== "en") {
+      for (const english of ["News<", "Tools in this article", "Referenced links", "Read the original", "No content available"]) {
+        expect(html, `${locale} shows no English "${english}"`).not.toContain(english);
+      }
+    }
+  });
 });
 
 /** The first element in a server tree whose props carry `article`. */
@@ -146,7 +234,9 @@ describe("the news article page and INSIGHTS_ARTICLE_TEMPLATE (#198)", () => {
     const page = await import("../../app/[lang]/news/[slug]/page");
     const element = articleElement(await page.default(params));
     expect(element?.type).toBe(ArticleTemplate);
-    expect(element?.props).toMatchObject({ lang: "fr", tools: DETAIL.tools, tool: DETAIL.tool });
+    // #198: the page hands the template its locale's labels (#421 review).
+    const fr = (await import("../../i18n/dictionaries/fr.json")).default;
+    expect(element?.props).toMatchObject({ lang: "fr", labels: fr.news.article, tools: DETAIL.tools, tool: DETAIL.tool });
   });
 
   it("keeps the article metadata whatever the flag", async () => {

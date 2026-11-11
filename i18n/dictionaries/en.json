@@ -310,7 +310,14 @@
       "dayAgo": "1 day ago",
       "daysAgo": "{count} days ago"
     },
-    "viewSource": "View Source"
+    "viewSource": "View Source",
+    "article": {
+      "eyebrow": "News",
+      "tools": "Tools in this article",
+      "noContent": "No content available",
+      "referencedLinks": "Referenced links",
+      "readOriginal": "Read the original at {source}"
+    }
   },
   "tools": {
     "title": "AI Coding Tools",

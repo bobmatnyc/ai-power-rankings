@@ -310,7 +310,14 @@
       "dayAgo": "1 день тому",
       "daysAgo": "{count} днів тому"
     },
-    "viewSource": "Переглянути джерело"
+    "viewSource": "Переглянути джерело",
+    "article": {
+      "eyebrow": "Новини",
+      "tools": "Інструменти в цій статті",
+      "noContent": "Вміст недоступний",
+      "referencedLinks": "Посилання в статті",
+      "readOriginal": "Читати оригінал на {source}"
+    }
   },
   "tools": {
     "title": "AI Coding Тули",

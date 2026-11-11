@@ -310,7 +310,14 @@
       "dayAgo": "Hace 1 día",
       "daysAgo": "Hace {count} días"
     },
-    "viewSource": "Ver fuente"
+    "viewSource": "Ver fuente",
+    "article": {
+      "eyebrow": "Noticias",
+      "tools": "Herramientas en este artículo",
+      "noContent": "No hay contenido disponible",
+      "referencedLinks": "Enlaces citados",
+      "readOriginal": "Leer el original en {source}"
+    }
   },
   "tools": {
     "title": "Herramientas de codificación IA",

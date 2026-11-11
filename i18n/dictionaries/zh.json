@@ -671,6 +671,13 @@
       "opinion": "观点评述",
       "prediction": "趋势预测",
       "commentary": "行业评论"
+    },
+    "article": {
+      "eyebrow": "新闻",
+      "tools": "本文提及的工具",
+      "noContent": "暂无内容",
+      "referencedLinks": "参考链接",
+      "readOriginal": "在 {source} 阅读原文"
     }
   },
   "tools": {

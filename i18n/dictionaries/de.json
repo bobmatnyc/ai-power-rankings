@@ -305,7 +305,14 @@
       "dayAgo": "Vor 1 Tag",
       "daysAgo": "Vor {count} Tagen"
     },
-    "viewSource": "Quelle anzeigen"
+    "viewSource": "Quelle anzeigen",
+    "article": {
+      "eyebrow": "Neuigkeiten",
+      "tools": "Tools in diesem Artikel",
+      "noContent": "Kein Inhalt verfügbar",
+      "referencedLinks": "Referenzierte Links",
+      "readOriginal": "Original lesen bei {source}"
+    }
   },
   "tools": {
     "title": "KI-Coding-Tools",
