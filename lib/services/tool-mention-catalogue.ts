@@ -48,15 +48,17 @@ function key(name: string): string {
  * Maps `mentions` onto the catalogue and reports the outcome.
  *
  * Why: see the file header; the report feeds the run summary's unmapped count.
- * What: mapped mentions get `tool` = the catalogue row's name; every other
- * field is untouched. Never throws: a read failure is returned in the report
+ * What: mapped mentions get `tool` = the catalogue row's name. #187: every
+ * mention with a name also gets `raw_tool`, the model-emitted name trimmed
+ * (an existing `raw_tool` is kept); every other field is untouched. Never throws: a read failure is returned in the report
  * and logged at warn level, with the mentions left as the model named them.
- * Test: `tests/unit/tool-mention-catalogue-187.test.ts`.
+ * Test: `tests/unit/tool-mention-catalogue-187.test.ts`,
+ * `tests/unit/tool-mention-raw-name-187.test.ts`.
  */
-export async function mapToolMentionsToCatalogue<M extends { tool?: string }>(
+export async function mapToolMentionsToCatalogue<M extends { tool?: string; raw_tool?: string }>(
   mentions: readonly M[],
   loadCatalogue: CatalogueLoader = readNewsToolCatalogue
-): Promise<{ mentions: M[]; report: ToolMappingReport }> {
+): Promise<{ mentions: Array<M & { raw_tool?: string }>; report: ToolMappingReport }> {
   let catalogue: NewsToolCatalogue | null = null;
   let catalogueError: string | null = null;
   try {
@@ -78,18 +80,21 @@ export async function mapToolMentionsToCatalogue<M extends { tool?: string }>(
   const unmappedNames: string[] = [];
   const unresolvedAliases: Array<{ alias: string; target: string }> = [];
   let mapped = 0;
-  const out = mentions.map((mention) => {
+  const out = mentions.map((mention): M & { raw_tool?: string } => {
     const name = typeof mention.tool === "string" ? mention.tool : "";
+    // #187: keep the model-emitted name (#432 counts aliases); a re-mapped mention keeps its first raw name.
+    const raw = typeof mention.raw_tool === "string" && mention.raw_tool.trim() ? mention.raw_tool.trim() : name.trim();
+    const withRaw = raw ? { ...mention, raw_tool: raw } : mention;
     // #187: an alias wins, as in the old mapper, and its target must be an active row.
     const target = name && Object.hasOwn(TOOL_ALIASES, key(name)) ? TOOL_ALIASES[key(name)] : undefined;
     const row = !catalogue || !name ? undefined : catalogue.byKey.get(key(target ?? name));
     if (!row) {
       unmappedNames.push(name);
       if (catalogue && target) unresolvedAliases.push({ alias: key(name), target });
-      return mention;
+      return withRaw;
     }
     mapped++;
-    return { ...mention, tool: row.name };
+    return { ...withRaw, tool: row.name };
   });
   if (unresolvedAliases.length > 0) {
     loggers.api.warn("[ToolMapping] Alias target is not an active catalogue tool; mentions left unmapped", {
