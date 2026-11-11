@@ -13,12 +13,14 @@
  *   order and renumbers rank, tier and movement; any other list's entries come back as
  *   the same array. `gateBoardEntries()` reads the entries' tools to decide which are
  *   measured (`hasCodingMetric`) and applies the gate; it reads nothing for a list that
- *   is not metric-gated.
- * Test: `tests/unit/models-public-rank-329.test.ts`.
+ *   is not metric-gated. #197: `dropNoindexEntries()` leaves out entries whose tool slug
+ *   is noindex, renumbered the same way.
+ * Test: `tests/unit/models-public-rank-329.test.ts`, `tests/unit/rankings-noindex-197.test.ts`.
  */
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
 import { hasCodingMetric, isMetricGatedList, listTier, type RankingList } from "@/lib/rankings/lists";
 import { entryRank, type RawRankingEntry } from "@/lib/tools/ranking-entry";
+import { isNoindexToolSlug } from "@/lib/seo/url-table";
 
 const positive = (value: unknown): number | null =>
   typeof value === "number" && Number.isFinite(value) && value > 0 ? value : null;
@@ -56,7 +58,29 @@ export function gateStoredEntries(
   isMeasured: (entry: RawRankingEntry) => boolean
 ): RawRankingEntry[] {
   if (!isMetricGatedList(list)) return entries;
-  const kept = entries.filter(isMeasured).sort((a, b) => (entryRank(a) || 999) - (entryRank(b) || 999));
+  return keepRenumbered(entries, isMeasured);
+}
+
+/**
+ * #197 PURE: the entries whose tool slug (`slugOf`) is not noindex (`isNoindexToolSlug`),
+ * renumbered as `gateStoredEntries()` renumbers. With no noindex entry, `entries` itself,
+ * so a board holding no noindex tool is served exactly as stored.
+ */
+export function dropNoindexEntries(
+  entries: RawRankingEntry[],
+  slugOf: (entry: RawRankingEntry) => string | undefined
+): RawRankingEntry[] {
+  const isNoindex = (entry: RawRankingEntry) => {
+    const slug = slugOf(entry);
+    return slug !== undefined && isNoindexToolSlug(slug);
+  };
+  if (!entries.some(isNoindex)) return entries;
+  return keepRenumbered(entries, (entry) => !isNoindex(entry));
+}
+
+/** PURE: entries kept where `keep`, in stored-rank order, with rank, D53 tier and movement renumbered 1..n. */
+function keepRenumbered(entries: RawRankingEntry[], keep: (entry: RawRankingEntry) => boolean): RawRankingEntry[] {
+  const kept = entries.filter(keep).sort((a, b) => (entryRank(a) || 999) - (entryRank(b) || 999));
   const moves = renumberPrevious(kept.map(previousOf));
   return kept.map((entry, i) => {
     const rank = i + 1;
