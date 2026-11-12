@@ -11,6 +11,7 @@
  *   history (scored live) and every flagged leaf it skipped (live value kept), so no
  *   fallback is silent and no leaf is replaced by a non-number. `assessMetricsFreshness`
  *   turns the newest `collected_date` at or before the period into fresh / stale.
+ *   `freshnessModeFromEnv` maps the cron's opt-in env value to the blocking mode (#95 step 7).
  * Test: `tests/unit/point-in-time-metrics-95.test.ts`
  */
 
@@ -166,10 +167,47 @@ export function applyMetricsHistorySnapshot<T extends PointInTimeTool>(
   };
 }
 
-/** `"off"` skips the guard; `"flag"` (the spec's phase-1 default) records stale state and never blocks. */
-export type MetricsFreshnessMode = "off" | "flag";
+/**
+ * `"off"` skips the guard; `"flag"` (the spec's phase-1 default) records stale state and never blocks.
+ * `"require"` (#95 step 7, opt-in) refuses a history-scored run whose snapshot is stale or
+ * unverifiable with `StaleMetricsError`, before any write.
+ */
+export type MetricsFreshnessMode = "off" | "flag" | "require";
 
-export const METRICS_FRESHNESS_MODES: readonly MetricsFreshnessMode[] = ["off", "flag"];
+export const METRICS_FRESHNESS_MODES: readonly MetricsFreshnessMode[] = ["off", "flag", "require"];
+
+/**
+ * #95 step 7: raised in `"require"` mode when a history-scored run's snapshot is stale or
+ * could not be checked (`unknown`). The run writes nothing; `freshness` is the guard's finding.
+ */
+export class StaleMetricsError extends Error {
+  constructor(public readonly freshness: MetricsFreshness) {
+    super(
+      `Metrics snapshot for period ${freshness.period} is ${freshness.status}: ${freshness.reason ?? "no reason recorded"}; refusing to write (require mode)`
+    );
+    this.name = "StaleMetricsError";
+  }
+
+  get period(): string {
+    return this.freshness.period;
+  }
+}
+
+/**
+ * #95 step 7: the freshness mode a `RANKINGS_REQUIRE_FRESH_METRICS` value selects.
+ *
+ * Why: the cron route opts into the blocking mode through one env var; the service reads none.
+ * What: unset, empty, `0` or `false` gives `undefined` (the caller passes no mode, so the
+ *   service default `"flag"` runs unchanged); `1` or `true` gives `"require"`. Any other value
+ *   throws, so a mistyped value fails the run instead of silently publishing in flag mode.
+ * Test: `tests/unit/require-fresh-metrics-95.test.ts`
+ */
+export function freshnessModeFromEnv(raw: string | undefined): MetricsFreshnessMode | undefined {
+  const value = (raw ?? "").trim().toLowerCase();
+  if (value === "" || value === "0" || value === "false") return undefined;
+  if (value === "1" || value === "true") return "require";
+  throw new Error(`RANKINGS_REQUIRE_FRESH_METRICS must be unset, "true", "1", "false" or "0"; got "${raw}"`);
+}
 
 export interface MetricsFreshness {
   mode: MetricsFreshnessMode;

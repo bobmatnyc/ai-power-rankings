@@ -74,7 +74,8 @@ describe("publish path activated (#185 PR-3, replaces the PR-1/PR-2 inert checks
   it("the cron route publishes only through publishActiveRankings(), never regenerateRankings()", () => {
     const cron = source("app/api/cron/regenerate-rankings/route.ts");
     expect(cron).toMatch(/from "@\/lib\/rankings\/publish-active"/);
-    expect(cron).toMatch(/await publishActiveRankings\(\)/);
+    // #95 step 7: the route may pass the freshness mode, so match the call, not an empty argument list.
+    expect(cron).toMatch(/await publishActiveRankings\(/);
     expect(cron).not.toMatch(/regenerateRankings\(/);
   });
 
