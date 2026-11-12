@@ -1,0 +1,37 @@
+# #458: triaged 2026-11-12; class-a false positives only
+# Default gitleaks rules stay active. Each allowlist is scoped to one path set
+# AND the rule ids triaged there, so a different secret type in the same file
+# still fires. Clerk publishable keys (pk_live/pk_test) are deliberately NOT
+# allowlisted here (held for owner approval).
+title = "ai-power-rankings gitleaks config"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Lighthouse reports: JWT-shaped strings in captured page data"
+targetRules = ["jwt"]
+paths = ['''^docs/performance/lighthouse/.*\.report\.(json|html)$''']
+
+[[allowlists]]
+description = "Clerk verification output: JWT-shaped test output"
+targetRules = ["jwt"]
+paths = ['''^tests/clerk-verification-output\.txt$''']
+
+[[allowlists]]
+description = "monthly-report-182 test fixture"
+targetRules = ["generic-api-key"]
+paths = ['''^tests/unit/monthly-report-182\.test\.ts$''']
+
+[[allowlists]]
+description = "crawl-monitor-325 test fixture"
+targetRules = ["stripe-access-token"]
+paths = ['''^tests/unit/crawl-monitor-325\.test\.ts$''']
+
+[[allowlists]]
+description = "Research docs: placeholder Authorization headers in curl examples"
+targetRules = ["curl-auth-header"]
+paths = [
+  '''^docs/research/cron-status-verification-2026-03-28\.md$''',
+  '''^docs/research/monthly-summary-feature-analysis-2026-02-05\.md$''',
+]
