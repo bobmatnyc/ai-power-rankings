@@ -57,6 +57,10 @@ describe("licenceActivationRefusal (#453)", () => {
     ["not_required", { licenceReview: "not_required" }],
     ["reviewed with a ruling id", REVIEWED],
     ["reviewed with a lettered ruling id", { licenceReview: "reviewed", licenceReviewRuling: "D9rl3" }],
+    // #453 fix: ids with a letter after the D are real owner ruling ids.
+    ["reviewed with ruling Dee", { licenceReview: "reviewed", licenceReviewRuling: "Dee" }],
+    ["reviewed with ruling Df8", { licenceReview: "reviewed", licenceReviewRuling: "Df8" }],
+    ["reviewed with ruling De4", { licenceReview: "reviewed", licenceReviewRuling: "De4" }],
   ])("allows %s", (_name, seed) => {
     expect(licenceActivationRefusal(seed)).toBeNull();
   });
@@ -67,6 +71,10 @@ describe("licenceActivationRefusal (#453)", () => {
     ["reviewed without a ruling", { licenceReview: "reviewed" }, /no valid licenceReviewRuling/],
     ["reviewed with an empty ruling", { licenceReview: "reviewed", licenceReviewRuling: "" }, /no valid/],
     ["reviewed with a malformed ruling", { licenceReview: "reviewed", licenceReviewRuling: "88" }, /no valid/],
+    ["reviewed with a bare D ruling", { licenceReview: "reviewed", licenceReviewRuling: "D" }, /no valid/],
+    ["reviewed with a lower-case ruling", { licenceReview: "reviewed", licenceReviewRuling: "d83" }, /no valid/],
+    ["reviewed with a ruling not led by D", { licenceReview: "reviewed", licenceReviewRuling: "X83" }, /no valid/],
+    ["reviewed with a hyphenated ruling", { licenceReview: "reviewed", licenceReviewRuling: "D-1" }, /no valid/],
     ["reviewed with a numeric ruling", { licenceReview: "reviewed", licenceReviewRuling: 88 }, /no valid/],
     ["an unknown value", { licenceReview: "approved" }, /unknown value/],
     ["a non-string value", { licenceReview: 42 }, /unknown value/],
@@ -90,12 +98,20 @@ describe("seed validator: licence_review reviewed (#453)", () => {
     const parsed = row(doc({ licence_review: "reviewed", licence_review_ruling: "D88" }));
     expect(parsed).toMatchObject({ licenceReview: "reviewed", licenceReviewRuling: "D88" });
     expect(row(doc({}))).toMatchObject({ licenceReview: "pending", licenceReviewRuling: null });
+    // #453 fix: letter-led ids are accepted.
+    for (const id of ["Dee", "Df8", "De4"]) {
+      expect(row(doc({ licence_review: "reviewed", licence_review_ruling: id }))).toMatchObject({ licenceReviewRuling: id });
+    }
   });
 
   it.each<[string, Record<string, unknown>, RegExp]>([
     ["reviewed without a ruling", { licence_review: "reviewed" }, /needs licence_review_ruling/],
     ["reviewed with an empty ruling", { licence_review: "reviewed", licence_review_ruling: " " }, /needs licence_review_ruling/],
     ["reviewed with a malformed ruling", { licence_review: "reviewed", licence_review_ruling: "ruling 88" }, /needs licence_review_ruling/],
+    ["reviewed with ruling D", { licence_review: "reviewed", licence_review_ruling: "D" }, /needs licence_review_ruling/],
+    ["reviewed with ruling d83", { licence_review: "reviewed", licence_review_ruling: "d83" }, /needs licence_review_ruling/],
+    ["reviewed with ruling X83", { licence_review: "reviewed", licence_review_ruling: "X83" }, /needs licence_review_ruling/],
+    ["reviewed with ruling D-1", { licence_review: "reviewed", licence_review_ruling: "D-1" }, /needs licence_review_ruling/],
     ["a ruling beside pending", { licence_review_ruling: "D88" }, /only with licence_review "reviewed"/],
   ])("rejects %s", (_name, patch, message) => {
     expect(() => parseModelSeed(doc(patch))).toThrow(message);
@@ -121,6 +137,7 @@ describe("reseed keeps a stored reviewed review (#453)", () => {
 
   it.each<[string, ModelSeedEntry, unknown, { licenceReview: unknown; licenceReviewRuling: unknown; kept: boolean }]>([
     ["a pending seed keeps a stored reviewed", withReview("pending"), REVIEWED, { licenceReview: "reviewed", licenceReviewRuling: "D88", kept: true }],
+    ["a pending seed keeps a stored reviewed Dee", withReview("pending"), { licenceReview: "reviewed", licenceReviewRuling: "Dee" }, { licenceReview: "reviewed", licenceReviewRuling: "Dee", kept: true }],
     ["a pending seed over a stored pending", withReview("pending"), PENDING, { licenceReview: "pending", licenceReviewRuling: null, kept: false }],
     ["a pending seed over a reviewed without ruling", withReview("pending"), { licenceReview: "reviewed" }, { licenceReview: "pending", licenceReviewRuling: null, kept: false }],
     ["a not_required seed replaces a stored reviewed", withReview("not_required"), REVIEWED, { licenceReview: "not_required", licenceReviewRuling: null, kept: false }],

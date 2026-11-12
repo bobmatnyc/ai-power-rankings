@@ -19,11 +19,12 @@
 export type LicenceReview = "not_required" | "pending" | "reviewed";
 
 /**
- * #453: an owner ruling id, as the owner writes them (D63, D0c, D9rl3). `reviewed` needs one.
+ * #453: an owner ruling id, as the owner writes them (D63, D0c, D9rl3, Dee): D and then one or
+ * more of [0-9a-z]. #453 fix: a letter may follow the D (Dee is this gate's own basis). `reviewed` needs one.
  * Kept in step with the POSIX pattern inside `licenceAllowsActivationSql`.
  */
-export const RULING_ID = /^D[0-9][0-9a-z]*$/;
-const RULING_ID_SQL = "^D[0-9][0-9a-z]*$";
+export const RULING_ID = /^D[0-9a-z]+$/;
+const RULING_ID_SQL = "^D[0-9a-z]+$";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
