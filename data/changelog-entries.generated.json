@@ -1001,10 +1001,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-7f361e4be047",
+    "version": "Unreleased",
+    "date": "2026-11-12T20:14:01.064Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "rankings",
+    "title": "/[lang]/rankings/coding-harnesses?category=<value> shows the harness board's tools of that category, with their board…",
+    "description": "`/[lang]/rankings/coding-harnesses?category=<value>` shows the harness board's tools of that category, with their board ranks (#196). The values are the eight the #191 URL table names (`app-builder`, `autonomous-agent`, `code-editor`, `code-review`, `devops-assistant`, `ide-assistant`, `open-source-framework`, `testing-tool`), each matched against the `tools.subcategory` column in underscore form (`app-builder` → `app_builder`, `harnessSubcategory`; Architect ruling), not `tools.category`. A tool with no subcategory is on no category view but stays on the board. Board rows, and so `/api/rankings`, now carry `tool.subcategory` (the column; null when unset), and tool reads map the column too. The middleware rewrites a known value to a static route (`/[lang]/rankings/coding-harnesses/category/<value>`, which itself answers a 308 to `?category=`), so the board stays ISR. An empty or unknown value shows the whole board, on that page and in the rankings grid's client filter (`/rankings?category=`), which before filtered an unknown value to nothing. A category with no ranked tool says \"No tools in this category are ranked yet.\" (`rankings.lists.categoryEmpty`, all 10 locales). A category view keeps the board's metadata, so its canonical is `/[lang]/rankings` (D51), and it is not in the sitemap. The URL table's 97 rows to this board stay held (`PENDING_TARGETS`). Tests: `tests/unit/rankings-category-196.test.ts`, `tests/unit/rankings-category-grid-196.test.tsx`, `tests/unit/rankings-category-pglite-196.test.ts`",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-81ccb42f87bc",
     "version": "Unreleased",
-    "date": "2026-11-12T15:46:58.590Z",
-    "dateSource": "build",
+    "date": "2026-11-12T16:01:53.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "models",
     "title": "a model row whose licence review is pending (data.modelSeed.licenceReview) cannot be set active",
