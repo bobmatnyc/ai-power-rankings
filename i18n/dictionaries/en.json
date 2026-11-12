@@ -410,6 +410,11 @@
         "native": "Native",
         "supports": "Supported",
         "source": "Source"
+      },
+      "licenceNote": {
+        "heading": "Licence",
+        "body": "The weights of {name} are released under the {licence}, a non-commercial licence. Commercial use needs permission from {vendor}.",
+        "link": "Read the licence"
       }
     },
     "status": {

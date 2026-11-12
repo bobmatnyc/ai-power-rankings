@@ -639,6 +639,11 @@
         "native": "ネイティブ",
         "supports": "対応",
         "source": "出典"
+      },
+      "licenceNote": {
+        "heading": "ライセンス",
+        "body": "{name} の重みは非商用ライセンスである {licence} で公開されています。商用利用には {vendor} の許可が必要です。",
+        "link": "ライセンスを読む"
       }
     },
     "status": {

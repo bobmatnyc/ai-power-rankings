@@ -990,6 +990,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-0b8d294a187f",
+    "version": "Unreleased",
+    "date": "2026-11-12T15:09:59.526Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "models",
+    "title": "the MiniMax M2 (minimax-base-2) and MiniMax (minimax) tool pages show a licence note under the overview: the weights…",
+    "description": "the MiniMax M2 (`minimax-base-2`) and MiniMax (`minimax`) tool pages show a licence note under the overview: the weights are under a non-commercial licence (the MiniMax Non-Commercial License and the MiniMax Community License), commercial use needs permission from MiniMax, and a link opens the licence text on Hugging Face (owner ruling D88). The note comes from a curated slug map in `lib/tools/licence-notes.ts`, not the database, and its labels are in all ten locale dictionaries. Every other tool page is unchanged. Tests: `tests/unit/licence-note-184.test.tsx` (#184)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-09076900a243",
     "version": "Unreleased",
     "date": "2026-11-11T11:59:56.000Z",

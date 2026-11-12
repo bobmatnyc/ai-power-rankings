@@ -410,6 +410,11 @@
         "native": "Nativo",
         "supports": "Compatible",
         "source": "Fuente"
+      },
+      "licenceNote": {
+        "heading": "Licencia",
+        "body": "Los pesos de {name} se publican bajo la {licence}, una licencia no comercial. El uso comercial requiere permiso de {vendor}.",
+        "link": "Leer la licencia"
       }
     },
     "status": {

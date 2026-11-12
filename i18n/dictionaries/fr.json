@@ -410,6 +410,11 @@
         "native": "Natif",
         "supports": "Pris en charge",
         "source": "Source"
+      },
+      "licenceNote": {
+        "heading": "Licence",
+        "body": "Les poids de {name} sont publiés sous la {licence}, une licence non commerciale. Tout usage commercial nécessite l'autorisation de {vendor}.",
+        "link": "Lire la licence"
       }
     },
     "status": {

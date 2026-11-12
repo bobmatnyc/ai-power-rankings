@@ -403,6 +403,11 @@
         "native": "Nativ",
         "supports": "Unterstützt",
         "source": "Quelle"
+      },
+      "licenceNote": {
+        "heading": "Lizenz",
+        "body": "Die Gewichte von {name} stehen unter der {licence}, einer nicht-kommerziellen Lizenz. Kommerzielle Nutzung erfordert eine Genehmigung von {vendor}.",
+        "link": "Lizenz lesen"
       }
     },
     "status": {

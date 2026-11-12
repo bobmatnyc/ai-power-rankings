@@ -410,6 +410,11 @@
         "native": "Izvorno",
         "supports": "Podržano",
         "source": "Izvor"
+      },
+      "licenceNote": {
+        "heading": "Licenca",
+        "body": "Težine modela {name} objavljene su pod licencom {licence}, nekomercijalnom licencom. Komercijalna upotreba zahtijeva dopuštenje tvrtke {vendor}.",
+        "link": "Pročitajte licencu"
       }
     },
     "status": {

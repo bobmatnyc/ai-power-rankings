@@ -408,6 +408,11 @@
         "native": "기본",
         "supports": "지원",
         "source": "출처"
+      },
+      "licenceNote": {
+        "heading": "라이선스",
+        "body": "{name}의 가중치는 비상업용 라이선스인 {licence}로 공개되어 있습니다. 상업적으로 사용하려면 {vendor}의 허가가 필요합니다.",
+        "link": "라이선스 읽기"
       }
     },
     "status": {

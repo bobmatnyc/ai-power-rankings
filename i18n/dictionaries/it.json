@@ -410,6 +410,11 @@
         "native": "Nativo",
         "supports": "Supportato",
         "source": "Fonte"
+      },
+      "licenceNote": {
+        "heading": "Licenza",
+        "body": "I pesi di {name} sono rilasciati con la {licence}, una licenza non commerciale. L'uso commerciale richiede l'autorizzazione di {vendor}.",
+        "link": "Leggi la licenza"
       }
     },
     "status": {

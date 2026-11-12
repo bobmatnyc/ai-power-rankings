@@ -866,6 +866,11 @@
         "native": "原生",
         "supports": "支持",
         "source": "来源"
+      },
+      "licenceNote": {
+        "heading": "许可证",
+        "body": "{name} 的权重以非商业许可证 {licence} 发布。商业使用需获得 {vendor} 的许可。",
+        "link": "阅读许可证"
       }
     },
     "status": {
