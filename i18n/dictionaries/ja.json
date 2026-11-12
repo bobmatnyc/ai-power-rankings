@@ -642,7 +642,8 @@
       },
       "licenceNote": {
         "heading": "ライセンス",
-        "body": "{name} の重みは非商用ライセンスである {licence} で公開されています。商用利用には {vendor} の許可が必要です。",
+        "bodyNonCommercial": "{name} の重みは {vendor} の {licence} で公開されており、非商用利用のみが許可されています。商用利用には {vendor} による事前の書面での許可が必要です。",
+        "bodyCommunity": "{name} の重みは {licence} で公開されています。商用利用では「Built with」の表示と {vendor} への一度限りの通知が必要です。年間売上高が2,000万米ドルを超える製品やサービスには {vendor} による事前の書面での許可が必要です。",
         "link": "ライセンスを読む"
       }
     },

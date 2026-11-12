@@ -990,14 +990,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-0b8d294a187f",
+    "id": "unreleased-1e3caf17bcc0",
     "version": "Unreleased",
-    "date": "2026-11-12T15:09:59.526Z",
+    "date": "2026-11-12T15:21:01.143Z",
     "dateSource": "build",
     "section": "Added",
     "scope": "models",
-    "title": "the MiniMax M2 (minimax-base-2) and MiniMax (minimax) tool pages show a licence note under the overview: the weights…",
-    "description": "the MiniMax M2 (`minimax-base-2`) and MiniMax (`minimax`) tool pages show a licence note under the overview: the weights are under a non-commercial licence (the MiniMax Non-Commercial License and the MiniMax Community License), commercial use needs permission from MiniMax, and a link opens the licence text on Hugging Face (owner ruling D88). The note comes from a curated slug map in `lib/tools/licence-notes.ts`, not the database, and its labels are in all ten locale dictionaries. Every other tool page is unchanged. Tests: `tests/unit/licence-note-184.test.tsx` (#184)",
+    "title": "the MiniMax M2 (minimax-base-2) and MiniMax (minimax) tool pages show a licence note under the overview: each states…",
+    "description": "the MiniMax M2 (`minimax-base-2`) and MiniMax (`minimax`) tool pages show a licence note under the overview: each states its own licence's terms and links the licence text on Hugging Face. MiniMax M2.7's Non-Commercial License permits non-commercial use only, and commercial use needs prior written authorization from MiniMax; MiniMax M3.1-Flash's MiniMax Community License allows commercial use with a \"Built with\" credit and a one-time notice to MiniMax, and needs prior written authorization only above US$20 million yearly revenue (owner ruling D88). The note comes from a curated slug map in `lib/tools/licence-notes.ts`, not the database, and its labels are in all ten locale dictionaries. Every other tool page is unchanged. Tests: `tests/unit/licence-note-184.test.tsx` (#184)",
     "changeType": "feature"
   },
   {

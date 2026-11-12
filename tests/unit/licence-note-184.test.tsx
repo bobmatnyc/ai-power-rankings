@@ -4,10 +4,13 @@ import type { PGlite } from "@electric-sql/pglite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
- * #184 (owner ruling D88): the non-commercial licence note on the two MiniMax tool pages.
+ * #184 (owner ruling D88): the licence note on the two MiniMax tool pages.
  *
- * Why: `minimax` and `minimax-base-2` stay listed, so their pages must say the weights are
- *   non-commercial and link the licence; every other tool page must render as before.
+ * Why: `minimax` and `minimax-base-2` stay listed, so each page must state its own licence's
+ *   commercial-use terms and link the licence; every other tool page must render as before.
+ *   M2.7's Non-Commercial License prohibits commercial use without written authorization;
+ *   M3.1-Flash's MiniMax Community License allows it with a credit and a one-time notice,
+ *   and needs written authorization only above US$20 million yearly revenue.
  * What: unit tests of `licenceNoteFor` and `LicenceNoteBlock`, a locale check over all ten
  *   dictionaries, and page tests that render the real tool page to static HTML on a PGlite
  *   catalogue at 0016 (as `tool-links-page-183.test.tsx` does).
@@ -42,12 +45,21 @@ vi.setConfig({ testTimeout: 60_000 });
 const M27_LICENCE = "https://huggingface.co/MiniMaxAI/MiniMax-M2.7/raw/main/LICENSE";
 const M31_LICENCE = "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash/raw/main/LICENSE";
 const NOTE_RE = /<div[^>]*data-licence-note[\s\S]*?<\/section>/;
+const M27_SENTENCE = (name: string) =>
+  `The weights of ${name} are released under the Non-Commercial License from MiniMax, which permits non-commercial use only. Commercial use needs prior written authorization from MiniMax.`;
+const M31_SENTENCE = (name: string) =>
+  `The weights of ${name} are released under the MiniMax Community License. Commercial use must display a “Built with” credit and send a one-time notice to MiniMax; products or services with more than US$20 million in yearly revenue need prior written authorization from MiniMax.`;
 
 describe("#184 licenceNoteFor", () => {
   it("lists exactly the two MiniMax slugs, each with its own licence URL", () => {
     expect(Object.keys(LICENCE_NOTES).sort()).toEqual(["minimax", "minimax-base-2"]);
     expect(licenceNoteFor("minimax-base-2")?.licenceUrl).toBe(M27_LICENCE);
     expect(licenceNoteFor("minimax")?.licenceUrl).toBe(M31_LICENCE);
+  });
+
+  it("names each licence as its own title reads, with that licence's terms", () => {
+    expect(licenceNoteFor("minimax-base-2")).toMatchObject({ licenceName: "Non-Commercial License", terms: "nonCommercial" });
+    expect(licenceNoteFor("minimax")).toMatchObject({ licenceName: "MiniMax Community License", terms: "community" });
   });
 
   it("returns null for any other slug, including object-prototype names", () => {
@@ -64,9 +76,7 @@ describe("#184 LicenceNoteBlock", () => {
     );
     expect(html).toContain('<section aria-labelledby="tool-licence-note"');
     expect(html).toContain('<h2 id="tool-licence-note" class="text-lg font-semibold text-foreground">Licence</h2>');
-    expect(html).toContain(
-      "The weights of MiniMax M2 are released under the MiniMax Non-Commercial License, a non-commercial licence. Commercial use needs permission from MiniMax."
-    );
+    expect(html).toContain(M27_SENTENCE("MiniMax M2"));
     expect(html).toContain(`<a href="${M27_LICENCE}" target="_blank" rel="noopener noreferrer nofollow"`);
     expect(html).toContain(">Read the licence</a>");
   });
@@ -79,7 +89,7 @@ describe("#184 LicenceNoteBlock", () => {
     const html = renderToStaticMarkup(
       <LicenceNoteBlock name="A $& B" note={licenceNoteFor("minimax")} labels={en.tools.detail.licenceNote} />
     );
-    expect(html).toContain("The weights of A $&amp; B are released under the MiniMax Community License");
+    expect(html).toContain("The weights of A $&amp; B are released under the MiniMax Community License.");
   });
 });
 
@@ -87,8 +97,15 @@ describe("#184 locale labels", () => {
   const dicts = { en, de, es, fr, hr, it: it_, ja, ko, uk, zh };
   it.each(Object.entries(dicts))("%s has a complete licenceNote with every placeholder", (_, dict) => {
     const labels = dict.tools.detail.licenceNote;
-    for (const key of ["heading", "body", "link"] as const) expect(labels[key].trim()).not.toBe("");
-    for (const token of ["{name}", "{licence}", "{vendor}"]) expect(labels.body).toContain(token);
+    for (const key of ["heading", "bodyNonCommercial", "bodyCommunity", "link"] as const) {
+      expect(labels[key].trim()).not.toBe("");
+    }
+    for (const body of [labels.bodyNonCommercial, labels.bodyCommunity]) {
+      for (const token of ["{name}", "{licence}", "{vendor}"]) expect(body).toContain(token);
+    }
+    // The Community License's own terms: a "Built with" credit and a US$20 million threshold.
+    expect(labels.bodyCommunity).toContain("Built with");
+    expect(labels.bodyCommunity).toMatch(/20 |2,000/); // "2,000万" in ja, ko, zh
   });
 });
 
@@ -124,23 +141,29 @@ describe("#184 licence note on the server-rendered tool page", () => {
   });
 
   it.each([
-    ["minimax-base-2", "MiniMax M2", "MiniMax Non-Commercial License", M27_LICENCE],
-    ["minimax", "MiniMax", "MiniMax Community License", M31_LICENCE],
-  ])("%s shows the note above the profile block, linking its licence", async (slug, name, licence, url) => {
+    ["minimax-base-2", M27_SENTENCE("MiniMax M2"), M27_LICENCE],
+    ["minimax", M31_SENTENCE("MiniMax"), M31_LICENCE],
+  ])("%s shows its own licence's note above the profile block", async (slug, sentence, url) => {
     const html = await renderPage(slug);
     const note = NOTE_RE.exec(html)?.[0];
     expect(note).toBeDefined();
-    expect(note).toContain(`The weights of ${name} are released under the ${licence}, a non-commercial licence.`);
-    expect(note).toContain("Commercial use needs permission from MiniMax.");
+    expect(note).toContain(sentence);
     expect(note).toContain(`href="${url}"`);
     expect(html.indexOf("data-licence-note")).toBeLessThan(html.indexOf("data-tool-profile"));
+  });
+
+  it("the minimax note does not call the Community License non-commercial", async () => {
+    const note = NOTE_RE.exec(await renderPage("minimax"))?.[0] ?? "";
+    expect(note).toContain("MiniMax Community License");
+    expect(note).not.toMatch(/non-commercial/i);
+    expect(note).not.toContain("Non-Commercial License");
   });
 
   it("a non-English page shows the note in its locale", async () => {
     const html = await renderPage("minimax-base-2", "de");
     const note = NOTE_RE.exec(html)?.[0];
     expect(note).toContain(`>${de.tools.detail.licenceNote.heading}</h2>`);
-    expect(note).toContain("Die Gewichte von MiniMax M2 stehen unter der MiniMax Non-Commercial License");
+    expect(note).toContain("Die Gewichte von MiniMax M2 stehen unter der Non-Commercial License von MiniMax");
     expect(note).toContain(`>${de.tools.detail.licenceNote.link}</a>`);
   });
 

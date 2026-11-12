@@ -413,7 +413,8 @@
       },
       "licenceNote": {
         "heading": "Licence",
-        "body": "The weights of {name} are released under the {licence}, a non-commercial licence. Commercial use needs permission from {vendor}.",
+        "bodyNonCommercial": "The weights of {name} are released under the {licence} from {vendor}, which permits non-commercial use only. Commercial use needs prior written authorization from {vendor}.",
+        "bodyCommunity": "The weights of {name} are released under the {licence}. Commercial use must display a “Built with” credit and send a one-time notice to {vendor}; products or services with more than US$20 million in yearly revenue need prior written authorization from {vendor}.",
         "link": "Read the licence"
       }
     },

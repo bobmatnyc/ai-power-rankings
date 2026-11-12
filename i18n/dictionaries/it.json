@@ -413,7 +413,8 @@
       },
       "licenceNote": {
         "heading": "Licenza",
-        "body": "I pesi di {name} sono rilasciati con la {licence}, una licenza non commerciale. L'uso commerciale richiede l'autorizzazione di {vendor}.",
+        "bodyNonCommercial": "I pesi di {name} sono rilasciati con la {licence} di {vendor}, che consente solo l'uso non commerciale. L'uso commerciale richiede un'autorizzazione scritta preventiva di {vendor}.",
+        "bodyCommunity": "I pesi di {name} sono rilasciati con la {licence}. L'uso commerciale deve mostrare la dicitura «Built with» e inviare una notifica una tantum a {vendor}; i prodotti o servizi con ricavi annui superiori a 20 milioni di dollari USA richiedono un'autorizzazione scritta preventiva di {vendor}.",
         "link": "Leggi la licenza"
       }
     },

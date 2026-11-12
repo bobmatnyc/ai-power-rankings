@@ -413,7 +413,8 @@
       },
       "licenceNote": {
         "heading": "Licence",
-        "body": "Les poids de {name} sont publiés sous la {licence}, une licence non commerciale. Tout usage commercial nécessite l'autorisation de {vendor}.",
+        "bodyNonCommercial": "Les poids de {name} sont publiés sous la {licence} de {vendor}, qui n'autorise que l'usage non commercial. Tout usage commercial nécessite l'autorisation écrite préalable de {vendor}.",
+        "bodyCommunity": "Les poids de {name} sont publiés sous la {licence}. Tout usage commercial doit afficher la mention « Built with » et faire l'objet d'une notification unique à {vendor} ; les produits ou services dont le chiffre d'affaires annuel dépasse 20 millions de dollars américains nécessitent l'autorisation écrite préalable de {vendor}.",
         "link": "Lire la licence"
       }
     },
