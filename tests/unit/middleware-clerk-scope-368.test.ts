@@ -93,7 +93,8 @@ const TABLE: Array<[string, boolean, number | "next"]> = [
   ["/en/terms", false, "next"],
   ["/en/trending", false, "next"],
   ["/en/best-ai-coding-tools", false, "next"],
-  ["/en/whats-new", false, "next"],
+  // #191: /en/whats-new now 308s to /en/insights (url-table-191.test.ts); the live page takes its place.
+  ["/en/insights", false, "next"],
   ["/en/whats-new/2026-10", false, "next"],
 ];
 

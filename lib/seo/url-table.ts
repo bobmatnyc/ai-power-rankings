@@ -34,7 +34,7 @@ export const URL_TABLE_ROWS: readonly UrlTableRow[] = rows as UrlTableRow[];
 export const PENDING_TARGETS: readonly RegExp[] = [
   /^\/en\/rankings\/coding-harnesses$/, // #196: the harness ranking page and its category filter
   // #197: the model family pages shipped with D91 (migrations 0018, 0019); their 70 rows now 308. See #191
-  /^\/en\/insights$/, // #198: the Insights hub (the 20 /whats-new rows)
+  // #191: hold released, /en/insights has been live since 11-11 (#198); the 20 /whats-new rows now 308
   // D6e: the per-major pages of the D58 re-point render since the set_status apply; their 60 alias rows now 308. See #329
   // Codex merge: hold released after apply + publish (runs 42738932628, 42739081839)
 ];
