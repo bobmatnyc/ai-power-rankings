@@ -410,6 +410,12 @@
         "native": "Nativo",
         "supports": "Compatible",
         "source": "Fuente"
+      },
+      "licenceNote": {
+        "heading": "Licencia",
+        "bodyNonCommercial": "Los pesos de {name} se publican bajo la {licence} de {vendor}, que solo permite el uso no comercial. El uso comercial requiere una autorización previa por escrito de {vendor}.",
+        "bodyCommunity": "Los pesos de {name} se publican bajo la {licence}. El uso comercial debe mostrar el crédito «Built with» y enviar un aviso único a {vendor}; los productos o servicios con ingresos anuales superiores a 20 millones de dólares estadounidenses requieren una autorización previa por escrito de {vendor}.",
+        "link": "Leer la licencia"
       }
     },
     "status": {

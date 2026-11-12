@@ -866,6 +866,12 @@
         "native": "原生",
         "supports": "支持",
         "source": "来源"
+      },
+      "licenceNote": {
+        "heading": "许可证",
+        "bodyNonCommercial": "{name} 的权重以 {vendor} 的 {licence} 发布，仅允许非商业使用。商业使用需事先获得 {vendor} 的书面授权。",
+        "bodyCommunity": "{name} 的权重以 {licence} 发布。商业使用须展示“Built with”标识并向 {vendor} 发送一次性通知；年收入超过 2,000 万美元的产品或服务须事先获得 {vendor} 的书面授权。",
+        "link": "阅读许可证"
       }
     },
     "status": {
