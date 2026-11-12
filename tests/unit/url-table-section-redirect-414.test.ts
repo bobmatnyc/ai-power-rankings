@@ -11,7 +11,7 @@ import { describe, expect, it, vi } from "vitest";
  * What: `/tools/<slug>` and `/news/<slug>` resolve to `/en/<full path>` in one
  *   hop, through the middleware too; a table row still wins; every row of
  *   `data/url-table-191.json` resolves as it did at a6d18bef
- *   (`tests/fixtures/url-table-191-resolution-414.json`; #197 D84: the ten perplexity rows left both); `LOCALIZED_SECTIONS`
+ *   (`tests/fixtures/url-table-191-resolution-414.json`; #197 D84: the ten perplexity rows left both; #191: the 20 /whats-new rows now redirect to /en/insights); `LOCALIZED_SECTIONS`
  *   equals the `app/[lang]` route directories.
  * Test: `npx vitest run tests/unit/url-table-section-redirect-414.test.ts`.
  */

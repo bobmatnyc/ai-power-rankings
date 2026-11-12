@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-12d1f4d5c12b",
+    "version": "Unreleased",
+    "date": "2026-11-12T19:54:21.686Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "seo",
+    "title": "the 20 /{de,en,es,fr,hr,it,ja,ko,uk,zh}/whats-new and /{…}/whats-new/recent URLs now 308 to /en/insights",
+    "description": "the 20 `/{de,en,es,fr,hr,it,ja,ko,uk,zh}/whats-new` and `/{…}/whats-new/recent` URLs now 308 to `/en/insights`. Their hold (`PENDING_TARGETS`) waited for the Insights hub, which has returned 200 since 11-11 (#198), and no ruling kept it. The `coding-harnesses` rows (#196) stay held. The shipped/held row counts become 181/97, and the 20 rows are no longer a sitemap source. `/en/insights` is not a source, so no redirect loops. The `INSIGHTS_PREVIEW` flag still gates the Insights pages, so an environment without it 308s to a 404. Tests: `tests/unit/url-table-191.test.ts`, `tests/unit/url-table-section-redirect-414.test.ts` (#191)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-4610440a66ac",
     "version": "Unreleased",
     "date": "2026-11-12T14:43:11.000Z",
