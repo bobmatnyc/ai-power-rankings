@@ -38,6 +38,7 @@ import { GET as getPeriods } from "../../app/api/admin/rankings/periods/route";
 import { GET as getRankings, POST as postRankings } from "../../app/api/admin/rankings/route";
 import { GET as getCheckPeriods } from "../../app/api/admin/check-ranking-periods/route";
 import { createFakeRankingsDb, rankingRow } from "../../lib/services/__fixtures__/fake-rankings-db";
+import { RANKING_ALGORITHM_VERSION } from "../../lib/services/ranking-generation.service";
 
 // The cron's RankingEntry shape: `rank` and `score`.
 const ROWS = [
@@ -360,5 +361,32 @@ describe("set-current, copy, PUT and sync-current keep bare rows intact (#256)",
     seed([rankingRow({ period: BARE, isCurrent: true, data: ROWS })]);
     expect(await post({ action: "sync-current" })).toMatchObject({ status: 200, body: { rankings_count: 2 } });
     expect(publicFile()).toMatchObject({ rankings: ROWS, is_current: true });
+  });
+});
+
+describe("create-period stamps the algorithm version (#448)", () => {
+  const row = (period: string) => fake.state.rankings.find((r) => r.period === period);
+  const post = async (payload: unknown) =>
+    json(
+      await postRankings(
+        req("/api/admin/rankings", {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: { "content-type": "application/json" },
+        })
+      )
+    );
+
+  it("an empty new period gets the current engine version, unprefixed like generated rows", async () => {
+    expect(await post({ action: "create-period", period: "2026-12" })).toMatchObject({ status: 200 });
+    const created = row("2026-12")!;
+    expect(created.algorithmVersion).toBe(RANKING_ALGORITHM_VERSION);
+    expect(created.data).toMatchObject({ algorithm_version: RANKING_ALGORITHM_VERSION, rankings: [] });
+  });
+
+  it("a copy keeps the source period's version", async () => {
+    expect(await post({ action: "create-period", period: "2026-12", copy_from: BARE })).toMatchObject({ status: 200 });
+    expect(row("2026-12")!.algorithmVersion).toBe("7.9");
+    expect(row("2026-12")!.algorithmVersion).not.toBe(RANKING_ALGORITHM_VERSION);
   });
 });
