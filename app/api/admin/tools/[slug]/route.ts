@@ -7,13 +7,16 @@
  * What: PUT edits the admin-editable fields; DELETE discontinues the tool by
  * setting its status to `discontinued` and keeps the row. Both check the admin
  * before reading the body or the database and answer the repository row.
- * Test: `tests/unit/admin-tool-edit-288.test.ts`.
+ *   #453: a PUT that moves a row into `active` is refused (409) while its licence review is
+ *   pending or unreadable; a row already active is unaffected.
+ * Test: `tests/unit/admin-tool-edit-288.test.ts`, `tests/unit/admin-tool-licence-453.test.ts`.
  */
 
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/api-auth";
 import { ToolsRepository } from "@/lib/db/repositories/tools.repository";
+import { licenceActivationRefusal } from "@/lib/db/repositories/licence-review";
 import { loggers } from "@/lib/logger";
 // #95: typed admin metrics with write-time validation.
 import { applyAdminMetrics, validateAdminMetrics } from "@/lib/admin-metrics-validation";
@@ -56,6 +59,14 @@ function writeFailed() {
   return NextResponse.json({ error: "Tool update was not applied" }, { status: 500 });
 }
 
+/** #453: an activation the licence review refuses; nothing was written. */
+function activationRefused(slug: string, reason: string) {
+  return NextResponse.json(
+    { error: `Tool ${slug} cannot be set active: ${reason}. Nothing was written.` },
+    { status: 409 }
+  );
+}
+
 /**
  * PUT /api/admin/tools/[slug] — edit name, category, status, description or metrics.
  *
@@ -65,7 +76,9 @@ function writeFailed() {
  * Any invalid field answers 400 and nothing is written.
  *
  * Answers 400 for an unreadable or invalid body, 404 for an unknown slug, and
- * `{ tool }` (the updated repository row) on success.
+ * `{ tool }` (the updated repository row) on success. #453: answers 409 and writes
+ * nothing when `status: "active"` would activate a row whose licence review refuses it
+ * (`licenceActivationRefusal`), checked on the read row and again in the UPDATE.
  */
 export async function PUT(request: NextRequest, context: RouteContext) {
   const authResult = await requireAdmin();
@@ -105,6 +118,13 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     const existing = await repo.findBySlug(slug);
     if (!existing) return notFound(slug);
 
+    // #453: no move into active while the licence review is pending; an active row stays editable (D83).
+    const activating = columns.status === "active";
+    if (activating && existing.status !== "active") {
+      const reason = licenceActivationRefusal((existing as Record<string, unknown>)["modelSeed"]);
+      if (reason) return activationRefused(slug, reason);
+    }
+
     const updates: Record<string, unknown> = { ...columns };
     if (description !== undefined) {
       // The manager reads info.product.description first, then info.description.
@@ -122,6 +142,10 @@ export async function PUT(request: NextRequest, context: RouteContext) {
     }
 
     const tool = await repo.update(rowKey(existing), updates);
+    // #453: the UPDATE's own licence guard matched nothing; the row changed after the read.
+    if (!tool && activating) {
+      return activationRefused(slug, "the row changed since it was read and its licence review does not allow activation");
+    }
     if (!tool) return writeFailed();
     // #95: magnitude warnings are returned, not blocking.
     const warnings = metricEntries?.ok ? metricEntries.warnings : [];

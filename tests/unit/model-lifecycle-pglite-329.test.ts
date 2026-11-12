@@ -30,6 +30,12 @@ const readFile = (file: string) => readFileSync(file, "utf8");
 const ENTRIES = readModelSeeds("all", readFile);
 const LIFECYCLE = readModelLifecycle(readFile);
 const CLAUDE_OPUS_DATA = { info: { company: "Anthropic" }, metrics: { users: 9 }, ruling: "D91" };
+// #453 (D83): the open-weight rows with a pending licence review that the lifecycle keeps active
+// were live before the licence gate, as in production; they start active. The gate refuses a
+// move into active, so an inactive start would refuse the apply.
+const PENDING_ACTIVE = LIFECYCLE.rows
+  .filter((r) => r.targetStatus === "active" && ENTRIES.some((e) => e.row.slug === r.slug && e.row.licenceReview === "pending"))
+  .map((r) => r.slug);
 
 let pg: PGlite | null = null;
 
@@ -59,7 +65,10 @@ async function freshDb(): Promise<PGlite> {
   for (const slug of ["claude-haiku", "claude-fable", "gpt-astra", "gpt-luna", "gpt-sol", "gpt-terra", "gemini-argon", "gemini-flash"]) {
     await insert(slug, "model", "inactive", false, {});
   }
-  for (const slug of ["qwen", "minimax"]) await insert(slug, "model", "inactive", true, {});
+  for (const slug of ["qwen", "minimax"]) await insert(slug, "model", PENDING_ACTIVE.includes(slug) ? "active" : "inactive", true, {});
+  // #453 (D83): the remaining live pending-review rows.
+  const present = new Set(["glm", "kimi", "qwen", "minimax"]);
+  for (const slug of PENDING_ACTIVE.filter((s) => !present.has(s))) await insert(slug, "model", "active", true, {});
   return db;
 }
 
@@ -104,6 +113,10 @@ afterEach(async () => {
 });
 
 describe("per-major apply on PGlite (#329)", () => {
+  it("#453: the fixture holds D83's 14 active rows with a pending licence review", () => {
+    expect(PENDING_ACTIVE).toHaveLength(14);
+  });
+
   it("ends with one active row per line and major, the rest deprecated, the aliases re-pointed, metrics untouched", async () => {
     pg = await freshDb();
     const log: string[] = [];

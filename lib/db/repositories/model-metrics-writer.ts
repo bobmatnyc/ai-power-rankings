@@ -16,13 +16,15 @@
  */
 
 import { hasCodingMetric, MODEL_TERMINAL_BENCH_SOURCE } from "../../rankings/lists";
+import { licenceActivationRefusal, licenceAllowsActivationSql } from "./licence-review";
 import type { ModelMetricRow } from "./model-metrics-seed.repository";
 import type { ModelSeedQueryable } from "./model-seed-writer";
 
 // #329: read-only; status and redirect_to are read to refuse redirect aliases and other kinds.
 export const MODEL_METRICS_SELECT_SQL = `SELECT slug, kind, status, data->>'redirect_to' AS redirect_to,
   jsonb_typeof(data->'metrics') AS metrics_type, jsonb_typeof(data->'metrics_provenance') AS provenance_type,
-  jsonb_build_object('metrics', data->'metrics', 'metrics_provenance', data->'metrics_provenance') AS metric_data
+  jsonb_build_object('metrics', data->'metrics', 'metrics_provenance', data->'metrics_provenance') AS metric_data,
+  data->'modelSeed' AS model_seed
 FROM tools WHERE slug = ANY($1::text[])`;
 
 // #329: merges data.metrics.terminal_bench and data.metrics_provenance.terminal_bench only; every
@@ -43,11 +45,13 @@ RETURNING slug`;
 // #329 (D63 Q9): activation, run only with --apply --activate and after the metric updates in the
 // same transaction. Sets status only on the listed model rows that are inactive and now carry a
 // positive Vals TB 4.0 figure; a redirect row or another kind never matches.
+// #453: and whose licence review allows activation; a pending review matches nothing.
 export const MODEL_ACTIVATE_SQL = `UPDATE tools SET status = 'active', updated_at = now()
 WHERE slug = ANY($1::text[]) AND kind = 'model' AND status = 'inactive'
   AND jsonb_typeof(data->'metrics'->'terminal_bench') = 'number'
   AND (data->'metrics'->>'terminal_bench')::numeric > 0
   AND split_part(data->'metrics_provenance'->'terminal_bench'->>'source', '#', 1) = $2
+  AND ${licenceAllowsActivationSql("data")}
 RETURNING slug`;
 
 interface ExistingRow {
@@ -58,6 +62,7 @@ interface ExistingRow {
   metrics_type: string | null;
   provenance_type: string | null;
   metric_data: { metrics: unknown; metrics_provenance: unknown };
+  model_seed: unknown;
 }
 
 export interface MetricChange {
@@ -129,14 +134,18 @@ function planActivation(slug: string, existing: ExistingRow | undefined, metric:
   if (!metric && !hasCodingMetric(existing!.metric_data)) {
     return { slug, outcome: "refused", reason: "row would carry no Vals Terminal-Bench 4.0 figure after the write" };
   }
-  return { slug, outcome: status === "active" ? "already-active" : "activate" };
+  if (status === "active") return { slug, outcome: "already-active" }; // #453 (D83): never refused for its licence
+  const licence = licenceActivationRefusal(existing!.model_seed); // #453: no activation while the review is pending
+  if (licence) return { slug, outcome: "refused", reason: licence };
+  return { slug, outcome: "activate" };
 }
 
 /**
  * Why: the dry run is the review step, so it must show every key a write would change and every
  *   row an activation would flip.
  * What: one SELECT over the metric slugs and the activation targets, then pure per-row plans.
- *   `activationTargets` null means no activation. Writes nothing.
+ *   `activationTargets` null means no activation. #453: an inactive target whose licence review
+ *   `licenceActivationRefusal` refuses is refused. Writes nothing.
  * Test: `tests/unit/load-model-metrics-329.test.ts`
  */
 export async function planModelMetrics(
