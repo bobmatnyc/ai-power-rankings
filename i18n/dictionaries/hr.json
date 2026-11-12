@@ -410,6 +410,12 @@
         "native": "Izvorno",
         "supports": "Podržano",
         "source": "Izvor"
+      },
+      "licenceNote": {
+        "heading": "Licenca",
+        "bodyNonCommercial": "Težine modela {name} objavljene su pod licencom {licence} tvrtke {vendor}, koja dopušta samo nekomercijalnu upotrebu. Komercijalna upotreba zahtijeva prethodno pisano odobrenje tvrtke {vendor}.",
+        "bodyCommunity": "Težine modela {name} objavljene su pod licencom {licence}. Komercijalna upotreba mora prikazati oznaku „Built with” i jednom obavijestiti tvrtku {vendor}; proizvodi ili usluge s godišnjim prihodom većim od 20 milijuna američkih dolara zahtijevaju prethodno pisano odobrenje tvrtke {vendor}.",
+        "link": "Pročitajte licencu"
       }
     },
     "status": {

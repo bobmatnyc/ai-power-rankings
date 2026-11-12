@@ -16,6 +16,9 @@ import { getToolNewsBySlug } from "@/lib/tools/tool-news-data";
 import { ToolProfileSections } from "@/components/tools/tool-profile-sections";
 import { ToolLinksBlock } from "@/components/tools/tool-links-block";
 import { getToolLinksForPage } from "@/lib/tools/tool-links-data";
+// #184: the curated non-commercial licence note (owner ruling D88).
+import { LicenceNoteBlock } from "@/components/tools/licence-note-block";
+import { licenceNoteFor } from "@/lib/tools/licence-notes";
 import {
   generateToolSchema,
   generateToolReviewSchema,
@@ -162,6 +165,12 @@ export default async function ToolDetailPage({ params }: PageProps): Promise<Rea
         version={modelVersion(tool)}
         profile={
           <>
+            {/* #184: D88 non-commercial licence note; renders nothing for an unlisted slug. */}
+            <LicenceNoteBlock
+              name={tool.name}
+              note={licenceNoteFor(tool.slug)}
+              labels={dict.tools.detail.licenceNote}
+            />
             <ToolProfileSections name={tool.name} lang={canonicalLocale(lang)} profile={profile} news={news} />
             {toolLinks && (
               <ToolLinksBlock

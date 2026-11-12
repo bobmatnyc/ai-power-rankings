@@ -408,6 +408,12 @@
         "native": "기본",
         "supports": "지원",
         "source": "출처"
+      },
+      "licenceNote": {
+        "heading": "라이선스",
+        "bodyNonCommercial": "{name}의 가중치는 {vendor}의 {licence}로 공개되어 있으며, 비상업적 사용만 허용됩니다. 상업적으로 사용하려면 {vendor}의 사전 서면 승인이 필요합니다.",
+        "bodyCommunity": "{name}의 가중치는 {licence}로 공개되어 있습니다. 상업적으로 사용하려면 'Built with' 표기를 하고 {vendor}에 1회 통지해야 합니다. 연 매출이 2,000만 미국 달러를 넘는 제품이나 서비스는 {vendor}의 사전 서면 승인이 필요합니다.",
+        "link": "라이선스 읽기"
       }
     },
     "status": {

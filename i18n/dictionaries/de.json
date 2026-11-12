@@ -403,6 +403,12 @@
         "native": "Nativ",
         "supports": "Unterstützt",
         "source": "Quelle"
+      },
+      "licenceNote": {
+        "heading": "Lizenz",
+        "bodyNonCommercial": "Die Gewichte von {name} stehen unter der {licence} von {vendor}, die nur nicht-kommerzielle Nutzung erlaubt. Kommerzielle Nutzung erfordert eine vorherige schriftliche Genehmigung von {vendor}.",
+        "bodyCommunity": "Die Gewichte von {name} stehen unter der {licence}. Bei kommerzieller Nutzung ist ein „Built with“-Hinweis anzuzeigen und {vendor} einmalig zu benachrichtigen; Produkte oder Dienste mit mehr als 20 Millionen US-Dollar Jahresumsatz benötigen eine vorherige schriftliche Genehmigung von {vendor}.",
+        "link": "Lizenz lesen"
       }
     },
     "status": {
