@@ -5,8 +5,8 @@ import { type RankingList, type RankingListMeta, rankingListMeta } from "@/lib/r
 
 /** One list's board as the ranking page renders it (#186, #305). */
 export interface ListBoard {
-  /** Display rows in the `/api/rankings` JSON form (dates as ISO strings). */
-  rankings: Array<{ tool?: { name?: string }; name?: string; updated_at?: string }>;
+  /** Display rows in the `/api/rankings` JSON form (dates as ISO strings). #196: `?category=` reads `tool.subcategory`. */
+  rankings: Array<{ tool?: { name?: string; subcategory?: string | null }; name?: string; updated_at?: string }>;
   /** The list's `list_meta` (D53/D63 index rules). */
   meta: RankingListMeta;
   /** #305: the published ranking's `algorithm.version` and `published_at`. */

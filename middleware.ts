@@ -1,6 +1,7 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import type { NextFetchEvent, NextRequest } from "next/server";
+import { harnessCategoryRewrite } from "./lib/rankings/harness-category-view";
 import { openWeightRewrite } from "./lib/rankings/open-weight-view";
 import { isApiPath, needsClerk, routeAccess } from "./lib/route-access";
 import { searchKeyRedirect } from "./lib/search-url-keys";
@@ -39,7 +40,8 @@ function authDisabledResponse(): NextResponse | null {
  *   per-user, so no public page was served from the edge cache.
  * What: Runs the #191 table redirect, the #233 search-key strip and the #340
  *   held-source rewrite for every matched path, as before, then the #195
- *   open-weight rewrite (`openWeightRewrite`). A path that
+ *   open-weight rewrite (`openWeightRewrite`) and the #196 category rewrite
+ *   (`harnessCategoryRewrite`). A path that
  *   `needsClerk()` (API, admin, dashboard, sign-in/up and the rest of the
  *   `(authenticated)` group) then runs `clerkHandler`, unchanged. Any other
  *   path gets the auth-disabled answer or passes through without Clerk.
@@ -62,6 +64,10 @@ export default function middleware(req: NextRequest, event: NextFetchEvent) {
   // #195: `/rankings/models?open=1` is served by its static open-weight route, so the board page stays ISR.
   const openWeight = openWeightRewrite(req);
   if (openWeight) return openWeight;
+
+  // #196: `/rankings/coding-harnesses?category=<known>` is served by its static category route, so the board stays ISR.
+  const category = harnessCategoryRewrite(req);
+  if (category) return category;
 
   // #368: Clerk runs only where auth is used; public pages skip it so the edge can cache them.
   if (needsClerk(req)) return clerkHandler(req, event);

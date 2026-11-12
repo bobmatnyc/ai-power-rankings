@@ -280,7 +280,8 @@
       "smallListNote": "Cette liste compte moins de {min} entrées, ses niveaux sont donc S, A et B par tiers.",
       "modelsMetricsPendingNote": "Provisoire : les métriques des modèles ne sont pas encore collectées, cet ordre n'est donc pas un classement de qualité.",
       "empty": "Aucun outil n'est encore classé dans cette liste.",
-      "openWeightEmpty": "Aucun modèle à poids ouverts n'est encore classé."
+      "openWeightEmpty": "Aucun modèle à poids ouverts n'est encore classé.",
+      "categoryEmpty": "Aucun outil de cette catégorie n'est encore classé."
     }
   },
   "news": {

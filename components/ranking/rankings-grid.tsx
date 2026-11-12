@@ -18,6 +18,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { trackEvent } from "@/lib/analytics/track";
 import { loggers } from "@/lib/logger-client";
+import { harnessCategory, rowsInCategory } from "@/lib/rankings/harness-category";
 import {
   formatAlgorithmVersion,
   formatHeaderDate,
@@ -45,6 +46,8 @@ interface RankingData {
     id: string;
     name: string;
     category: string;
+    /** #196: `tools.subcategory` (underscore form), which `?category=` filters on. */
+    subcategory?: string | null;
     status: string;
     website_url?: string;  // A link target only; never an image source
     logo?: string;         // Stored local logo path (legacy; see D82)
@@ -116,7 +119,9 @@ function RankingsGridContent({
   const listPath = `/${lang}${rankingListPath(list)}`;
 
   // Get filters from URL
-  const categoryParam = searchParams.get("category") || "all";
+  // #196: only a known harness category filters; an empty or unknown value is the unfiltered board.
+  const category = harnessCategory(searchParams.get("category"));
+  const categoryParam = category ?? "all";
   const tagsParam = searchParams.get("tags")?.split(",") || [];
   const sortParam = searchParams.get("sort") || "rank";
   // #233: the search term is client state only; it never enters the URL.
@@ -166,13 +171,8 @@ function RankingsGridContent({
   }, [initialRankings.length, fetchRankings]);
 
   // Apply filters
-  const filteredRankings = rankings.filter((r) => {
-    if (categoryParam !== "all" && r.tool.category !== categoryParam) {
-      return false;
-    }
-    // Add tag filtering logic here when tags are implemented
-    return true;
-  });
+  // #196: a category keeps the rows whose `tool.subcategory` it names (`rowsInCategory`).
+  const filteredRankings = category ? rowsInCategory(rankings, category) : rankings;
   // #175: apply the search term and send site_search once the rankings are loaded.
   const searchedRankings = useRankingsSearch(filteredRankings, searchTerm, !loading);
 
@@ -360,6 +360,11 @@ function RankingsGridContent({
       {rankings.length === 0 ? (
         // #186: a list with no ranked tool says so instead of rendering an empty grid.
         <p className="text-muted-foreground">{dict.rankings.lists.empty}</p>
+      ) : sortedRankings.length === 0 && categoryParam !== "all" && !searchTerm.trim() ? (
+        // #196: a category with no ranked tool says so, not a blank grid.
+        <p data-note="category-empty" className="text-muted-foreground">
+          {dict.rankings.lists.categoryEmpty}
+        </p>
       ) : sortedRankings.length === 0 && searchTerm.trim() ? (
         <SearchEmptyState
           term={searchTerm.trim()}

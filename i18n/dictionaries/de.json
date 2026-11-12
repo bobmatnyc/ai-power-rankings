@@ -275,7 +275,8 @@
       "smallListNote": "Diese Liste hat weniger als {min} Einträge, daher sind ihre Stufen S, A und B nach Dritteln.",
       "modelsMetricsPendingNote": "Vorläufig: Modellkennzahlen werden noch nicht erhoben, daher ist diese Reihenfolge keine Rangfolge nach Qualität.",
       "empty": "In dieser Liste ist noch kein Tool gerankt.",
-      "openWeightEmpty": "Es sind noch keine Open-Weight-Modelle gerankt."
+      "openWeightEmpty": "Es sind noch keine Open-Weight-Modelle gerankt.",
+      "categoryEmpty": "In dieser Kategorie sind noch keine Tools gerankt."
     }
   },
   "news": {
