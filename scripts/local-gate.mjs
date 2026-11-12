@@ -6,8 +6,8 @@
  *   for `v*` tags and manual dispatch. PR and push checks run here, on the developer's
  *   host, and post one informational `local-gate` commit status so a PR still shows
  *   whether its head passed. Nothing makes that status required.
- * What: Runs `npx tsc --noEmit`, `npm run test:unit` and `npm run build:next` (all always
- *   run, so the report shows every result). By default it then posts ONE status for HEAD via
+ * What: Runs `npx tsc --noEmit`, `npm run test:unit`, `npm run build:next` and a gitleaks
+ *   secret scan (all always run, so the report shows every result). By default it then posts ONE status for HEAD via
  *   `gh api repos/{owner}/{repo}/statuses/<sha>`. Before running anything it refuses
  *   (exit 2) when the tree is dirty, `gh` is missing or unauthenticated, owner/repo
  *   cannot be resolved, or GitHub does not know the HEAD commit (not pushed). It
@@ -16,13 +16,19 @@
  *   only, with no post and no clean/pushed requirement.
  *   Exit codes: 0 all checks passed (and, unless --no-status, the status posted);
  *   1 a check failed; 2 the status was refused or its post failed.
+ *   The gitleaks check (#460) needs gitleaks GITLEAKS_VERSION on PATH and fails without it.
+ *   It scans the files git sees (tracked plus untracked, not ignored) and the commits in
+ *   merge-base(origin/main, HEAD)..HEAD, never full history. Output is redacted.
  * Test: `npx vitest run tests/unit/local-gate.test.ts` covers the pure helpers and,
- *   with stub `gh`/`npx`/`npm` over a temp repo, every CLI arm: pass and post, failing
- *   check, failing post, each refusal, and invocation through a symlinked path.
+ *   with stub `gh`/`npx`/`npm`/`gitleaks` over a temp repo, every CLI arm: pass and post,
+ *   failing check, failing post, each refusal, invocation through a symlinked path, and
+ *   gitleaks missing, at the wrong version, reporting a finding, and clean.
  */
 
 import { spawnSync } from "node:child_process";
-import { realpathSync } from "node:fs";
+import { copyFileSync, lstatSync, mkdirSync, mkdtempSync, realpathSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 export const STATUS_CONTEXT = "local-gate";
@@ -37,7 +43,29 @@ export const CHECKS = [
   // so only `next build` catches them before Vercel does. `build:next` is `next build` alone;
   // `npm run build` would also rewrite the tracked changelog and category generator outputs.
   { name: "next build", cmd: "npm", args: ["run", "build:next"] },
+  // #460: the secret scan runs here, not in Actions (fleet CI ruling: Actions for release builds only).
+  { name: "gitleaks", run: () => runGitleaks() },
 ];
+
+// #460: the one place the gitleaks version is pinned.
+export const GITLEAKS_VERSION = "8.30.1";
+const GITLEAKS_INSTALL = `install gitleaks ${GITLEAKS_VERSION} with \`brew install gitleaks\` (then check \`gitleaks version\`) or from https://github.com/gitleaks/gitleaks/releases/tag/v${GITLEAKS_VERSION}`;
+const GITLEAKS_BASE_REF = "origin/main";
+
+/**
+ * Checks a `gitleaks version` spawn result against GITLEAKS_VERSION.
+ * Returns null when it matches, else a message naming the problem and how to install.
+ */
+export function gitleaksVersionProblem(res) {
+  if (res.error || res.status === null) {
+    return `gitleaks is not installed or not on PATH; ${GITLEAKS_INSTALL}.`;
+  }
+  const found = (res.stdout ?? "").trim().replace(/^v/, "");
+  if (res.status !== 0 || found !== GITLEAKS_VERSION) {
+    return `gitleaks ${found || "(unknown version)"} found, ${GITLEAKS_VERSION} required; ${GITLEAKS_INSTALL}.`;
+  }
+  return null;
+}
 
 /**
  * Extracts `owner/repo` from a GitHub remote URL (ssh, scp-style, or https).
@@ -113,11 +141,75 @@ function preflight() {
   return { sha, repo };
 }
 
+// #460: copies the files git would commit (tracked + untracked, not ignored) to a temp dir.
+// `gitleaks dir .` on the checkout itself also reads node_modules/.next/tmp, GBs in a dev tree.
+function snapshotTree(root) {
+  const list = git(["-C", root, "ls-files", "-z", "--cached", "--others", "--exclude-standard"]);
+  if (list === null) return null;
+  const dir = mkdtempSync(join(tmpdir(), "local-gate-gitleaks-"));
+  for (const rel of list.split("\0").filter(Boolean)) {
+    const src = join(root, rel);
+    let stat;
+    try {
+      stat = lstatSync(src);
+    } catch {
+      continue; // deleted in the working tree: nothing to scan
+    }
+    if (!stat.isFile()) continue; // symlinks and submodules; gitleaks dir skips symlinks too
+    mkdirSync(dirname(join(dir, rel)), { recursive: true });
+    copyFileSync(src, join(dir, rel));
+  }
+  return dir;
+}
+
+// #460: scans the working tree, then this branch's commits; any finding fails the check.
+// Spawned with argv arrays (no shell) and always with --redact, so no secret is printed.
+function runGitleaks() {
+  const problem = gitleaksVersionProblem(run("gitleaks", ["version"]));
+  if (problem) {
+    console.error(`local-gate: gitleaks — ${problem}`);
+    return false;
+  }
+  const root = git(["rev-parse", "--show-toplevel"]);
+  const snapshot = root ? snapshotTree(root) : null;
+  if (!snapshot) {
+    console.error("local-gate: gitleaks — could not list the working-tree files.");
+    return false;
+  }
+  const flags = ["--config", join(root, ".gitleaks.toml"), "--redact", "--no-banner"];
+
+  let treeOk;
+  try {
+    console.log("local-gate: gitleaks — scanning the working tree (tracked + untracked, not ignored)");
+    treeOk = run("gitleaks", ["dir", ".", ...flags], { cwd: snapshot, stdio: "inherit" }).status === 0;
+  } finally {
+    rmSync(snapshot, { recursive: true, force: true });
+  }
+
+  const base = git(["merge-base", GITLEAKS_BASE_REF, "HEAD"]);
+  if (!base) {
+    console.error(`local-gate: gitleaks — no merge-base with ${GITLEAKS_BASE_REF}; run \`git fetch origin\`.`);
+    return false;
+  }
+  const range = `${base}..HEAD`;
+  if (git(["rev-list", "--count", range]) === "0") {
+    console.log(`local-gate: gitleaks — no commits in ${base.slice(0, 12)}..HEAD; commit scan skipped.`);
+    return treeOk;
+  }
+  console.log(`local-gate: gitleaks — scanning commits ${base.slice(0, 12)}..HEAD`);
+  const commits = run("gitleaks", ["git", ".", ...flags, `--log-opts=${range}`], {
+    cwd: root,
+    stdio: "inherit",
+  });
+  return treeOk && commits.status === 0;
+}
+
 function runChecks() {
-  return CHECKS.map(({ name, cmd, args }) => {
+  return CHECKS.map(({ name, cmd, args, run: runCheck }) => {
     console.log(`\nlocal-gate: running ${name} ...`);
-    const res = run(cmd, args, { stdio: "inherit", shell: process.platform === "win32" });
-    const ok = res.status === 0;
+    const ok = runCheck
+      ? runCheck()
+      : run(cmd, args, { stdio: "inherit", shell: process.platform === "win32" }).status === 0;
     console.log(`local-gate: ${name} — ${ok ? "PASS" : "FAIL"}`);
     return { name, ok };
   });

@@ -992,8 +992,8 @@
   {
     "id": "unreleased-81ccb42f87bc",
     "version": "Unreleased",
-    "date": "2026-11-12T16:01:53.000Z",
-    "dateSource": "commit",
+    "date": "2026-11-12T15:46:58.590Z",
+    "dateSource": "build",
     "section": "Added",
     "scope": "models",
     "title": "a model row whose licence review is pending (data.modelSeed.licenceReview) cannot be set active",
