@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-4610440a66ac",
+    "version": "Unreleased",
+    "date": "2026-11-12T14:43:11.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "admin",
+    "title": "the admin create-period action stamps a new empty period with the current engine version (RANKING_ALGORITHM_VERSION,…",
+    "description": "the admin `create-period` action stamps a new empty period with the current engine version (`RANKING_ALGORITHM_VERSION`, unprefixed, e.g. `7.11`) on the row and in its data; it wrote a hard-coded `v6.0` after the V6 engine was retired (#254). A period copied from a source still keeps the source's version. Tests: `tests/unit/admin-rankings-bare-array-256.test.ts` (#448)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-9d544a183ea7",
     "version": "Unreleased",
     "date": "2026-11-11T18:28:24.000Z",
@@ -112,8 +123,8 @@
   {
     "id": "unreleased-df672226696e",
     "version": "Unreleased",
-    "date": "2026-11-11T18:28:55.819Z",
-    "dateSource": "build",
+    "date": "2026-11-11T18:33:28.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "news",
     "title": "the Article template prints the publication date in the route locale (1 septembre 2026 on /fr/, 2026年9月1日 on /ja/); it…",
