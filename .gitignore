@@ -206,3 +206,6 @@ kuzu-memories/
 
 # #329: private model metrics (Vals TB 4.0 figures are not redistributed in this repo)
 /data/private/
+
+# Internal planning notes stay out of the repository
+docs/briefs/
