@@ -990,10 +990,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-81ccb42f87bc",
+    "version": "Unreleased",
+    "date": "2026-11-12T15:46:58.590Z",
+    "dateSource": "build",
+    "section": "Added",
+    "scope": "models",
+    "title": "a model row whose licence review is pending (data.modelSeed.licenceReview) cannot be set active",
+    "description": "a model row whose licence review is `pending` (`data.modelSeed.licenceReview`) cannot be set active. The lifecycle `--set-status` step, the metrics loader's `--activate` and the admin PUT `/api/admin/tools/[slug]` with `status: \"active\"` refuse it in the plan (the admin PUT answers 409 and writes nothing) and again in the UPDATE, so a review that turns pending after planning rolls the apply back. A review the gate cannot read refuses. Rows already active are untouched (D83), and a null review (closed and legacy rows) is not blocked. A seed row may now carry `licence_review: \"reviewed\"` with `licence_review_ruling`, the owner's ruling id (for example `D88`); the validator rejects `reviewed` without one. `reviewed` and `not_required` allow activation. A reseed whose row still says `pending` keeps a stored `reviewed` review and its ruling; any other seed value replaces it. Tests: `tests/unit/licence-gate-453.test.ts`, `tests/unit/licence-gate-pglite-453.test.ts`, `tests/unit/admin-tool-licence-453.test.ts` (#453)",
+    "changeType": "feature"
+  },
+  {
     "id": "unreleased-1e3caf17bcc0",
     "version": "Unreleased",
-    "date": "2026-11-12T15:21:01.143Z",
-    "dateSource": "build",
+    "date": "2026-11-12T15:28:51.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "models",
     "title": "the MiniMax M2 (minimax-base-2) and MiniMax (minimax) tool pages show a licence note under the overview: each states…",

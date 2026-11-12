@@ -7,6 +7,7 @@ import { and, asc, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "../connection";
 import { type NewTool, type Tool, tools } from "../schema";
 import { BaseRepository, type QueryOptions } from "./base.repository";
+import { licenceAllowsActivationSql } from "./licence-review";
 
 interface ToolData {
   id: string;
@@ -481,11 +482,14 @@ export class ToolsRepository extends BaseRepository<ToolData> {
 
     // #288: match the row the lookup found by its UUID; a row with no `data.id`
     // (the lookup's UUID fallback) matched nothing under `data->>'id'`.
-    const results = await db
-      .update(tools)
-      .set(updateData)
-      .where(eq(tools.id, existing.db_id ?? id))
-      .returning();
+    // #453: a write of status active matches only a row already active or one whose stored
+    // licence review allows activation, so a pending review set after the read writes nothing.
+    const byId = eq(tools.id, existing.db_id ?? id);
+    const where =
+      status === "active"
+        ? and(byId, sql`(${tools.status} = 'active' OR ${sql.raw(licenceAllowsActivationSql(`"tools"."data"`))})`)
+        : byId;
+    const results = await db.update(tools).set(updateData).where(where).returning();
 
     const firstResult = results[0];
     return firstResult ? this.mapDbToolToData(firstResult) : null;

@@ -19,8 +19,9 @@
  */
 
 import { EXCLUDED_MODEL_MODALITIES } from "../../rankings/lists";
-import type { ModelSeedQueryable } from "./model-seed-writer";
-import { isCalendarDate } from "./model-seed.repository";
+import { licenceActivationRefusal, licenceAllowsActivationSql } from "./licence-review";
+import { type ModelSeedQueryable, seedLicenceReview } from "./model-seed-writer";
+import { isCalendarDate, type ModelSeedRow } from "./model-seed.repository";
 
 export const MODEL_LIFECYCLE_FILE = "docs/refresh/model-lifecycle.json";
 
@@ -345,8 +346,9 @@ export function lifecycleRecord(row: ModelLifecycleRow, checkedAt: string): Reco
 }
 
 // #329: read-only; status and redirect_to are read to refuse redirect aliases and other kinds.
+// #453: data.modelSeed is read for the licence-review gate.
 export const MODEL_STATUS_SELECT_SQL = `SELECT slug, kind, status, data->>'redirect_to' AS redirect_to,
-  data->'modelLifecycle' AS model_lifecycle
+  data->'modelLifecycle' AS model_lifecycle, data->'modelSeed' AS model_seed
 FROM tools WHERE slug = ANY($1::text[])`;
 
 /** #329: the statuses the status step may move a row from. Redirect and any other value are refused. */
@@ -356,11 +358,14 @@ export const MODEL_STATUS_FROM = ["inactive", "active", "deprecated"] as const;
 // non-model row, a redirect alias and any status outside MODEL_STATUS_FROM; it then returns no
 // row and the caller rolls back. Metrics, facts and name are never named.
 // D0c: no metric condition here; activation without a figure is the owner's ruling for this step.
+// #453: a move into active also needs the stored licence review to allow it (an active row is
+// left alone, D83); a row whose review turned pending after planning matches nothing.
 export const MODEL_STATUS_UPDATE_SQL = `UPDATE tools SET
   status = $2,
   data = data || jsonb_build_object('modelLifecycle', $3::jsonb),
   updated_at = now()
 WHERE slug = $1 AND kind = 'model' AND status IN ('inactive', 'active', 'deprecated')
+  AND ($2 <> 'active' OR status = 'active' OR ${licenceAllowsActivationSql("data")})
 RETURNING slug`;
 
 interface ExistingStatusRow {
@@ -369,6 +374,7 @@ interface ExistingStatusRow {
   status: string;
   redirect_to: string | null;
   model_lifecycle: unknown;
+  model_seed: unknown;
 }
 
 export type ModelStatusPlan =
@@ -393,13 +399,19 @@ function stableJson(value: unknown): string {
  * What: one SELECT over the lifecycle slugs, then a pure per-row plan. A slug with no row is
  *   planned as an inactive row when `pendingInserts` holds it (the seed upsert in the same
  *   transaction creates it), else refused. Refuses another kind, a redirect alias and a status
- *   outside `MODEL_STATUS_FROM`. Writes nothing.
- * Test: `tests/unit/model-lifecycle-329.test.ts`
+ *   outside `MODEL_STATUS_FROM`. #453: refuses a move into `active` (from any other status, or
+ *   as a new row) that `licenceActivationRefusal` refuses. The review judged is the one the row
+ *   holds after the seed step of the same run: for a slug in `seedRows` it is
+ *   `seedLicenceReview(seed row, stored data.modelSeed)`, else the stored `data.modelSeed`. A
+ *   pending insert with no seed row is refused (fail closed). A row already `active` is never
+ *   refused for its licence (D83). Writes nothing.
+ * Test: `tests/unit/model-lifecycle-329.test.ts`, `tests/unit/licence-gate-453.test.ts`
  */
 export async function planModelStatus(
   db: ModelSeedQueryable,
   lifecycle: ModelLifecycle,
-  pendingInserts: ReadonlySet<string>
+  pendingInserts: ReadonlySet<string>,
+  seedRows: ReadonlyMap<string, ModelSeedRow> = new Map()
 ): Promise<ModelStatusPlan[]> {
   const { rows } = await db.query(MODEL_STATUS_SELECT_SQL, [lifecycle.rows.map((r) => r.slug)]);
   const bySlug = new Map((rows as ExistingStatusRow[]).map((r) => [r.slug, r]));
@@ -408,9 +420,18 @@ export async function planModelStatus(
     const record = lifecycleRecord(row, lifecycle.checkedAt);
     const params = [slug, row.targetStatus, JSON.stringify(record)];
     const existing = bySlug.get(slug);
+    // #453: the licence review the row will hold when the status update runs.
+    const seedRow = seedRows.get(slug);
+    const licenceRefusal = (stored: unknown): string | null =>
+      seedRow ? licenceActivationRefusal(seedLicenceReview(seedRow, stored)) : licenceActivationRefusal(stored);
     if (!existing) {
-      if (pendingInserts.has(slug)) return { slug, outcome: "set", from: "inactive", to: row.targetStatus, params };
-      return { slug, outcome: "refused", reason: "no tools row with this slug; load the model seed first" };
+      if (!pendingInserts.has(slug)) return { slug, outcome: "refused", reason: "no tools row with this slug; load the model seed first" };
+      if (row.targetStatus === "active") {
+        // #453: fail closed when the inserted row's licence review is unknown.
+        const reason = seedRow ? licenceRefusal(undefined) : "licence review of the inserted row is unknown";
+        if (reason) return { slug, outcome: "refused", reason };
+      }
+      return { slug, outcome: "set", from: "inactive", to: row.targetStatus, params };
     }
     if (existing.kind !== "model") return { slug, outcome: "refused", reason: `slug is held by a ${existing.kind} row, not a model` };
     if (existing.status === "redirect") {
@@ -421,6 +442,10 @@ export async function planModelStatus(
     }
     if (existing.status === row.targetStatus && stableJson(existing.model_lifecycle ?? null) === stableJson(record)) {
       return { slug, outcome: "unchanged" };
+    }
+    if (row.targetStatus === "active" && existing.status !== "active") {
+      const reason = licenceRefusal(existing.model_seed); // #453: no activation while the review is pending
+      if (reason) return { slug, outcome: "refused", reason };
     }
     return { slug, outcome: "set", from: existing.status, to: row.targetStatus, params };
   });

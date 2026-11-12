@@ -167,7 +167,9 @@ export async function loadModelSeeds(
   let statusPlans: ModelStatusPlan[] = [];
   if (lifecycle) {
     const inserts = new Set(plans.filter((p) => p.outcome === "insert").map((p) => p.slug));
-    statusPlans = await planModelStatus(db, lifecycle, inserts);
+    // #453: the status step judges the licence review the seed step leaves on each row.
+    const seedRows = new Map(entries.map((e) => [e.row.slug, e.row]));
+    statusPlans = await planModelStatus(db, lifecycle, inserts, seedRows);
     for (const plan of statusPlans) log(formatStatusPlan(plan, apply ? "will" : "would"));
     const set = (to: string) => statusPlans.filter((p) => p.outcome === "set" && p.to === to).length;
     const statusRefused = statusPlans.filter((p) => p.outcome === "refused").length;

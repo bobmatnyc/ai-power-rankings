@@ -11,9 +11,11 @@
  *   model row it sets only the seed-owned columns and the `data.modelSeed` provenance key. It
  *   never names `status` or `data.metrics` in its update clause. A curated column (#334) is
  *   filled when stored null and never overwritten unless the caller names it in `overwrites`.
- * Test: `tests/unit/load-model-seeds-329.test.ts`
+ *   #453: a reseed keeps a stored `reviewed` licence review (see `seedLicenceReview`).
+ * Test: `tests/unit/load-model-seeds-329.test.ts`, `tests/unit/licence-gate-453.test.ts`
  */
 
+import { type LicenceReview, RULING_ID } from "./licence-review";
 import type { ModelSeedRow } from "./model-seed.repository";
 
 export interface ModelSeedQueryable {
@@ -83,7 +85,8 @@ FROM tools WHERE slug = ANY($1::text[])`;
 // it then returns no row and the caller rolls back. #334: each curated column also needs the seed
 // silent, the stored value null or equal, or the stored value still the one an overwrite named in
 // $10 (a jsonb object of column -> planned stored value), so a value changed after planning is
-// never overwritten.
+// never overwritten. #453: $11 is the ruling id of a stored `reviewed` licence review the plan
+// keeps (seedLicenceReview); the stored review must still be that one, or nothing is written.
 export const MODEL_SEED_UPSERT_SQL = `INSERT INTO tools
   (slug, name, category, status, kind, open_weight, hf_repo, licence, parameters_b, active_parameters_b, release_date, data)
 VALUES ($1, $2, 'other', 'inactive', 'model', $3, $4, $5, $6::numeric, $7::numeric, $8::date, $9::jsonb)
@@ -109,6 +112,8 @@ WHERE tools.kind = 'model' AND tools.status <> 'redirect'
     OR tools.active_parameters_b = ($10::jsonb->>'active_parameters_b')::numeric)
   AND (EXCLUDED.release_date IS NULL OR tools.release_date IS NULL OR tools.release_date = EXCLUDED.release_date
     OR tools.release_date = ($10::jsonb->>'release_date')::date)
+  AND ($11::text IS NULL OR (tools.data->'modelSeed'->>'licenceReview' = 'reviewed'
+    AND tools.data->'modelSeed'->>'licenceReviewRuling' = $11::text))
 RETURNING slug`;
 
 interface ExistingRow {
@@ -153,8 +158,48 @@ function seedValues(row: ModelSeedRow): Record<SeedColumn, ColumnValue> {
   };
 }
 
-/** The provenance stored under `data.modelSeed`: every fact with its source. */
-export function modelSeedProvenance(entry: ModelSeedEntry): Record<string, unknown> {
+/** The licence review a seed write stores, with the ruling id when it is `reviewed`. */
+export interface StoredLicenceReview {
+  licenceReview: LicenceReview | null;
+  licenceReviewRuling: string | null;
+  /** True when the value comes from the stored row, not the seed. */
+  kept: boolean;
+}
+
+/**
+ * Why: the owner's review is recorded once; a reseed of an unchanged seed must not undo it (#453).
+ * What: the rule. When the seed row says `pending` and the stored `data.modelSeed` says
+ *   `reviewed` with a ruling id matching `RULING_ID`, the stored review and its ruling are kept.
+ *   In every other case the seed's own value is written: a seed that says `not_required` or
+ *   `reviewed` (with its own ruling), or a closed row's null, replaces what is stored; a stored
+ *   `reviewed` without a valid ruling id is not kept, so the row falls back to `pending`. Pure.
+ * Test: `tests/unit/licence-gate-453.test.ts`
+ */
+export function seedLicenceReview(row: ModelSeedRow, storedModelSeed: unknown): StoredLicenceReview {
+  const stored = storedModelSeed as Record<string, unknown> | null | undefined;
+  if (
+    row.licenceReview === "pending" &&
+    typeof stored === "object" &&
+    stored !== null &&
+    !Array.isArray(stored) &&
+    stored["licenceReview"] === "reviewed" &&
+    typeof stored["licenceReviewRuling"] === "string" &&
+    RULING_ID.test(stored["licenceReviewRuling"])
+  ) {
+    return { licenceReview: "reviewed", licenceReviewRuling: stored["licenceReviewRuling"], kept: true };
+  }
+  return { licenceReview: row.licenceReview, licenceReviewRuling: row.licenceReviewRuling, kept: false };
+}
+
+/**
+ * The provenance stored under `data.modelSeed`: every fact with its source. #453: `review`
+ * overrides the seed row's licence review (a kept `reviewed`); `licenceReviewRuling` is present
+ * only on a `reviewed` row, so the provenance of every other row is as before.
+ */
+export function modelSeedProvenance(
+  entry: ModelSeedEntry,
+  review: Pick<StoredLicenceReview, "licenceReview" | "licenceReviewRuling"> = entry.row
+): Record<string, unknown> {
   const { row } = entry;
   const facts: Record<string, unknown> = {};
   for (const [key, fact] of Object.entries(row.facts)) facts[key] = { value: fact.value, source_url: fact.sourceUrl };
@@ -164,7 +209,8 @@ export function modelSeedProvenance(entry: ModelSeedEntry): Record<string, unkno
     checkedAt: entry.checkedAt,
     vendor: row.vendor,
     sourceUrl: row.sourceUrl,
-    licenceReview: row.licenceReview,
+    licenceReview: review.licenceReview,
+    ...(review.licenceReview === "reviewed" && { licenceReviewRuling: review.licenceReviewRuling }),
     facts,
   };
 }
@@ -179,7 +225,8 @@ function upsertParams(
   entry: ModelSeedEntry,
   values: Record<SeedColumn, ColumnValue>,
   provenance: unknown,
-  overwriteFrom: Partial<Record<CuratedColumn, ColumnValue>> = {}
+  overwriteFrom: Partial<Record<CuratedColumn, ColumnValue>> = {},
+  keptRuling: string | null = null
 ): unknown[] {
   const { row } = entry;
   const data = { info: { description: row.description, company: row.company }, modality: row.modality, modelSeed: provenance };
@@ -194,6 +241,7 @@ function upsertParams(
     values.release_date,
     JSON.stringify(data),
     JSON.stringify(overwriteFrom),
+    keptRuling, // #453: $11, the kept reviewed ruling the upsert re-checks
   ];
 }
 
@@ -220,8 +268,10 @@ export async function planModelSeedRows(
     const { slug } = entry.row;
     const base = { slug, seedFile: entry.seedFile };
     const values = seedValues(entry.row);
-    const provenance = modelSeedProvenance(entry);
     const existing = bySlug.get(slug);
+    // #453: a stored reviewed licence review survives a reseed that still says pending.
+    const review = seedLicenceReview(entry.row, existing?.model_seed);
+    const provenance = modelSeedProvenance(entry, review);
     if (!existing) {
       const changes = SEED_COLUMNS.filter((c) => values[c] !== null).map((c) => ({ column: c, from: null, to: values[c] }));
       return { ...base, outcome: "insert", changes, params: upsertParams(entry, values, provenance) };
@@ -244,7 +294,7 @@ export async function planModelSeedRows(
       return { ...base, outcome: "refused", reason: `${fields} (to replace, pass --overwrite ${hint})` };
     }
     const overwriteFrom = Object.fromEntries(conflicts.map((c) => [c, existing[c]]));
-    const params = upsertParams(entry, values, provenance, overwriteFrom);
+    const params = upsertParams(entry, values, provenance, overwriteFrom, review.kept ? review.licenceReviewRuling : null);
     const changes: ColumnChange[] = SEED_COLUMNS.filter((c) => !sameValue(c, existing[c], values[c])).map((c) => {
       const change: ColumnChange = { column: c, from: existing[c], to: values[c] };
       return (conflicts as readonly string[]).includes(c) ? { ...change, overwrite: true } : change;
