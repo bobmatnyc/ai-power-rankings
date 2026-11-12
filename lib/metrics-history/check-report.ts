@@ -13,14 +13,25 @@
  *   previous collected_date).
  *   Exit 0: pass, WARN lines allowed. Exit 3: a shard missing or not ok, a dead
  *   collector, or a part's coverage under its floor.
+ *   #184: coverage also covers `huggingface`, the open-weight run's key; it writes no
+ *   ledger row, so its coverage floor is the only thing that fails a missed month.
  * Test: `tests/unit/metrics-check-report-95.test.ts`,
- *   `tests/unit/metrics-cron-config-95.test.ts`; run by
+ *   `tests/unit/metrics-cron-config-95.test.ts`, `tests/unit/metrics-open-weight-cron-184.test.ts`; run by
  *   `scripts/check-metrics-history.ts` from `.github/workflows/check-metrics-history.yml`.
  */
 
-import { COLLECTOR_PARTS, type CollectorPart, SHARD_COUNTS } from "../metrics-collectors/registry";
+import { HF_METRICS_KEY } from "../metrics-collectors/huggingface";
+import { COLLECTOR_PARTS, SHARD_COUNTS } from "../metrics-collectors/registry";
 
-export type CoverageFloors = Record<CollectorPart, number | null>;
+/**
+ * #184: every history key the check covers. The four sharded parts plus the open-weight
+ * run's own key, taken from the collector so the check reads the name it writes. The ledger
+ * and dead-collector checks stay on COLLECTOR_PARTS: the open-weight run writes no ledger row.
+ */
+export const CHECKED_PARTS = [...COLLECTOR_PARTS, HF_METRICS_KEY] as const;
+export type CheckedPart = (typeof CHECKED_PARTS)[number];
+
+export type CoverageFloors = Record<CheckedPart, number | null>;
 
 /**
  * #95: per part, the share of ELIGIBLE tools that must have that part's key for the date
@@ -34,8 +45,19 @@ export type CoverageFloors = Record<CollectorPart, number | null>;
  * and some of those repos may be renamed or gone. Override: `METRICS_COVERAGE_FLOOR`.
  * #95: a repo 404 is `not_found` and leaves its shard `ok`, but the tool stays eligible
  * and unrecorded, so a mass 404 (a broken URL column) fails this floor, not the ledger.
+ * #184: huggingface allows 80%, as github does, for the same reason: its eligible set is an
+ * identifier column (`kind='model'` with an `hf_repo`, the run's own listModels filter), not
+ * last month's matches, and a Hub repo may be renamed or gated (`not_found`). With about 25
+ * models that tolerates 5 misses; a run that never happened records 0 and fails.
  */
-export const COVERAGE_FLOOR: Readonly<CoverageFloors> = { github: 0.8, pypi: 0.9, npm: 0.9, vscode: 0.9 };
+export const COVERAGE_FLOOR: Readonly<CoverageFloors> = {
+  github: 0.8,
+  pypi: 0.9,
+  npm: 0.9,
+  vscode: 0.9,
+  // #184: the open-weight run's key; see above.
+  [HF_METRICS_KEY]: 0.8,
+};
 
 /**
  * #95: parses `METRICS_COVERAGE_FLOOR`. Empty or unset: the defaults. `off`: every floor off.
@@ -47,13 +69,14 @@ export function parseCoverageFloors(spec: string | undefined): CoverageFloors {
   const text = (spec ?? "").trim();
   if (text === "") return floors;
   if (text === "off") {
-    for (const part of COLLECTOR_PARTS) floors[part] = null;
+    for (const part of CHECKED_PARTS) floors[part] = null;
     return floors;
   }
   for (const entry of text.split(",")) {
     const match = /^\s*([a-z]+)\s*=\s*(off|[0-9]*\.?[0-9]+)\s*$/.exec(entry);
-    const part = match?.[1] as CollectorPart | undefined;
-    if (!match || !part || !(COLLECTOR_PARTS as readonly string[]).includes(part)) {
+    const part = match?.[1] as CheckedPart | undefined;
+    // #184: the open-weight key takes an override like any part.
+    if (!match || !part || !(CHECKED_PARTS as readonly string[]).includes(part)) {
       throw new Error("METRICS_COVERAGE_FLOOR must be empty, off, or part=share pairs");
     }
     const share = match[2] === "off" ? null : Number(match[2]);
@@ -137,7 +160,8 @@ export function renderMetricsHistoryReport(input: ReportInput): { exitCode: numb
   // for a part never counts as a miss.
   let coverageFail = 0;
   lines.push("", "Coverage per part (eligible tools with the part recorded):");
-  for (const part of COLLECTOR_PARTS) {
+  // #184: includes the open-weight key, which has no ledger row to miss.
+  for (const part of CHECKED_PARTS) {
     const row = input.partCoverage.find((c) => c.part === part);
     const eligible = Number(row?.eligible ?? 0);
     const recorded = Number(row?.recorded ?? 0);

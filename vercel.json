@@ -79,6 +79,10 @@
     {
       "path": "/api/cron/collect-metrics?part=github&shard=5&of=6",
       "schedule": "50 4 1 * *"
+    },
+    {
+      "path": "/api/cron/collect-open-weight-metrics",
+      "schedule": "30 5 1 * *"
     }
   ]
 }
