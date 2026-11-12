@@ -12,6 +12,7 @@
 
 import { EXCLUDED_MODEL_MODALITIES } from "../../rankings/lists";
 import { parseClosedModelSeed } from "./closed-model-seed.repository";
+import { type LicenceReview, RULING_ID } from "./licence-review";
 
 /** The facts a seed row may state. Anything else, metrics included, is refused. */
 export const MODEL_SEED_FACT_KEYS = [
@@ -43,7 +44,9 @@ export interface ModelSeedRow {
   sourceUrl: string;
   description: string;
   /** Open-weight rows only; null on closed rows. */
-  licenceReview: "not_required" | "pending" | null;
+  licenceReview: LicenceReview | null;
+  /** #453: the owner ruling id behind a `reviewed` licence; null for every other value. */
+  licenceReviewRuling: string | null;
   facts: Partial<Record<ModelSeedFactKey, ModelSeedFact>>;
 }
 
@@ -76,6 +79,7 @@ const ROW_KEYS = new Set([
   "source_url",
   "description",
   "licence_review",
+  "licence_review_ruling", // #453: required with, and only with, licence_review "reviewed"
   "facts",
 ]);
 const NUMBER_FACTS: ReadonlySet<ModelSeedFactKey> = new Set(["parameters_b", "active_parameters_b"]);
@@ -135,7 +139,10 @@ function parseFact(key: string, raw: unknown, what: string, checkedAt: string): 
  *   description; a missing `facts` object, an unknown fact key, or a fact without an https
  *   `source_url` or with a bad value; no `current_version`; an open-weight row without `hf_repo`
  *   or with a `licence_review` that does not match its licence; a closed row with `hf_repo` or a
- *   `licence_review`; active parameters above total parameters.
+ *   `licence_review`; active parameters above total parameters. #453: a non-OSI open-weight row
+ *   may carry `licence_review` "reviewed" instead of "pending", and only with a
+ *   `licence_review_ruling` matching `RULING_ID` (for example "D88"); a ruling on any other row
+ *   is refused.
  * Test: `tests/unit/model-seed-329.test.ts` (one throw per rule).
  */
 export function parseModelSeedRow(entry: unknown, what: string, checkedAt: string): ModelSeedRow {
@@ -169,17 +176,31 @@ export function parseModelSeedRow(entry: unknown, what: string, checkedAt: strin
   }
 
   let licenceReview: ModelSeedRow["licenceReview"] = null;
+  let licenceReviewRuling: string | null = null;
+  const ruling = e["licence_review_ruling"];
   if (openWeight) {
     if (!facts.hf_repo) throw new Error(`${what}: an open-weight row needs facts.hf_repo`);
     const licence = facts.licence ? String(facts.licence.value).toLowerCase() : null;
     const expected = licence !== null && OSI_LICENCES.has(licence) ? "not_required" : "pending";
-    if (e["licence_review"] !== expected) {
-      throw new Error(`${what}: licence_review must be "${expected}" for licence ${licence ?? "(not stated)"}`);
+    // #453: the owner's review of a custom licence is recorded as "reviewed" plus the ruling id.
+    if (expected === "pending" && e["licence_review"] === "reviewed") {
+      if (typeof ruling !== "string" || !RULING_ID.test(ruling.trim())) {
+        throw new Error(`${what}: licence_review "reviewed" needs licence_review_ruling, an owner ruling id such as "D88"`);
+      }
+      licenceReview = "reviewed";
+      licenceReviewRuling = ruling.trim();
+    } else {
+      if (e["licence_review"] !== expected) {
+        const allowed = expected === "pending" ? `"pending" (or "reviewed" with licence_review_ruling)` : `"${expected}"`;
+        throw new Error(`${what}: licence_review must be ${allowed} for licence ${licence ?? "(not stated)"}`);
+      }
+      if (ruling !== undefined) throw new Error(`${what}: licence_review_ruling is allowed only with licence_review "reviewed"`);
+      licenceReview = expected;
     }
-    licenceReview = expected;
   } else {
     if (facts.hf_repo) throw new Error(`${what}: a closed row has no hf_repo`);
     if (e["licence_review"] !== undefined) throw new Error(`${what}: a closed row has no licence_review`);
+    if (ruling !== undefined) throw new Error(`${what}: a closed row has no licence_review_ruling`);
   }
 
   return {
@@ -194,6 +215,7 @@ export function parseModelSeedRow(entry: unknown, what: string, checkedAt: strin
     sourceUrl,
     description,
     licenceReview,
+    licenceReviewRuling,
     facts,
   };
 }

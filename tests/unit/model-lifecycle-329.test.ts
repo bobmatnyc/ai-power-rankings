@@ -213,7 +213,9 @@ describe("status step plan and loader (#329)", () => {
       checkedAt: LIFECYCLE.checkedAt,
       rows: LIFECYCLE.rows.filter((r) => ["gpt-astra", "claude-opus", "grok-4-5", "glm", "kimi", "mimo", "qwen"].includes(r.slug)),
     };
-    const plans = await planModelStatus(db, lifecycle, new Set(["mimo"]));
+    // #453: the seed rows tell the planner the licence review of the row the seed inserts.
+    const seedRows = new Map(readModelSeeds("all", readFile).map((e) => [e.row.slug, e.row]));
+    const plans = await planModelStatus(db, lifecycle, new Set(["mimo"]), seedRows);
     const by = new Map(plans.map((p) => [p.slug, p]));
     expect(by.get("gpt-astra")).toMatchObject({ outcome: "set", from: "inactive", to: "active" });
     expect(by.get("claude-opus")).toMatchObject({ outcome: "set", from: "active", to: "active" });
@@ -225,7 +227,10 @@ describe("status step plan and loader (#329)", () => {
   });
 
   it("the status update names only status and data.modelLifecycle and never matches a redirect", () => {
-    expect(MODEL_STATUS_UPDATE_SQL).not.toMatch(/metrics|modelSeed|name\s*=/);
+    // #453: data.modelSeed is read by the licence guard in the WHERE, never written.
+    const [setClause, whereClause] = MODEL_STATUS_UPDATE_SQL.split("WHERE");
+    expect(setClause).not.toMatch(/metrics|modelSeed|name\s*=/);
+    expect(whereClause).not.toMatch(/metrics|name\s*=/);
     expect(MODEL_STATUS_UPDATE_SQL).toMatch(/status IN \('inactive', 'active', 'deprecated'\)/);
     expect(MODEL_STATUS_UPDATE_SQL).toMatch(/kind = 'model'/);
   });
