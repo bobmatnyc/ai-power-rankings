@@ -101,13 +101,15 @@ describe("the committed map", () => {
   it("ships every 308 row except those whose destination page is missing", () => {
     // D6e: released; the 60 rows of the six D58 aliases ship again (91 + 60, 177 - 60).
     // ar-Te2/T76: the 10 openai-codex-cli rows are released too (151 + 10, 127 - 10).
-    expect(shipped).toHaveLength(161);
-    expect(held).toHaveLength(117);
+    // #191: the Insights hold is released (/en/insights is live), so the 20 /whats-new rows ship (161 + 20, 117 - 20).
+    expect(shipped).toHaveLength(181);
+    expect(held).toHaveLength(97);
     const perMajor = /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/;
     expect(shipped.filter((row) => perMajor.test(row.destination))).toHaveLength(60);
     expect(held.filter((row) => perMajor.test(row.destination))).toHaveLength(0);
-    // #198: the 20 /whats-new rows wait for /en/insights.
-    expect(held.filter((row) => row.destination === "/en/insights")).toHaveLength(20);
+    // #191: the 20 /whats-new rows ship now that /en/insights is live (#198).
+    expect(shipped.filter((row) => row.destination === "/en/insights")).toHaveLength(20);
+    expect(held.filter((row) => row.destination === "/en/insights")).toHaveLength(0);
     expect(shipped.length + held.length).toBe(redirectRows.length);
   });
 
@@ -135,6 +137,36 @@ describe("the committed map", () => {
   it("covers the 17 non-locale rows (Q-A85-1) by the pattern rule, not literal rows", () => {
     const patternRows = redirectRows.filter((row) => !isLocale(row.source.split("/")[1] ?? ""));
     expect(patternRows).toHaveLength(17);
+  });
+});
+
+describe("the released /whats-new rows (#191)", () => {
+  const whatsNewSources = locales.flatMap((locale) => [`/${locale}/whats-new`, `/${locale}/whats-new/recent`]);
+
+  it("are exactly the 20 rows aimed at /en/insights, and /en/insights is no source", () => {
+    expect(whatsNewSources).toHaveLength(20);
+    expect(redirectRows.filter((row) => row.destination === "/en/insights").map((row) => row.source).sort()).toEqual(
+      [...whatsNewSources].sort()
+    );
+    expect(redirectRows.some((row) => row.source === "/en/insights")).toBe(false);
+  });
+
+  it.each(whatsNewSources)("%s answers one 308 to /en/insights through the middleware", async (source) => {
+    const res = await run(source);
+    expect(res.status).toBe(308);
+    expect(location(res)).toBe("/en/insights");
+    expect(resolveTableRedirect("/en/insights")).toBeNull();
+  });
+
+  it("keeps the coding-harnesses hold (#196): its sources still resolve to no redirect", async () => {
+    const harnessRows = redirectRows.filter((row) => pathOf(row.destination) === "/en/rankings/coding-harnesses");
+    expect(harnessRows.length).toBeGreaterThan(0);
+    for (const row of harnessRows) {
+      expect(isPendingTarget(row.destination), row.source).toBe(true);
+      expect(resolveTableRedirect(row.source), row.source).toBeNull();
+    }
+    const res = await run("/en/best-ai-coding-tools");
+    expect(res.status).not.toBe(308);
   });
 });
 
@@ -313,6 +345,24 @@ describe("sitemap", () => {
     }
     for (const row of noindexRows) expect(paths.has(row.source)).toBe(false);
     for (const row of shipped) expect(paths.has(pathOf(row.source))).toBe(false);
+  });
+});
+
+describe("sitemap after the /whats-new release (#191)", () => {
+  it("lists /en/insights and none of the 20 /whats-new sources", async () => {
+    vi.stubEnv("INSIGHTS_PREVIEW", "true");
+    findAll.mockResolvedValue([]);
+    getPublishedSlugs.mockResolvedValue([]);
+    listPeriods.mockResolvedValue([]);
+    const { buildSitemapEntries } = await import("../../lib/sitemap");
+    const paths = new Set(
+      (await buildSitemapEntries("https://aipowerranking.com")).map((e) => new URL(e.url).pathname)
+    );
+    expect(paths.has("/en/insights")).toBe(true);
+    for (const locale of locales) {
+      expect(paths.has(`/${locale}/whats-new`), locale).toBe(false);
+      expect(paths.has(`/${locale}/whats-new/recent`), locale).toBe(false);
+    }
   });
 });
 

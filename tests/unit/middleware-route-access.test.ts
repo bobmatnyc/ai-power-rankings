@@ -152,7 +152,7 @@ describe("middleware: public pages and APIs stay anonymous", () => {
 
   it.each([
     "/en",
-    "/en/whats-new",
+    "/en/insights", // #191: /en/whats-new now 308s, so the live Insights hub stands in
     "/sitemap.xml",
     "/robots.txt",
     // Middleware lets /api/companies through; its POST handler requires an
