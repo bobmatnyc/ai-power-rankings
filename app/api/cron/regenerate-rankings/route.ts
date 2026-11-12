@@ -10,6 +10,8 @@
  *   invalid profile set fails the run (500 and alert) before any write.
  * - Requires CRON_SECRET authentication via Bearer token (same as sibling crons)
  * - Idempotent per period; concurrent/duplicate runs for the same period return 409
+ * - #95 step 7: `RANKINGS_REQUIRE_FRESH_METRICS=true` turns on the blocking freshness mode;
+ *   a refused run (`StaleMetricsError`) writes nothing, alerts and returns 409. Unset: flag mode.
  * Test: `tests/unit/publish-active-185.test.ts`.
  */
 
@@ -17,7 +19,11 @@ import { NextResponse } from "next/server";
 import { invalidateRankingsCache } from "@/lib/cache/invalidation.service";
 import { loggers } from "@/lib/logger";
 import { publishActiveRankings } from "@/lib/rankings/publish-active";
-import { RankingGenerationInProgressError } from "@/lib/services/ranking-generation.service";
+import {
+  freshnessModeFromEnv,
+  RankingGenerationInProgressError,
+  StaleMetricsError,
+} from "@/lib/services/ranking-generation.service";
 
 /**
  * Send a failure alert via webhook when the cron route encounters an error.
@@ -113,7 +119,9 @@ export async function GET(request: Request) {
 
     // 2. Regenerate rankings (idempotent per period, guarded against concurrent runs)
     // #185: per-list boards under the active profile set; never the combined layout.
-    const result = await publishActiveRankings();
+    // #95 step 7: the route owns the env read; unset passes no mode, so the service default runs.
+    const metricsFreshness = freshnessModeFromEnv(process.env["RANKINGS_REQUIRE_FRESH_METRICS"]);
+    const result = await publishActiveRankings(metricsFreshness ? { metricsFreshness } : {});
 
     const duration = Date.now() - startTime;
     loggers.api.info("Cron: Ranking regeneration complete", {
@@ -187,6 +195,30 @@ export async function GET(request: Request) {
           success: false,
           error: "Ranking regeneration already in progress for this period",
           period: error.period,
+        },
+        { status: 409 }
+      );
+    }
+
+    // #95 step 7: require mode refused a stale or unverifiable snapshot; nothing was written.
+    if (error instanceof StaleMetricsError) {
+      loggers.api.warn("Cron: Ranking regeneration refused on stale metrics", {
+        period: error.period,
+        metricsFreshness: error.freshness,
+        durationMs: duration,
+      });
+      await sendCronAlert("/api/cron/regenerate-rankings", error.message, {
+        period: error.period,
+        latestCollectedDate: error.freshness.latestCollectedDate,
+        durationMs: duration,
+        impact: "Rankings were not published: the metrics snapshot is stale (RANKINGS_REQUIRE_FRESH_METRICS)",
+      });
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Metrics snapshot is stale for this period; rankings were not published",
+          period: error.period,
+          metrics_freshness: error.freshness,
         },
         { status: 409 }
       );

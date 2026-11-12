@@ -28,12 +28,20 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
 }));
 const board311 = vi.hoisted(() => ({ load: async (): Promise<unknown> => null }));
 vi.mock("../../lib/rankings/current-rankings", () => ({ loadCurrentRankings: () => board311.load() }));
-vi.mock("../../lib/services/ranking-generation.service", () => ({
-  RankingGenerationInProgressError: class extends Error {
-    period = "";
-  },
-  regenerateRankings: () => publish.impl(),
-}));
+vi.mock("../../lib/services/ranking-generation.service", async () => {
+  // #95 step 7: the cron route also imports the freshness-mode parser and StaleMetricsError from here.
+  const pit = await vi.importActual<typeof import("../../lib/metrics-history/point-in-time")>(
+    "../../lib/metrics-history/point-in-time"
+  );
+  return {
+    RankingGenerationInProgressError: class extends Error {
+      period = "";
+    },
+    regenerateRankings: () => publish.impl(),
+    freshnessModeFromEnv: pit.freshnessModeFromEnv,
+    StaleMetricsError: pit.StaleMetricsError,
+  };
+});
 // #185: the cron route publishes through publishActiveRankings(), so the stub sits there.
 vi.mock("../../lib/rankings/publish-active", () => ({ publishActiveRankings: () => publish.impl() }));
 
