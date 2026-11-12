@@ -203,7 +203,8 @@ describe("#184 the scheduled run and scoring cannot reach the open-weight collec
     "lib/metrics-collectors/registry.ts",
     "lib/metrics-history/collect-shard.ts",
     "lib/metrics-history/point-in-time.ts",
-    "vercel.json",
+    // #184: vercel.json left this list on purpose. Ruling D83 schedules the run monthly through
+    // its own route; `metrics-open-weight-cron-184.test.ts` pins that one entry.
     ".github/workflows/check-metrics-history.yml",
   ])("%s does not mention the open-weight collector", (file) => {
     expect(read(file)).not.toMatch(NEEDLE);

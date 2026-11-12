@@ -12,8 +12,10 @@
 
 import { describe, expect, it } from "vitest";
 import { GITHUB_URL_PATHS } from "../../lib/metrics-collectors/github";
+import { HF_METRICS_KEY } from "../../lib/metrics-collectors/huggingface";
 import { COLLECTOR_PARTS, SHARD_COUNTS } from "../../lib/metrics-collectors/registry";
 import {
+  CHECKED_PARTS,
   COVERAGE_FLOOR,
   type LedgerRow,
   parseCoverageFloors,
@@ -121,7 +123,8 @@ describe("#95 renderMetricsHistoryReport checks", () => {
   it("parses METRICS_COVERAGE_FLOOR", () => {
     expect(parseCoverageFloors(undefined)).toEqual(COVERAGE_FLOOR);
     expect(parseCoverageFloors("  ")).toEqual(COVERAGE_FLOOR);
-    expect(parseCoverageFloors("off")).toEqual({ github: null, pypi: null, npm: null, vscode: null });
+    // #184: `off` also turns off the open-weight key's floor.
+    expect(parseCoverageFloors("off")).toEqual({ github: null, pypi: null, npm: null, vscode: null, huggingface: null });
     expect(parseCoverageFloors("github=0.5, npm=off")).toEqual({ ...COVERAGE_FLOOR, github: 0.5, npm: null });
     expect(() => parseCoverageFloors("rubygems=0.5")).toThrow("METRICS_COVERAGE_FLOOR");
     expect(() => parseCoverageFloors("github=1.5")).toThrow("from 0 to 1");
@@ -204,7 +207,8 @@ describe("#95 executeCheck", () => {
     for (const s of db.calls[0]) expect(() => assertSelectOnly(s.text)).not.toThrow();
     expect(db.calls[0][1].params).toEqual(["2026-11-01"]);
     // #95: the part-coverage query reads the collector's own GitHub URL fields.
-    expect(db.calls[0][4].params).toEqual(["2026-11-01", [...COLLECTOR_PARTS], [...GITHUB_URL_PATHS]]);
+    // #184: and covers the open-weight key, passed as $4.
+    expect(db.calls[0][4].params).toEqual(["2026-11-01", [...CHECKED_PARTS], [...GITHUB_URL_PATHS], HF_METRICS_KEY]);
   });
 
   it("reports per-part coverage and errors on a malformed METRICS_COVERAGE_FLOOR before any query", async () => {
