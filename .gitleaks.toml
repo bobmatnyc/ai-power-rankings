@@ -35,3 +35,10 @@ paths = [
   '''(^|/)docs/research/cron-status-verification-2026-03-28\.md$''',
   '''(^|/)docs/research/monthly-summary-feature-analysis-2026-02-05\.md$''',
 ]
+
+# #458: Clerk publishable keys, public by design (owner OK 17:48Z)
+[[allowlists]]
+description = "Clerk publishable keys (pk_live_/pk_test_) are public by design"
+targetRules = ["generic-api-key"]
+regexTarget = "secret"
+regexes = ['''^pk_(live|test)_[A-Za-z0-9]+$''']
