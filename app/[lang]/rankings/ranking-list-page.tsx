@@ -9,6 +9,7 @@ import { generalFAQsFor } from "@/data/seo-content";
 import type { Locale } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { generateRankingOGImageUrl } from "@/lib/og-utils";
+import { type HarnessCategory, rowsInCategory } from "@/lib/rankings/harness-category";
 import { loadListBoard } from "@/lib/rankings/list-board";
 import {
   DEFAULT_RANKING_LIST,
@@ -46,9 +47,12 @@ import { siteOrigin } from "@/lib/site-origin";
  *   #195: `RankingListPage` with `openWeightOnly` renders the open-weight models board
  *   (`/rankings/models?open=1`); with no open-weight row it shows `lists.openWeightEmpty`
  *   and no grid, since an empty grid fetches the full board on the client.
+ *   #196: with `category` it renders only the board's rows of that category, ranks kept
+ *   (`/rankings/coding-harnesses?category=`); with none it shows `lists.categoryEmpty`
+ *   and no grid, for the same reason. The metadata is the unfiltered board's.
  * Test: `tests/unit/ranking-list-pages-186.test.tsx`,
  *   `tests/unit/seo-canonical-origin.test.ts` (the `/rankings` page),
- *   `tests/unit/rankings-open-weight-195.test.ts`.
+ *   `tests/unit/rankings-open-weight-195.test.ts`, `tests/unit/rankings-category-196.test.ts`.
  */
 
 /**
@@ -161,19 +165,24 @@ export async function RankingListPage({
   lang,
   list,
   openWeightOnly = false,
+  category = null,
 }: {
   lang: string;
   list: RankingList;
   openWeightOnly?: boolean;
+  /** #196: a known harness category filters the board to its rows; null is the unfiltered board. */
+  category?: HarnessCategory | null;
 }): Promise<React.JSX.Element> {
   const dict = await getDictionary(lang as Locale);
   // #368: read directly, replacing the /api/rankings self-fetch.
-  const [{ rankings: initialRankings, meta, header }, navLists] = await Promise.all([
+  const [{ rankings: boardRows, meta, header }, navLists] = await Promise.all([
     // #195: the open-weight board for `?open=1`; the unfiltered page reads as before.
     openWeightOnly ? loadListBoard(list, true) : loadListBoard(list),
     // D6e: hide model page until model metrics land
     visibleRankingLists(),
   ]);
+  // #196: a category view keeps the board's rows of that category, with their board ranks.
+  const initialRankings = category ? rowsInCategory(boardRows, category) : boardRows;
   const listText = dict.rankings.lists;
   const locale = canonicalLocale(lang);
 
@@ -251,6 +260,11 @@ export async function RankingListPage({
         {openWeightOnly && initialRankings.length === 0 ? (
           <p data-note="open-weight-empty" className="text-muted-foreground">
             {listText.openWeightEmpty}
+          </p>
+        ) : category && initialRankings.length === 0 ? (
+          // #196: an empty category says so; an empty grid would fetch the full board client-side.
+          <p data-note="category-empty" className="text-muted-foreground">
+            {listText.categoryEmpty}
           </p>
         ) : (
         <Suspense

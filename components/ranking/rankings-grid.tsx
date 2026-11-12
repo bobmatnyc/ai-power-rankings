@@ -18,6 +18,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { trackEvent } from "@/lib/analytics/track";
 import { loggers } from "@/lib/logger-client";
+import { harnessCategory } from "@/lib/rankings/harness-category";
 import {
   formatAlgorithmVersion,
   formatHeaderDate,
@@ -116,7 +117,8 @@ function RankingsGridContent({
   const listPath = `/${lang}${rankingListPath(list)}`;
 
   // Get filters from URL
-  const categoryParam = searchParams.get("category") || "all";
+  // #196: only a known harness category filters; an empty or unknown value is the unfiltered board.
+  const categoryParam = harnessCategory(searchParams.get("category")) ?? "all";
   const tagsParam = searchParams.get("tags")?.split(",") || [];
   const sortParam = searchParams.get("sort") || "rank";
   // #233: the search term is client state only; it never enters the URL.
@@ -360,6 +362,11 @@ function RankingsGridContent({
       {rankings.length === 0 ? (
         // #186: a list with no ranked tool says so instead of rendering an empty grid.
         <p className="text-muted-foreground">{dict.rankings.lists.empty}</p>
+      ) : sortedRankings.length === 0 && categoryParam !== "all" && !searchTerm.trim() ? (
+        // #196: a category with no ranked tool says so, not a blank grid.
+        <p data-note="category-empty" className="text-muted-foreground">
+          {dict.rankings.lists.categoryEmpty}
+        </p>
       ) : sortedRankings.length === 0 && searchTerm.trim() ? (
         <SearchEmptyState
           term={searchTerm.trim()}

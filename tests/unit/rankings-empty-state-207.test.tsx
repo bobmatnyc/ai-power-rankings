@@ -148,7 +148,8 @@ describe("rankings search empty state (#207)", () => {
   });
 
   it("a category filter with zero rows and no term shows no search message", async () => {
-    nav.search = "category=no-such-category";
+    // #196: an unknown category is the unfiltered board now; a known one with no row is the zero-row case.
+    nav.search = "category=testing-tool";
     await renderGrid();
     for (const name of names) expect(screen.queryByText(name)).toBeNull();
     expect(screen.queryByRole("status")).toBeNull();
