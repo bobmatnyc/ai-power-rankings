@@ -20,6 +20,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  readdirSync,
   rmSync,
   symlinkSync,
   writeFileSync,
@@ -28,7 +29,12 @@ import { tmpdir } from "node:os";
 import { delimiter, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { parseGitHubRemote, summarizeResults } from "../../scripts/local-gate.mjs";
+import {
+  GITLEAKS_VERSION,
+  gitleaksVersionProblem,
+  parseGitHubRemote,
+  summarizeResults,
+} from "../../scripts/local-gate.mjs";
 
 const SCRIPT = fileURLToPath(new URL("../../scripts/local-gate.mjs", import.meta.url));
 
@@ -65,7 +71,48 @@ describe("summarizeResults", () => {
   });
 });
 
+// #460: the pinned-version check behind the gitleaks gate step.
+describe("gitleaksVersionProblem", () => {
+  it("accepts the pinned version, with or without a leading v", () => {
+    expect(gitleaksVersionProblem({ status: 0, stdout: `${GITLEAKS_VERSION}\n` })).toBeNull();
+    expect(gitleaksVersionProblem({ status: 0, stdout: `v${GITLEAKS_VERSION}` })).toBeNull();
+  });
+
+  it("names the install route when the binary is missing", () => {
+    const msg = gitleaksVersionProblem({ error: new Error("ENOENT"), status: null, stdout: "" });
+    expect(msg).toContain("not installed");
+    expect(msg).toContain("brew install gitleaks");
+    expect(msg).toContain(`releases/tag/v${GITLEAKS_VERSION}`);
+  });
+
+  it("rejects any other version", () => {
+    expect(gitleaksVersionProblem({ status: 0, stdout: "8.18.0\n" })).toContain(
+      `gitleaks 8.18.0 found, ${GITLEAKS_VERSION} required`
+    );
+  });
+
+  it.each([
+    ["8.30.10", { status: 0, stdout: "8.30.10\n" }],
+    ["v8.30.1-rc", { status: 0, stdout: "v8.30.1-rc\n" }],
+    ["a non-zero exit", { status: 1, stdout: `${GITLEAKS_VERSION}\n` }],
+  ])("rejects the near miss %s", (_label, res) => {
+    expect(gitleaksVersionProblem(res)).toContain(`${GITLEAKS_VERSION} required`);
+  });
+});
+
 // Stubs use shell builtins only: PATH holds nothing but the stub and git directories.
+// The gitleaks stub records which files its `dir` scan saw, to prove ignored files are skipped.
+const GITLEAKS_STUB = `#!/bin/sh
+echo "gitleaks $*" >> "$STUB_LOG"
+case "$1" in
+  version) echo "\${GITLEAKS_VERSION_OUT:-${GITLEAKS_VERSION}}"; exit 0 ;;
+  dir)
+    for f in README.md untracked.txt ignored.txt " notes.env"; do [ -f "$f" ] && echo "scanned $f" >> "$STUB_LOG"; done
+    exit "\${GITLEAKS_DIR_EXIT:-0}" ;;
+  git) exit "\${GITLEAKS_GIT_EXIT:-0}" ;;
+esac
+exit 99
+`;
 const GH_STUB = `#!/bin/sh
 echo "gh $*" >> "$STUB_LOG"
 case "$1" in
@@ -154,6 +201,7 @@ describe("local-gate CLI", { timeout: 30_000 }, () => {
       ["gh", GH_STUB],
       ["npx", NPX_STUB],
       ["npm", NPM_STUB],
+      ["gitleaks", GITLEAKS_STUB],
     ]) {
       writeFileSync(join(stubBin, name), body);
       chmodSync(join(stubBin, name), 0o755);
@@ -164,6 +212,8 @@ describe("local-gate CLI", { timeout: 30_000 }, () => {
     git(["add", "README.md"]);
     git(["-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgsign=false", "commit", "-q", "-m", "init"]);
     sha = git(["rev-parse", "HEAD"]);
+    // #460: the gitleaks commit scan diffs against origin/main; HEAD starts level with it.
+    git(["update-ref", "refs/remotes/origin/main", sha]);
   });
 
   afterEach(() => {
@@ -221,7 +271,124 @@ describe("local-gate CLI", { timeout: 30_000 }, () => {
     expect(r.out).toContain(message);
     expect(r.out).toContain("no commit status was posted");
     expect(r.posts).toHaveLength(0);
-    expect(r.calls.some((c) => c.startsWith("npx") || c.startsWith("npm"))).toBe(false);
+    expect(r.calls.some((c) => /^(npx|npm|gitleaks) /.test(c))).toBe(false);
+  });
+
+  // #460: the gitleaks gate step.
+  describe("gitleaks step", () => {
+    function commitFile(name: string) {
+      writeFileSync(join(repo, name), "change\n");
+      git(["add", name]);
+      git(["-c", "user.name=t", "-c", "user.email=t@example.com", "-c", "commit.gpgsign=false", "commit", "-q", "-m", name]);
+    }
+
+    it("passes clean: scans git-visible files only and skips an empty commit range", () => {
+      writeFileSync(join(repo, ".gitignore"), "ignored.txt\n");
+      writeFileSync(join(repo, "ignored.txt"), "x\n");
+      writeFileSync(join(repo, "untracked.txt"), "x\n");
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(0);
+      expect(r.out).toContain("PASS  gitleaks");
+      expect(r.calls).toContain("gitleaks version");
+      const dir = r.calls.find((c) => c.startsWith("gitleaks dir "));
+      expect(dir).toMatch(/^gitleaks dir \. --config \S+\.gitleaks\.toml --redact --no-banner$/);
+      expect(r.calls).toContain("scanned README.md");
+      expect(r.calls).toContain("scanned untracked.txt");
+      expect(r.calls).not.toContain("scanned ignored.txt");
+      expect(r.calls.some((c) => c.startsWith("gitleaks git"))).toBe(false);
+      expect(r.out).toContain("commit scan skipped");
+    });
+
+    it("scans only merge-base..HEAD when the branch has commits", () => {
+      commitFile("feature.txt");
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(0);
+      const scan = r.calls.find((c) => c.startsWith("gitleaks git "));
+      expect(scan).toMatch(/--redact --no-banner/);
+      expect(scan).toContain(`--log-opts=${sha}..HEAD`);
+    });
+
+    it.each([
+      ["the working tree", { GITLEAKS_DIR_EXIT: "1" }],
+      ["the commit range", { GITLEAKS_GIT_EXIT: "1" }],
+    ])("fails the gate and posts failure on a finding in %s", (_label, env) => {
+      commitFile("feature.txt");
+      const r = gate([], env);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain("FAIL  gitleaks");
+      expect(r.posts).toHaveLength(1);
+      expect(r.posts[0]).toContain("description=failed: gitleaks");
+    });
+
+    it("fails with install instructions when gitleaks is missing", () => {
+      rmSync(join(stubBin, "gitleaks"));
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain("gitleaks is not installed or not on PATH");
+      expect(r.out).toContain("brew install gitleaks");
+      expect(r.out).toContain("FAIL  gitleaks");
+    });
+
+    it("fails without scanning when gitleaks is the wrong version", () => {
+      const r = gate(["--no-status"], { GITLEAKS_VERSION_OUT: "8.18.0" });
+      expect(r.code).toBe(1);
+      expect(r.out).toContain(`gitleaks 8.18.0 found, ${GITLEAKS_VERSION} required`);
+      expect(r.calls.some((c) => /^gitleaks (dir|git) /.test(c))).toBe(false);
+    });
+
+    // #460 fix round: the snapshot fails closed.
+    it("copies and scans a first filename that starts with a space", () => {
+      writeFileSync(join(repo, " notes.env"), "x\n");
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(0);
+      expect(r.calls).toContain("scanned  notes.env");
+    });
+
+    it("fails the step and removes the temp dir when a copy fails mid-snapshot", () => {
+      const scratchTmp = join(root, "tmp");
+      mkdirSync(scratchTmp);
+      writeFileSync(join(repo, "b-locked.txt"), "x\n");
+      chmodSync(join(repo, "b-locked.txt"), 0o000);
+      const r = gate(["--no-status"], { TMPDIR: scratchTmp });
+      chmodSync(join(repo, "b-locked.txt"), 0o644);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain('could not copy "b-locked.txt"');
+      expect(r.out).toContain("FAIL  gitleaks");
+      expect(r.calls.some((c) => c.startsWith("gitleaks dir "))).toBe(false);
+      expect(readdirSync(scratchTmp)).toEqual([]);
+    });
+
+    it.each([
+      ["the listing is empty", () => git(["rm", "-q", "README.md"]), "listed no files"],
+      ["no listed file exists", () => rmSync(join(repo, "README.md")), "no working-tree files were copied"],
+    ])("fails the step when %s", (_label, arrange, message) => {
+      arrange();
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain(message);
+      expect(r.calls.some((c) => c.startsWith("gitleaks dir "))).toBe(false);
+    });
+
+    it("fails the step when the listing command fails", () => {
+      rmSync(join(gitBin, "git"));
+      writeFileSync(
+        join(gitBin, "git"),
+        `#!/bin/sh\ncase "$*" in *ls-files*) exit 128 ;; esac\nexec "${findGit()}" "$@"\n`
+      );
+      chmodSync(join(gitBin, "git"), 0o755);
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain("`git ls-files` failed");
+      expect(r.calls.some((c) => c.startsWith("gitleaks dir "))).toBe(false);
+    });
+
+    it("fails the step when there is no origin/main to diff against", () => {
+      git(["update-ref", "-d", "refs/remotes/origin/main"]);
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain("no merge-base with origin/main");
+      expect(r.out).toContain("FAIL  gitleaks");
+    });
   });
 
   it("runs the checks when invoked through a symlinked path containing a space", () => {
