@@ -612,7 +612,8 @@
       "smallListNote": "此列表少于 {min} 项，因此其等级按三等分为 S、A 和 B。",
       "modelsMetricsPendingNote": "临时：尚未收集模型指标，因此此顺序不代表质量排名。",
       "empty": "此列表中尚无已排名的工具。",
-      "openWeightEmpty": "目前尚无已排名的开放权重模型。"
+      "openWeightEmpty": "目前尚无已排名的开放权重模型。",
+      "categoryEmpty": "该类别中尚无已排名的工具。"
     }
   },
   "news": {

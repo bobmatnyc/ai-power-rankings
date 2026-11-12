@@ -280,7 +280,8 @@
       "smallListNote": "이 목록은 항목이 {min}개 미만이므로 등급은 3등분한 S, A, B입니다.",
       "modelsMetricsPendingNote": "임시: 모델 지표가 아직 수집되지 않았으므로 이 순서는 품질 순위가 아닙니다.",
       "empty": "이 목록에는 아직 순위가 매겨진 도구가 없습니다.",
-      "openWeightEmpty": "아직 순위가 매겨진 오픈 웨이트 모델이 없습니다."
+      "openWeightEmpty": "아직 순위가 매겨진 오픈 웨이트 모델이 없습니다.",
+      "categoryEmpty": "아직 이 카테고리에서 순위가 매겨진 도구가 없습니다."
     }
   },
   "news": {

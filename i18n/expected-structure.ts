@@ -221,6 +221,8 @@ export const EXPECTED_DICTIONARY_STRUCTURE = {
       empty: "",
       // #195: the empty /rankings/models?open=1 board
       openWeightEmpty: "",
+      // #196: an empty /rankings/coding-harnesses?category= board
+      categoryEmpty: "",
     },
     // #280: the card's v7.6 copy is gone; it renders `methodologyV8` text and keeps this link label.
     algorithm: {
