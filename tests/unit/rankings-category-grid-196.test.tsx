@@ -33,15 +33,16 @@ vi.mock("../../i18n/client", () => ({ useI18n: () => ({ dict: en, lang: "en" }) 
 
 import RankingsGrid from "../../components/ranking/rankings-grid";
 
-function ranking(rank: number, slug: string, name: string, category: string) {
-  return { rank, tool: { id: `id-${slug}`, slug, name, category, status: "active" }, scores: { overall: 80 - rank }, metrics: {} };
+// #196: the filter reads `tool.subcategory`; `category` is set to disagree, so a match on it would show.
+function ranking(rank: number, slug: string, name: string, category: string, subcategory: string | null) {
+  return { rank, tool: { id: `id-${slug}`, slug, name, category, subcategory, status: "active" }, scores: { overall: 80 - rank }, metrics: {} };
 }
 const rankings = [
-  ranking(1, "cursor", "Cursor", "code-editor"),
-  ranking(2, "claude-code", "Claude Code", "autonomous-agent"),
-  ranking(3, "copilot", "GitHub Copilot", "ide-assistant"),
+  ranking(1, "cursor", "Cursor", "code-editor", "code_editor"),
+  ranking(2, "factory", "Factory", "other", "autonomous_agent"),
+  ranking(3, "copilot", "GitHub Copilot", "autonomous-agent", null),
 ];
-const names = ["Cursor", "Claude Code", "GitHub Copilot"];
+const names = ["Cursor", "Factory", "GitHub Copilot"];
 
 async function renderGrid() {
   await act(async () => {
@@ -61,10 +62,10 @@ afterEach(() => {
 });
 
 describe("#196 grid ?category=", () => {
-  it("a known category shows only its rows", async () => {
+  it("a known category shows only the rows of its subcategory, not of tools.category", async () => {
     nav.search = "category=autonomous-agent";
     await renderGrid();
-    expect(shown()).toEqual(["Claude Code"]);
+    expect(shown()).toEqual(["Factory"]);
   });
 
   it.each(["category=no-such-category", "category="])("%s shows every row and no empty message", async (search) => {

@@ -542,6 +542,7 @@ export class ToolsRepository extends BaseRepository<ToolData> {
       db_id: dbTool.id, // Then override with authoritative database UUID to prevent overwriting
       kind: dbTool.kind, // #186: the column decides list membership, never a JSONB copy
       status: dbTool.status, // D58: the column decides status; a stale data.status never overrides it
+      subcategory: dbTool.subcategory ?? null, // #196: the column decides `?category=`; never a JSONB copy
     };
   }
 

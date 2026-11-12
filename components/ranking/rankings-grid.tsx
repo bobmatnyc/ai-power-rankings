@@ -18,7 +18,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { trackEvent } from "@/lib/analytics/track";
 import { loggers } from "@/lib/logger-client";
-import { harnessCategory } from "@/lib/rankings/harness-category";
+import { harnessCategory, rowsInCategory } from "@/lib/rankings/harness-category";
 import {
   formatAlgorithmVersion,
   formatHeaderDate,
@@ -46,6 +46,8 @@ interface RankingData {
     id: string;
     name: string;
     category: string;
+    /** #196: `tools.subcategory` (underscore form), which `?category=` filters on. */
+    subcategory?: string | null;
     status: string;
     website_url?: string;  // A link target only; never an image source
     logo?: string;         // Stored local logo path (legacy; see D82)
@@ -118,7 +120,8 @@ function RankingsGridContent({
 
   // Get filters from URL
   // #196: only a known harness category filters; an empty or unknown value is the unfiltered board.
-  const categoryParam = harnessCategory(searchParams.get("category")) ?? "all";
+  const category = harnessCategory(searchParams.get("category"));
+  const categoryParam = category ?? "all";
   const tagsParam = searchParams.get("tags")?.split(",") || [];
   const sortParam = searchParams.get("sort") || "rank";
   // #233: the search term is client state only; it never enters the URL.
@@ -168,13 +171,8 @@ function RankingsGridContent({
   }, [initialRankings.length, fetchRankings]);
 
   // Apply filters
-  const filteredRankings = rankings.filter((r) => {
-    if (categoryParam !== "all" && r.tool.category !== categoryParam) {
-      return false;
-    }
-    // Add tag filtering logic here when tags are implemented
-    return true;
-  });
+  // #196: a category keeps the rows whose `tool.subcategory` it names (`rowsInCategory`).
+  const filteredRankings = category ? rowsInCategory(rankings, category) : rankings;
   // #175: apply the search term and send site_search once the rankings are loaded.
   const searchedRankings = useRankingsSearch(filteredRankings, searchTerm, !loading);
 

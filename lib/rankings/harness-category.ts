@@ -1,9 +1,9 @@
 /**
  * #196: the categories `?category=` filters the harness board by.
  *
- * The values the #191 URL table's `/rankings/coding-harnesses?category=` rows name, each
- * equal to a `tools.category` value (the field the board rows carry as `tool.category`
- * and the client grid's filter reads). A value outside this list is unknown.
+ * The values the #191 URL table's `/rankings/coding-harnesses?category=` rows name, in the
+ * URL (hyphen) form of a `tools.subcategory` value (Architect ruling 20:12Z; Q-A4: the
+ * column stores underscores, URLs use hyphens). A value outside this list is unknown.
  */
 export const HARNESS_CATEGORIES = [
   "app-builder",
@@ -24,7 +24,16 @@ export function harnessCategory(value: string | null | undefined): HarnessCatego
   return value && CATEGORY_SET.has(value) ? (value as HarnessCategory) : null;
 }
 
-/** #196 PURE: the rows whose `tool.category` is `category`, in board order, ranks kept. */
-export function rowsInCategory<T extends { tool?: { category?: string } }>(rows: readonly T[], category: HarnessCategory): T[] {
-  return rows.filter((row) => row.tool?.category === category);
+/** #196 PURE: the `tools.subcategory` value a URL category names: hyphens to underscores (`app-builder` -> `app_builder`, Q-A4). */
+export function harnessSubcategory(category: HarnessCategory): string {
+  return category.replace(/-/g, "_");
+}
+
+/**
+ * #196 PURE: the rows whose `tool.subcategory` is `category`'s (`harnessSubcategory`), in board
+ * order, ranks kept. `tool.category` is not read; a row with no subcategory is in no category.
+ */
+export function rowsInCategory<T extends { tool?: { subcategory?: string | null } }>(rows: readonly T[], category: HarnessCategory): T[] {
+  const subcategory = harnessSubcategory(category);
+  return rows.filter((row) => row.tool?.subcategory === subcategory);
 }
