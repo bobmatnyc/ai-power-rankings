@@ -222,6 +222,8 @@ async function formatRanking(ranking: any, toolsRepo: ToolsRepository) {
       slug: tool.slug,
       name: tool.name,
       category: tool.category,
+      // #196: the `tools.subcategory` column (underscore form), which `?category=` filters on; null when unset.
+      subcategory: typeof toolAsAny?.["subcategory"] === "string" ? (toolAsAny["subcategory"] as string) : null,
       status: tool.status,
       website_url: toolInfo?.website || "",
       logo: logoPath,

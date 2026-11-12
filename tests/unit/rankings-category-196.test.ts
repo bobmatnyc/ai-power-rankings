@@ -11,9 +11,11 @@ import { locales } from "../../i18n/config";
  *   empty or unknown value the whole board, a category with no ranked tool an empty
  *   message (never the full board), and no view may become a page of its own for search
  *   engines (D51). The 308s stay held until the release is ruled on.
- * What: the rankings and tools repositories are stubbed (no database; the board reads no
- *   column beyond the joined tool, so no pglite is needed). The harness board holds one
- *   tool per table category plus a `code-assistant` tool. The checks run the real
+ * What: the rankings and tools repositories are stubbed (no database; the column read is
+ *   proven on PGlite in `rankings-category-pglite-196.test.ts`). The harness board holds one
+ *   tool per table category, each with `category: "other"` so only `tools.subcategory`
+ *   (Architect ruling 20:12Z) can place it, plus a `code_assistant` tool and a tool with no
+ *   subcategory. The checks run the real
  *   middleware, the real `generateMetadata` and page components of `/rankings/[list]`
  *   and the category route `?category=` is rewritten to, walking the returned element
  *   trees, and read the real URL table.
@@ -42,11 +44,12 @@ vi.mock("../../lib/db/repositories/rankings.repository", () => ({
   },
 }));
 
-/** Tool `h-<category>` is a harness of that category. */
+/** Tool `h-<subcategory>` is a harness with that subcategory; `h-none` has none; every category is `other`. */
 vi.mock("../../lib/db/repositories/tools.repository", () => ({
   ToolsRepository: class {
     async findById(id: string) {
-      return { id, db_id: id, slug: id, name: `Tool ${id}`, category: id.slice(2), kind: "harness", status: "active", info: {} };
+      const subcategory = id === "h-none" ? null : id.slice(2);
+      return { id, db_id: id, slug: id, name: `Tool ${id}`, category: "other", subcategory, kind: "harness", status: "active", info: {} };
     }
     async findBySlug() {
       return null;
@@ -57,11 +60,12 @@ vi.mock("../../lib/db/repositories/tools.repository", () => ({
   },
 }));
 
-const { HARNESS_CATEGORIES } = await import("../../lib/rankings/harness-category");
+const { HARNESS_CATEGORIES, harnessSubcategory } = await import("../../lib/rankings/harness-category");
 const { URL_TABLE_ROWS, PENDING_TARGETS, isPendingTarget, resolveTableRedirect } = await import("../../lib/seo/url-table");
 
-// One tool per category, in reverse order so board order differs from category order, plus a non-table category.
-const BOARD = [...[...HARNESS_CATEGORIES].reverse(), "code-assistant"].map((c) => `h-${c}`);
+// One tool per subcategory, in reverse order so board order differs from category order, plus a
+// non-table subcategory and a tool with none.
+const BOARD = [...[...HARNESS_CATEGORIES].reverse().map(harnessSubcategory), "code_assistant", "none"].map((c) => `h-${c}`);
 
 function stored(list: string, ids: string[]) {
   return {
@@ -140,13 +144,33 @@ describe("#196 the category values", () => {
   });
 });
 
+describe("#196 the URL value to subcategory mapping", () => {
+  it.each([
+    ["app-builder", "app_builder"],
+    ["autonomous-agent", "autonomous_agent"],
+    ["code-editor", "code_editor"],
+    ["code-review", "code_review"],
+    ["devops-assistant", "devops_assistant"],
+    ["ide-assistant", "ide_assistant"],
+    ["open-source-framework", "open_source_framework"],
+    ["testing-tool", "testing_tool"],
+  ] as const)("%s filters on tools.subcategory %s", (category, subcategory) => {
+    expect(harnessSubcategory(category)).toBe(subcategory);
+  });
+
+  it("covers every known category", () => {
+    expect(HARNESS_CATEGORIES).toHaveLength(8);
+  });
+});
+
 describe("#196 the filtered board", () => {
-  it.each([...HARNESS_CATEGORIES])("?category=%s renders only that category's tool, with its board rank", async (category) => {
+  it.each([...HARNESS_CATEGORIES])("?category=%s renders only the tool of that subcategory, with its board rank", async (category) => {
     const { default: Page } = await categoryRoute();
     const tree = await Page(params({ lang: "en", list: "coding-harnesses", category }));
     const [grid] = gridOf(tree);
-    expect(grid?.["initialRankings"].map((r: any) => [r.tool.slug, r.tool.category, r.rank])).toEqual([
-      [`h-${category}`, category, BOARD.indexOf(`h-${category}`) + 1],
+    const id = `h-${harnessSubcategory(category)}`;
+    expect(grid?.["initialRankings"].map((r: any) => [r.tool.slug, r.tool.category, r.tool.subcategory, r.rank])).toEqual([
+      [id, "other", harnessSubcategory(category), BOARD.indexOf(id) + 1],
     ]);
     expect(emptyNoteOf(tree)).toEqual([]);
   });
@@ -159,7 +183,7 @@ describe("#196 the filtered board", () => {
   });
 
   it("a category with no ranked tool shows the empty message and no grid (which would fetch the full board)", async () => {
-    state.current["harness"] = stored("harness", BOARD.filter((id) => id !== "h-testing-tool"));
+    state.current["harness"] = stored("harness", BOARD.filter((id) => id !== "h-testing_tool"));
     const { default: Page } = await categoryRoute();
     const tree = await Page(params({ lang: "en", list: "coding-harnesses", category: "testing-tool" }));
     expect(gridOf(tree)).toEqual([]);
@@ -176,9 +200,18 @@ describe("#196 the filtered board", () => {
     }
   });
 
-  it("the unfiltered board still renders every row", async () => {
+  it("the unfiltered board still renders every row, the tool with no subcategory included", async () => {
     const { default: Page } = await unfilteredRoute();
     expect(shownSlugs(await Page(params({ lang: "en", list: "coding-harnesses" })))).toEqual(BOARD);
+    expect(BOARD).toContain("h-none");
+  });
+
+  it("a tool with no subcategory is on no category page", async () => {
+    const { default: Page } = await categoryRoute();
+    for (const category of HARNESS_CATEGORIES) {
+      const tree = await Page(params({ lang: "en", list: "coding-harnesses", category }));
+      expect(shownSlugs(tree), category).not.toContain("h-none");
+    }
   });
 
   it("only the harness board has category views", async () => {
