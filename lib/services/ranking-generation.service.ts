@@ -46,8 +46,12 @@ import {
   MetricsHistoryReadError,
   type MetricsHistorySnapshot,
   type PointInTimeReport,
+  StaleMetricsError,
 } from "@/lib/metrics-history/point-in-time";
 import { selectLatestCollectedDate, selectMetricsHistoryRows } from "@/lib/metrics-history/read";
+
+// #95 step 7: the cron route takes these from here; app/ never imports lib/metrics-history (D20 privacy guard).
+export { freshnessModeFromEnv, StaleMetricsError } from "@/lib/metrics-history/point-in-time";
 import {
   ALGORITHM_V76_WEIGHTS,
   ALGORITHM_VERSION,
@@ -173,7 +177,10 @@ export interface RankingGenerationResult {
   pointInTime: PointInTimeReport | null;
   /** #95: the freshness guard's finding for the period. */
   metricsFreshness: MetricsFreshness;
-  /** #95: true when the guard ran on a history-scored run and the snapshot is stale or could not be checked. Never blocks. */
+  /**
+   * #95: true when the guard ran on a history-scored run and the snapshot is stale or could not be checked.
+   * Flag mode never blocks; require mode throws `StaleMetricsError` instead of returning true.
+   */
   staleMetrics: boolean;
 }
 
@@ -249,6 +256,7 @@ export interface RegenerateRankingsOptions {
   /**
    * #95 step 5: freshness guard mode. Default "flag" (spec phase 1): record, never block.
    * It reads history only on a run that scored from history; otherwise `not_applicable`.
+   * #95 step 7: "require" throws `StaleMetricsError` on a stale or unknown status, before any write.
    */
   metricsFreshness?: MetricsFreshnessMode;
 }
@@ -755,7 +763,8 @@ async function checkMetricsFreshness(
     return { mode, status: "unknown", period, latestCollectedDate: null, reason: "persistence port has no metrics-history reader" };
   }
   try {
-    return assessMetricsFreshness(period, await persistence.loadLatestMetricsCollectedDate(period));
+    // #95 step 7: stamp the mode that ran; assessMetricsFreshness reports "flag".
+    return { ...assessMetricsFreshness(period, await persistence.loadLatestMetricsCollectedDate(period)), mode };
   } catch (error) {
     return { mode, status: "unknown", period, latestCollectedDate: null, reason: `history read failed: ${errorText(error)}` };
   }
@@ -800,8 +809,10 @@ async function loadPointInTimeTools(
  * profile error writes nothing.
  * #95: `usePointInTimeMetrics` (default off) scores from `tool_metrics_history` as of the
  * period; the freshness guard (default "flag") checks only such a run, reports a stale
- * snapshot and never blocks; a live-scored run is `not_applicable`.
- * Test: `lib/services/ranking-generation.golden.test.ts` (publish unchanged),
+ * snapshot and never blocks; a live-scored run is `not_applicable`. In "require" mode
+ * (#95 step 7) a stale or unknown snapshot throws `StaleMetricsError` before any write.
+ * Test: `tests/unit/require-fresh-metrics-95.test.ts` (require mode),
+ * `lib/services/ranking-generation.golden.test.ts` (publish unchanged),
  * `lib/services/ranking-generation.modes.test.ts` (draft, dry-run),
  * `tests/unit/ranking-generation-per-list-186.test.ts` (per-list layout),
  * `tests/unit/point-in-time-metrics-95.test.ts` (point-in-time, freshness).
@@ -838,7 +849,7 @@ export async function regenerateRankings(
     throw new Error("A scoring profile set applies to the per-list layout only (#185)");
   }
   const algorithmVersion = scoring?.algorithmVersion ?? RANKING_ALGORITHM_VERSION;
-  // #95: the guard defaults to flag-only (spec step 5 phase 1); there is no blocking mode.
+  // #95: the guard defaults to flag-only (spec step 5 phase 1); "require" (step 7) is opt-in and blocks.
   const freshnessMode = options.metricsFreshness ?? "flag";
   if (!METRICS_FRESHNESS_MODES.includes(freshnessMode)) {
     throw new Error(`Unknown metrics freshness mode: ${String(freshnessMode)}`);
@@ -912,6 +923,10 @@ export async function regenerateRankings(
 
     // #95 step 5: flag a stale snapshot right before the write; flag mode never blocks.
     const metricsFreshness = await checkMetricsFreshness(freshnessMode, period, persistence, pointInTime?.applied === true);
+    // #95 step 7: require mode fails closed on a stale or unverifiable snapshot; nothing is written.
+    if (freshnessMode === "require" && (metricsFreshness.status === "stale" || metricsFreshness.status === "unknown")) {
+      throw new StaleMetricsError(metricsFreshness);
+    }
 
     if (mode === "publish") {
       if (layout === "combined") {
