@@ -20,6 +20,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  readdirSync,
   rmSync,
   symlinkSync,
   writeFileSync,
@@ -89,6 +90,14 @@ describe("gitleaksVersionProblem", () => {
       `gitleaks 8.18.0 found, ${GITLEAKS_VERSION} required`
     );
   });
+
+  it.each([
+    ["8.30.10", { status: 0, stdout: "8.30.10\n" }],
+    ["v8.30.1-rc", { status: 0, stdout: "v8.30.1-rc\n" }],
+    ["a non-zero exit", { status: 1, stdout: `${GITLEAKS_VERSION}\n` }],
+  ])("rejects the near miss %s", (_label, res) => {
+    expect(gitleaksVersionProblem(res)).toContain(`${GITLEAKS_VERSION} required`);
+  });
 });
 
 // Stubs use shell builtins only: PATH holds nothing but the stub and git directories.
@@ -98,7 +107,7 @@ echo "gitleaks $*" >> "$STUB_LOG"
 case "$1" in
   version) echo "\${GITLEAKS_VERSION_OUT:-${GITLEAKS_VERSION}}"; exit 0 ;;
   dir)
-    for f in README.md untracked.txt ignored.txt; do [ -f "$f" ] && echo "scanned $f" >> "$STUB_LOG"; done
+    for f in README.md untracked.txt ignored.txt " notes.env"; do [ -f "$f" ] && echo "scanned $f" >> "$STUB_LOG"; done
     exit "\${GITLEAKS_DIR_EXIT:-0}" ;;
   git) exit "\${GITLEAKS_GIT_EXIT:-0}" ;;
 esac
@@ -325,6 +334,60 @@ describe("local-gate CLI", { timeout: 30_000 }, () => {
       expect(r.code).toBe(1);
       expect(r.out).toContain(`gitleaks 8.18.0 found, ${GITLEAKS_VERSION} required`);
       expect(r.calls.some((c) => /^gitleaks (dir|git) /.test(c))).toBe(false);
+    });
+
+    // #460 fix round: the snapshot fails closed.
+    it("copies and scans a first filename that starts with a space", () => {
+      writeFileSync(join(repo, " notes.env"), "x\n");
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(0);
+      expect(r.calls).toContain("scanned  notes.env");
+    });
+
+    it("fails the step and removes the temp dir when a copy fails mid-snapshot", () => {
+      const scratchTmp = join(root, "tmp");
+      mkdirSync(scratchTmp);
+      writeFileSync(join(repo, "b-locked.txt"), "x\n");
+      chmodSync(join(repo, "b-locked.txt"), 0o000);
+      const r = gate(["--no-status"], { TMPDIR: scratchTmp });
+      chmodSync(join(repo, "b-locked.txt"), 0o644);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain('could not copy "b-locked.txt"');
+      expect(r.out).toContain("FAIL  gitleaks");
+      expect(r.calls.some((c) => c.startsWith("gitleaks dir "))).toBe(false);
+      expect(readdirSync(scratchTmp)).toEqual([]);
+    });
+
+    it.each([
+      ["the listing is empty", () => git(["rm", "-q", "README.md"]), "listed no files"],
+      ["no listed file exists", () => rmSync(join(repo, "README.md")), "no working-tree files were copied"],
+    ])("fails the step when %s", (_label, arrange, message) => {
+      arrange();
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain(message);
+      expect(r.calls.some((c) => c.startsWith("gitleaks dir "))).toBe(false);
+    });
+
+    it("fails the step when the listing command fails", () => {
+      rmSync(join(gitBin, "git"));
+      writeFileSync(
+        join(gitBin, "git"),
+        `#!/bin/sh\ncase "$*" in *ls-files*) exit 128 ;; esac\nexec "${findGit()}" "$@"\n`
+      );
+      chmodSync(join(gitBin, "git"), 0o755);
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain("`git ls-files` failed");
+      expect(r.calls.some((c) => c.startsWith("gitleaks dir "))).toBe(false);
+    });
+
+    it("fails the step when there is no origin/main to diff against", () => {
+      git(["update-ref", "-d", "refs/remotes/origin/main"]);
+      const r = gate(["--no-status"]);
+      expect(r.code).toBe(1);
+      expect(r.out).toContain("no merge-base with origin/main");
+      expect(r.out).toContain("FAIL  gitleaks");
     });
   });
 

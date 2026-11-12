@@ -26,7 +26,7 @@
  */
 
 import { spawnSync } from "node:child_process";
-import { copyFileSync, lstatSync, mkdirSync, mkdtempSync, realpathSync, rmSync } from "node:fs";
+import { copyFileSync, existsSync, lstatSync, mkdirSync, mkdtempSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -141,25 +141,30 @@ function preflight() {
   return { sha, repo };
 }
 
-// #460: copies the files git would commit (tracked + untracked, not ignored) to a temp dir.
+// #460: copies the files git would commit (tracked + untracked, not ignored) into `dir`.
 // `gitleaks dir .` on the checkout itself also reads node_modules/.next/tmp, GBs in a dev tree.
-function snapshotTree(root) {
-  const list = git(["-C", root, "ls-files", "-z", "--cached", "--others", "--exclude-standard"]);
-  if (list === null) return null;
-  const dir = mkdtempSync(join(tmpdir(), "local-gate-gitleaks-"));
-  for (const rel of list.split("\0").filter(Boolean)) {
+// Fails closed: throws on any error but ENOENT (a file deleted since the listing), and on an
+// empty listing or zero files copied, so the scan never passes on an empty directory.
+function snapshotTree(root, dir) {
+  // #460: read the -z listing raw; git()'s trim() would cut a leading space off the first path.
+  const res = run("git", ["-C", root, "ls-files", "-z", "--cached", "--others", "--exclude-standard"]);
+  if (res.error || res.status !== 0) throw new Error("`git ls-files` failed; cannot list the working-tree files.");
+  const files = res.stdout.split("\0").filter((rel) => rel !== "");
+  if (files.length === 0) throw new Error("`git ls-files` listed no files to scan.");
+  let copied = 0;
+  for (const rel of files) {
     const src = join(root, rel);
-    let stat;
     try {
-      stat = lstatSync(src);
-    } catch {
-      continue; // deleted in the working tree: nothing to scan
+      if (!lstatSync(src).isFile()) continue; // symlinks and submodules; gitleaks dir skips symlinks too
+      mkdirSync(dirname(join(dir, rel)), { recursive: true });
+      copyFileSync(src, join(dir, rel));
+      copied += 1;
+    } catch (error) {
+      if (error?.code === "ENOENT" && !existsSync(src)) continue; // deleted since the listing
+      throw new Error(`could not copy ${JSON.stringify(rel)} for the scan: ${error?.code ?? error}`);
     }
-    if (!stat.isFile()) continue; // symlinks and submodules; gitleaks dir skips symlinks too
-    mkdirSync(dirname(join(dir, rel)), { recursive: true });
-    copyFileSync(src, join(dir, rel));
   }
-  return dir;
+  if (copied === 0) throw new Error("no working-tree files were copied for the scan.");
 }
 
 // #460: scans the working tree, then this branch's commits; any finding fails the check.
@@ -171,19 +176,26 @@ function runGitleaks() {
     return false;
   }
   const root = git(["rev-parse", "--show-toplevel"]);
-  const snapshot = root ? snapshotTree(root) : null;
-  if (!snapshot) {
-    console.error("local-gate: gitleaks — could not list the working-tree files.");
+  if (!root) {
+    console.error("local-gate: gitleaks — could not resolve the repository root.");
     return false;
   }
   const flags = ["--config", join(root, ".gitleaks.toml"), "--redact", "--no-banner"];
 
+  // #460: the snapshot is built inside try/finally, so the temp dir is removed on every path
+  // and a snapshot error fails the step instead of crashing the gate.
   let treeOk;
+  let snapshot;
   try {
+    snapshot = mkdtempSync(join(tmpdir(), "local-gate-gitleaks-"));
+    snapshotTree(root, snapshot);
     console.log("local-gate: gitleaks — scanning the working tree (tracked + untracked, not ignored)");
     treeOk = run("gitleaks", ["dir", ".", ...flags], { cwd: snapshot, stdio: "inherit" }).status === 0;
+  } catch (error) {
+    console.error(`local-gate: gitleaks — working-tree snapshot failed: ${error?.message ?? error}`);
+    return false;
   } finally {
-    rmSync(snapshot, { recursive: true, force: true });
+    if (snapshot) rmSync(snapshot, { recursive: true, force: true });
   }
 
   const base = git(["merge-base", GITLEAKS_BASE_REF, "HEAD"]);
