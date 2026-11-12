@@ -10,14 +10,16 @@
  *   on 2026-10-01, an open-weight row on 2026-10-15 and an npm-only re-run row on 2026-10-20,
  *   then runs the real `PART_COVERAGE_QUERY` and `FLAT_QUERY`. Each part must read its own
  *   latest earlier date, and the rendered report must fail the parts nobody recorded on 2026-11-01.
+ *   #184: `huggingface` is checked too; a `kind='model'` tool with an `hf_repo` is eligible for it.
  * Test: `npx vitest run tests/unit/metrics-part-coverage-pglite-95.test.ts`. No server, no network.
  */
 
 import { PGlite } from "@electric-sql/pglite";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GITHUB_URL_PATHS } from "../../lib/metrics-collectors/github";
+import { HF_METRICS_KEY } from "../../lib/metrics-collectors/huggingface";
 import { COLLECTOR_PARTS } from "../../lib/metrics-collectors/registry";
-import { renderMetricsHistoryReport } from "../../lib/metrics-history/check-report";
+import { CHECKED_PARTS, renderMetricsHistoryReport } from "../../lib/metrics-history/check-report";
 import { FLAT_QUERY, PART_COVERAGE_QUERY } from "../../scripts/check-metrics-history";
 
 vi.setConfig({ testTimeout: 60_000 });
@@ -34,7 +36,12 @@ describe("PART_COVERAGE_QUERY and FLAT_QUERY previous collection (#95)", () => {
   beforeEach(async () => {
     pg = new PGlite();
     await pg.exec(`
-      CREATE TABLE tools (id uuid PRIMARY KEY, data jsonb NOT NULL DEFAULT '{}'::jsonb);
+      CREATE TABLE tools (
+        id uuid PRIMARY KEY,
+        data jsonb NOT NULL DEFAULT '{}'::jsonb,
+        kind text NOT NULL DEFAULT 'harness',
+        hf_repo text
+      );
       CREATE TABLE tool_metrics_history (
         tool_id uuid REFERENCES tools(id),
         collected_date date NOT NULL,
@@ -64,10 +71,12 @@ describe("PART_COVERAGE_QUERY and FLAT_QUERY previous collection (#95)", () => {
   });
 
   async function partCoverage(): Promise<{ part: string; eligible: number; recorded: number }[]> {
+    // #184: CHECKED_PARTS and the open-weight key, as executeCheck passes them.
     const result = await pg.query<{ part: string; eligible: number; recorded: number }>(PART_COVERAGE_QUERY, [
       "2026-11-01",
-      [...COLLECTOR_PARTS],
+      [...CHECKED_PARTS],
       [...GITHUB_URL_PATHS],
+      HF_METRICS_KEY,
     ]);
     return result.rows;
   }
@@ -77,6 +86,8 @@ describe("PART_COVERAGE_QUERY and FLAT_QUERY previous collection (#95)", () => {
     const byPart = Object.fromEntries(rows.map((r) => [r.part, { eligible: r.eligible, recorded: r.recorded }]));
     expect(byPart).toEqual({
       github: { eligible: 1, recorded: 0 },
+      // #184: C carried the open-weight key on 2026-10-15 and has nothing on 2026-11-01.
+      huggingface: { eligible: 1, recorded: 0 },
       npm: { eligible: 1, recorded: 1 },
       pypi: { eligible: 1, recorded: 0 },
       vscode: { eligible: 1, recorded: 0 },
@@ -115,5 +126,28 @@ describe("PART_COVERAGE_QUERY and FLAT_QUERY previous collection (#95)", () => {
       pypi: { compared: 1, unchanged: 1 },
       vscode: { compared: 1, unchanged: 1 },
     });
+  });
+
+  // #184: the open-weight run writes no ledger row, so this query is what sees a missed month.
+  it("makes a model with an hf_repo eligible for huggingface on its first month, and counts its row", async () => {
+    const D = "00000000-0000-4000-8000-00000000000d";
+    const E = "00000000-0000-4000-8000-00000000000e";
+    const F = "00000000-0000-4000-8000-00000000000f";
+    await pg.query("INSERT INTO tools (id, kind, hf_repo) VALUES ($1, 'model', 'org/model-d')", [D]);
+    await pg.query("INSERT INTO tools (id, kind, hf_repo) VALUES ($1, 'model', NULL)", [E]);
+    await pg.query("INSERT INTO tools (id, kind, hf_repo) VALUES ($1, 'harness', 'org/not-a-model')", [F]);
+
+    const missed = (await partCoverage()).find((r) => r.part === HF_METRICS_KEY);
+    expect(missed).toEqual({ part: HF_METRICS_KEY, eligible: 2, recorded: 0 });
+
+    for (const id of [C, D]) {
+      await pg.query("INSERT INTO tool_metrics_history (tool_id, collected_date, metrics) VALUES ($1, $2, $3::jsonb)", [
+        id,
+        "2026-11-01",
+        JSON.stringify({ [HF_METRICS_KEY]: { downloads_30d: leaf } }),
+      ]);
+    }
+    const recorded = (await partCoverage()).find((r) => r.part === HF_METRICS_KEY);
+    expect(recorded).toEqual({ part: HF_METRICS_KEY, eligible: 2, recorded: 2 });
   });
 });

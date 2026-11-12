@@ -26,6 +26,7 @@
 import { neon } from "@neondatabase/serverless";
 import {
   type Coverage,
+  CHECKED_PARTS,
   type CoverageFloors,
   type DateCount,
   type FlatCount,
@@ -36,6 +37,7 @@ import {
   resolveCheckDate,
 } from "../lib/metrics-history/check-report";
 import { GITHUB_URL_PATHS } from "../lib/metrics-collectors/github";
+import { HF_METRICS_KEY } from "../lib/metrics-collectors/huggingface";
 import { COLLECTOR_PARTS } from "../lib/metrics-collectors/registry";
 import { assertSelectOnly, redact } from "../lib/ranking-snapshot-diff";
 
@@ -68,6 +70,8 @@ export const FLAT_QUERY =
 // part's key on the checked date. $3 is GITHUB_URL_PATHS, the collector's own URL fields.
 // #95: the previous collection is per part: the latest earlier date holding that part. An
 // off-day row (open-weight run, shard re-run) must not zero eligibility for the other parts.
+// #184: $2 is CHECKED_PARTS. $4 is the open-weight key; a `kind='model'` tool with an
+// `hf_repo` (the run's listModels filter) is eligible for it, so a missed month fails.
 export const PART_COVERAGE_QUERY =
   "SELECT p.part AS part, count(*)::int AS eligible, " +
   "(count(*) FILTER (WHERE jsonb_typeof(cur.metrics -> p.part) = 'object'))::int AS recorded " +
@@ -80,6 +84,7 @@ export const PART_COVERAGE_QUERY =
   "OR (p.part = 'github' AND EXISTS (SELECT 1 FROM unnest($3::text[]) AS g(path) " +
   "WHERE jsonb_typeof(t.data #> string_to_array(g.path, '.')) = 'string' " +
   "AND (t.data #>> string_to_array(g.path, '.')) LIKE '%github.com%')) " +
+  "OR (p.part = $4 AND t.kind = 'model' AND coalesce(t.hf_repo, '') <> '') " +
   "GROUP BY p.part";
 
 export const QUERIES = [ROWS_QUERY, LEDGER_QUERY, COVERAGE_QUERY, FLAT_QUERY, PART_COVERAGE_QUERY] as const;
@@ -146,7 +151,8 @@ export async function executeCheck(deps: {
       { text: LEDGER_QUERY, params: [date] },
       { text: COVERAGE_QUERY, params: [date] },
       { text: FLAT_QUERY, params: [date, [...COLLECTOR_PARTS]] },
-      { text: PART_COVERAGE_QUERY, params: [date, [...COLLECTOR_PARTS], [...GITHUB_URL_PATHS]] },
+      // #184: coverage covers the open-weight key too.
+      { text: PART_COVERAGE_QUERY, params: [date, [...CHECKED_PARTS], [...GITHUB_URL_PATHS], HF_METRICS_KEY] },
     ]);
     if (!Array.isArray(results) || results.length !== QUERIES.length) {
       throw new CheckError("the transaction returned the wrong number of results");
