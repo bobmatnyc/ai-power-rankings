@@ -338,7 +338,8 @@ export async function POST(request: NextRequest) {
         }
 
         let rankingData: any;
-        let algorithmVersion = "v6.0";
+        // #448: an empty period carries the current engine version, unprefixed like generated rows.
+        let algorithmVersion = RANKING_ALGORITHM_VERSION;
         if (copy_from) {
           // Copy from existing period
           const sourceData = await rankingsRepo.getByPeriod(copy_from);
@@ -359,7 +360,7 @@ export async function POST(request: NextRequest) {
           // Create empty period
           rankingData = {
             period,
-            algorithm_version: "v6.0",
+            algorithm_version: algorithmVersion,
             generated_at: new Date().toISOString(),
             rankings: [],
           };
