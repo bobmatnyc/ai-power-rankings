@@ -3,7 +3,11 @@ import type { ChangelogEntry } from "../../lib/data/changelog-generator";
 import type { NewWeeklyDigest, WeeklyDigest } from "../../lib/db/schema";
 import type { DigestArticle } from "../../lib/services/weekly-digest-input";
 import type { WeeklyDigestRepository } from "../../lib/services/weekly-digest.repository";
-import { WeeklyDigestError, generateWeeklyDigest } from "../../lib/services/weekly-digest.service";
+import {
+  WeeklyDigestEmptyError,
+  WeeklyDigestError,
+  generateWeeklyDigest,
+} from "../../lib/services/weekly-digest.service";
 import { countDigestWords } from "../../lib/weekly-digest-validate";
 
 /**
@@ -268,6 +272,31 @@ describe("generateWeeklyDigest validation and failure (#181)", () => {
     llm.mockResolvedValue(completion(VALID_FULL, "length"));
     const f = makeRepo([article(1), article(2), article(3)]);
     await expect(run(f)).rejects.toThrow(/truncated/);
+    expect(f.repo.save).not.toHaveBeenCalled();
+  });
+
+  // #468: sonnet-5.5 spent 1499 of 1500 tokens on reasoning and returned empty content.
+  it("caps reasoning so the token budget leaves room for the digest", async () => {
+    llm.mockResolvedValue(completion(VALID_FULL));
+    const f = makeRepo([article(1), article(2), article(3)]);
+    await run(f);
+    const body = JSON.parse(String(llm.mock.calls[0]?.[1].body)) as {
+      max_tokens: number;
+      reasoning?: { max_tokens?: number };
+    };
+    const reasoningCap = body.reasoning?.max_tokens;
+    expect(reasoningCap).toBeGreaterThan(0);
+    // A ~350-word digest is about 500 tokens; demand at least 3x that after reasoning.
+    expect(body.max_tokens - (reasoningCap ?? body.max_tokens)).toBeGreaterThanOrEqual(1500);
+  });
+
+  it("fails loudly on an empty reply: one call, a digest_empty error, no stored row", async () => {
+    llm.mockResolvedValue(completion("", "stop"));
+    const f = makeRepo([article(1), article(2), article(3)]);
+    const error = await run(f).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(WeeklyDigestEmptyError);
+    expect(String(error)).toMatch(/digest_empty/);
+    expect(llm).toHaveBeenCalledTimes(1);
     expect(f.repo.save).not.toHaveBeenCalled();
   });
 });
