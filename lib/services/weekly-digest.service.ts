@@ -11,8 +11,8 @@
  * reports counts and stops. Otherwise it makes one OpenRouter call, validates the
  * body with `validateDigest`, and on a failed check makes exactly one more call
  * that names the failed checks. A second failure throws `WeeklyDigestError`. A
- * transport error, an empty-key error or a reply cut off at the token limit
- * throws at once. The row is written only after a valid body, so every failure
+ * transport error, an empty-key error, a reply cut off at the token limit or
+ * an empty reply (#468) throws at once. The row is written only after a valid body, so every failure
  * leaves any stored row as it was.
  * Test: `tests/unit/weekly-digest-service-181.test.ts`.
  */
@@ -40,8 +40,25 @@ import { getOpenRouterApiKey } from "@/lib/startup-validation";
 import { countDigestWords, validateDigest } from "@/lib/weekly-digest-validate";
 import { previousIsoWeek } from "@/lib/weekly-digest-window";
 
-/** Completion budget: a 350-word digest is about 500 tokens; the rest is headroom. */
-const DIGEST_MAX_TOKENS = 1500;
+/**
+ * #468: reasoning tokens count against `max_tokens`. With 1500 and no reasoning cap,
+ * sonnet-5.5 spent 1499 on reasoning and returned empty content. Reasoning is capped at
+ * 1024 (Anthropic's minimum thinking budget); the total leaves 2476 tokens for a
+ * ~500-token digest.
+ */
+export const DIGEST_REASONING_MAX_TOKENS = 1024;
+export const DIGEST_MAX_TOKENS = 3500;
+
+/** #468: the model returned no content, so there is no digest to validate or store. */
+export class WeeklyDigestEmptyError extends Error {
+  constructor(model: string, finishReason: string | null, reasoningTokens: number | undefined) {
+    super(
+      `digest_empty: model ${model} returned no content ` +
+        `(finish_reason=${finishReason ?? "unknown"}, reasoning_tokens=${reasoningTokens ?? "unknown"})`
+    );
+    this.name = "WeeklyDigestEmptyError";
+  }
+}
 
 export type WeeklyDigestOutcome =
   | {
@@ -116,6 +133,8 @@ async function callModel(
       ],
       temperature: 0.3,
       max_tokens: DIGEST_MAX_TOKENS,
+      // #468: bound reasoning so it cannot spend the whole budget and leave no content.
+      reasoning: { max_tokens: DIGEST_REASONING_MAX_TOKENS },
       ...OPENROUTER_USAGE_REQUEST,
     }),
   });
@@ -133,6 +152,10 @@ async function callModel(
     model,
     maxTokens: DIGEST_MAX_TOKENS,
   });
+  // #468: an empty reply fails loudly here, with no retry and no stored row.
+  if (content.trim().length === 0) {
+    throw new WeeklyDigestEmptyError(model, diagnostics.finishReason, diagnostics.reasoningTokens);
+  }
   return {
     content,
     promptTokens: diagnostics.promptTokens ?? 0,
