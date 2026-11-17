@@ -17,6 +17,9 @@
  * Test: `tests/unit/weekly-digest-service-181.test.ts`.
  */
 
+import { revalidatePath } from "next/cache";
+import { INSIGHTS_HUB_PATH, weeklyInsightPath } from "@/app/[lang]/insights/preview-gate";
+import { locales } from "@/i18n/config";
 import { CHANGELOG_ENTRIES } from "@/lib/data/changelog-entries";
 import type { ChangelogEntry } from "@/lib/data/changelog-generator";
 import { loggers } from "@/lib/logger";
@@ -57,6 +60,40 @@ export class WeeklyDigestEmptyError extends Error {
         `(finish_reason=${finishReason ?? "unknown"}, reasoning_tokens=${reasoningTokens ?? "unknown"})`
     );
     this.name = "WeeklyDigestEmptyError";
+  }
+}
+
+/**
+ * Every page path that shows the digest for `week`, in every locale.
+ *
+ * #468: the W46 permalink kept serving a 404 cached before the row was stored,
+ * for up to the pages' 30-minute `revalidate`. The RSS routes are force-dynamic.
+ */
+export function digestPagePaths(week: string): string[] {
+  return locales.flatMap((lang) => [
+    `/${lang}/whats-new/weekly/${week}`,
+    `/${lang}/whats-new`,
+    // #468: the Insights paths come from its own tree, which stays unlinked while in preview (#198).
+    `/${lang}${INSIGHTS_HUB_PATH}`,
+    `/${lang}${weeklyInsightPath(week)}`,
+  ]);
+}
+
+/**
+ * #468: purge the cached pages after a stored digest. A failure is logged, not
+ * thrown: the row is stored, and the cached pages expire on their own.
+ */
+function revalidateDigestPages(week: string): void {
+  const failed: string[] = [];
+  for (const path of digestPagePaths(week)) {
+    try {
+      revalidatePath(path);
+    } catch (error) {
+      failed.push(`${path}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+  if (failed.length > 0) {
+    loggers.api.warn("Weekly digest stored but page revalidation failed", { week, failed });
   }
 }
 
@@ -268,5 +305,7 @@ export async function generateWeeklyDigest(
   if (!written) return { status: "skipped", week, reason: "already-stored" };
 
   loggers.api.info("Weekly digest stored", { week, tier, wordCount, attempts: draft.attempts });
+  // #468: only a stored row purges the cached pages; skip, dry run and failure return earlier.
+  revalidateDigestPages(week);
   return { status: "generated", week, tier, wordCount, attempts: draft.attempts, generationTimeMs };
 }

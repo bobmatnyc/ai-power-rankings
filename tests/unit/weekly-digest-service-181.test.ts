@@ -25,6 +25,9 @@ import { countDigestWords } from "../../lib/weekly-digest-validate";
  */
 
 vi.mock("../../lib/startup-validation", () => ({ getOpenRouterApiKey: () => "test-key" }));
+// #468: a stored digest purges its cached pages.
+const revalidatePath = vi.hoisted(() => vi.fn());
+vi.mock("next/cache", () => ({ revalidatePath }));
 
 // A Monday 07:30 UTC run: the window is the week before, 2026-W43.
 const NOW = new Date("2026-10-26T07:30:00Z");
@@ -118,6 +121,48 @@ function promptOf(call: number): string {
 
 beforeEach(() => {
   llm.mockReset();
+  revalidatePath.mockReset();
+});
+
+describe("page revalidation after a stored digest (#468)", () => {
+  const LOCALES = ["en", "de", "fr", "it", "ja", "ko", "uk", "hr", "zh", "es"];
+  const expected = LOCALES.flatMap((lang) => [
+    `/${lang}/whats-new/weekly/${WEEK}`,
+    `/${lang}/whats-new`,
+    `/${lang}/insights`,
+    `/${lang}/insights/weekly/${WEEK}`,
+  ]);
+  const purged = () => revalidatePath.mock.calls.map((c) => c[0]).sort();
+
+  it.each([{ force: false }, { force: true }])("purges every page in every locale (force=$force)", async ({ force }) => {
+    llm.mockResolvedValue(completion(VALID_FULL));
+    const f = makeRepo([article(1), article(2), article(3)], force ? { content: "STORED" } : undefined);
+    expect(await run(f, { force })).toMatchObject({ status: "generated" });
+    expect(purged()).toEqual([...expected].sort());
+  });
+
+  it("still returns generated when revalidation throws", async () => {
+    llm.mockResolvedValue(completion(VALID_FULL));
+    revalidatePath.mockImplementation(() => {
+      throw new Error("no static generation store");
+    });
+    const f = makeRepo([article(1), article(2), article(3)]);
+    expect(await run(f)).toMatchObject({ status: "generated" });
+    expect(f.repo.rows.has(WEEK)).toBe(true);
+  });
+
+  it("purges nothing on skip, dry run, concurrent write or failure", async () => {
+    await run(makeRepo([]));
+    await run(makeRepo([article(1), article(2), article(3)], { content: "STORED" }));
+    await run(makeRepo([article(1), article(2), article(3)]), { dryRun: true });
+    llm.mockResolvedValue(completion(VALID_FULL));
+    const raced = makeRepo([article(1), article(2), article(3)]);
+    raced.repo.save.mockResolvedValue(false);
+    await run(raced);
+    llm.mockResolvedValue(new Response("down", { status: 502 }));
+    await expect(run(makeRepo([article(1), article(2), article(3)]))).rejects.toThrow(/502/);
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
 });
 
 describe("generateWeeklyDigest branches (#181)", () => {
