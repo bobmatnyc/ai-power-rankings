@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-f55aab54ba57",
+    "version": "Unreleased",
+    "date": "2026-11-17T12:37:41.878Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "digest",
+    "title": "a stored weekly digest now revalidates /<locale>/whats-new/weekly/<week>, /<locale>/whats-new, /<locale>/insights and…",
+    "description": "a stored weekly digest now revalidates `/<locale>/whats-new/weekly/<week>`, `/<locale>/whats-new`, `/<locale>/insights` and `/<locale>/insights/weekly/<week>` for every locale. Before, a 404 cached before the row was written kept serving for up to 30 minutes. A revalidation failure logs a warning and the run still reports `generated`; skip, dry run and failure paths revalidate nothing. The digest prompt now names a target below the middle (280 for the full tier) and says \"never exceed\" the tier's max, after a full draft ran to 394 of 350 words. Tests: `tests/unit/weekly-digest-service-181.test.ts`, `tests/unit/weekly-digest-input-181.test.ts` (#468)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-358565e54ac9",
     "version": "Unreleased",
     "date": "2026-11-16T22:34:38.000Z",
