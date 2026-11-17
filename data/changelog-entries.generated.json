@@ -99,10 +99,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-358565e54ac9",
+    "version": "Unreleased",
+    "date": "2026-11-16T22:34:38.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "digest",
+    "title": "the weekly-digest cron returned 500 because anthropic/claude-sonnet-5.5 spent 1499 of its 1500 max_tokens on reasoning…",
+    "description": "the weekly-digest cron returned 500 because `anthropic/claude-sonnet-5.5` spent 1499 of its 1500 `max_tokens` on reasoning and returned empty content. The request now caps reasoning at 1024 tokens (`reasoning.max_tokens`) and raises `max_tokens` to 3500, leaving 2476 tokens for a ~500-token digest. An empty reply now throws `WeeklyDigestEmptyError` (`digest_empty`, with finish_reason and reasoning tokens) at once, with no retry and no stored row. Tests: `tests/unit/weekly-digest-service-181.test.ts` (#468)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-12d1f4d5c12b",
     "version": "Unreleased",
-    "date": "2026-11-12T19:54:21.686Z",
-    "dateSource": "build",
+    "date": "2026-11-12T20:32:38.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "seo",
     "title": "the 20 /{de,en,es,fr,hr,it,ja,ko,uk,zh}/whats-new and /{…}/whats-new/recent URLs now 308 to /en/insights",
@@ -1003,8 +1014,8 @@
   {
     "id": "unreleased-7f361e4be047",
     "version": "Unreleased",
-    "date": "2026-11-12T20:14:01.064Z",
-    "dateSource": "build",
+    "date": "2026-11-12T20:58:20.000Z",
+    "dateSource": "commit",
     "section": "Added",
     "scope": "rankings",
     "title": "/[lang]/rankings/coding-harnesses?category=<value> shows the harness board's tools of that category, with their board…",
