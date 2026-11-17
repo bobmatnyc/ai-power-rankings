@@ -15,6 +15,10 @@ import {
 
 // #198: rendered on request and cached for 30 minutes, like /whats-new/<period>.
 export const revalidate = 1800;
+// #470: without static params the route was dynamic (private, no-store) and never cached; months render on first request.
+export function generateStaticParams(): Array<{ lang: string; month: string }> {
+  return [];
+}
 
 type PageProps = { params: Promise<{ lang: string; month: string }> };
 

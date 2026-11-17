@@ -29,6 +29,8 @@ const PAGES: Array<[string, number | null]> = [
   ["whats-new/page.tsx", 1800],
   ["whats-new/[period]/page.tsx", 1800],
   ["whats-new/weekly/[week]/page.tsx", 1800],
+  // #470: the monthly Insight permalink is ISR like /whats-new/<period>.
+  ["insights/monthly/[month]/page.tsx", 1800],
   ["about/page.tsx", null],
   // D6e (#401): methodology reads the model-visibility gate from the DB, so it is ISR (revalidate 300).
   ["methodology/page.tsx", 300],
@@ -63,6 +65,7 @@ const DB_PAGES = [
   "whats-new/page.tsx",
   "whats-new/[period]/page.tsx",
   "whats-new/weekly/[week]/page.tsx",
+  "insights/monthly/[month]/page.tsx", // #470
   "methodology/page.tsx",
 ];
 
