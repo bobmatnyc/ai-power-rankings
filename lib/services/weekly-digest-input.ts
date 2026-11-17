@@ -153,6 +153,14 @@ Hard rules:
 /** The short tier's word target, the middle of `DIGEST_WORDS.short`. */
 const SHORT_TARGET_WORDS = Math.round((DIGEST_WORDS.short.min + DIGEST_WORDS.short.max) / 2);
 
+/**
+ * The full tier's word target, 30% of the way into `DIGEST_WORDS.full` (280 of 250-350).
+ * #468: a draft aimed at the middle ran to 394 words; a target below the middle leaves headroom.
+ */
+const FULL_TARGET_WORDS = Math.round(
+  DIGEST_WORDS.full.min + (DIGEST_WORDS.full.max - DIGEST_WORDS.full.min) * 0.3
+);
+
 function tierRules(tier: DigestTier, hasNewAndChanged: boolean, articleCount: number): string {
   const { min, max } = DIGEST_WORDS[tier];
   if (tier === "short") {
@@ -160,14 +168,16 @@ function tierRules(tier: DigestTier, hasNewAndChanged: boolean, articleCount: nu
     // text per article, land inside 80-120 for one article (3 + 2) and for
     // two (3 + 1 + 1). Two sentences per bullet with two articles reach 152.
     const perBullet = articleCount >= 2 ? "1 sentence" : "2 sentences";
-    return `This was a quiet week. Write ${min}-${max} words (aim for about ${SHORT_TARGET_WORDS} words) in this exact structure, with no headings. Keep each sentence to 16-20 words:
+    // #468: the hard ceiling is stated, as in the full tier.
+    return `This was a quiet week. Write ${min}-${max} words (aim for about ${SHORT_TARGET_WORDS} words; never exceed ${max}) in this exact structure, with no headings. Keep each sentence to 16-20 words:
 1. An opening paragraph of 3 sentences: what the week covered, the biggest item, and why it matters to a developer.
 2. One bullet per article, each ${perBullet}: what changed and who it affects. Each bullet links its article. Use 3-6 words of link text.`;
   }
   const newAndChanged = hasNewAndChanged
     ? 'Then "## New and changed": the new tools and site changes in the material.'
     : 'Do not write a "New and changed" section: the material has none.';
-  return `Write ${min}-${max} words (aim for about 300) in this exact structure:
+  // #468: name the hard ceiling; a full draft overran the max (394>350) on attempt 1.
+  return `Write ${min}-${max} words (aim for about ${FULL_TARGET_WORDS} words; never exceed ${max}) in this exact structure:
 1. An opening of 2 sentences with no heading: how many articles and tools the week covered, and the biggest item.
 2. "## The week in short": 3 or 4 bullets, one line each, each linking one article.
 3. "## What mattered": 2 or 3 short paragraphs that name tools and link their articles.

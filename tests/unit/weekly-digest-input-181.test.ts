@@ -9,7 +9,7 @@ import {
   digestTier,
   siteChangesForWindow,
 } from "../../lib/services/weekly-digest-input";
-import { countDigestWords, validateDigest } from "../../lib/weekly-digest-validate";
+import { DIGEST_WORDS, countDigestWords, validateDigest } from "../../lib/weekly-digest-validate";
 import { windowForWeek } from "../../lib/weekly-digest-window";
 
 /**
@@ -158,6 +158,30 @@ describe("short-tier prompt and word floor (#181)", () => {
     expect(countDigestWords(body)).toBeGreaterThanOrEqual(80);
     const context = { tier: "short" as const, allowedSlugs: new Set(articles.map((a) => a.slug)), hasNewAndChanged: false };
     expect(validateDigest(body, context)).toEqual([]);
+  });
+});
+
+describe("prompt states the word ceiling (#468)", () => {
+  // #468: a full draft ran to 394 words against a 350 max on attempt 1.
+  it.each([
+    ["full", 3],
+    ["short", 1],
+  ] as const)("the %s tier names a target below the max and says never exceed the max", (tier, count) => {
+    const articles = Array.from({ length: count }, (_, i) => ({
+      id: `a${i}`,
+      slug: `story-${i}`,
+      title: `Story ${i}`,
+      summary: GOOD,
+      publishedAt: null,
+      toolMentions: [],
+    }));
+    const { system } = buildDigestPrompt({ window: WINDOW, tier, articles, newTools: [], siteChanges: [] });
+    const { min, max } = DIGEST_WORDS[tier];
+    expect(system).toContain(`never exceed ${max}`);
+    const target = Number(/aim for about (\d+) words/.exec(system)?.[1]);
+    expect(target).toBeGreaterThanOrEqual(min);
+    expect(target).toBeLessThan(max);
+    if (tier === "full") expect(target).toBe(280);
   });
 });
 

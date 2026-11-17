@@ -182,6 +182,9 @@ export function insightJsonLd(metadata: Metadata, headline: string, dates: Insig
   return createJsonLdScript(schema).replace(/</g, "\\u003c");
 }
 
+/** #468: the locale-free path of the Insights hub, for cache revalidation outside this tree. */
+export const INSIGHTS_HUB_PATH = "/insights";
+
 /** The locale-free path of a weekly Insight (#198); proposal M5-7 names `/insights/weekly/<yyyy-Www>`. */
 export function weeklyInsightPath(week: string): string {
   return `/insights/weekly/${week}`;
