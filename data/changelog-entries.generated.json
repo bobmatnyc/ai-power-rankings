@@ -101,8 +101,8 @@
   {
     "id": "unreleased-f55aab54ba57",
     "version": "Unreleased",
-    "date": "2026-11-17T12:37:41.878Z",
-    "dateSource": "build",
+    "date": "2026-11-17T12:56:25.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "digest",
     "title": "a stored weekly digest now revalidates /<locale>/whats-new/weekly/<week>, /<locale>/whats-new, /<locale>/insights and…",
