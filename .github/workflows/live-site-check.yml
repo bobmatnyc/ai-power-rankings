@@ -1,0 +1,51 @@
+name: Live site check
+
+# Why: owner ruling, a deterministic (no LLM) daily check of the live site and API.
+# What: runs scripts/check-live-site.mjs (no dependencies, so no npm install). A FAIL
+# exits 1 and fails the job, which sends GitHub's failed-workflow email. When the
+# ALERT_WEBHOOK_URL secret is set, the output tail is also posted there.
+# Test: tests/unit/live-site-check.test.ts covers the verdicts.
+
+on:
+  schedule:
+    - cron: '15 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  live-site-check:
+    name: Check live site and API
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check live site
+        run: |
+          set -o pipefail
+          node scripts/check-live-site.mjs 2>&1 | tee live-site-check-output.txt
+        env:
+          BASE_URL: ${{ vars.PRODUCTION_BASE_URL || 'https://aipowerranking.com' }}
+
+      - name: Post failure to webhook
+        if: ${{ failure() }}
+        env:
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "${ALERT_WEBHOOK_URL:-}" ]; then
+            echo "ALERT_WEBHOOK_URL not set; skipping webhook."
+            exit 0
+          fi
+          tail_text=$(tail -n 30 live-site-check-output.txt 2>/dev/null || echo "no output captured")
+          payload=$(jq -n --arg text "Live site check failed: ${RUN_URL}
+          ${tail_text}" '{text: $text}')
+          curl -sS -X POST -H 'Content-Type: application/json' --data "$payload" "$ALERT_WEBHOOK_URL" > /dev/null
