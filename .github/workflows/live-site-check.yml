@@ -18,6 +18,7 @@ jobs:
   live-site-check:
     name: Check live site and API
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4

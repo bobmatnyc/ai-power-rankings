@@ -19,7 +19,10 @@ import {
   checkTtfb,
   digestWeekKey,
   formatResult,
+  isRetryableStatus,
   isoWeekKey,
+  monthlyInsightsKey,
+  runCheck,
   previousMonthKey,
   summarize,
 } from "../../scripts/lib/live-site-checks.mjs";
@@ -126,5 +129,39 @@ describe("ttfb and aggregation", () => {
     expect(summarize([p, w]).exitCode).toBe(0);
     expect(summarize([p, w, f])).toEqual({ line: "SUMMARY 1 pass, 1 warn, 1 fail", exitCode: 1 });
     expect(formatResult(f)).toBe("FAIL c bad");
+  });
+});
+
+describe("month boundary, JSON shape, isolation", () => {
+  it("insights month waits for the 08:00Z monthly-summary cron on the 1st", () => {
+    expect(monthlyInsightsKey(new Date("2026-11-01T07:15:00Z"))).toBe("2026-09");
+    expect(monthlyInsightsKey(new Date("2026-11-01T09:00:00Z"))).toBe("2026-10");
+    expect(monthlyInsightsKey(new Date("2027-01-01T07:15:00Z"))).toBe("2026-11");
+    expect(monthlyInsightsKey(NOW)).toBe("2026-10");
+  });
+
+  it("a null or non-object JSON body FAILs", () => {
+    for (const body of ["null", "42", '"x"']) {
+      expect(checkRankingsApi(res(200, body), NOW).level).toBe("FAIL");
+      expect(checkNewsApi(res(200, body), NOW).level).toBe("FAIL");
+    }
+    const withNull = JSON.stringify({ news: [null, { event_date: "2026-11-17T00:00:00Z" }] });
+    expect(checkNewsApi(res(200, withNull), NOW).level).toBe("PASS");
+  });
+
+  it("a throwing check becomes its own FAIL and later checks still run", async () => {
+    const results = [
+      await runCheck("boom", () => {
+        throw new Error("bad shape");
+      }),
+      await runCheck("ok", async () => checkStatus200("ok", res(200))),
+    ];
+    expect(results.map(formatResult)).toEqual(["FAIL boom check threw: bad shape", "PASS ok 200"]);
+    expect(summarize(results).exitCode).toBe(1);
+  });
+
+  it("retries only gateway statuses", () => {
+    expect([502, 503, 504].every(isRetryableStatus)).toBe(true);
+    expect([200, 404, 500].some(isRetryableStatus)).toBe(false);
   });
 });

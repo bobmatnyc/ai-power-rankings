@@ -65,6 +65,31 @@ export function digestWeekKey(now) {
   return isoWeekKey(new Date(monday.getTime() - weeksBack * 7 * DAY_MS));
 }
 
+/**
+ * The insights month that must be live at `now`.
+ *
+ * /api/cron/monthly-summary runs `0 8 1 * *` (vercel.json), so before 09:00Z on
+ * the 1st last month's page may not exist; check two months back then.
+ */
+export function monthlyInsightsKey(now) {
+  const early = now.getUTCDate() === 1 && now.getUTCHours() < 9;
+  return monthKey(new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - (early ? 2 : 1), 1)));
+}
+
+/** True for a gateway status worth one retry; a persistent one still FAILs. */
+export function isRetryableStatus(status) {
+  return status === 502 || status === 503 || status === 504;
+}
+
+/** Run one check; a thrown error becomes that check's FAIL so the rest still run. */
+export async function runCheck(name, fn) {
+  try {
+    return await fn();
+  } catch (err) {
+    return fail(name, `check threw: ${err?.message || err}`);
+  }
+}
+
 function statusIs(name, res, expected) {
   if (res.error) return fail(name, `request failed: ${res.error}`);
   if (res.status !== expected) return fail(name, `status ${res.status}, want ${expected}`);
@@ -73,7 +98,9 @@ function statusIs(name, res, expected) {
 
 function parseJson(name, res) {
   try {
-    return { json: JSON.parse(res.body) };
+    const json = JSON.parse(res.body);
+    if (json === null || typeof json !== "object") return { result: fail(name, "JSON body is not an object") };
+    return { json };
   } catch {
     return { result: fail(name, "body is not JSON") };
   }
@@ -142,7 +169,7 @@ export function checkNewsApi(res, now) {
   const parsed = parseJson(name, res);
   if (parsed.result) return parsed.result;
   const news = Array.isArray(parsed.json.news) ? parsed.json.news : [];
-  const times = news.map((n) => Date.parse(n.event_date)).filter((t) => Number.isFinite(t));
+  const times = news.map((n) => Date.parse(n?.event_date)).filter((t) => Number.isFinite(t));
   if (times.length === 0) return fail(name, "no news item with an event_date");
   const newest = Math.max(...times);
   const ageDays = (now.getTime() - newest) / DAY_MS;

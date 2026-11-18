@@ -22,7 +22,9 @@ import {
   checkTtfb,
   digestWeekKey,
   formatResult,
-  previousMonthKey,
+  isRetryableStatus,
+  monthlyInsightsKey,
+  runCheck,
   summarize,
 } from "./lib/live-site-checks.mjs";
 
@@ -62,7 +64,10 @@ async function get(base, path) {
   try {
     res = await fetchOnce(base + path);
   } catch {
-    // One retry on a network error or timeout only; a bad status is never retried.
+    res = null;
+  }
+  // One retry on a network error, timeout or 502/503/504; other statuses are final.
+  if (res === null || isRetryableStatus(res.status)) {
     await sleep(DELAY_MS);
     try {
       res = await fetchOnce(base + path);
@@ -78,27 +83,35 @@ async function main() {
   const base = baseUrl(process.argv.slice(2), process.env);
   const now = new Date();
   const week = digestWeekKey(now);
-  const month = previousMonthKey(now);
+  const month = monthlyInsightsKey(now);
   console.log(`live-site-check ${base} at ${now.toISOString()}`);
 
   const results = [];
-  const record = (r) => {
+  // Each check is isolated: a throw is that check's FAIL and the rest still run.
+  const record = async (name, fn) => {
+    const r = await runCheck(name, fn);
     results.push(r);
     console.log(formatResult(r));
   };
 
-  record(checkRootRedirect(await get(base, "/")));
-  record(checkHomeTitle(await get(base, "/en")));
-  record(checkRankingsPage(await get(base, "/en/rankings")));
-  record(checkStatus200("tool-page-claude-code", await get(base, "/en/tools/claude-code")));
-  record(checkRankingsApi(await get(base, "/api/rankings/current"), now));
-  record(checkNewsApi(await get(base, "/api/news"), now));
-  record(checkDigestPage(await get(base, `/en/whats-new/weekly/${week}`), week));
-  record(checkDigestRss(await get(base, "/en/whats-new/rss.xml"), week));
-  record(checkMonthlyInsights(await get(base, `/en/insights/monthly/${month}`), month));
-  record(checkStatus200("sitemap", await get(base, "/sitemap.xml")));
-  record(checkStatus200("robots", await get(base, "/robots.txt")));
-  record(checkTtfb(samples));
+  await record("root-redirect", async () => checkRootRedirect(await get(base, "/")));
+  await record("home-title", async () => checkHomeTitle(await get(base, "/en")));
+  await record("rankings-page", async () => checkRankingsPage(await get(base, "/en/rankings")));
+  await record("tool-page-claude-code", async () =>
+    checkStatus200("tool-page-claude-code", await get(base, "/en/tools/claude-code")),
+  );
+  await record("api-rankings-current", async () => checkRankingsApi(await get(base, "/api/rankings/current"), now));
+  await record("api-news", async () => checkNewsApi(await get(base, "/api/news"), now));
+  await record("weekly-digest-page", async () =>
+    checkDigestPage(await get(base, `/en/whats-new/weekly/${week}`), week),
+  );
+  await record("whats-new-rss", async () => checkDigestRss(await get(base, "/en/whats-new/rss.xml"), week));
+  await record("monthly-insights", async () =>
+    checkMonthlyInsights(await get(base, `/en/insights/monthly/${month}`), month),
+  );
+  await record("sitemap", async () => checkStatus200("sitemap", await get(base, "/sitemap.xml")));
+  await record("robots", async () => checkStatus200("robots", await get(base, "/robots.txt")));
+  await record("ttfb", async () => checkTtfb(samples));
 
   const { line, exitCode } = summarize(results);
   console.log(line);
