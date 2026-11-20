@@ -11,7 +11,8 @@ const doc = readFileSync(join(process.cwd(), "docs/refresh/bot-share-gate.md"), 
 const METRICS = [
   "Engagement",
   "Views per user",
-  "List-to-detail rate",
+  // #230: the list-to-detail row was relabelled to the `ranking_row_click` rate.
+  "List-to-detail rate (`ranking_row_click` rate, per #230)",
   "Insights traffic",
   "Search Console indexed pages",
   "Search Console 404 count",
@@ -41,7 +42,8 @@ describe("bot-share gate doc", () => {
   });
 
   it("has a Status line and a Frozen on line", () => {
-    expect(doc).toMatch(/^Status: DRAFT — freezes after #174$/m);
-    expect(doc).toMatch(/^Frozen on: .+$/m);
+    // #230: the gate was frozen on 2026-11-20; the Status and Frozen-on lines must say so.
+    expect(doc).toMatch(/^Status: FROZEN on 2026-11-20 \(#230\)\. Not an active gate\. Kept as a record\.$/m);
+    expect(doc).toMatch(/^Frozen on: 2026-11-20$/m);
   });
 });
