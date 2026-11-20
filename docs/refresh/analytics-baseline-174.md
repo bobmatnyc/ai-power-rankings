@@ -7,7 +7,7 @@ Issue: [#174](https://github.com/bobmatnyc/ai-power-rankings/issues/174). Gate t
 ## Architect ruling, 2026-10-23 16:40Z
 
 - `bot-share-gate.md` is NOT frozen. [#174](https://github.com/bobmatnyc/ai-power-rankings/issues/174) met 0 of 6 acceptance criteria, so under D88 the baseline has not landed. The freeze happens once [#175](https://github.com/bobmatnyc/ai-power-rankings/issues/175)'s first-party events give a usable baseline.
-- List-to-detail uses the page-view proxy for now, labelled as a proxy: tools 1.06, all content 3.33. It is replaced by the [#175](https://github.com/bobmatnyc/ai-power-rankings/issues/175) `ranking_row_click` rate once that event has data.
+- List-to-detail uses the page-view proxy for now, labelled as a proxy: tools 1.06, all content 3.33. It is replaced by the [#175](https://github.com/bobmatnyc/ai-power-rankings/issues/175) `ranking_row_click` rate once that event has data. **Update 2026-11-20 ([#230](https://github.com/bobmatnyc/ai-power-rankings/issues/230)): the proxy is retired as a measure; the `ranking_row_click` rate replaces it. The bot-share gate is frozen ([bot-share-gate.md](bot-share-gate.md)).**
 
 **Data source:** GA4 Pages and screens export, 2026-09-23..10-20 (static, owner-provided; no GA API access by owner ruling). One dimension (page title and screen class), 742 rows, window = 28 days. The export has no page path, session, source, or entry/exit columns.
 

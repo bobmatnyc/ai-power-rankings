@@ -1,7 +1,31 @@
 # Bot-share gate and M7 thresholds (#176, M1-3)
 
-Status: DRAFT — freezes after #174
-Frozen on: <date, set when #174 supplies the baseline>
+Status: FROZEN on 2026-11-20 (#230). Not an active gate. Kept as a record.
+Frozen on: 2026-11-20
+
+This gate is frozen. It does not decide any M7 outcome and nothing should be
+measured against it. [#174](https://github.com/bobmatnyc/ai-power-rankings/issues/174)
+met 0/6 criteria from the static GA4 export, so under D88 the gate never
+landed. The sections below are the unchanged draft. The provisional numbers
+stayed provisional and no owner decision was recorded.
+
+## Follow-ups recorded by #230
+
+Source: the Architect's ruling on #174 (2026-10-23). The #175 first-party
+events have been in production since 2026-10-23 (PR #229). Reviewed on
+2026-11-20.
+
+1. Bot-share gate: frozen, as above. The #174 baseline is in
+   [analytics-baseline-174.md](analytics-baseline-174.md).
+2. List-to-detail measure: the page-view proxy in
+   [analytics-baseline-174.md](analytics-baseline-174.md) (tools 1.06, all
+   content 3.33) is replaced by the `ranking_row_click` rate. The proxy is a
+   views ratio, not a click-through rate, and is retired as a measure. The
+   `ranking_row_click` event is defined in
+   [ga4-event-plan.md](ga4-event-plan.md). The rate itself is not recorded
+   here. It comes from the GA4 property's first-party event data over a
+   28-day window matching the #174 export, and is read by the owner or an
+   agent cleared for analytics access.
 
 Every number here is PROVISIONAL until the owner decides it (see "Decisions log").
 Cells marked "baseline from #174" take their value from the M1-1 baseline
@@ -44,7 +68,7 @@ recorded by #174.
 |---|---|---|
 | Engagement | ≥ +10% vs the M1 baseline (baseline from #174) | Drop of more than 10% vs the M1 baseline (baseline from #174) |
 | Views per user | ≥ +10% vs the M1 baseline (baseline from #174) | Drop of more than 10% vs the M1 baseline (baseline from #174) |
-| List-to-detail rate | ≥ +10% vs the M1 baseline (baseline from #174) | Drop of more than 10% vs the M1 baseline (baseline from #174) |
+| List-to-detail rate (`ranking_row_click` rate, per #230) | ≥ +10% vs the M1 baseline (baseline from #174) | Drop of more than 10% vs the M1 baseline (baseline from #174) |
 | Insights traffic | > 0 and rising week over week | 0, or not rising week over week |
 | Search Console indexed pages | No decrease vs baseline (baseline from #174) | Any decrease vs baseline (baseline from #174) |
 | Search Console 404 count | No increase vs baseline (baseline from #174) | Any increase vs baseline (baseline from #174) |
