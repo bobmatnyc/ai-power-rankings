@@ -106,3 +106,21 @@ describe("URL ingestion refuses a page with no article body (#477)", () => {
     expect(saveArticle).toHaveBeenCalledTimes(1);
   });
 });
+
+// #477: a real article about privacy/consent, as Jina markdown (headings and
+// list items carry no terminal punctuation), must not be read as a banner.
+const CONSENT_NEWS_MARKDOWN = `# EU regulators fine ad network over cookie consent
+
+## Privacy enforcement
+
+The French data regulator fined an ad network 40 million euros on Monday for setting tracking cookies before users gave consent.
+- The network must change its banner within three months
+- Regulators said the decision applies across the EU
+The company said it will appeal the ruling in court.`;
+
+describe("assertArticleBody keeps real consent news (#477)", () => {
+  it("passes a ~300-char markdown news article about cookie consent", async () => {
+    const { assertArticleBody } = await import("../../lib/services/article-body-guard");
+    expect(() => assertArticleBody(CONSENT_NEWS_MARKDOWN)).not.toThrow();
+  });
+});

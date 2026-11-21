@@ -4,7 +4,7 @@
  * an active article. Extraction must refuse such a body before analysis.
  * What: `assertArticleBody` throws `ArticleBodyRejectedError` for an empty,
  * too-short, or consent/boilerplate-only body; otherwise it returns.
- * Test: `lib/services/article-body-guard.test.ts`.
+ * Test: `tests/unit/article-body-guard-477.test.ts`.
  */
 
 export type ArticleBodyRejectionReason = "empty_body" | "body_too_short" | "boilerplate_body";
@@ -34,17 +34,22 @@ const BOILERPLATE_MARKER =
 
 /** Throws `ArticleBodyRejectedError` when `content` is not an article body. */
 export function assertArticleBody(content: string | null | undefined): void {
-  const body = (content ?? "").replace(/\s+/g, " ").trim();
+  const raw = content ?? "";
+  const body = raw.replace(/\s+/g, " ").trim();
   if (body.length === 0) {
     throw new ArticleBodyRejectedError("empty_body", "0 chars");
   }
   if (body.length < MIN_ARTICLE_BODY_CHARS) {
     throw new ArticleBodyRejectedError("body_too_short", `${body.length}<${MIN_ARTICLE_BODY_CHARS} chars`);
   }
-  const substantive = body
-    .split(/(?<=[.!?])\s+/)
+  const substantive = raw
+    // #477: split on newlines too, so a Jina markdown heading or list item
+    // without terminal punctuation is judged alone, not merged into a block.
+    .split(/(?<=[.!?])\s+|\n+/)
     .filter((sentence) => !BOILERPLATE_MARKER.test(sentence))
-    .join(" ");
+    .join(" ")
+    .replace(/\s+/g, " ")
+    .trim();
   if (substantive.length < MIN_ARTICLE_BODY_CHARS) {
     throw new ArticleBodyRejectedError(
       "boilerplate_body",

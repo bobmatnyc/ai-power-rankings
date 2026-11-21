@@ -127,6 +127,16 @@ export class ContentExtractor {
    * Uses Jina Reader API with fallback to basic HTML fetch
    */
   async extractFromUrl(url: string): Promise<{ content: string; links: Array<{ href: string; text: string }> }> {
+    const result = await this.extractRawFromUrl(url);
+    // #477: every URL ingest path (automated run, ArticleIngestionService, admin
+    // route via ArticleDatabaseService) reaches here; refuse an empty or banner body.
+    assertArticleBody(result.content);
+    return result;
+  }
+
+  private async extractRawFromUrl(
+    url: string
+  ): Promise<{ content: string; links: Array<{ href: string; text: string }> }> {
     console.log(`[ContentExtractor] Fetching content from URL: ${url}`);
 
     // Try Jina Reader first if available
@@ -1168,8 +1178,6 @@ export class ArticleIngestionService {
           const urlResult = await this.contentExtractor.extractFromUrl(input.input);
           content = urlResult.content;
           extractedLinks = urlResult.links;
-          // #477: never analyze or insert a page whose body is empty or a consent banner.
-          assertArticleBody(content);
           break;
         case "file":
           if (!input.mimeType || !input.fileName || !input.input) {
