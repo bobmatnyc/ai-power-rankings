@@ -119,6 +119,7 @@ import type { BraveSearchService } from "./brave-search.service";
 import type { ArticleQualityService } from "./article-quality.service";
 import type { ArticleIngestionService } from "./article-ingestion.service";
 import { SummaryRejectedError } from "../article-summary";
+import { ArticleBodyRejectedError } from "./article-body-guard"; // #477
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
@@ -505,5 +506,42 @@ describe("AutomatedIngestionService - summary rejection (#180)", () => {
     expect(result.articlesIngested).toBe(0);
     const outcomes = (simulatedRow.candidateOutcomes as CandidateOutcome[]).map((o) => o.outcome);
     expect(outcomes).toEqual(["summary_rejected", "summary_rejected"]);
+  });
+});
+
+describe("AutomatedIngestionService - article body rejection (#477)", () => {
+  beforeEach(() => {
+    resetDbFixture();
+  });
+
+  it("records a rejected body as extraction_failed, keeps ingesting, and does not fail the run", async () => {
+    const service = new AutomatedIngestionService();
+    const ingestArticle = vi.fn(async (input: { input: string }) => {
+      if (input.input.endsWith("/banner")) {
+        throw new ArticleBodyRejectedError("boilerplate_body", "12<100 chars");
+      }
+      return { id: "article-1", rankingChangesApplied: 0 };
+    });
+    injectServices(
+      service,
+      [
+        searchResult("Vercel board and agent swarms", "https://example.com/banner", daysAgo(1), "window"),
+        searchResult("Editor adds inline review", "https://example.com/good", daysAgo(1), "window"),
+      ],
+      ingestArticle
+    );
+
+    const result = await service.runDailyDiscovery({ skipQualityCheck: true, maxArticles: 5 });
+
+    expect(result.status).toBe("completed");
+    expect(result.errors).toEqual([]);
+    expect(result.articlesIngested).toBe(1);
+    const persisted = simulatedRow.candidateOutcomes as CandidateOutcome[];
+    const rejected = persisted.filter((entry) => entry.outcome === "extraction_failed");
+    expect(rejected).toHaveLength(1);
+    expect(rejected[0]).toMatchObject({
+      url: "https://example.com/banner",
+      reason: expect.stringContaining("boilerplate_body"),
+    });
   });
 });

@@ -14,6 +14,7 @@
 import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import { SummaryRejectedError } from "@/lib/article-summary"; // #180
+import { ArticleBodyRejectedError } from "./article-body-guard"; // #477
 import {
   automatedIngestionRuns,
   articles,
@@ -1495,6 +1496,17 @@ export class AutomatedIngestionService {
               reason: error.reason,
             });
             recordOutcome(article, "summary_rejected", error.reason);
+            continue;
+          }
+          // #477: the re-extracted body is empty or boilerplate. A candidate-level
+          // extraction failure, not a run error; nothing was inserted.
+          if (error instanceof ArticleBodyRejectedError) {
+            loggers.api.warn("[AutomatedIngestion] Article body rejected", {
+              url: article.url,
+              reason: error.reason,
+            });
+            runCounts.fetchFailed++;
+            recordOutcome(article, "extraction_failed", error.message);
             continue;
           }
           const errorMsg = `Failed to ingest ${article.url}: ${error instanceof Error ? error.message : "Unknown error"}`;
