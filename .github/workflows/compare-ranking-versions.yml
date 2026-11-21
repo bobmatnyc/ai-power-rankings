@@ -33,6 +33,7 @@ jobs:
   compare:
     name: v7.9 vs v7.10 table
     runs-on: ubuntu-latest
+    environment: prod-db
     timeout-minutes: 15
     steps:
       - name: Checkout
