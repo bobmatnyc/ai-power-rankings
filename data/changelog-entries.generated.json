@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-cfcdd664a04f",
+    "version": "Unreleased",
+    "date": "2026-11-21T16:43:32.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "ingestion",
+    "title": "daily news ingestion no longer re-scores the same rejected candidates or judges an article on a one-sentence teaser",
+    "description": "daily news ingestion no longer re-scores the same rejected candidates or judges an article on a one-sentence teaser. A candidate URL recorded as `quality_rejected` in a run from the last 30 days (`REJECTED_URL_LOOKBACK_DAYS`, read from `automated_ingestion_runs.candidate_outcomes`) is skipped before the quality LLM, recorded as `skipped_previously_rejected` and counted in `articlesSkipped` and the run summary's `previouslyRejected`; if that read fails, every candidate is assessed. A Tavily snippet of 500 characters or fewer (`TEASER_MAX_CHARS`) is replaced by the extractor's full text before assessment when the full text is longer and passes the #477 body guard; otherwise the snippet is assessed as before. Expansion has its own budget (`TEASER_EXPANSION_BUDGET`: 10 per run, 10 s each, 3 at once, none after 120 s of run time), and a teaser fetch's provider error does not fail the run. Quality thresholds and the assessment prompt are unchanged. Tests: `tests/unit/ingestion-rejected-url-memory-476.test.ts`, `tests/unit/ingestion-teaser-extraction-476.test.ts` (#476)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-f55aab54ba57",
     "version": "Unreleased",
     "date": "2026-11-17T12:56:25.000Z",

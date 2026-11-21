@@ -26,6 +26,8 @@ export interface IngestionRunCounts {
   /** Candidates left after the freshness filter. */
   candidates: number;
   urlDuplicates: number;
+  /** #476: candidates skipped because a run within the lookback rejected their URL. */
+  previouslyRejected: number;
   semanticDuplicates: number;
   /** #366: the part of `semanticDuplicates` dropped as the same event (isSameEvent), not for title similarity. */
   sameEventDuplicates: number;
@@ -157,6 +159,7 @@ export function emptyRunCounts(): IngestionRunCounts {
     stale: 0,
     candidates: 0,
     urlDuplicates: 0,
+    previouslyRejected: 0, // #476
     semanticDuplicates: 0,
     sameEventDuplicates: 0,
     fetched: 0,
