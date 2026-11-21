@@ -25,6 +25,7 @@ import {
   validateSummary,
 } from "@/lib/article-summary";
 import { jinaReaderService } from "./jina-reader.service";
+import { assertArticleBody } from "./article-body-guard"; // #477
 import { mapToolMentionsToCatalogue, type ToolMappingReport } from "./tool-mention-catalogue"; // #187
 
 // Validation schemas
@@ -1167,6 +1168,8 @@ export class ArticleIngestionService {
           const urlResult = await this.contentExtractor.extractFromUrl(input.input);
           content = urlResult.content;
           extractedLinks = urlResult.links;
+          // #477: never analyze or insert a page whose body is empty or a consent banner.
+          assertArticleBody(content);
           break;
         case "file":
           if (!input.mimeType || !input.fileName || !input.input) {
