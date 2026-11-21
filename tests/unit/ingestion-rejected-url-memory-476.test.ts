@@ -8,9 +8,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
  * ignores the WHERE clause, so the lookback test proves the in-code bound).
  */
 
-const { priorRuns, setPayloads } = vi.hoisted(() => ({
+const { priorRuns, setPayloads, readFails } = vi.hoisted(() => ({
   priorRuns: [] as Array<{ createdAt: Date; candidateOutcomes: unknown }>,
   setPayloads: [] as Record<string, unknown>[],
+  readFails: { value: false },
 }));
 
 vi.mock("../../lib/db/connection", () => ({
@@ -31,8 +32,11 @@ vi.mock("../../lib/db/connection", () => ({
         where: () => ({
           orderBy: () => Promise.resolve([]),
           limit: () => Promise.resolve([{ status: "running" }]),
-          then: (resolve: (value: unknown[]) => void) =>
-            resolve(fields && "candidateOutcomes" in fields ? priorRuns : []),
+          then: (resolve: (value: unknown[]) => void, reject: (e: unknown) => void) => {
+            const isRunsRead = !!fields && "candidateOutcomes" in fields;
+            if (isRunsRead && readFails.value) return reject(new Error("connection reset"));
+            return resolve(isRunsRead ? priorRuns : []);
+          },
         }),
       }),
     }),
@@ -99,6 +103,7 @@ describe("rejected-URL memory (#476)", () => {
   beforeEach(() => {
     priorRuns.length = 0;
     setPayloads.length = 0;
+    readFails.value = false;
   });
 
   it("skips a URL rejected in a prior run without calling the assessor, and counts it", async () => {
@@ -146,5 +151,22 @@ describe("rejected-URL memory (#476)", () => {
       now
     );
     expect([...urls]).toEqual(["https://a.example/in"]);
+  });
+
+  it("assesses every candidate when the prior-rejections read throws (fail open)", async () => {
+    readFails.value = true;
+    priorRuns.push(priorRun(2, REJECTED_URL));
+    const { service, batchAssess } = setup([
+      candidate("Amazon company page", REJECTED_URL),
+      candidate("Agentic coding tool ships", FRESH_URL),
+    ]);
+
+    const result = await service.runDailyDiscovery({ days: 14 });
+
+    const assessedUrls = batchAssess.mock.calls.flatMap((call) =>
+      (call[0] as Array<{ url: string }>).map((a) => a.url)
+    );
+    expect(assessedUrls.sort()).toEqual([FRESH_URL, REJECTED_URL].sort());
+    expect(result.status).toBe("completed");
   });
 });

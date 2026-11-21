@@ -47,7 +47,13 @@ function candidate(url: string, content: string) {
   };
 }
 
-function setup(results: ReturnType<typeof candidate>[], fetchImpl: (url: string) => Promise<string | null>) {
+type FetchImpl = (
+  url: string,
+  stats?: unknown,
+  billing?: { note: (provider: string, message: string, status?: number) => void }
+) => Promise<string | null>;
+
+function setup(results: ReturnType<typeof candidate>[], fetchImpl: FetchImpl) {
   const service = new AutomatedIngestionService();
   const batchAssess = vi.fn(async (items: Array<{ url: string }>) =>
     items.map(() => ({
@@ -68,7 +74,7 @@ function setup(results: ReturnType<typeof candidate>[], fetchImpl: (url: string)
   internal._articleQualityService = { batchAssess };
   internal._articleIngestionService = { ingestArticle: vi.fn() };
   const fetchArticleContent = vi
-    .spyOn(service as unknown as { fetchArticleContent: (url: string) => Promise<string | null> }, "fetchArticleContent")
+    .spyOn(service as unknown as { fetchArticleContent: FetchImpl }, "fetchArticleContent")
     .mockImplementation(fetchImpl);
   const assessedContent = (url: string): string | undefined =>
     batchAssess.mock.calls
@@ -84,7 +90,7 @@ describe("teaser extraction before assessment (#476)", () => {
 
     await service.runDailyDiscovery({ days: 14 });
 
-    expect(fetchArticleContent).toHaveBeenCalledWith(url, expect.anything(), expect.anything());
+    expect(fetchArticleContent).toHaveBeenCalledWith(url, undefined, undefined);
     expect(assessedContent(url)).toBe(FULL_TEXT);
   });
 
@@ -123,5 +129,62 @@ describe("teaser extraction before assessment (#476)", () => {
 
     expect(fetchArticleContent).toHaveBeenCalled();
     expect(assessedContent(url)).toBe(TEASER);
+  });
+
+  // #476 review: expansion has its own budget inside the pipeline timeout.
+  it("bounds expansion with a hanging extractor: cap respected, run completes, snippets assessed", async () => {
+    const urls = [1, 2, 3, 4, 5].map((i) => `https://news.google.com/hang-${i}`);
+    const { service, fetchArticleContent, assessedContent } = setup(
+      // Distinct titles, so semantic dedupe keeps all five.
+      ["Cursor", "Windsurf", "Devin", "Copilot", "Aider"].map((tool, i) => ({
+        ...candidate(urls[i]!, TEASER),
+        title: `${tool} ships release ${i} with unrelated feature set`,
+      })),
+      () => new Promise<string | null>(() => undefined)
+    );
+    (service as unknown as { teaserBudget: object }).teaserBudget = {
+      maxPerRun: 2,
+      perTeaserTimeoutMs: 50,
+      concurrency: 2,
+      stopAfterRunMs: 60_000,
+    };
+
+    const started = Date.now();
+    const result = await service.runDailyDiscovery({ days: 14 });
+
+    expect(Date.now() - started).toBeLessThan(2_000);
+    expect(fetchArticleContent).toHaveBeenCalledTimes(2);
+    for (const u of urls) expect(assessedContent(u)).toBe(TEASER);
+    expect(result.status).not.toBe("failed");
+  });
+
+  it("starts no expansion once the run is past stopAfterRunMs", async () => {
+    const url = "https://news.google.com/late";
+    const { service, fetchArticleContent, assessedContent } = setup([candidate(url, TEASER)], async () => FULL_TEXT);
+    (service as unknown as { teaserBudget: object }).teaserBudget = {
+      maxPerRun: 10,
+      perTeaserTimeoutMs: 10_000,
+      concurrency: 3,
+      stopAfterRunMs: 0,
+    };
+
+    await service.runDailyDiscovery({ days: 14 });
+
+    expect(fetchArticleContent).not.toHaveBeenCalled();
+    expect(assessedContent(url)).toBe(TEASER);
+  });
+
+  it("does not count a teaser fetch's 402 as a run billing failure", async () => {
+    const url = "https://news.google.com/billing";
+    const { service, assessedContent } = setup([candidate(url, TEASER)], async (_u, _s, billing) => {
+      billing?.note("tavily", "402 Payment Required", 402);
+      return null;
+    });
+
+    const result = await service.runDailyDiscovery({ days: 14 });
+
+    expect(assessedContent(url)).toBe(TEASER);
+    expect(result.status).not.toBe("failed");
+    expect(result.errors.join(" ")).not.toMatch(/billing/i);
   });
 });

@@ -336,6 +336,21 @@ export const REJECTED_URL_LOOKBACK_DAYS = 30;
 export const TEASER_MAX_CHARS = 500;
 
 /**
+ * #476: teaser expansion's own budget inside PIPELINE_TIMEOUT_MS (265 s). One
+ * extraction chain can take ~70 s, so expansions are capped per run, each is
+ * given up after `perTeaserTimeoutMs`, at most `concurrency` run at once, and
+ * none starts once the run is `stopAfterRunMs` old. Over budget keeps the snippet.
+ */
+export const TEASER_EXPANSION_BUDGET = {
+  maxPerRun: 10,
+  perTeaserTimeoutMs: 10_000,
+  concurrency: 3,
+  stopAfterRunMs: 120_000,
+} as const;
+
+export type TeaserExpansionBudget = { [K in keyof typeof TEASER_EXPANSION_BUDGET]: number };
+
+/**
  * Why: #476 — the same rejected candidates were re-scored by the LLM every day.
  * What: The set of URLs recorded as `quality_rejected` in runs created within
  * `lookbackDays` of `nowMs`. URLs compare exactly, as checkDuplicates() does,
@@ -661,14 +676,18 @@ export class AutomatedIngestionService {
    * unchanged. Never throws.
    * Test: `tests/unit/ingestion-teaser-extraction-476.test.ts`.
    */
-  private async expandTeaser(
-    url: string,
-    teaser: string,
-    extractionStats: { tavilySuccess: number; jinaSuccess: number; basicSuccess: number; allFailed: number },
-    billingFailures: ProviderBillingFailures
-  ): Promise<string> {
+  private async expandTeaser(url: string, teaser: string, timeoutMs: number): Promise<string> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
     try {
-      const full = await this.fetchArticleContent(url, extractionStats, billingFailures);
+      // #476: no billingFailures — a teaser fetch is optional, so its 401/402
+      // must not fail the run. Its own stats object keeps it out of the
+      // tavily/jina success counts; the caller counts `teaserExpanded`.
+      const full = await Promise.race([
+        this.fetchArticleContent(url, undefined, undefined),
+        new Promise<null>((_, reject) => {
+          timer = setTimeout(() => reject(new Error(`teaser extraction timed out after ${timeoutMs}ms`)), timeoutMs);
+        }),
+      ]);
       if (!full || full.length <= teaser.length) return teaser;
       // #476: a boilerplate page (consent wall) must not replace the teaser.
       assertArticleBody(full);
@@ -679,7 +698,40 @@ export class AutomatedIngestionService {
         error: error instanceof Error ? error.message : String(error),
       });
       return teaser;
+    } finally {
+      if (timer) clearTimeout(timer);
     }
+  }
+
+  /** #476: overridable in tests only. */
+  private teaserBudget: TeaserExpansionBudget = { ...TEASER_EXPANSION_BUDGET };
+
+  /**
+   * Why: #476 (review) — serial, unbounded expansion could exhaust the 265 s
+   * pipeline timeout and end the run with zero yield.
+   * What: Expands up to `maxPerRun` teasers with at most `concurrency` in
+   * flight; no expansion starts once `Date.now() - runStartMs` reaches
+   * `stopAfterRunMs`. Each entry's `content` is replaced in place only when
+   * expandTeaser returns longer text. Returns how many were replaced.
+   * Test: `tests/unit/ingestion-teaser-extraction-476.test.ts`.
+   */
+  private async expandTeasers(
+    entries: Array<{ url: string; content: string }>,
+    runStartMs: number
+  ): Promise<number> {
+    const budget = this.teaserBudget;
+    const queue = entries.slice(0, budget.maxPerRun);
+    let expanded = 0;
+    const worker = async (): Promise<void> => {
+      for (let entry = queue.shift(); entry; entry = queue.shift()) {
+        if (Date.now() - runStartMs >= budget.stopAfterRunMs) return;
+        const teaser = entry.content;
+        entry.content = await this.expandTeaser(entry.url, teaser, budget.perTeaserTimeoutMs);
+        if (entry.content !== teaser) expanded++;
+      }
+    };
+    await Promise.all(Array.from({ length: Math.max(1, budget.concurrency) }, worker));
+    return expanded;
   }
 
   /**
@@ -1267,7 +1319,10 @@ export class AutomatedIngestionService {
         basicSuccess: 0,
         allFailed: 0,
         usedTavilySearchContent: 0,
+        teaserExpanded: 0, // #476
       };
+      // #476: teaser snippets, expanded after the loop under TEASER_EXPANSION_BUDGET.
+      const teaserEntries: SearchResultWithContent[] = [];
 
       const fetchCandidates = newArticles.slice(0, maxArticles * 2);
       for (const article of fetchCandidates) {
@@ -1294,22 +1349,20 @@ export class AutomatedIngestionService {
         // Tavily Extract → Jina → Basic HTML fallback chain and downstream
         // quality gates unchanged.
         if (tavilyContent && tavilyContent.length > 100) {
-          // #476: a teaser snippet gets the extractor's full text before assessment.
-          const content =
-            tavilyContent.length <= TEASER_MAX_CHARS
-              ? await this.expandTeaser(article.url, tavilyContent, extractionStats, billingFailures)
-              : tavilyContent;
           // Use Tavily's pre-fetched content from search results
           extractionStats.usedTavilySearchContent++;
-          articlesWithContent.push({
+          const entry: SearchResultWithContent = {
             url: article.url,
             title: article.title,
             description: article.description,
             source: article.source,
             publishedDate: article.publishedDate,
-            content,
+            content: tavilyContent,
             discoveredVia: discoveredViaOf(article), // #132
-          });
+          };
+          articlesWithContent.push(entry);
+          // #476: a teaser snippet gets the extractor's full text before assessment.
+          if (tavilyContent.length <= TEASER_MAX_CHARS) teaserEntries.push(entry);
         } else {
           // Fallback: fetch content using extraction chain (Tavily Extract → Jina Reader → Basic HTML)
           // Individual failures are gracefully handled and logged, never blocking the batch
@@ -1355,6 +1408,9 @@ export class AutomatedIngestionService {
         }
       }
 
+      // #476: bounded teaser expansion; over budget keeps the snippet.
+      extractionStats.teaserExpanded = await this.expandTeasers(teaserEntries, startTime);
+
       // #172: fetch-stage counts for the run summary.
       runCounts.fetched = articlesWithContent.length;
       runCounts.fetchFailed = failedFetches.length;
@@ -1380,6 +1436,7 @@ export class AutomatedIngestionService {
           jinaReader: extractionStats.jinaSuccess,
           basicHtml: extractionStats.basicSuccess,
           allFailed: extractionStats.allFailed,
+          teaserExpanded: extractionStats.teaserExpanded, // #476
         },
       });
 
