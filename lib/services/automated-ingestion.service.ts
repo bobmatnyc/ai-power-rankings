@@ -14,7 +14,7 @@
 import { and, desc, eq, gte, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/connection";
 import { SummaryRejectedError } from "@/lib/article-summary"; // #180
-import { ArticleBodyRejectedError } from "./article-body-guard"; // #477
+import { ArticleBodyRejectedError, assertArticleBody } from "./article-body-guard"; // #477, #476
 import {
   automatedIngestionRuns,
   articles,
@@ -326,6 +326,14 @@ export const CANDIDATE_OUTCOME_LIMIT = 100;
  * assessment. The same off-topic pages were rediscovered and re-scored daily.
  */
 export const REJECTED_URL_LOOKBACK_DAYS = 30;
+
+/**
+ * #476: a search snippet at or below this length is a teaser, not full text.
+ * One-sentence Google-redirect teasers were scored on the snippet alone. Tavily
+ * cuts `description` from the snippet at 500 chars, so a snippet this short
+ * carries nothing beyond the description.
+ */
+export const TEASER_MAX_CHARS = 500;
 
 /**
  * Why: #476 — the same rejected candidates were re-scored by the LLM every day.
@@ -643,6 +651,34 @@ export class AutomatedIngestionService {
       });
     } catch {
       // Ignore URL parsing errors
+    }
+  }
+
+  /**
+   * Why: #476 — relevant articles were rejected on a one-sentence teaser snippet.
+   * What: Returns the extractor's full text for `url` when it is longer than the
+   * teaser and passes the #477 body guard; otherwise returns the teaser
+   * unchanged. Never throws.
+   * Test: `tests/unit/ingestion-teaser-extraction-476.test.ts`.
+   */
+  private async expandTeaser(
+    url: string,
+    teaser: string,
+    extractionStats: { tavilySuccess: number; jinaSuccess: number; basicSuccess: number; allFailed: number },
+    billingFailures: ProviderBillingFailures
+  ): Promise<string> {
+    try {
+      const full = await this.fetchArticleContent(url, extractionStats, billingFailures);
+      if (!full || full.length <= teaser.length) return teaser;
+      // #476: a boilerplate page (consent wall) must not replace the teaser.
+      assertArticleBody(full);
+      return full;
+    } catch (error) {
+      loggers.api.warn("[AutomatedIngestion] Teaser extraction failed; assessing the snippet", {
+        url: url.substring(0, 100),
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return teaser;
     }
   }
 
@@ -1258,6 +1294,11 @@ export class AutomatedIngestionService {
         // Tavily Extract → Jina → Basic HTML fallback chain and downstream
         // quality gates unchanged.
         if (tavilyContent && tavilyContent.length > 100) {
+          // #476: a teaser snippet gets the extractor's full text before assessment.
+          const content =
+            tavilyContent.length <= TEASER_MAX_CHARS
+              ? await this.expandTeaser(article.url, tavilyContent, extractionStats, billingFailures)
+              : tavilyContent;
           // Use Tavily's pre-fetched content from search results
           extractionStats.usedTavilySearchContent++;
           articlesWithContent.push({
@@ -1266,7 +1307,7 @@ export class AutomatedIngestionService {
             description: article.description,
             source: article.source,
             publishedDate: article.publishedDate,
-            content: tavilyContent,
+            content,
             discoveredVia: discoveredViaOf(article), // #132
           });
         } else {
