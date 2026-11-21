@@ -275,6 +275,8 @@ export type CandidateOutcomeKind =
   // #167: the quality LLM call itself failed (e.g. out of credits) — not a rejection.
   | "assessment_failed"
   | "quality_rejected"
+  // #476: quality_rejected in a run within REJECTED_URL_LOOKBACK_DAYS; not re-assessed.
+  | "skipped_previously_rejected"
   // #180: the generated summary failed validation twice; `reason` names the failed checks.
   | "summary_rejected"
   | "ingest_failed"
@@ -318,6 +320,39 @@ export const OUTCOME_QUALITY_REASON_MAX_CHARS = 2000;
  * jsonb column small enough that reading a run row stays cheap.
  */
 export const CANDIDATE_OUTCOME_LIMIT = 100;
+
+/**
+ * #476: how far back a `quality_rejected` outcome keeps its URL out of the LLM
+ * assessment. The same off-topic pages were rediscovered and re-scored daily.
+ */
+export const REJECTED_URL_LOOKBACK_DAYS = 30;
+
+/**
+ * Why: #476 — the same rejected candidates were re-scored by the LLM every day.
+ * What: The set of URLs recorded as `quality_rejected` in runs created within
+ * `lookbackDays` of `nowMs`. URLs compare exactly, as checkDuplicates() does,
+ * after the same 300-char cut recordOutcome() applies. Malformed rows are ignored.
+ * Test: `tests/unit/ingestion-rejected-url-memory-476.test.ts`.
+ */
+export function collectRejectedUrls(
+  runs: ReadonlyArray<{ createdAt: Date | string | null; candidateOutcomes: unknown }>,
+  nowMs: number,
+  lookbackDays: number = REJECTED_URL_LOOKBACK_DAYS
+): Set<string> {
+  const cutoffMs = nowMs - lookbackDays * 24 * 60 * 60 * 1000;
+  const rejected = new Set<string>();
+  for (const run of runs) {
+    const createdMs = run.createdAt ? new Date(run.createdAt).getTime() : Number.NaN;
+    if (!(createdMs >= cutoffMs)) continue;
+    if (!Array.isArray(run.candidateOutcomes)) continue;
+    for (const entry of run.candidateOutcomes as Array<Partial<CandidateOutcome> | null>) {
+      if (entry?.outcome === "quality_rejected" && typeof entry.url === "string") {
+        rejected.add(entry.url);
+      }
+    }
+  }
+  return rejected;
+}
 
 /**
  * Why: #132 — the outcome list is diagnostic detail. It must never be able to
@@ -1118,20 +1153,37 @@ export class AutomatedIngestionService {
         remaining: articlesWithoutUrlDuplicates.length,
       });
 
+      // #476: a URL the LLM rejected in a recent run is not re-assessed.
+      const rejectedUrls = await this.getRecentlyRejectedUrls(nowMs);
+      const wasRejected = (r: { url: string }): boolean =>
+        rejectedUrls.has(r.url.substring(0, 300));
+      const notPreviouslyRejected = articlesWithoutUrlDuplicates.filter((r) => !wasRejected(r));
+      for (const skipped of articlesWithoutUrlDuplicates.filter(wasRejected)) {
+        recordOutcome(
+          skipped,
+          "skipped_previously_rejected",
+          `quality_rejected within ${REJECTED_URL_LOOKBACK_DAYS}d`
+        );
+      }
+      const previouslyRejectedCount =
+        articlesWithoutUrlDuplicates.length - notPreviouslyRejected.length;
+      runCounts.previouslyRejected = previouslyRejectedCount;
+
       // Step 3b: Filter semantic duplicates (same story, different source)
       // "First wins" - keep only the first article per topic
       const recentArticles = await this.getRecentArticleTitles(7); // Last 7 days
       const newArticles = await this.filterSemanticDuplicates(
-        articlesWithoutUrlDuplicates,
+        notPreviouslyRejected,
         recentArticles,
         runCounts
       );
-      articlesSkippedSemantic = articlesWithoutUrlDuplicates.length - newArticles.length;
+      articlesSkippedSemantic = notPreviouslyRejected.length - newArticles.length;
       runCounts.semanticDuplicates = articlesSkippedSemantic; // #172
-      articlesSkipped = articlesSkippedStale + urlDuplicatesCount + articlesSkippedSemantic;
+      articlesSkipped =
+        articlesSkippedStale + urlDuplicatesCount + previouslyRejectedCount + articlesSkippedSemantic;
       // #132: record which candidate died where, not just how many.
       const survivingUrls = new Set(newArticles.map((a) => a.url));
-      for (const dropped of articlesWithoutUrlDuplicates.filter((a) => !survivingUrls.has(a.url))) {
+      for (const dropped of notPreviouslyRejected.filter((a) => !survivingUrls.has(a.url))) {
         recordOutcome(dropped, "skipped_semantic", "semantic duplicate of a recent article");
       }
 
@@ -2057,6 +2109,35 @@ export class AutomatedIngestionService {
    * Check for duplicate URLs in the articles table
    * Returns a Set of URLs that already exist in the database
    */
+  /**
+   * Why: #476 — remember LLM rejections across runs from the persisted
+   * candidate_outcomes, so no new table is needed.
+   * What: Reads runs created within REJECTED_URL_LOOKBACK_DAYS and returns the
+   * URLs they recorded as `quality_rejected`. Fails open: on any error or with
+   * no database it returns an empty set and every candidate is assessed.
+   * Test: `tests/unit/ingestion-rejected-url-memory-476.test.ts`.
+   */
+  async getRecentlyRejectedUrls(nowMs: number = Date.now()): Promise<Set<string>> {
+    const db = getDb();
+    if (!db) return new Set();
+    try {
+      const cutoff = new Date(nowMs - REJECTED_URL_LOOKBACK_DAYS * 24 * 60 * 60 * 1000);
+      const runs = await db
+        .select({
+          createdAt: automatedIngestionRuns.createdAt,
+          candidateOutcomes: automatedIngestionRuns.candidateOutcomes,
+        })
+        .from(automatedIngestionRuns)
+        .where(gte(automatedIngestionRuns.createdAt, cutoff));
+      return collectRejectedUrls(Array.isArray(runs) ? runs : [], nowMs);
+    } catch (error) {
+      loggers.api.warn("[AutomatedIngestion] Could not read prior rejections; assessing all", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return new Set();
+    }
+  }
+
   async checkDuplicates(urls: string[]): Promise<Set<string>> {
     const db = getDb();
     if (!db) {
