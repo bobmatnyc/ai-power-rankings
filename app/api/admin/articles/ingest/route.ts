@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db/connection";
 import { ArticleDatabaseService } from "@/lib/services/article-db-service";
 import { ArticleIngestionSchema } from "@/lib/services/article-ingestion.service";
 import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
+import { ArticleBodyRejectedError } from "@/lib/services/article-body-guard"; // #477
 
 /**
  * POST /api/admin/articles/ingest
@@ -73,6 +74,11 @@ export async function POST(request: NextRequest) {
         },
         { status: 400 }
       );
+    }
+
+    // #477: the URL yielded no article body; a client-input problem, not a server fault.
+    if (error instanceof ArticleBodyRejectedError) {
+      return NextResponse.json({ error: error.message, reason: error.reason }, { status: 422 });
     }
 
     // Handle other errors
