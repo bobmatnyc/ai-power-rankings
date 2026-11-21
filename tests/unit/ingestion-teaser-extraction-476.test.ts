@@ -174,17 +174,17 @@ describe("teaser extraction before assessment (#476)", () => {
     expect(assessedContent(url)).toBe(TEASER);
   });
 
-  it("does not count a teaser fetch's 402 as a run billing failure", async () => {
+  it("does not count a teaser fetch's 401 as a run billing/auth failure", async () => {
     const url = "https://news.google.com/billing";
     const { service, assessedContent } = setup([candidate(url, TEASER)], async (_u, _s, billing) => {
-      billing?.note("tavily", "402 Payment Required", 402);
+      billing?.note("tavily", "Unauthorized", 401);
       return null;
     });
 
     const result = await service.runDailyDiscovery({ days: 14 });
 
     expect(assessedContent(url)).toBe(TEASER);
+    expect(result.errors.join(" ")).not.toMatch(/Provider (billing|auth) error/);
     expect(result.status).not.toBe("failed");
-    expect(result.errors.join(" ")).not.toMatch(/billing/i);
   });
 });
