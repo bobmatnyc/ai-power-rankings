@@ -408,7 +408,9 @@ export function serializeCandidateOutcomes(
  * `SELECT e FROM automated_ingestion_runs r, jsonb_array_elements(r.candidate_outcomes) e WHERE e->>'outcome' = 'run_counts'`.
  * Test: `tests/unit/ingestion-run-counts-persist-476.test.ts`.
  */
-export const RUN_COUNTS_OUTCOME = "run_counts" as const;
+// #476: defined in a dependency-free module so non-service readers can skip the entry.
+export { RUN_COUNTS_OUTCOME } from "./run-counts-outcome";
+import { RUN_COUNTS_OUTCOME } from "./run-counts-outcome";
 
 export interface PersistedRunCounts {
   /** Teaser snippets replaced by extracted full text before assessment. */
