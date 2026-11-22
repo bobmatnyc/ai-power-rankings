@@ -823,8 +823,12 @@ export class ArticleDatabaseService {
       // later changes from other articles and the monthly job.
       if (!this.db) throw new Error("Database connection not available");
       let rolledBack = 0;
+      let missingTools: string[] = [];
       await this.db.transaction(async (tx) => {
-        rolledBack = await revertArticleAndSoftDelete(createDeleteRevertStore(tx), articleId);
+        ({ rolledBack, missingTools } = await revertArticleAndSoftDelete(
+          createDeleteRevertStore(tx),
+          articleId
+        ));
       });
 
       // Update processing log
@@ -833,7 +837,7 @@ export class ArticleDatabaseService {
         completedAt: new Date(),
         durationMs: Date.now() - startTime,
         rankingsChanged: rolledBack,
-        debugInfo: { rolledBackChanges: rolledBack },
+        debugInfo: { rolledBackChanges: rolledBack, missingTools },
       });
     } catch (error) {
       // Update processing log with error

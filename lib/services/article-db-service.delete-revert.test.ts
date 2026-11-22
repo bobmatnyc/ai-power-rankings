@@ -25,6 +25,8 @@ interface State {
 const h = vi.hoisted(() => ({
   state: null as unknown as State,
   failOnSetToolId: null as string | null,
+  // Concurrent mode: transactions see each other's writes at once (no snapshot copy).
+  live: false,
   repo: {
     createProcessingLog: vi.fn(),
     updateProcessingLog: vi.fn(),
@@ -37,6 +39,7 @@ const h = vi.hoisted(() => ({
 // Fake DB: a transaction works on a deep copy and commits it only when the callback returns.
 const fakeDb = {
   transaction: async (fn: (tx: { state: State }) => Promise<void>) => {
+    if (h.live) return fn({ state: h.state });
     const draft = structuredClone(h.state);
     await fn({ state: draft });
     h.state = draft;
@@ -57,9 +60,18 @@ vi.mock("./article-delete-revert", async (importOriginal) => {
   return {
     ...actual,
     createDeleteRevertStore: (tx: { state: State }) => ({
-      listAppliedChanges: async (articleId: string) =>
-        tx.state.changes.filter((c) => c.articleId === articleId && c.isApplied && !c.rolledBack),
-      getTool: async (toolId: string) => tx.state.tools.find((t) => t.id === toolId) ?? null,
+      // #480: atomic claim, like UPDATE ... WHERE NOT rolled_back RETURNING *.
+      claimAppliedChanges: async (articleId: string) => {
+        const claimed = tx.state.changes.filter(
+          (c) => c.articleId === articleId && c.isApplied && !c.rolledBack
+        );
+        for (const c of claimed) {
+          c.isApplied = false;
+          c.rolledBack = true;
+        }
+        return structuredClone(claimed);
+      },
+      getToolForUpdate: async (toolId: string) => tx.state.tools.find((t) => t.id === toolId) ?? null,
       setToolScores: async (
         toolId: string,
         deltaScore: { overallScore: number },
@@ -69,14 +81,6 @@ vi.mock("./article-delete-revert", async (importOriginal) => {
         const tool = tx.state.tools.find((t) => t.id === toolId)!;
         tool.deltaScore = deltaScore;
         tool.currentScore = currentScore;
-      },
-      markRolledBack: async (ids: string[]) => {
-        for (const c of tx.state.changes) {
-          if (ids.includes(c.id)) {
-            c.isApplied = false;
-            c.rolledBack = true;
-          }
-        }
       },
       softDeleteArticle: async (articleId: string) => {
         if (!(articleId in tx.state.articleStatus)) return false;
@@ -97,6 +101,7 @@ const tool = (id: string, delta: number, baseline: number): ToolRow => ({
 
 beforeEach(() => {
   h.failOnSetToolId = null;
+  h.live = false;
   h.repo.createProcessingLog.mockResolvedValue({ id: "log-1" });
   h.repo.updateProcessingLog.mockResolvedValue(null);
   h.repo.getArticleById.mockResolvedValue({ id: "a1", rankingsSnapshot: { rankings: [] } });
@@ -173,5 +178,29 @@ describe("ArticleDatabaseService.deleteArticle (#480)", () => {
     expect(h.state.tools[0]!.deltaScore.overallScore).toBe(2);
     expect(h.state.tools[1]!.deltaScore.overallScore).toBe(0);
     expect(h.state.articleStatus.a1).toBe("deleted");
+  });
+
+  it("two concurrent deletes of one article revert its deltas once", async () => {
+    h.live = true;
+    const svc = new ArticleDatabaseService();
+
+    await Promise.allSettled([svc.deleteArticle("a1"), svc.deleteArticle("a1")]);
+
+    expect(h.state.tools[0]!.deltaScore.overallScore).toBe(2);
+    expect(h.state.tools[1]!.deltaScore.overallScore).toBe(0);
+  });
+
+  it("records tools missing at revert time in the processing log", async () => {
+    h.state.tools = h.state.tools.filter((t) => t.id !== "t2");
+
+    await new ArticleDatabaseService().deleteArticle("a1");
+
+    expect(h.repo.updateProcessingLog).toHaveBeenCalledWith(
+      "log-1",
+      expect.objectContaining({
+        status: "completed",
+        debugInfo: expect.objectContaining({ missingTools: ["t2"] }),
+      })
+    );
   });
 });
