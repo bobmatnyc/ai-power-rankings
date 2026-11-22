@@ -31,6 +31,7 @@ import {
   validateImportanceScore,
   validateSentimentScore,
 } from "@/lib/types/article-analysis";
+import { createDeleteRevertStore, revertArticleAndSoftDelete } from "./article-delete-revert";
 import { resolveEffectivePublishedDate } from "./published-date-resolver";
 import {
   AIAnalyzer,
@@ -816,16 +817,19 @@ export class ArticleDatabaseService {
         throw new Error("Article not found");
       }
 
-      // Rollback ranking changes
-      const rolledBack = await this.articlesRepo.rollbackArticleRankings(articleId);
-
-      // Restore rankings from snapshot if available
-      if (article.rankingsSnapshot) {
-        await this.restoreRankingsFromSnapshot(article.rankingsSnapshot);
-      }
-
-      // Soft delete the article
-      await this.articlesRepo.deleteArticle(articleId, false);
+      // #480: revert only this article's own applied deltas, mark them rolled back and
+      // soft-delete, all in one transaction; an error aborts the delete and surfaces.
+      // No restore from article.rankingsSnapshot: a whole-board overwrite would erase
+      // later changes from other articles and the monthly job.
+      if (!this.db) throw new Error("Database connection not available");
+      let rolledBack = 0;
+      let missingTools: string[] = [];
+      await this.db.transaction(async (tx) => {
+        ({ rolledBack, missingTools } = await revertArticleAndSoftDelete(
+          createDeleteRevertStore(tx),
+          articleId
+        ));
+      });
 
       // Update processing log
       await this.articlesRepo.updateProcessingLog(processingLog.id, {
@@ -833,7 +837,7 @@ export class ArticleDatabaseService {
         completedAt: new Date(),
         durationMs: Date.now() - startTime,
         rankingsChanged: rolledBack,
-        debugInfo: { rolledBackChanges: rolledBack },
+        debugInfo: { rolledBackChanges: rolledBack, missingTools },
       });
     } catch (error) {
       // Update processing log with error
@@ -1177,18 +1181,5 @@ export class ArticleDatabaseService {
     }
 
     console.log(`[ArticleDatabaseService] Successfully applied changes to ${changesByToolId.size} tools`);
-  }
-
-  /**
-   * Restore rankings from a snapshot
-   */
-  private async restoreRankingsFromSnapshot(_snapshot: unknown): Promise<void> {
-    console.log("[ArticleDatabaseService] Restoring rankings from snapshot");
-
-    // TODO: Implement snapshot restoration
-    // This would involve:
-    // 1. Loading the snapshot data
-    // 2. Updating the rankings table
-    // 3. Recalculating any dependent data
   }
 }

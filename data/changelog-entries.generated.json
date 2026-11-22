@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-4100f8d10a39",
+    "version": "Unreleased",
+    "date": "2026-11-22T22:45:18.871Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "admin",
+    "title": "deleting an article reverts its own ranking effect",
+    "description": "deleting an article reverts its own ranking effect. `ArticleDatabaseService.deleteArticle` subtracts each `score_change` of the article's applied, not-rolled-back `article_rankings_changes` rows from the affected tools' `overallScore` (delta and current), marks those rows rolled back and soft-deletes the article in one DB transaction; any error aborts the delete and leaves the article active. Changes from other articles and the monthly job are kept: the empty whole-board snapshot restore is removed. An article with no applied changes is only soft-deleted, as before. Tests: `lib/services/article-db-service.delete-revert.test.ts` (#480)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-8f835efcd3e8",
     "version": "Unreleased",
     "date": "2026-11-22T10:03:34.000Z",
