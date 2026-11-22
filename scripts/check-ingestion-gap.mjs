@@ -238,8 +238,10 @@ export function formatIngestedArticleLines(ingestedArticleIds, articleRows) {
  * @returns {string[]}
  */
 export function formatCandidateOutcomeLines(candidateOutcomes) {
-  const outcomes = coerceJsonArray(candidateOutcomes);
-  if (outcomes === null) return ["CANDIDATE_OUTCOMES=unavailable"];
+  const stored = coerceJsonArray(candidateOutcomes);
+  if (stored === null) return ["CANDIDATE_OUTCOMES=unavailable"];
+  // #476: the run_counts entry describes the run, not a candidate.
+  const outcomes = stored.filter((entry) => !isRunCountsEntry(entry));
 
   const counts = new Map();
   for (const entry of outcomes) {
@@ -273,6 +275,32 @@ export function formatCandidateOutcomeLines(candidateOutcomes) {
   return lines;
 }
 
+// #476: outcome value of the run-level counts entry; see RUN_COUNTS_OUTCOME in
+// lib/services/automated-ingestion.service.ts.
+export const RUN_COUNTS_OUTCOME = "run_counts";
+
+function isRunCountsEntry(entry) {
+  return Boolean(entry) && typeof entry === "object" && entry.outcome === RUN_COUNTS_OUTCOME;
+}
+
+function countOrNa(value) {
+  return typeof value === "number" && Number.isFinite(value) ? String(value) : "n/a";
+}
+
+/**
+ * Why: #476 — on 2026-11-22 the log could not say whether teaser expansion ran.
+ * What: One RUN_COUNTS line with teaser_expanded and previously_rejected from the
+ *   run_counts entry of candidate_outcomes; `n/a` for a run written before #476.
+ * Test: `formatRunCountsLine` cases in tests/unit/check-ingestion-gap.test.ts.
+ */
+export function formatRunCountsLine(candidateOutcomes) {
+  const entry = (coerceJsonArray(candidateOutcomes) ?? []).find(isRunCountsEntry);
+  return (
+    `RUN_COUNTS teaser_expanded=${countOrNa(entry?.teaserExpanded)} ` +
+    `previously_rejected=${countOrNa(entry?.previouslyRejected)}`
+  );
+}
+
 /**
  * Render the whole latest-run detail block, including the failure case.
  *
@@ -289,6 +317,7 @@ export function formatRunDetailLines(detail) {
   return [
     ...formatIngestedArticleLines(detail.ingestedArticleIds, detail.articleRows),
     ...formatCandidateOutcomeLines(detail.candidateOutcomes),
+    formatRunCountsLine(detail.candidateOutcomes), // #476
   ];
 }
 
