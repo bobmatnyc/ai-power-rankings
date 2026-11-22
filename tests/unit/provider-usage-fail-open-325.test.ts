@@ -17,6 +17,7 @@
  *   database.
  */
 
+import { RUN_COUNTS_OUTCOME } from "../../lib/services/run-counts-outcome";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const RUN_ID = "00000000-0000-4000-8000-000000000326";
@@ -180,7 +181,9 @@ async function runDailyNews(): Promise<RunObservation> {
     success: boolean;
     data?: { status: string; errors: string[] };
   };
-  const outcomes = (mocks.row["candidateOutcomes"] as Array<{ outcome: string }> | undefined) ?? [];
+  const outcomes = ((mocks.row["candidateOutcomes"] as Array<{ outcome: string }> | undefined) ?? []).filter(
+      (o) => o.outcome !== RUN_COUNTS_OUTCOME // #476: the leading run_counts entry is not a candidate
+    );
   return {
     status: response.status,
     success: payload.success,

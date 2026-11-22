@@ -21,6 +21,7 @@
  * database.
  */
 
+import { RUN_COUNTS_OUTCOME } from "../../lib/services/run-counts-outcome";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const RUN_ID = "run-167-fixture";
@@ -259,7 +260,9 @@ describe("GET /api/cron/daily-news — provider billing errors (#167)", () => {
     expect(errorLog.some((line) => /openrouter/i.test(line) && /credit/i.test(line))).toBe(true);
 
     // A candidate the LLM never assessed is not a quality rejection.
-    const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+    const outcomes = ((mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? []).filter(
+      (o) => o.outcome !== RUN_COUNTS_OUTCOME // #476: the leading run_counts entry is not a candidate
+    );
     expect(outcomes).toHaveLength(3);
     expect(outcomes.some((o) => o.outcome === "quality_rejected")).toBe(false);
     expect(mocks.ingestArticle).not.toHaveBeenCalled();
@@ -277,7 +280,9 @@ describe("GET /api/cron/daily-news — provider billing errors (#167)", () => {
     expect(payload.data?.status).toBe("completed");
     expect(mocks.row["status"]).toBe("completed");
 
-    const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+    const outcomes = ((mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? []).filter(
+      (o) => o.outcome !== RUN_COUNTS_OUTCOME // #476: the leading run_counts entry is not a candidate
+    );
     expect(outcomes.map((o) => o.outcome)).toEqual([
       "quality_rejected",
       "quality_rejected",
@@ -354,7 +359,9 @@ describe("GET /api/cron/daily-news — every quality assessment fails (#172)", (
     const payload = (await response.json()) as RoutePayload;
 
     // Soft, so a regression reports the outcome and the status code separately.
-    const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+    const outcomes = ((mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? []).filter(
+      (o) => o.outcome !== RUN_COUNTS_OUTCOME // #476: the leading run_counts entry is not a candidate
+    );
     expect.soft(outcomes.map((o) => o.outcome)).toEqual([
       "assessment_failed",
       "assessment_failed",
@@ -415,7 +422,9 @@ describe("GET /api/cron/daily-news — assessment circuit breaker fails closed (
       const response = await GET(cronRequest());
       const payload = (await response.json()) as RoutePayload;
 
-      const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+      const outcomes = ((mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? []).filter(
+      (o) => o.outcome !== RUN_COUNTS_OUTCOME // #476: the leading run_counts entry is not a candidate
+    );
       expect.soft(outcomes.map((o) => o.outcome)).toEqual(Array(n).fill("assessment_failed"));
       expect.soft(mocks.ingestArticle).not.toHaveBeenCalled();
       expect.soft(response.status).toBe(500);
@@ -431,7 +440,9 @@ describe("GET /api/cron/daily-news — assessment circuit breaker fails closed (
     const response = await GET(cronRequest());
     const payload = (await response.json()) as RoutePayload;
 
-    const outcomes = (mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? [];
+    const outcomes = ((mocks.row["candidateOutcomes"] as OutcomeRow[] | undefined) ?? []).filter(
+      (o) => o.outcome !== RUN_COUNTS_OUTCOME // #476: the leading run_counts entry is not a candidate
+    );
     expect.soft(outcomes.map((o) => o.outcome)).toEqual(Array(3).fill("assessment_failed"));
     expect.soft(response.status).toBe(500);
     expect(payload.data?.status).toBe("failed");
