@@ -9,6 +9,7 @@
  */
 
 import { loggers } from '@/lib/logger';
+import { buildToolAnchoredQueries, loadTrackedToolNames } from './discovery-queries';
 import { ProviderApiError } from './provider-api-error'; // #367
 import { recordCrawlUsage, tavilyCredits } from './provider-usage'; // #392
 
@@ -171,6 +172,14 @@ export class TavilySearchService {
 
     const results: TavilySearchResult[] = [];
 
+    // #476: tool-anchored queries rotated daily; same call count as before
+    // (recency pass + primary + one supplementary = 3 searches).
+    const [primaryQuery, ...supplementaryQueries] = buildToolAnchoredQueries(
+      await loadTrackedToolNames(),
+      new Date(),
+      2
+    );
+
     try {
       // #125: recent-first pass. Tavily ranks results by relevance, not
       // recency (confirmed against the current API reference — there is no
@@ -193,7 +202,7 @@ export class TavilySearchService {
       // Brave wasn't configured as a fallback).
       if (includeRecentPass && topic === 'news') {
         try {
-          const recentQuery = this.buildAINewsQuery();
+          const recentQuery = primaryQuery;
           const recentResults = await this.executeSearch(recentQuery, {
             maxResults: 10,
             searchDepth,
@@ -214,7 +223,6 @@ export class TavilySearchService {
       }
 
       // Execute primary query
-      const primaryQuery = this.buildAINewsQuery();
       const primaryResults = await this.executeSearch(primaryQuery, {
         maxResults,
         searchDepth,
@@ -225,7 +233,6 @@ export class TavilySearchService {
       results.push(...primaryResults);
 
       // Execute supplementary queries for better coverage
-      const supplementaryQueries = this.getSupplementaryQueries();
       for (const query of supplementaryQueries) {
         const supplementaryResults = await this.executeSearch(query, {
           maxResults: 10,
@@ -370,43 +377,6 @@ export class TavilySearchService {
       score: result.score,
       discoveredVia,
     };
-  }
-
-  /**
-   * Build the primary AI news query
-   */
-  private buildAINewsQuery(): string {
-    return `AI coding assistant news OR AI code generation tools OR
-GitHub Copilot OR Cursor AI OR Claude Code OR Windsurf OR
-Devin AI OR Replit Agent OR Amazon Q Developer OR
-AI developer tools announcement OR agentic coding 2026`.replace(/\s+/g, ' ').trim();
-  }
-
-  /**
-   * Get supplementary queries for broader coverage
-   * Rotates based on day of week
-   */
-  private getSupplementaryQueries(): string[] {
-    const dayOfWeek = new Date().getDay();
-
-    const allQueries = [
-      'AI coding assistant funding startup investment 2026',
-      'autonomous coding agent Devin Replit release update',
-      '"GitHub Copilot" OR "Cursor" announcement 2026',
-      'AI code review tool launch enterprise',
-      'SWE-bench coding agent benchmark results',
-      'AI pair programming tool VS Code JetBrains',
-      'Claude Anthropic developer tools API update',
-    ];
-
-    // Cost reduction: issue ONE rotated supplementary query per run instead of
-    // two. This trims ~1 Tavily search credit per ingestion run while keeping
-    // daily coverage variety — the chosen query still advances by one slot each
-    // day (startIndex = dayOfWeek), so across a week the full topic list is
-    // still swept. The primary discovery query is unchanged. Reverting is a
-    // one-line change (re-add the (startIndex + 1) entry below).
-    const startIndex = dayOfWeek % allQueries.length;
-    return [allQueries[startIndex]];
   }
 
   /**

@@ -9,6 +9,7 @@
  */
 
 import { loggers } from '@/lib/logger';
+import { buildToolAnchoredQueries, loadTrackedToolNames } from './discovery-queries';
 import { recordCrawlUsage } from './provider-usage'; // #392
 
 /**
@@ -47,11 +48,6 @@ interface BraveApiResponse {
 }
 
 /**
- * Days of the week for query rotation
- */
-type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
-
-/**
  * Service for discovering AI news using Brave Search API
  */
 export class BraveSearchService {
@@ -82,12 +78,15 @@ export class BraveSearchService {
 
     try {
       // Execute primary query
-      const primaryQuery = this.buildAnalystQuery();
+      // #476: tool-anchored queries rotated daily (2 searches, as before).
+      const [primaryQuery, ...supplementaryQueries] = buildToolAnchoredQueries(
+        await loadTrackedToolNames(),
+        new Date(),
+        2
+      );
       const primaryResults = await this.executeSearch(primaryQuery, freshness);
       results.push(...primaryResults);
 
-      // Execute supplementary queries
-      const supplementaryQueries = this.getSupplementaryQueries();
       for (const query of supplementaryQueries) {
         const supplementaryResults = await this.executeSearch(query, freshness);
         results.push(...supplementaryResults);
@@ -116,36 +115,6 @@ export class BraveSearchService {
       });
       return [];
     }
-  }
-
-  /**
-   * Build the primary analyst-style query targeting tech news sites and AI coding tools
-   *
-   * @returns Primary search query string
-   */
-  buildAnalystQuery(): string {
-    return 'AI coding tools news announcements launches updates site:techcrunch.com OR site:theverge.com OR site:arstechnica.com OR site:venturebeat.com OR site:wired.com OR "GitHub Copilot" OR "Cursor" OR "Claude Code" OR "Windsurf" OR "Devin" OR "Replit" OR "Codeium"';
-  }
-
-  /**
-   * Get supplementary queries based on the current day of week
-   *
-   * @returns Array of supplementary query strings
-   */
-  getSupplementaryQueries(): string[] {
-    const dayOfWeek = this.getCurrentDayOfWeek();
-
-    const supplementaryQueryMap: Record<DayOfWeek, string[]> = {
-      monday: ['"GitHub Copilot" OR "Cursor" OR "Claude Code" announcement 2026'],
-      tuesday: ['AI code assistant funding startup investment'],
-      wednesday: ['autonomous coding agent Devin Replit release update'],
-      thursday: ['AI developer tools benchmark SWE-bench evaluation'],
-      friday: ['Anthropic OpenAI coding assistant API update'],
-      saturday: [this.buildAnalystQuery()],
-      sunday: [this.buildAnalystQuery()],
-    };
-
-    return supplementaryQueryMap[dayOfWeek];
   }
 
   /**
@@ -239,25 +208,6 @@ export class BraveSearchService {
       publishedDate: result.page_age || null,
       age: result.age || null,
     };
-  }
-
-  /**
-   * Get the current day of week in lowercase
-   *
-   * @returns Current day of week
-   */
-  private getCurrentDayOfWeek(): DayOfWeek {
-    const days: DayOfWeek[] = [
-      'sunday',
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-      'saturday',
-    ];
-    const dayIndex = new Date().getDay();
-    return days[dayIndex];
   }
 
   /**
