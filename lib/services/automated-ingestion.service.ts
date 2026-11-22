@@ -388,8 +388,39 @@ export function collectRejectedUrls(
  * Test: `serializeCandidateOutcomes` cases in
  * automated-ingestion.candidate-outcomes.test.ts.
  */
-export function serializeCandidateOutcomes(outcomes: CandidateOutcome[]): CandidateOutcome[] {
-  return JSON.parse(JSON.stringify(outcomes.slice(0, CANDIDATE_OUTCOME_LIMIT)));
+export function serializeCandidateOutcomes(
+  outcomes: CandidateOutcome[],
+  runCounts?: PersistedRunCounts
+): Array<CandidateOutcome | RunCountsRecord> {
+  const capped: Array<CandidateOutcome | RunCountsRecord> = outcomes.slice(0, CANDIDATE_OUTCOME_LIMIT);
+  // #476: the run-level counts lead the list so the cap never cuts them.
+  const withCounts = runCounts ? [{ outcome: RUN_COUNTS_OUTCOME, ...runCounts }, ...capped] : capped;
+  return JSON.parse(JSON.stringify(withCounts));
+}
+
+/**
+ * Why: #476 — teaserExpanded and previouslyRejected lived only in the in-memory
+ * run summary, so on 2026-11-22 nobody could tell afterwards whether teaser
+ * expansion ran. The run row has no column for them, and a column needs a
+ * production migration.
+ * What: The two counts, persisted as one leading entry of candidate_outcomes
+ * with `outcome = 'run_counts'`. Read back with
+ * `SELECT e FROM automated_ingestion_runs r, jsonb_array_elements(r.candidate_outcomes) e WHERE e->>'outcome' = 'run_counts'`.
+ * Test: `tests/unit/ingestion-run-counts-persist-476.test.ts`.
+ */
+// #476: defined in a dependency-free module so non-service readers can skip the entry.
+export { RUN_COUNTS_OUTCOME } from "./run-counts-outcome";
+import { RUN_COUNTS_OUTCOME } from "./run-counts-outcome";
+
+export interface PersistedRunCounts {
+  /** Teaser snippets replaced by extracted full text before assessment. */
+  teaserExpanded: number;
+  /** Candidates recorded as `skipped_previously_rejected`. */
+  previouslyRejected: number;
+}
+
+export interface RunCountsRecord extends PersistedRunCounts {
+  outcome: typeof RUN_COUNTS_OUTCOME;
 }
 
 /**
@@ -549,6 +580,8 @@ export interface IngestionResult {
    * automated_ingestion_runs.candidate_outcomes.
    */
   candidateOutcomes: CandidateOutcome[];
+  /** #476: run-level counts persisted as the leading candidate_outcomes entry. */
+  persistedRunCounts?: PersistedRunCounts;
   rankingChanges: number;
   estimatedCostUsd: number;
   errors: string[];
@@ -1014,6 +1047,8 @@ export class AutomatedIngestionService {
     let articlesSkipped = 0;
     let articlesSkippedSemantic = 0;
     let articlesSkippedStale = 0;
+    // #476: kept for the run row; extractionStats is scoped to one branch.
+    let teaserExpandedCount = 0;
     // #132: per-candidate dispositions, so a zero-yield run can be read back
     // as "no fresh candidate existed" vs "one existed and failed to insert".
     const candidateOutcomes: CandidateOutcome[] = [];
@@ -1411,6 +1446,7 @@ export class AutomatedIngestionService {
 
       // #476: bounded teaser expansion; over budget keeps the snippet.
       extractionStats.teaserExpanded = await this.expandTeasers(teaserEntries, startTime);
+      teaserExpandedCount = extractionStats.teaserExpanded; // #476: persisted in `finally`
 
       // #172: fetch-stage counts for the run summary.
       runCounts.fetched = articlesWithContent.length;
@@ -1827,6 +1863,13 @@ export class AutomatedIngestionService {
       if (pipelineResult && billingReasons.length > 0) {
         pipelineResult.status = "failed";
         pipelineResult.errors.unshift(...billingReasons);
+      }
+      // #476: persist the two run-level counts with the row, not only in the log.
+      if (pipelineResult) {
+        pipelineResult.persistedRunCounts = {
+          teaserExpanded: teaserExpandedCount,
+          previouslyRejected: runCounts.previouslyRejected,
+        };
       }
       if (!isDryRun && runId && !runId.startsWith("dry-run") && pipelineResult) {
         // #124: restore error-reporting parity with the pre-fix success
@@ -2449,7 +2492,11 @@ export class AutomatedIngestionService {
       // must not take the run's terminal status and counters down with it.
       if (updates.candidateOutcomes !== undefined) {
         try {
-          updateData.candidateOutcomes = serializeCandidateOutcomes(updates.candidateOutcomes);
+          // #476: persistedRunCounts rides along as the list's leading entry.
+          updateData.candidateOutcomes = serializeCandidateOutcomes(
+            updates.candidateOutcomes,
+            updates.persistedRunCounts
+          );
         } catch (serializationError) {
           loggers.api.warn(
             "[AutomatedIngestion] Candidate outcomes could not be serialized; persisting the run row without them",

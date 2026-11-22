@@ -307,7 +307,7 @@ describe("AutomatedIngestionService - candidate outcomes (#132)", () => {
 
     await service.runDailyDiscovery({ skipQualityCheck: true, maxArticles: 5 });
 
-    const persisted = simulatedRow.candidateOutcomes as CandidateOutcome[];
+    const persisted = persistedCandidates();
     expect(persisted).toHaveLength(1);
     expect(persisted[0].outcome).toBe("ingest_failed");
     expect(persisted[0].reason).toContain("insert exploded");
@@ -349,7 +349,7 @@ describe("AutomatedIngestionService - quality reject record (#179)", () => {
 
     await service.runDailyDiscovery({ maxArticles: 5 });
 
-    const persisted = simulatedRow.candidateOutcomes as CandidateOutcome[];
+    const persisted = persistedCandidates();
     expect(persisted).toHaveLength(1);
     expect(persisted[0]).toMatchObject({
       outcome: "quality_rejected",
@@ -504,7 +504,7 @@ describe("AutomatedIngestionService - summary rejection (#180)", () => {
     expect(result.status).toBe("completed");
     expect(result.errors).toEqual([]);
     expect(result.articlesIngested).toBe(0);
-    const outcomes = (simulatedRow.candidateOutcomes as CandidateOutcome[]).map((o) => o.outcome);
+    const outcomes = persistedCandidates().map((o) => o.outcome);
     expect(outcomes).toEqual(["summary_rejected", "summary_rejected"]);
   });
 });
@@ -545,3 +545,10 @@ describe("AutomatedIngestionService - article body rejection (#477)", () => {
     });
   });
 });
+
+/** #476: the persisted list leads with a `run_counts` entry; candidate assertions skip it. */
+function persistedCandidates(): CandidateOutcome[] {
+  return (simulatedRow.candidateOutcomes as Array<{ outcome: string }>).filter(
+    (entry) => entry.outcome !== "run_counts"
+  ) as CandidateOutcome[];
+}

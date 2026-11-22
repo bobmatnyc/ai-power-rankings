@@ -452,6 +452,14 @@ describe("sanitising helpers", () => {
     expect(bucketCandidateOutcomes("not an array").outcomeCounts).toEqual({});
   });
 
+  it("does not count the #476 run_counts entry as a candidate outcome", () => {
+    const out = bucketCandidateOutcomes([
+      { outcome: "run_counts", teaserExpanded: 1, previouslyRejected: 2 },
+      { outcome: "quality_rejected", averageScore: 4 },
+    ]);
+    expect(out.outcomeCounts).toEqual({ quality_rejected: 1 });
+  });
+
   it("providerFlags reports presence only", () => {
     const flags = providerFlags({ OPENROUTER_API_KEY: "v", TAVILY_API_KEY: "  " } as NodeJS.ProcessEnv);
     expect(flags[0]).toEqual({ name: "OpenRouter (LLM)", configured: true });

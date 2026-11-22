@@ -11,6 +11,8 @@
  * Test: `tests/unit/crawl-monitor-325.test.ts`.
  */
 
+import { RUN_COUNTS_OUTCOME } from "../services/run-counts-outcome";
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** The daily-news cron runs once a day; a gap above this is flagged on the page. */
@@ -305,6 +307,8 @@ export function bucketCandidateOutcomes(outcomes: unknown): {
     if (!entry || typeof entry !== "object") continue;
     const kind = (entry as { outcome?: unknown }).outcome;
     if (typeof kind !== "string" || !/^[a-z_]{1,40}$/.test(kind)) continue;
+    // #476: the run_counts entry describes the run, not a candidate.
+    if (kind === RUN_COUNTS_OUTCOME) continue;
     outcomeCounts[kind] = (outcomeCounts[kind] ?? 0) + 1;
     const score = (entry as { averageScore?: unknown }).averageScore;
     if (kind === "quality_rejected" && typeof score === "number" && Number.isFinite(score)) {
