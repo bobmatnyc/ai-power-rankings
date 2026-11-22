@@ -1121,9 +1121,10 @@ export class AutomatedIngestionService {
       // extraction call and an LLM analysis. Skipping keeps it out of
       // `articlesIngested` and out of the articles table.
       //
-      // One window governs both the provider lookback and this gate, so an
-      // operator-widened backfill (`--days=30`) is not gated back down to 14.
-      const freshnessWindowDays = options?.days ?? FRESHNESS_WINDOW_DAYS;
+      // #476: the gate no longer shares the provider window. A short daily
+      // provider window (3) must not narrow the gate below 14; an
+      // operator-widened backfill (`--days=30`) still widens it.
+      const freshnessWindowDays = Math.max(FRESHNESS_WINDOW_DAYS, options?.days ?? 0);
       const nowMs = Date.now();
       // #125: sort freshest-source-date-first BEFORE either downstream cap
       // (content-prep slice below, and the final maxArticles slice) so a

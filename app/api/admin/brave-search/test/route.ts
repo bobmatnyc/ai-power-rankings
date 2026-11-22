@@ -9,6 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/api-auth";
 import { BraveSearchService, type BraveSearchResult } from "@/lib/services/brave-search.service";
 import { loggers } from "@/lib/logger";
+import { buildToolAnchoredQueries, loadTrackedToolNames } from "@/lib/services/discovery-queries";
 
 /**
  * Search test result
@@ -70,7 +71,9 @@ export async function POST(request: NextRequest) {
       : "pd";
 
     // Build query - use custom query or default
-    const query = body.query?.trim() || braveService.buildAnalystQuery();
+    // #476: default to today's tool-anchored query (analyst query removed).
+    const query = body.query?.trim() ||
+      buildToolAnchoredQueries(await loadTrackedToolNames(), new Date(), 1)[0];
 
     loggers.api.info("[BraveSearch] Test search initiated", {
       userId,

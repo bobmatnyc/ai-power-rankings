@@ -17,6 +17,7 @@ import {
 } from "@/lib/services/automated-ingestion.service";
 import { invalidateArticleCache } from "@/lib/cache/invalidation.service";
 import { loggers } from "@/lib/logger";
+import { DAILY_PROVIDER_WINDOW_DAYS } from "@/lib/services/discovery-queries";
 
 /**
  * Send a failure alert via webhook when the cron route encounters an error.
@@ -120,7 +121,10 @@ export async function GET(request: Request) {
 
     // 2. Run daily news discovery and ingestion
     const service = new AutomatedIngestionService();
-    const result: IngestionResult = await service.runDailyDiscovery();
+    // #476: short provider window for the daily run; backfills keep 14.
+    const result: IngestionResult = await service.runDailyDiscovery({
+      days: DAILY_PROVIDER_WINDOW_DAYS,
+    });
 
     const duration = Date.now() - startTime;
 
