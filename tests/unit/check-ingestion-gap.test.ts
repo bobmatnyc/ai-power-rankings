@@ -25,6 +25,7 @@ import {
   formatCandidateOutcomeLines,
   formatIngestedArticleLines,
   formatRunDetailLines,
+  formatRunCountsLine,
   withRunDetail,
 } from "../../scripts/check-ingestion-gap.mjs";
 
@@ -307,7 +308,12 @@ describe("latest-run detail block (#138)", () => {
   it("prints `unavailable` for both columns when they are null (a row predating migration 0013)", () => {
     const lines = formatRunDetailLines({ ingestedArticleIds: null, candidateOutcomes: null });
 
-    expect(lines).toEqual(["INGESTED_ARTICLE_IDS=unavailable", "CANDIDATE_OUTCOMES=unavailable"]);
+    // #476: the run counts line degrades to n/a, never an error.
+    expect(lines).toEqual([
+      "INGESTED_ARTICLE_IDS=unavailable",
+      "CANDIDATE_OUTCOMES=unavailable",
+      "RUN_COUNTS teaser_expanded=n/a previously_rejected=n/a",
+    ]);
   });
 
   it("aggregates candidate outcomes by outcome, commonest first", () => {
@@ -397,5 +403,30 @@ describe("coerceJsonArray (#138)", () => {
   it("rejects a string that is not a JSON array", () => {
     expect(coerceJsonArray("not json")).toBeNull();
     expect(coerceJsonArray('{"a":1}')).toBeNull();
+  });
+});
+
+describe("formatRunCountsLine (#476)", () => {
+  it("prints both counts from the run_counts entry and keeps it out of the candidate aggregate", () => {
+    const stored = [
+      { outcome: "run_counts", teaserExpanded: 2, previouslyRejected: 3 },
+      { url: "https://a.example/x", outcome: "quality_rejected" },
+    ];
+
+    expect(formatRunCountsLine(stored)).toBe("RUN_COUNTS teaser_expanded=2 previously_rejected=3");
+    expect(formatRunDetailLines({ ingestedArticleIds: [], candidateOutcomes: stored })).toContain(
+      "RUN_COUNTS teaser_expanded=2 previously_rejected=3"
+    );
+    expect(formatCandidateOutcomeLines(stored)).toEqual([
+      "CANDIDATE_OUTCOMES=1",
+      "CANDIDATE_OUTCOME outcome=quality_rejected count=1",
+    ]);
+  });
+
+  it("prints n/a for a run written before #476", () => {
+    expect(formatRunCountsLine([{ url: "https://a.example/x", outcome: "skipped_stale" }])).toBe(
+      "RUN_COUNTS teaser_expanded=n/a previously_rejected=n/a"
+    );
+    expect(formatRunCountsLine(null)).toBe("RUN_COUNTS teaser_expanded=n/a previously_rejected=n/a");
   });
 });

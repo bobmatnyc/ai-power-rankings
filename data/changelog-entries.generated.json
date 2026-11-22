@@ -101,12 +101,23 @@
   {
     "id": "unreleased-8f835efcd3e8",
     "version": "Unreleased",
-    "date": "2026-11-22T09:46:53.000Z",
+    "date": "2026-11-22T10:03:34.000Z",
     "dateSource": "commit",
     "section": "Fixed",
     "scope": "ingestion",
     "title": "news discovery queries name tracked tools",
     "description": "news discovery queries name tracked tools. Each Tavily and Brave query is 4 active tool names from the `tools` table joined by OR (`lib/services/discovery-queries.ts`), and the groups advance daily so every active tool is queried over a cycle. The generic OR query and the weekday topic queries are removed, including the funding/investment query. If the `tools` read fails or returns nothing, a static list of 8 top tools is used. Searches per run are unchanged: Tavily 3, Brave 2. The daily cron asks providers for 3 days (`DAILY_PROVIDER_WINDOW_DAYS`) instead of 14; runs with no `days` keep 14, and the freshness gate stays at 14 days (wider only when a run passes more). Tests: `tests/unit/discovery-queries-476.test.ts`, `tests/unit/ingestion-daily-window-476.test.ts`, `tests/unit/cron-daily-news-window-476.test.ts` (#476)",
+    "changeType": "fix"
+  },
+  {
+    "id": "unreleased-c2f61a4ae6b6",
+    "version": "Unreleased",
+    "date": "2026-11-22T23:32:34.000Z",
+    "dateSource": "commit",
+    "section": "Fixed",
+    "scope": "ingestion",
+    "title": "a run's teaserExpanded and previouslyRejected counts are stored with the run row",
+    "description": "a run's `teaserExpanded` and `previouslyRejected` counts are stored with the run row. They were only in the in-memory run summary, so afterwards nobody could tell whether teaser expansion ran. The final run-row write puts them first in `automated_ingestion_runs.candidate_outcomes` as `{\"outcome\":\"run_counts\",\"teaserExpanded\":N,\"previouslyRejected\":N}`, ahead of the 100-entry cap; no schema change. The gap detector prints `RUN_COUNTS teaser_expanded=N previously_rejected=N` for the latest run, `n/a` for a run written before this change, and leaves the entry out of its candidate-outcome counts. Tests: `tests/unit/ingestion-run-counts-persist-476.test.ts`, `tests/unit/check-ingestion-gap.test.ts` (#476)",
     "changeType": "fix"
   },
   {

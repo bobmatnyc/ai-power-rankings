@@ -8,6 +8,7 @@
 import { getDb } from "../lib/db/connection";
 import { automatedIngestionRuns } from "../lib/db/schema";
 import { desc } from "drizzle-orm";
+import { RUN_COUNTS_OUTCOME } from "../lib/services/run-counts-outcome";
 
 async function main() {
   const db = getDb();
@@ -38,7 +39,10 @@ async function main() {
     // #132: the two columns that tell "no fresh candidate existed" from "one
     // existed and failed to insert".
     console.log(`  Stale Skipped: ${run.articlesSkippedStale}`);
-    const outcomes = Array.isArray(run.candidateOutcomes) ? run.candidateOutcomes : [];
+    // #476: the leading run_counts entry is not a candidate.
+    const outcomes = (Array.isArray(run.candidateOutcomes) ? run.candidateOutcomes : []).filter(
+      (entry) => (entry as { outcome?: unknown } | null)?.outcome !== RUN_COUNTS_OUTCOME
+    );
     console.log(`  Candidate Outcomes: ${outcomes.length}`);
     if (outcomes.length > 0) {
       console.log(`  Outcome details: ${JSON.stringify(outcomes).substring(0, 400)}`);
