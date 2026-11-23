@@ -181,7 +181,8 @@ describe("prompt states the word ceiling (#468)", () => {
     const target = Number(/aim for about (\d+) words/.exec(system)?.[1]);
     expect(target).toBeGreaterThanOrEqual(min);
     expect(target).toBeLessThan(max);
-    if (tier === "full") expect(target).toBe(280);
+    // #468: the full tier asks for about 300 words, 50 below the cap.
+    if (tier === "full") expect(target).toBe(300);
   });
 });
 
