@@ -364,10 +364,10 @@ describe("generateWeeklyDigest dry run (#181)", () => {
 
 describe("over-cap draft feedback (#468)", () => {
   // #468: W47 drafts ran 364 then 392 words against the 350 cap; the retry only repeated the code.
-  it("asks for about 300 words on the first attempt", async () => {
+  it("asks for about 280 words on the first attempt", async () => {
     llm.mockResolvedValueOnce(completion(VALID_FULL));
     await run(makeRepo([article(1), article(2), article(3)]));
-    expect(promptOf(0)).toContain("aim for about 300 words; never exceed 350");
+    expect(promptOf(0)).toContain("aim for about 280 words; never exceed 350");
     expect(promptOf(0)).not.toContain("Cut at least");
   });
 
@@ -378,8 +378,11 @@ describe("over-cap draft feedback (#468)", () => {
     const outcome = await run(makeRepo([article(1), article(2), article(3)]));
     expect(outcome).toMatchObject({ status: "generated", attempts: 2 });
     expect(promptOf(1)).toContain("word_count_above_max (392>350)");
-    expect(promptOf(1)).toContain("Your previous draft was 392 words; the cap is 350. Cut at least 42 words");
-    expect(promptOf(1)).toContain("cutting about 92");
+    // #468: the exact sentence, so a missing space before "Shorten" fails.
+    expect(promptOf(1)).toContain(
+      " Your previous draft was 392 words; the cap is 350. Cut at least 42 words; aim for about 280 words, " +
+        "which means cutting about 112. Shorten sentences and drop detail; keep every required section and link."
+    );
   });
 
   it("still rejects a draft over 350 words on both attempts and stores nothing", async () => {

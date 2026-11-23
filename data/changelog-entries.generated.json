@@ -110,14 +110,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-ba2fee3ffc02",
+    "id": "unreleased-91164d578dfb",
     "version": "Unreleased",
-    "date": "2026-11-23T10:22:27.415Z",
+    "date": "2026-11-23T10:25:07.247Z",
     "dateSource": "build",
     "section": "Fixed",
     "scope": "digest",
-    "title": "the full weekly digest prompt asks for about 300 words (was 280), and the 350-word maximum is unchanged",
-    "description": "the full weekly digest prompt asks for about 300 words (was 280), and the 350-word maximum is unchanged. When a draft fails `word_count_above_max`, the retry prompt states the draft's word count, the cap, the minimum cut, and the cut needed to reach the target. The 2026-W47 run failed twice with 364 and then 392 words because the retry only repeated the failure code. Other failures retry as before, still with two attempts. Tests: `tests/unit/weekly-digest-service-181.test.ts`, `tests/unit/weekly-digest-input-181.test.ts` (#468)",
+    "title": "the full weekly digest prompt keeps its target of about 280 words, and the 350-word maximum is unchanged",
+    "description": "the full weekly digest prompt keeps its target of about 280 words, and the 350-word maximum is unchanged. When a draft fails `word_count_above_max`, the retry prompt states the draft's word count, the cap, the minimum cut, and the cut needed to reach the target. The 2026-W47 run failed twice with 364 and then 392 words because the retry only repeated the failure code. Other failures retry as before, still with two attempts. Tests: `tests/unit/weekly-digest-service-181.test.ts`, `tests/unit/weekly-digest-input-181.test.ts` (#468)",
     "changeType": "fix"
   },
   {
