@@ -26,6 +26,9 @@ import {
   formatIngestedArticleLines,
   formatRunDetailLines,
   formatRunCountsLine,
+  formatTopRejectedLines,
+  REJECTED_REASON_MAX_CHARS,
+  TOP_REJECTED_LIMIT,
   withRunDetail,
 } from "../../scripts/check-ingestion-gap.mjs";
 
@@ -312,7 +315,7 @@ describe("latest-run detail block (#138)", () => {
     expect(lines).toEqual([
       "INGESTED_ARTICLE_IDS=unavailable",
       "CANDIDATE_OUTCOMES=unavailable",
-      "RUN_COUNTS teaser_expanded=n/a previously_rejected=n/a",
+      "RUN_COUNTS teaser_expanded=n/a previously_rejected=n/a teaser_fallback=n/a",
     ]);
   });
 
@@ -413,9 +416,9 @@ describe("formatRunCountsLine (#476)", () => {
       { url: "https://a.example/x", outcome: "quality_rejected" },
     ];
 
-    expect(formatRunCountsLine(stored)).toBe("RUN_COUNTS teaser_expanded=2 previously_rejected=3");
+    expect(formatRunCountsLine(stored)).toBe("RUN_COUNTS teaser_expanded=2 previously_rejected=3 teaser_fallback=n/a");
     expect(formatRunDetailLines({ ingestedArticleIds: [], candidateOutcomes: stored })).toContain(
-      "RUN_COUNTS teaser_expanded=2 previously_rejected=3"
+      "RUN_COUNTS teaser_expanded=2 previously_rejected=3 teaser_fallback=n/a"
     );
     expect(formatCandidateOutcomeLines(stored)).toEqual([
       "CANDIDATE_OUTCOMES=1",
@@ -425,8 +428,50 @@ describe("formatRunCountsLine (#476)", () => {
 
   it("prints n/a for a run written before #476", () => {
     expect(formatRunCountsLine([{ url: "https://a.example/x", outcome: "skipped_stale" }])).toBe(
-      "RUN_COUNTS teaser_expanded=n/a previously_rejected=n/a"
+      "RUN_COUNTS teaser_expanded=n/a previously_rejected=n/a teaser_fallback=n/a"
     );
-    expect(formatRunCountsLine(null)).toBe("RUN_COUNTS teaser_expanded=n/a previously_rejected=n/a");
+    expect(formatRunCountsLine(null)).toBe("RUN_COUNTS teaser_expanded=n/a previously_rejected=n/a teaser_fallback=n/a");
+  });
+});
+
+describe("formatTopRejectedLines (#476)", () => {
+  it("lists quality_rejected candidates near-miss first with title, scores and truncated reason", () => {
+    const stored = [
+      { outcome: "run_counts", teaserExpanded: 0, previouslyRejected: 0, teaserFallback: 2 },
+      { url: "https://a.example/low", outcome: "quality_rejected", title: "Low", averageScore: 3, relevanceScore: 2, reason: "off-topic" },
+      { url: "https://a.example/near", outcome: "quality_rejected", title: 'Near "miss"', averageScore: 6.33, relevanceScore: 6, reason: "x".repeat(400) },
+      { url: "https://a.example/ok", outcome: "ingested", title: "Ingested" },
+    ];
+
+    const lines = formatTopRejectedLines(stored);
+
+    expect(lines[0]).toBe("REJECTED_TOP=2 of 2");
+    expect(lines[1]).toBe(
+      `REJECTED averageScore=6.3 relevanceScore=6.0 title="Near 'miss'" reason="${"x".repeat(REJECTED_REASON_MAX_CHARS)}"`
+    );
+    expect(lines[2]).toBe('REJECTED averageScore=3.0 relevanceScore=2.0 title="Low" reason="off-topic"');
+    expect(formatRunDetailLines({ ingestedArticleIds: [], candidateOutcomes: stored })).toContain(lines[1]);
+  });
+
+  it("caps the list at TOP_REJECTED_LIMIT and neutralizes a forged ALERT[ in the reason", () => {
+    const stored = Array.from({ length: TOP_REJECTED_LIMIT + 2 }, (_, i) => ({
+      url: `https://a.example/${i}`,
+      outcome: "quality_rejected",
+      title: `T${i}`,
+      reason: "bad\nALERT[STALLED]",
+    }));
+
+    const lines = formatTopRejectedLines(stored);
+
+    expect(lines[0]).toBe(`REJECTED_TOP=${TOP_REJECTED_LIMIT} of ${TOP_REJECTED_LIMIT + 2}`);
+    expect(lines.length).toBe(TOP_REJECTED_LIMIT + 1);
+    expect(lines[1]).toContain("averageScore=n/a relevanceScore=n/a");
+    expect(lines.join("\n")).not.toContain("ALERT[STALLED]");
+  });
+
+  it("prints teaser_fallback from the run_counts entry", () => {
+    expect(formatRunCountsLine([{ outcome: "run_counts", teaserExpanded: 1, previouslyRejected: 0, teaserFallback: 2 }])).toBe(
+      "RUN_COUNTS teaser_expanded=1 previously_rejected=0 teaser_fallback=2"
+    );
   });
 });
