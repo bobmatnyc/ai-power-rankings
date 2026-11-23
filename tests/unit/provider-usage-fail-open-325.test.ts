@@ -123,9 +123,11 @@ const MODEL = "anthropic/claude-sonnet-5.5";
 /** Three same-day candidates with enough body that no extraction provider runs. */
 function discoveryResults() {
   const now = new Date().toISOString();
-  const body =
+  // #476: repeated past TEASER_MAX_CHARS so no teaser fetch is attempted.
+  const body = (
     "This fixture body is long enough to clear the 100-character sufficiency threshold, " +
-    "so the pipeline reuses it and never calls an extraction provider.";
+    "so the pipeline reuses it and never calls an extraction provider. "
+  ).repeat(4);
   return [
     ["Cursor ships background agents for large monorepos", "https://news-a.example.com/cursor"],
     ["Zed editor publishes latency benchmark results", "https://news-b.example.com/zed"],
