@@ -187,4 +187,47 @@ describe("teaser extraction before assessment (#476)", () => {
     expect(result.errors.join(" ")).not.toMatch(/Provider (billing|auth) error/);
     expect(result.status).not.toBe("failed");
   });
+
+  // #476 (marker rule): a snippet over the length cutoff that is still truncated gets full text.
+  it("extracts a long snippet that carries a [...] truncation marker", async () => {
+    const url = "https://example.com/truncated";
+    const truncated = `${LONG_SNIPPET} The announcement continues [...]`;
+    const { service, fetchArticleContent, assessedContent } = setup([candidate(url, truncated)], async () => FULL_TEXT);
+
+    await service.runDailyDiscovery({ days: 14 });
+
+    expect(fetchArticleContent).toHaveBeenCalledWith(url, undefined, undefined);
+    expect(assessedContent(url)).toBe(FULL_TEXT);
+  });
+
+  // #476 (Fail-Open Check): a failed fetch keeps the snippet AND is recorded.
+  it("records a failed full-text fetch as teaserFallback and still assesses the snippet", async () => {
+    const url = "https://example.com/fetch-fails";
+    const { service, assessedContent } = setup([candidate(url, TEASER)], async () => {
+      throw new Error("extractor down");
+    });
+
+    const result = await service.runDailyDiscovery({ days: 14 });
+
+    expect(assessedContent(url)).toBe(TEASER);
+    expect(result.persistedRunCounts).toMatchObject({ teaserExpanded: 0, teaserFallback: 1 });
+    expect(result.status).not.toBe("failed");
+  });
+
+  // #476: a google.com/url redirect is fetched and deduplicated as the publisher URL.
+  it("resolves a google.com/url redirect before dedup and fetch", async () => {
+    const redirect = "https://www.google.com/url?rct=j&sa=t&url=https%3A%2F%2Fpublisher.example%2Fstory&ct=ga";
+    const publisher = "https://publisher.example/story";
+    const { service, fetchArticleContent, assessedContent } = setup(
+      [candidate(redirect, TEASER)],
+      async () => FULL_TEXT
+    );
+    const checkDuplicates = vi.spyOn(service, "checkDuplicates");
+
+    await service.runDailyDiscovery({ days: 14 });
+
+    expect(checkDuplicates.mock.calls[0]?.[0]).toEqual([publisher]);
+    expect(fetchArticleContent).toHaveBeenCalledWith(publisher, undefined, undefined);
+    expect(assessedContent(publisher)).toBe(FULL_TEXT);
+  });
 });
