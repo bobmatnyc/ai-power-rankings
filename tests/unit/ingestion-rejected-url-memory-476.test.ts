@@ -169,4 +169,76 @@ describe("rejected-URL memory (#476)", () => {
     expect(assessedUrls.sort()).toEqual([FRESH_URL, REJECTED_URL].sort());
     expect(result.status).toBe("completed");
   });
+
+  // #476 (critic HIGH): a transient extractor error must not hide an article for 30 days.
+  it("does not skip, on the next run, a URL rejected after its full-text fetch failed", async () => {
+    const teaser = { ...candidate("Claude Code ships agents", FRESH_URL), content: "Claude Code ships background agents for long-running coding tasks, according to a report published today. Read more" };
+    const first = setup([teaser]);
+    vi.spyOn(
+      first.service as unknown as { fetchArticleContent: () => Promise<string | null> },
+      "fetchArticleContent"
+    ).mockRejectedValue(new Error("extractor down"));
+
+    const run1 = await first.service.runDailyDiscovery({ days: 14 });
+
+    const outcome1 = run1.candidateOutcomes.find((o) => o.url === FRESH_URL);
+    expect(outcome1?.outcome).toBe("quality_rejected_unexpanded");
+    expect(collectRejectedUrls([{ createdAt: new Date(), candidateOutcomes: run1.candidateOutcomes }]).has(FRESH_URL)).toBe(false);
+
+    priorRuns.push({ createdAt: new Date(), candidateOutcomes: run1.candidateOutcomes });
+    const second = setup([candidate("Claude Code ships agents", FRESH_URL)]);
+    const run2 = await second.service.runDailyDiscovery({ days: 14 });
+
+    expect(second.batchAssess).toHaveBeenCalledTimes(1);
+    expect(run2.candidateOutcomes.find((o) => o.url === FRESH_URL)?.outcome).not.toBe("skipped_previously_rejected");
+  });
+
+  it("still skips a URL rejected after a successful full-text fetch", async () => {
+    const teaser = { ...candidate("Off-topic page", REJECTED_URL), content: "A short off-topic teaser about retail deals and delivery options that has nothing to do with AI coding. Read more" };
+    const first = setup([teaser]);
+    vi.spyOn(
+      first.service as unknown as { fetchArticleContent: () => Promise<string | null> },
+      "fetchArticleContent"
+    ).mockResolvedValue("An off-topic retail page about shopping deals and delivery options. ".repeat(20));
+
+    const run1 = await first.service.runDailyDiscovery({ days: 14 });
+    expect(run1.candidateOutcomes.find((o) => o.url === REJECTED_URL)?.outcome).toBe("quality_rejected");
+
+    priorRuns.push({ createdAt: new Date(), candidateOutcomes: run1.candidateOutcomes });
+    const second = setup([candidate("Off-topic page", REJECTED_URL)]);
+    const run2 = await second.service.runDailyDiscovery({ days: 14 });
+
+    expect(second.batchAssess).not.toHaveBeenCalled();
+    expect(run2.candidateOutcomes.find((o) => o.url === REJECTED_URL)?.outcome).toBe("skipped_previously_rejected");
+  });
+
+  // #476 (delta review HIGH): a teaser cut by the per-run cap was never fetched.
+  it("marks an over-budget teaser unexpanded and does not skip it on the next run", async () => {
+    const teaser = {
+      ...candidate("Claude Code ships agents", FRESH_URL),
+      content: "Claude Code ships background agents for long-running coding tasks, according to a report published today. Read more",
+    };
+    const first = setup([teaser]);
+    (first.service as unknown as { teaserBudget: Record<string, number> }).teaserBudget = {
+      maxPerRun: 0,
+      perTeaserTimeoutMs: 10_000,
+      concurrency: 1,
+      stopAfterRunMs: 120_000,
+    };
+    const fetchSpy = vi
+      .spyOn(first.service as unknown as { fetchArticleContent: () => Promise<string | null> }, "fetchArticleContent")
+      .mockResolvedValue("unused");
+
+    const run1 = await first.service.runDailyDiscovery({ days: 14 });
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(run1.candidateOutcomes.find((o) => o.url === FRESH_URL)?.outcome).toBe("quality_rejected_unexpanded");
+
+    priorRuns.push({ createdAt: new Date(), candidateOutcomes: run1.candidateOutcomes });
+    const second = setup([candidate("Claude Code ships agents", FRESH_URL)]);
+    const run2 = await second.service.runDailyDiscovery({ days: 14 });
+
+    expect(second.batchAssess).toHaveBeenCalledTimes(1);
+    expect(run2.candidateOutcomes.find((o) => o.url === FRESH_URL)?.outcome).not.toBe("skipped_previously_rejected");
+  });
 });

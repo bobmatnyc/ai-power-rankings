@@ -140,10 +140,12 @@ function searchResult(
     description: "A discovery fixture.",
     source: "example.com",
     publishedDate,
-    content:
+    // #476: repeated past TEASER_MAX_CHARS so no teaser fetch is attempted.
+    content: (
       "A vendor announced something today. This fixture body exists only to " +
       "clear the 100-character sufficiency threshold so no extraction call is " +
-      "attempted during the test run.",
+      "attempted during the test run. "
+    ).repeat(4),
     score: 0.9,
     discoveredVia,
   };

@@ -275,6 +275,10 @@ export type CandidateOutcomeKind =
   // #167: the quality LLM call itself failed (e.g. out of credits) — not a rejection.
   | "assessment_failed"
   | "quality_rejected"
+  // #476: rejected after its full-text fetch failed, so scored on the snippet.
+  // Not read by the rejected-URL lookback: a transient extractor error must
+  // not hide the article for REJECTED_URL_LOOKBACK_DAYS.
+  | "quality_rejected_unexpanded"
   // #476: quality_rejected in a run within REJECTED_URL_LOOKBACK_DAYS; not re-assessed.
   | "skipped_previously_rejected"
   // #180: the generated summary failed validation twice; `reason` names the failed checks.
@@ -327,13 +331,9 @@ export const CANDIDATE_OUTCOME_LIMIT = 100;
  */
 export const REJECTED_URL_LOOKBACK_DAYS = 30;
 
-/**
- * #476: a search snippet at or below this length is a teaser, not full text.
- * One-sentence Google-redirect teasers were scored on the snippet alone. Tavily
- * cuts `description` from the snippet at 500 chars, so a snippet this short
- * carries nothing beyond the description.
- */
-export const TEASER_MAX_CHARS = 500;
+// #476: teaser rule (length OR truncation/boilerplate markers) lives in teaser-detection.ts.
+export { TEASER_MAX_CHARS } from "./teaser-detection";
+import { needsFullText, resolvePublisherUrl } from "./teaser-detection";
 
 /**
  * #476: teaser expansion's own budget inside PIPELINE_TIMEOUT_MS (265 s). One
@@ -342,7 +342,10 @@ export const TEASER_MAX_CHARS = 500;
  * none starts once the run is `stopAfterRunMs` old. Over budget keeps the snippet.
  */
 export const TEASER_EXPANSION_BUDGET = {
-  maxPerRun: 10,
+  // #476: 15, not 10 — the marker rule flags more candidates (13 of 20 on the
+  // 2026-11-23 run were thin). 15 x 10 s / 3 in flight is ~50 s worst case,
+  // inside stopAfterRunMs (120 s) and well inside the 265 s pipeline timeout.
+  maxPerRun: 15,
   perTeaserTimeoutMs: 10_000,
   concurrency: 3,
   stopAfterRunMs: 120_000,
@@ -415,6 +418,8 @@ import { RUN_COUNTS_OUTCOME } from "./run-counts-outcome";
 export interface PersistedRunCounts {
   /** Teaser snippets replaced by extracted full text before assessment. */
   teaserExpanded: number;
+  /** #476: teaser fetches that failed or returned no usable text; the snippet was scored. */
+  teaserFallback: number;
   /** Candidates recorded as `skipped_previously_rejected`. */
   previouslyRejected: number;
 }
@@ -745,26 +750,37 @@ export class AutomatedIngestionService {
    * What: Expands up to `maxPerRun` teasers with at most `concurrency` in
    * flight; no expansion starts once `Date.now() - runStartMs` reaches
    * `stopAfterRunMs`. Each entry's `content` is replaced in place only when
-   * expandTeaser returns longer text. Returns how many were replaced.
+   * expandTeaser returns longer text. Returns how many were replaced and how
+   * many fell back to the snippet (#476).
    * Test: `tests/unit/ingestion-teaser-extraction-476.test.ts`.
    */
   private async expandTeasers(
     entries: Array<{ url: string; content: string }>,
-    runStartMs: number
-  ): Promise<number> {
+    runStartMs: number,
+    unexpandedUrls?: Set<string>
+  ): Promise<{ expanded: number; fallback: number }> {
     const budget = this.teaserBudget;
     const queue = entries.slice(0, budget.maxPerRun);
     let expanded = 0;
+    let fallback = 0; // #476: fetch attempted, snippet kept
+    // #476: every teaser starts unexpanded (capped, time-cut and failed alike) and
+    // is cleared only when a fetch replaced its content; kept out of the lookback.
+    for (const entry of entries) unexpandedUrls?.add(entry.url);
     const worker = async (): Promise<void> => {
       for (let entry = queue.shift(); entry; entry = queue.shift()) {
         if (Date.now() - runStartMs >= budget.stopAfterRunMs) return;
         const teaser = entry.content;
         entry.content = await this.expandTeaser(entry.url, teaser, budget.perTeaserTimeoutMs);
-        if (entry.content !== teaser) expanded++;
+        if (entry.content !== teaser) {
+          expanded++;
+          unexpandedUrls?.delete(entry.url);
+        } else {
+          fallback++;
+        }
       }
     };
     await Promise.all(Array.from({ length: Math.max(1, budget.concurrency) }, worker));
-    return expanded;
+    return { expanded, fallback };
   }
 
   /**
@@ -1049,6 +1065,7 @@ export class AutomatedIngestionService {
     let articlesSkippedStale = 0;
     // #476: kept for the run row; extractionStats is scoped to one branch.
     let teaserExpandedCount = 0;
+    let teaserFallbackCount = 0; // #476
     // #132: per-candidate dispositions, so a zero-yield run can be read back
     // as "no fresh candidate existed" vs "one existed and failed to insert".
     const candidateOutcomes: CandidateOutcome[] = [];
@@ -1114,6 +1131,9 @@ export class AutomatedIngestionService {
       // downstream discoverySource metadata stays accurate.
       const { results: searchResults, provider: usedProvider } =
         await this.discoverArticles(options, billingFailures);
+
+      // #476: unwrap google.com/url?... redirects to the publisher URL before fetch and dedup.
+      for (const result of searchResults) result.url = resolvePublisherUrl(result.url);
 
       articlesDiscovered = searchResults.length;
       runCounts.discovered = articlesDiscovered; // #172
@@ -1199,7 +1219,9 @@ export class AutomatedIngestionService {
             ? {
                 reason: reason.substring(
                   0,
-                  outcome === "quality_rejected" ? OUTCOME_QUALITY_REASON_MAX_CHARS : 120
+                  outcome === "quality_rejected" || outcome === "quality_rejected_unexpanded"
+                    ? OUTCOME_QUALITY_REASON_MAX_CHARS
+                    : 120
                 ),
               }
             : {}),
@@ -1356,9 +1378,12 @@ export class AutomatedIngestionService {
         allFailed: 0,
         usedTavilySearchContent: 0,
         teaserExpanded: 0, // #476
+        teaserFallback: 0, // #476
       };
       // #476: teaser snippets, expanded after the loop under TEASER_EXPANSION_BUDGET.
       const teaserEntries: SearchResultWithContent[] = [];
+      // #476: URLs whose full-text fetch was attempted and failed.
+      const unexpandedUrls = new Set<string>();
 
       const fetchCandidates = newArticles.slice(0, maxArticles * 2);
       for (const article of fetchCandidates) {
@@ -1398,7 +1423,8 @@ export class AutomatedIngestionService {
           };
           articlesWithContent.push(entry);
           // #476: a teaser snippet gets the extractor's full text before assessment.
-          if (tavilyContent.length <= TEASER_MAX_CHARS) teaserEntries.push(entry);
+          // #476: short OR truncated/boilerplate snippets, not the length check alone.
+          if (needsFullText(tavilyContent)) teaserEntries.push(entry);
         } else {
           // Fallback: fetch content using extraction chain (Tavily Extract → Jina Reader → Basic HTML)
           // Individual failures are gracefully handled and logged, never blocking the batch
@@ -1445,8 +1471,11 @@ export class AutomatedIngestionService {
       }
 
       // #476: bounded teaser expansion; over budget keeps the snippet.
-      extractionStats.teaserExpanded = await this.expandTeasers(teaserEntries, startTime);
+      const teaserResult = await this.expandTeasers(teaserEntries, startTime, unexpandedUrls);
+      extractionStats.teaserExpanded = teaserResult.expanded;
+      extractionStats.teaserFallback = teaserResult.fallback; // #476: recorded, never dropped
       teaserExpandedCount = extractionStats.teaserExpanded; // #476: persisted in `finally`
+      teaserFallbackCount = extractionStats.teaserFallback;
 
       // #172: fetch-stage counts for the run summary.
       runCounts.fetched = articlesWithContent.length;
@@ -1474,6 +1503,7 @@ export class AutomatedIngestionService {
           basicHtml: extractionStats.basicSuccess,
           allFailed: extractionStats.allFailed,
           teaserExpanded: extractionStats.teaserExpanded, // #476
+          teaserFallback: extractionStats.teaserFallback, // #476
         },
       });
 
@@ -1550,7 +1580,8 @@ export class AutomatedIngestionService {
           const verdict = qualityResults[index];
           recordOutcome(
             assessed,
-            "quality_rejected",
+            // #476: a fetch-failed rejection gets its own outcome so the 30-day lookback ignores it.
+            unexpandedUrls.has(assessed.url) ? "quality_rejected_unexpanded" : "quality_rejected",
             verdict?.reasoning ?? "no quality assessment returned",
             verdict
               ? {
@@ -1868,6 +1899,7 @@ export class AutomatedIngestionService {
       if (pipelineResult) {
         pipelineResult.persistedRunCounts = {
           teaserExpanded: teaserExpandedCount,
+          teaserFallback: teaserFallbackCount, // #476
           previouslyRejected: runCounts.previouslyRejected,
         };
       }
