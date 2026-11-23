@@ -305,6 +305,7 @@ export function formatRunCountsLine(candidateOutcomes) {
 // #476: how many rejected candidates the alert lists, and how much of each reason.
 export const TOP_REJECTED_LIMIT = 5;
 export const REJECTED_REASON_MAX_CHARS = 160;
+const REJECTED_OUTCOMES = new Set(["quality_rejected", "quality_rejected_unexpanded"]);
 
 function scoreOrNa(value) {
   return typeof value === "number" && Number.isFinite(value) ? value.toFixed(1) : "n/a";
@@ -328,14 +329,15 @@ export function formatTopRejectedLines(candidateOutcomes) {
   // CANDIDATE_OUTCOMES=unavailable already reports an unreadable column.
   if (stored === null) return [];
   const rejected = stored.filter(
-    (entry) => entry && typeof entry === "object" && entry.outcome === "quality_rejected"
+    // #476: quality_rejected_unexpanded = rejected on the snippet after a failed fetch.
+    (entry) => entry && typeof entry === "object" && REJECTED_OUTCOMES.has(entry.outcome)
   );
   const score = (entry) => (typeof entry.averageScore === "number" ? entry.averageScore : -1);
   const ranked = [...rejected].sort((a, b) => score(b) - score(a));
   const lines = [`REJECTED_TOP=${Math.min(rejected.length, TOP_REJECTED_LIMIT)} of ${rejected.length}`];
   for (const entry of ranked.slice(0, TOP_REJECTED_LIMIT)) {
     lines.push(
-      `REJECTED averageScore=${scoreOrNa(entry.averageScore)} relevanceScore=${scoreOrNa(entry.relevanceScore)} ` +
+      `REJECTED outcome=${detailToken(entry.outcome)} averageScore=${scoreOrNa(entry.averageScore)} relevanceScore=${scoreOrNa(entry.relevanceScore)} ` +
         `title=${quoted(entry.title, DETAIL_URL_MAX_CHARS)} reason=${quoted(entry.reason, REJECTED_REASON_MAX_CHARS)}`
     );
   }
