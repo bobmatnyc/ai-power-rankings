@@ -763,15 +763,19 @@ export class AutomatedIngestionService {
     const queue = entries.slice(0, budget.maxPerRun);
     let expanded = 0;
     let fallback = 0; // #476: fetch attempted, snippet kept
+    // #476: every teaser starts unexpanded (capped, time-cut and failed alike) and
+    // is cleared only when a fetch replaced its content; kept out of the lookback.
+    for (const entry of entries) unexpandedUrls?.add(entry.url);
     const worker = async (): Promise<void> => {
       for (let entry = queue.shift(); entry; entry = queue.shift()) {
         if (Date.now() - runStartMs >= budget.stopAfterRunMs) return;
         const teaser = entry.content;
         entry.content = await this.expandTeaser(entry.url, teaser, budget.perTeaserTimeoutMs);
-        if (entry.content !== teaser) expanded++;
-        else {
+        if (entry.content !== teaser) {
+          expanded++;
+          unexpandedUrls?.delete(entry.url);
+        } else {
           fallback++;
-          unexpandedUrls?.add(entry.url); // #476: kept out of the rejected-URL lookback
         }
       }
     };
