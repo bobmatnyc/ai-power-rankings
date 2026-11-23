@@ -438,7 +438,7 @@ describe("formatTopRejectedLines (#476)", () => {
   it("lists quality_rejected candidates near-miss first with title, scores and truncated reason", () => {
     const stored = [
       { outcome: "run_counts", teaserExpanded: 0, previouslyRejected: 0, teaserFallback: 2 },
-      { url: "https://a.example/low", outcome: "quality_rejected", title: "Low", averageScore: 3, relevanceScore: 2, reason: "off-topic" },
+      { url: "https://a.example/low", outcome: "quality_rejected_unexpanded", title: "Low", averageScore: 3, relevanceScore: 2, reason: "off-topic" },
       { url: "https://a.example/near", outcome: "quality_rejected", title: 'Near "miss"', averageScore: 6.33, relevanceScore: 6, reason: "x".repeat(400) },
       { url: "https://a.example/ok", outcome: "ingested", title: "Ingested" },
     ];
@@ -447,9 +447,9 @@ describe("formatTopRejectedLines (#476)", () => {
 
     expect(lines[0]).toBe("REJECTED_TOP=2 of 2");
     expect(lines[1]).toBe(
-      `REJECTED averageScore=6.3 relevanceScore=6.0 title="Near 'miss'" reason="${"x".repeat(REJECTED_REASON_MAX_CHARS)}"`
+      `REJECTED outcome=quality_rejected averageScore=6.3 relevanceScore=6.0 title="Near 'miss'" reason="${"x".repeat(REJECTED_REASON_MAX_CHARS)}"`
     );
-    expect(lines[2]).toBe('REJECTED averageScore=3.0 relevanceScore=2.0 title="Low" reason="off-topic"');
+    expect(lines[2]).toBe('REJECTED outcome=quality_rejected_unexpanded averageScore=3.0 relevanceScore=2.0 title="Low" reason="off-topic"');
     expect(formatRunDetailLines({ ingestedArticleIds: [], candidateOutcomes: stored })).toContain(lines[1]);
   });
 

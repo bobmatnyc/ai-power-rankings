@@ -275,6 +275,10 @@ export type CandidateOutcomeKind =
   // #167: the quality LLM call itself failed (e.g. out of credits) — not a rejection.
   | "assessment_failed"
   | "quality_rejected"
+  // #476: rejected after its full-text fetch failed, so scored on the snippet.
+  // Not read by the rejected-URL lookback: a transient extractor error must
+  // not hide the article for REJECTED_URL_LOOKBACK_DAYS.
+  | "quality_rejected_unexpanded"
   // #476: quality_rejected in a run within REJECTED_URL_LOOKBACK_DAYS; not re-assessed.
   | "skipped_previously_rejected"
   // #180: the generated summary failed validation twice; `reason` names the failed checks.
@@ -752,7 +756,8 @@ export class AutomatedIngestionService {
    */
   private async expandTeasers(
     entries: Array<{ url: string; content: string }>,
-    runStartMs: number
+    runStartMs: number,
+    unexpandedUrls?: Set<string>
   ): Promise<{ expanded: number; fallback: number }> {
     const budget = this.teaserBudget;
     const queue = entries.slice(0, budget.maxPerRun);
@@ -764,7 +769,10 @@ export class AutomatedIngestionService {
         const teaser = entry.content;
         entry.content = await this.expandTeaser(entry.url, teaser, budget.perTeaserTimeoutMs);
         if (entry.content !== teaser) expanded++;
-        else fallback++;
+        else {
+          fallback++;
+          unexpandedUrls?.add(entry.url); // #476: kept out of the rejected-URL lookback
+        }
       }
     };
     await Promise.all(Array.from({ length: Math.max(1, budget.concurrency) }, worker));
@@ -1207,7 +1215,9 @@ export class AutomatedIngestionService {
             ? {
                 reason: reason.substring(
                   0,
-                  outcome === "quality_rejected" ? OUTCOME_QUALITY_REASON_MAX_CHARS : 120
+                  outcome === "quality_rejected" || outcome === "quality_rejected_unexpanded"
+                    ? OUTCOME_QUALITY_REASON_MAX_CHARS
+                    : 120
                 ),
               }
             : {}),
@@ -1368,6 +1378,8 @@ export class AutomatedIngestionService {
       };
       // #476: teaser snippets, expanded after the loop under TEASER_EXPANSION_BUDGET.
       const teaserEntries: SearchResultWithContent[] = [];
+      // #476: URLs whose full-text fetch was attempted and failed.
+      const unexpandedUrls = new Set<string>();
 
       const fetchCandidates = newArticles.slice(0, maxArticles * 2);
       for (const article of fetchCandidates) {
@@ -1455,7 +1467,7 @@ export class AutomatedIngestionService {
       }
 
       // #476: bounded teaser expansion; over budget keeps the snippet.
-      const teaserResult = await this.expandTeasers(teaserEntries, startTime);
+      const teaserResult = await this.expandTeasers(teaserEntries, startTime, unexpandedUrls);
       extractionStats.teaserExpanded = teaserResult.expanded;
       extractionStats.teaserFallback = teaserResult.fallback; // #476: recorded, never dropped
       teaserExpandedCount = extractionStats.teaserExpanded; // #476: persisted in `finally`
@@ -1564,7 +1576,8 @@ export class AutomatedIngestionService {
           const verdict = qualityResults[index];
           recordOutcome(
             assessed,
-            "quality_rejected",
+            // #476: a fetch-failed rejection gets its own outcome so the 30-day lookback ignores it.
+            unexpandedUrls.has(assessed.url) ? "quality_rejected_unexpanded" : "quality_rejected",
             verdict?.reasoning ?? "no quality assessment returned",
             verdict
               ? {
