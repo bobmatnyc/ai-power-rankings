@@ -361,3 +361,34 @@ describe("generateWeeklyDigest dry run (#181)", () => {
     expect(f.repo.save).not.toHaveBeenCalled();
   });
 });
+
+describe("over-cap draft feedback (#468)", () => {
+  // #468: W47 drafts ran 364 then 392 words against the 350 cap; the retry only repeated the code.
+  it("asks for about 300 words on the first attempt", async () => {
+    llm.mockResolvedValueOnce(completion(VALID_FULL));
+    await run(makeRepo([article(1), article(2), article(3)]));
+    expect(promptOf(0)).toContain("aim for about 300 words; never exceed 350");
+    expect(promptOf(0)).not.toContain("Cut at least");
+  });
+
+  it("states the measured count, the cap and the words to cut on the retry", async () => {
+    llm
+      .mockResolvedValueOnce(completion(sized(fullBody(), 392)))
+      .mockResolvedValueOnce(completion(VALID_FULL));
+    const outcome = await run(makeRepo([article(1), article(2), article(3)]));
+    expect(outcome).toMatchObject({ status: "generated", attempts: 2 });
+    expect(promptOf(1)).toContain("word_count_above_max (392>350)");
+    expect(promptOf(1)).toContain("Your previous draft was 392 words; the cap is 350. Cut at least 42 words");
+    expect(promptOf(1)).toContain("cutting about 92");
+  });
+
+  it("still rejects a draft over 350 words on both attempts and stores nothing", async () => {
+    llm.mockImplementation(async () => completion(sized(fullBody(), 351)));
+    const f = makeRepo([article(1), article(2), article(3)]);
+    const error = await run(f).catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(WeeklyDigestError);
+    expect((error as WeeklyDigestError).failures).toEqual(["word_count_above_max (351>350)"]);
+    expect(llm).toHaveBeenCalledTimes(2);
+    expect(f.repo.save).not.toHaveBeenCalled();
+  });
+});

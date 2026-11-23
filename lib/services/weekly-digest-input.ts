@@ -154,12 +154,10 @@ Hard rules:
 const SHORT_TARGET_WORDS = Math.round((DIGEST_WORDS.short.min + DIGEST_WORDS.short.max) / 2);
 
 /**
- * The full tier's word target, 30% of the way into `DIGEST_WORDS.full` (280 of 250-350).
- * #468: a draft aimed at the middle ran to 394 words; a target below the middle leaves headroom.
+ * The full tier's word target: 300, 50 words below the 350 cap.
+ * #468: the target is stated as a fixed number well below the cap; the cap is unchanged.
  */
-const FULL_TARGET_WORDS = Math.round(
-  DIGEST_WORDS.full.min + (DIGEST_WORDS.full.max - DIGEST_WORDS.full.min) * 0.3
-);
+export const FULL_TARGET_WORDS = 300;
 
 function tierRules(tier: DigestTier, hasNewAndChanged: boolean, articleCount: number): string {
   const { min, max } = DIGEST_WORDS[tier];
@@ -207,6 +205,23 @@ function sourceMaterial(inputs: DigestInputs): string {
 }
 
 /**
+ * #468: W47 failed twice on `word_count_above_max` (364, then 392 > 350) because the
+ * retry only repeated the code. This turns that failure into a measured cut.
+ * Returns "" when no `word_count_above_max (<words>><max>)` failure is present.
+ */
+function overageFeedback(tier: DigestTier, failures: readonly string[]): string {
+  for (const failure of failures) {
+    const m = /^word_count_above_max \((\d+)>(\d+)\)$/.exec(failure);
+    if (!m) continue;
+    const measured = Number(m[1]);
+    const cap = Number(m[2]);
+    const target = tier === "full" ? FULL_TARGET_WORDS : SHORT_TARGET_WORDS;
+    return ` Your previous draft was ${measured} words; the cap is ${cap}. Cut at least ${measured - cap} words; aim for about ${target} words, which means cutting about ${measured - target}.Shorten sentences and drop detail; keep every required section and link.`;
+  }
+  return "";
+}
+
+/**
  * The system and user prompts for one attempt.
  *
  * `previousFailures`, when given, are the validator's failed checks for the
@@ -219,7 +234,7 @@ export function buildDigestPrompt(
   const hasNewAndChanged = inputs.newTools.length + inputs.siteChanges.length > 0;
   const retry =
     previousFailures.length > 0
-      ? `\n\nYour previous draft failed these checks: ${previousFailures.join("; ")}. Write the whole digest again and fix them.`
+      ? `\n\nYour previous draft failed these checks: ${previousFailures.join("; ")}. Write the whole digest again and fix them.${overageFeedback(inputs.tier, previousFailures)}`
       : "";
   return {
     system: `${SYSTEM_RULES}\n\n${tierRules(inputs.tier, hasNewAndChanged, inputs.articles.length)}`,
