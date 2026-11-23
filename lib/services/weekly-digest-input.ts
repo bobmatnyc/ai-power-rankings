@@ -154,10 +154,10 @@ Hard rules:
 const SHORT_TARGET_WORDS = Math.round((DIGEST_WORDS.short.min + DIGEST_WORDS.short.max) / 2);
 
 /**
- * The full tier's word target: 300, 50 words below the 350 cap.
- * #468: the target is stated as a fixed number well below the cap; the cap is unchanged.
+ * The full tier's word target: 280, 70 words below the 350 cap.
+ * #468: a draft aimed at the middle overran the cap; 280 leaves headroom. The cap is unchanged.
  */
-export const FULL_TARGET_WORDS = 300;
+export const FULL_TARGET_WORDS = 280;
 
 function tierRules(tier: DigestTier, hasNewAndChanged: boolean, articleCount: number): string {
   const { min, max } = DIGEST_WORDS[tier];
@@ -216,7 +216,7 @@ function overageFeedback(tier: DigestTier, failures: readonly string[]): string 
     const measured = Number(m[1]);
     const cap = Number(m[2]);
     const target = tier === "full" ? FULL_TARGET_WORDS : SHORT_TARGET_WORDS;
-    return ` Your previous draft was ${measured} words; the cap is ${cap}. Cut at least ${measured - cap} words; aim for about ${target} words, which means cutting about ${measured - target}.Shorten sentences and drop detail; keep every required section and link.`;
+    return ` Your previous draft was ${measured} words; the cap is ${cap}. Cut at least ${measured - cap} words; aim for about ${target} words, which means cutting about ${measured - target}. Shorten sentences and drop detail; keep every required section and link.`;
   }
   return "";
 }
