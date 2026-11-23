@@ -109,6 +109,7 @@ describe("run counts persisted with the run row (#476)", () => {
     expect(outcomes?.[0]).toEqual({
       outcome: "run_counts",
       teaserExpanded: 1,
+      teaserFallback: 0,
       previouslyRejected: 1,
     });
   });
