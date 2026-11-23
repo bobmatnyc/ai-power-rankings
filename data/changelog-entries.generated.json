@@ -101,12 +101,23 @@
   {
     "id": "unreleased-457e576eb676",
     "version": "Unreleased",
-    "date": "2026-11-23T10:18:36.522Z",
-    "dateSource": "build",
+    "date": "2026-11-23T10:52:56.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "ingestion",
     "title": "daily news ingestion fetches full article text before quality scoring for any candidate whose snippet is short or shows…",
     "description": "daily news ingestion fetches full article text before quality scoring for any candidate whose snippet is short or shows a truncation, error-page or nav-boilerplate marker (`[...]`, `…`, \"Read more\", \"Oops\"), not only snippets of 500 chars or less. Up to 15 fetches run per run. A `google.com/url?...` candidate is fetched and deduplicated as its publisher URL. A failed fetch keeps the snippet and is counted as `teaserFallback` in the run's `run_counts` entry. The gap alert prints `teaser_fallback` and the top 5 `quality_rejected` candidates with title, averageScore, relevanceScore and reason. Quality thresholds are unchanged. Tests: `tests/unit/teaser-detection-476.test.ts`, `tests/unit/ingestion-teaser-extraction-476.test.ts`, `tests/unit/check-ingestion-gap.test.ts` (#476)",
+    "changeType": "fix"
+  },
+  {
+    "id": "unreleased-91164d578dfb",
+    "version": "Unreleased",
+    "date": "2026-11-23T10:25:07.247Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "digest",
+    "title": "the full weekly digest prompt keeps its target of about 280 words, and the 350-word maximum is unchanged",
+    "description": "the full weekly digest prompt keeps its target of about 280 words, and the 350-word maximum is unchanged. When a draft fails `word_count_above_max`, the retry prompt states the draft's word count, the cap, the minimum cut, and the cut needed to reach the target. The 2026-W47 run failed twice with 364 and then 392 words because the retry only repeated the failure code. Other failures retry as before, still with two attempts. Tests: `tests/unit/weekly-digest-service-181.test.ts`, `tests/unit/weekly-digest-input-181.test.ts` (#468)",
     "changeType": "fix"
   },
   {
