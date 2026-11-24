@@ -66,15 +66,17 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # B77 / #355: the DB identity check. Prints `database sha256:<16 hex>`, a one-way hash
-      # of hostname + database name (scripts/print-db-fingerprint.ts, via databaseFingerprint).
-      # It must equal the hash of vault NEON.AIPR_DATABASE_URL_NEW. No host, database name,
-      # user or URL is printed (the log is public). It parses the URL only: no connection,
-      # no write. No grep filter sits on this step, so the line always reaches the log.
-      - name: Database fingerprint
+      # B77 / #355: the DB identity check. D19: no fingerprint hash, host, database name, user
+      # or URL may appear in the public log. scripts/check-db-fingerprint.ts computes
+      # databaseFingerprint(DATABASE_URL), compares it in constant time with the prod-db secret
+      # EXPECTED_DB_FINGERPRINT, and prints only `database match` or `database mismatch`
+      # (exit 1 on mismatch; a missing value prints a fixed line naming the variable). It parses
+      # the URL only: no connection, no write. Keep any grep filter off this step.
+      - name: Database fingerprint check
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: npx tsx scripts/print-db-fingerprint.ts
+          EXPECTED_DB_FINGERPRINT: ${{ secrets.EXPECTED_DB_FINGERPRINT }}
+        run: npx tsx scripts/check-db-fingerprint.ts
 
       # The dispatch input reaches the shell only through `env:` and is shape-checked.
       - name: Validate inputs
