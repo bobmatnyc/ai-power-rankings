@@ -78,7 +78,7 @@ const TABLE: Array<[string, boolean, number | "next"]> = [
   ["/en/unauthorized", true, "next"],
   ["/en/%61dmin", true, 307], // #228: once-decoded admin
   ["/en/%2561dmin", true, "next"], // double-encoded: Clerk runs, nothing to protect
-  ["/", false, "next"],
+  ["/", false, 307], // #487: the root redirect moved from app/page.tsx to middleware
   ["/en", false, "next"],
   ["/de", false, "next"],
   ["/en/tools", false, "next"],

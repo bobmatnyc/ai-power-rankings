@@ -113,8 +113,15 @@ describe("middleware: protected routes win over public patterns", () => {
 });
 
 describe("middleware: public pages and APIs stay anonymous", () => {
+  // #487: / now redirects to /en in middleware, still without an auth lookup.
+  it("redirects / to /en without an auth lookup", async () => {
+    const res = await run("/");
+    expect(res.status).toBe(307);
+    expect(res.headers.get("location")).toBe("http://localhost/en");
+    expect(anonymousAuth).not.toHaveBeenCalled();
+  });
+
   it.each([
-    "/",
     "/en/tools",
     "/de/tools/cursor",
     "/en/rankings",

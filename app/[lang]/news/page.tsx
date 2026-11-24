@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import NewsContent from "@/components/news/news-content";
-import type { Locale } from "@/i18n/config";
+import { type Locale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { getCurrentYear } from "@/lib/get-current-year";
 import { ENGLISH_ONLY_OG_LOCALE, englishOnlyAlternates } from "@/lib/seo/alternates";
 
-// #368: ISR, not force-dynamic; the list loads client-side. Rendered per locale on first request.
+// #368: ISR, not force-dynamic; the list loads client-side.
 export const revalidate = 60;
+// #487: the page reads no database (the list loads client-side), so every locale is prerendered at build.
 export function generateStaticParams(): Array<{ lang: string }> {
-  return [];
+  return locales.map((lang) => ({ lang }));
 }
 
 interface PageProps {
