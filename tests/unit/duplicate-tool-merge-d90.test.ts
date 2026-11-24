@@ -19,7 +19,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { checkBackup } from "../../scripts/duplicate-tool-merge-apply";
 import { derivePairs, type MergeDb, planMerge, loadMergeState } from "../../scripts/duplicate-tool-merge";
 import { runMigrations } from "../../scripts/apply-migrations";
-import { type MergeMode, parseArgs, runMerge } from "../../scripts/merge-duplicate-tools";
+import { backupId, type MergeMode, parseArgs, runMerge } from "../../scripts/merge-duplicate-tools";
 import { chainDb, MIGRATION_FILES, readMigration } from "./fixtures/migration-chain-183";
 import { pgliteMigrationDb } from "./fixtures/timestamptz-237-fixture";
 
@@ -167,7 +167,11 @@ describe("D90 merge on the migration chain", () => {
     const { code, log, statements } = await run(db, { mode: "backup", file });
     expect(code).toBe(0);
     for (const s of statements) expect(s.trim()).toMatch(/^SELECT\b/);
-    expect(log).toEqual([`backup: wrote ${file}: 12 tools, 6 tool_links, 3 tool_metrics_history row(s)`]);
+    // #488: the second line is the backup id, a hash of the file's bytes.
+    expect(log).toEqual([
+      `backup: wrote ${file}: 12 tools, 6 tool_links, 3 tool_metrics_history row(s)`,
+      `backup: id ${backupId(readFileSync(file, "utf8"))}`,
+    ]);
     await expect(run(db, { mode: "backup", file })).rejects.toThrow(/EEXIST/);
   });
 

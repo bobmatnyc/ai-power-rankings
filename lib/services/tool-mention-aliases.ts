@@ -12,13 +12,15 @@
  * #432 (owner ruling D35): 34 suspect aliases (model, vendor and common-word names)
  * are dropped, so they map only when the raw name is a catalogue name or slug; 8 Claude
  * aliases map to the Claude model rows or Claude.AI. The per-alias table is on #432.
+ * #488: "chatgpt canvas" maps to ChatGPT, the row ChatGPT Canvas merged into.
  * Test: `tests/unit/tool-mention-aliases-187.test.ts`,
  * `tests/unit/tool-mention-aliases-432.test.ts`.
  */
 export const TOOL_ALIASES: Readonly<Record<string, string>> = {
   // OpenAI
   // #432: the GPT model names, "chatgpt" and "openai" are dropped; none names the Canvas feature.
-  "chatgpt canvas": "ChatGPT Canvas",
+  // #488: ChatGPT Canvas is merged into ChatGPT (owner ruling (a)); the Canvas name lands there.
+  "chatgpt canvas": "ChatGPT",
   // Codex-merge: ar-Te2/T76 merged the Codex CLI row into OpenAI Codex; every Codex name lands there.
   "openai codex": "OpenAI Codex",
   "openai codex cli": "OpenAI Codex",

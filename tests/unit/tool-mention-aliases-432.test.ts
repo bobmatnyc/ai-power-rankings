@@ -66,8 +66,8 @@ const RETARGETED: Record<string, string> = {
 };
 
 /** Unruled aliases and the row name each must still reach. */
+// #488: "chatgpt canvas" left this list; the ChatGPT Canvas merge retargets it (see below).
 const UNTOUCHED: Record<string, string> = {
-  "chatgpt canvas": "ChatGPT Canvas",
   codex: "OpenAI Codex",
   "claude code": "Claude Code",
   "claude artifacts": "Claude.AI",
@@ -157,5 +157,37 @@ describe("unruled aliases keep their targets (#432)", () => {
     expect(TOOL_ALIASES[alias]).toBe(name);
     const { mentions } = await mapToolMentionsToCatalogue([{ tool: alias }], loader);
     expect(mentions[0]?.tool).toBe(name);
+  });
+});
+
+// #488: owner ruling (a) merges ChatGPT Canvas into ChatGPT; the Canvas name now reaches ChatGPT.
+describe("the ChatGPT Canvas alias after the merge (#488)", () => {
+  const catalogueWith = (canvasStatus: "active" | "redirect") => async () =>
+    buildToolCatalogue([
+      { id: "t-chatgpt", slug: "chatgpt", name: "ChatGPT", kind: "productivity", status: "active" },
+      {
+        id: "t-chatgpt-canvas",
+        slug: "chatgpt-canvas",
+        name: "ChatGPT Canvas",
+        kind: "productivity",
+        status: canvasStatus,
+        ...(canvasStatus === "redirect" ? { redirect_to: "chatgpt" } : {}),
+      },
+    ]);
+
+  it("maps chatgpt canvas to ChatGPT in the alias table", () => {
+    expect(TOOL_ALIASES["chatgpt canvas"]).toBe("ChatGPT");
+  });
+
+  it.each(["ChatGPT Canvas", "chatgpt canvas", "CHATGPT CANVAS"])("%s resolves to ChatGPT once Canvas redirects", async (raw) => {
+    const { mentions, report } = await mapToolMentionsToCatalogue([{ tool: raw }], catalogueWith("redirect"));
+    expect(mentions[0]?.tool).toBe("ChatGPT");
+    expect(mentions[0]?.raw_tool).toBe(raw);
+    expect(report.unresolvedAliases).toEqual([]);
+  });
+
+  it("resolves to ChatGPT before the apply too: the alias wins over the still-active Canvas row", async () => {
+    const { mentions } = await mapToolMentionsToCatalogue([{ tool: "ChatGPT Canvas" }], catalogueWith("active"));
+    expect(mentions[0]?.tool).toBe("ChatGPT");
   });
 });

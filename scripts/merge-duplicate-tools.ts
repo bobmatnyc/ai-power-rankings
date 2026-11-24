@@ -17,11 +17,17 @@
  *   `openai-codex` (`MERGE_SETS`); its dry run adds the row guards, the survivor's field
  *   decisions and the before/after harness scores (`scripts/codex-merge*.ts`), and its apply
  *   also writes the survivor's merged data in the same transaction. `--set d90` is the default.
- * Test: `tests/unit/duplicate-tool-merge-d90.test.ts` ("CLI"), `tests/unit/codex-merge-t76.test.ts`.
+ *   #488: `--set chatgpt-canvas` merges `chatgpt-canvas` into `chatgpt`; its dry run, backup and
+ *   apply add Canvas's ranking boards, ranking snapshots and article mentions
+ *   (`scripts/chatgpt-canvas-merge.ts`). Every backup prints a backup id (`backupId`), and the
+ *   apply prints the id of the backup it was licensed by.
+ * Test: `tests/unit/duplicate-tool-merge-d90.test.ts` ("CLI"), `tests/unit/codex-merge-t76.test.ts`,
+ *   `tests/unit/chatgpt-canvas-merge-488.test.ts`.
  *
- * Usage: tsx scripts/merge-duplicate-tools.ts [--set d90|codex] [--dry-run | --backup <file> | --apply <backup-file>]
+ * Usage: tsx scripts/merge-duplicate-tools.ts [--set d90|codex|chatgpt-canvas] [--dry-run | --backup <file> | --apply <backup-file>]
  */
 
+import { createHash } from "node:crypto";
 import fs from "node:fs";
 import { applyMerge, type ApplyOptions, checkBackup, MergeRefusedError, takeBackup } from "./duplicate-tool-merge-apply";
 import {
@@ -30,19 +36,31 @@ import {
   loadMergeState,
   MAX_BACKUP_AGE_MS,
   MERGE_SETS,
+  mergeSetById,
   type MergeDb,
   type MergeSet,
   planMerge,
   type Queryable,
 } from "./duplicate-tool-merge";
 import { codexBackupVerdict, codexDryRun, codexPatch } from "./codex-merge";
+import { CANVAS_BACKUP_KEY, canvasBackupRows, canvasDryRun, canvasPatch } from "./chatgpt-canvas-merge";
 import { resolveDatabaseUrl } from "../lib/db/database-url";
 import { redactConnectionString } from "./apply-migrations";
 import { assertReadOnlySql, databaseFingerprint } from "./migration-preflight";
 
 export type MergeMode = { mode: "dry-run" } | { mode: "backup"; file: string } | { mode: "apply"; backupFile: string };
 
-const USAGE = "Usage: tsx scripts/merge-duplicate-tools.ts [--set d90|codex] [--dry-run | --backup <file> | --apply <backup-file>]";
+const USAGE =
+  "Usage: tsx scripts/merge-duplicate-tools.ts [--set d90|codex|chatgpt-canvas] [--dry-run | --backup <file> | --apply <backup-file>]";
+
+/**
+ * #488: the id an operator records for a backup: the first 16 hex digits of the SHA-256 of the
+ * backup file's bytes. The backup step and the apply print it from the same bytes, so the two
+ * log lines tie the apply to the backup that licensed it. Not a database fingerprint.
+ */
+export function backupId(fileText: string): string {
+  return `backup-${createHash("sha256").update(fileText, "utf8").digest("hex").slice(0, 16)}`;
+}
 
 /** Parses the one mode flag (`--backup` and `--apply` each take a path) and `--set`. */
 export function parseArgs(argv: string[]): { mode: MergeMode | null; set: MergeSet; errors: string[] } {
@@ -54,7 +72,8 @@ export function parseArgs(argv: string[]): { mode: MergeMode | null; set: MergeS
     const next = argv[i + 1];
     if (arg === "--dry-run") modes.push({ mode: "dry-run" });
     else if (arg === "--set") {
-      if (next === "d90" || next === "codex") set = MERGE_SETS[next];
+      const chosen = mergeSetById(next);
+      if (chosen) set = chosen;
       else errors.push(`--set needs one of ${Object.keys(MERGE_SETS).join(", ")}`);
       i++;
     } else if (arg === "--backup" || arg === "--apply") {
@@ -94,14 +113,22 @@ export async function runMerge(deps: RunDeps, mode: MergeMode, set: MergeSet = M
   const now = deps.now ?? (() => new Date());
   const pairs = derivePairs(set.oldSlugs);
   const codex = set.id === "codex";
+  const canvas = set.id === "chatgpt-canvas";
 
   if (mode.mode === "backup") {
     const backup = await takeBackup(readOnly(deps.db), pairs, deps.fingerprint, now(), set.ruling);
-    fs.writeFileSync(mode.file, `${JSON.stringify(backup, null, 2)}\n`, { flag: "wx" });
+    // #488: the Canvas apply also rewrites JSON documents; they are read before any file is written.
+    const docs = canvas ? await canvasBackupRows(readOnly(deps.db)) : null;
+    const text = `${JSON.stringify(docs ? { ...backup, [CANVAS_BACKUP_KEY]: docs } : backup, null, 2)}\n`;
+    fs.writeFileSync(mode.file, text, { flag: "wx" });
+    const extra = docs
+      ? `, ${(["rankings", "ranking_versions", "articles"] as const).map((t) => `${docs.filter((d) => d.table === t).length} ${t}`).join(", ")} document(s)`
+      : "";
     log(
       `backup: wrote ${mode.file}: ${backup.tools.length} tools, ${backup.tool_links.length} tool_links, ` +
-        `${backup.tool_metrics_history.length} tool_metrics_history row(s)`
+        `${backup.tool_metrics_history.length} tool_metrics_history row(s)${extra}`
     );
+    log(`backup: id ${backupId(text)}`);
     return 0;
   }
 
@@ -123,6 +150,8 @@ export async function runMerge(deps: RunDeps, mode: MergeMode, set: MergeSet = M
         for (const line of await boardReport(await loadBoardInputs(q), extra.survivorData, at)) log(line);
       }
     }
+    // #488: guard and JSON re-point plan; an unresolved document fails the dry run.
+    if (canvas) ok = (await canvasDryRun(q, log)).ok && ok;
     log("dry run: nothing written (pass --apply <backup-file> to write)");
     return ok ? 0 : 1;
   }
@@ -132,9 +161,13 @@ export async function runMerge(deps: RunDeps, mode: MergeMode, set: MergeSet = M
     return 1;
   }
   const raw = fs.readFileSync(mode.backupFile, "utf8");
+  log(`--apply: backup id ${backupId(raw)}`);
   // Codex merge (D35): the patch's text-correction line is printed only once the transaction commits.
   const patchLines: string[] = [];
-  const options: ApplyOptions = { ruling: set.ruling, ...(codex ? { patch: codexPatch(now(), (l) => patchLines.push(l)) } : {}) };
+  // #488: the Canvas JSON re-point plan, printed only once the transaction commits.
+  const canvasLines: string[] = [];
+  const patch = codex ? codexPatch(now(), (l) => patchLines.push(l)) : canvas ? canvasPatch(raw, (l) => canvasLines.push(l)) : undefined;
+  const options: ApplyOptions = { ruling: set.ruling, ...(patch ? { patch } : {}) };
   const verdict = (p: Parameters<typeof checkBackup>[2]) => {
     const shared = checkBackup(raw, deps.fingerprint, p, now(), MAX_BACKUP_AGE_MS, set.ruling);
     return shared.ok && codex ? codexBackupVerdict(raw) : shared;
@@ -142,8 +175,11 @@ export async function runMerge(deps: RunDeps, mode: MergeMode, set: MergeSet = M
   try {
     const plan = await applyMerge(deps.db, pairs, verdict, options);
     for (const line of formatPlan(plan, "will")) log(line);
+    for (const line of canvasLines) log(line);
     for (const line of patchLines) log(line);
-    const merged = plan.pairs.every((p) => p.state === "already-merged");
+    // #488: an already-merged pair whose JSON re-point still wrote documents is not a no-op.
+    const canvasWrote = canvasLines.some((l) => /^totals: chatgpt-canvas json: [1-9]/.test(l));
+    const merged = plan.pairs.every((p) => p.state === "already-merged") && !canvasWrote;
     log(`--apply: committed (${merged ? (patchLines.length > 0 ? "already merged, text corrected" : "no-op, already merged") : "merged"})`);
     return 0;
   } catch (error) {

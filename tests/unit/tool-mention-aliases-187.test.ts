@@ -15,6 +15,7 @@ import golden from "../fixtures/tool-mapper-golden-187.json";
  * #432: the fixture's `rulings` block lists the owner's later changes; for those
  * aliases the expected output is the new target, or for a dropped alias the
  * catalogue row of that exact name if there is one, else the input unmapped.
+ * #488: the `488` block retargets "chatgpt canvas" to ChatGPT; every block applies.
  * Test: `npx vitest run tests/unit/tool-mention-aliases-187.test.ts`. No database.
  */
 
@@ -35,9 +36,10 @@ const targets = [...new Set(Object.values(TOOL_ALIASES))];
 const mention = (tool: string) => ({ tool });
 
 // #432: the owner's rulings override the old output for the aliases they name.
-const ruling = golden.rulings["432"];
-const dropped = new Set<string>(ruling.dropped);
-const retargeted = ruling.retargeted as Record<string, string>;
+// #488: every ruling block applies (432, then 488); no two blocks name one alias.
+const rulings = Object.values(golden.rulings) as Array<{ dropped: string[]; retargeted: Record<string, string> }>;
+const dropped = new Set<string>(rulings.flatMap((r) => r.dropped));
+const retargeted: Record<string, string> = Object.assign({}, ...rulings.map((r) => r.retargeted));
 const targetCatalogue = catalogueOf(targets);
 /** The output the lookup now owes for `input`, given the old mapper's table output `out`. */
 const rulingOutput = (input: string, out: string): string => {

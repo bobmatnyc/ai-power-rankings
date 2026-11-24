@@ -49,6 +49,13 @@
     "claude haiku": "claude-haiku",
     "claude canvas": "Claude.AI"
    }
+  },
+  "488": {
+   "note": "Owner ruling (a) on #488: ChatGPT Canvas merges into ChatGPT, so its alias maps to the survivor, written as in TOOL_ALIASES.",
+   "dropped": [],
+   "retargeted": {
+    "chatgpt canvas": "ChatGPT"
+   }
   }
  },
  "rows": [
