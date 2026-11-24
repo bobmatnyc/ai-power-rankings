@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextFetchEvent, NextRequest } from "next/server";
 import { harnessCategoryRewrite } from "./lib/rankings/harness-category-view";
 import { openWeightRewrite } from "./lib/rankings/open-weight-view";
+import { rootLocaleRedirect } from "./lib/root-locale-redirect";
 import { isApiPath, needsClerk, routeAccess } from "./lib/route-access";
 import { searchKeyRedirect } from "./lib/search-url-keys";
 import { heldSourceRewrite, urlTableRedirect } from "./lib/url-table-redirect";
@@ -41,12 +42,14 @@ function authDisabledResponse(): NextResponse | null {
  * What: Runs the #191 table redirect, the #233 search-key strip and the #340
  *   held-source rewrite for every matched path, as before, then the #195
  *   open-weight rewrite (`openWeightRewrite`) and the #196 category rewrite
- *   (`harnessCategoryRewrite`). A path that
+ *   (`harnessCategoryRewrite`), then the #487 `/` -> `/en` redirect
+ *   (`rootLocaleRedirect`). A path that
  *   `needsClerk()` (API, admin, dashboard, sign-in/up and the rest of the
  *   `(authenticated)` group) then runs `clerkHandler`, unchanged. Any other
  *   path gets the auth-disabled answer or passes through without Clerk.
  * Test: `tests/unit/middleware-clerk-scope-368.test.ts`,
- *   `tests/unit/middleware-route-access.test.ts`.
+ *   `tests/unit/middleware-route-access.test.ts`,
+ *   `tests/unit/root-locale-redirect-487.test.ts`.
  */
 export default function middleware(req: NextRequest, event: NextFetchEvent) {
   // #191: the signed URL table's 308s, first, so a table source never takes two hops.
@@ -68,6 +71,10 @@ export default function middleware(req: NextRequest, event: NextFetchEvent) {
   // #196: `/rankings/coding-harnesses?category=<known>` is served by its static category route, so the board stays ISR.
   const category = harnessCategoryRewrite(req);
   if (category) return category;
+
+  // #487: `/` redirects here, at the edge, so the bare domain invokes no page function (and no Clerk).
+  const root = rootLocaleRedirect(req);
+  if (root) return root;
 
   // #368: Clerk runs only where auth is used; public pages skip it so the edge can cache them.
   if (needsClerk(req)) return clerkHandler(req, event);

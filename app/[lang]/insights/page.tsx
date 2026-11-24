@@ -15,6 +15,10 @@ import {
 
 // #198: rendered on request and cached for 30 minutes, like /whats-new.
 export const revalidate = 1800;
+// #487: ISR per locale, not dynamic. Empty, not every locale: the hub reads the database, which is null at build.
+export function generateStaticParams(): Array<{ lang: string }> {
+  return [];
+}
 
 /** #198: how many weeks the hub lists; a year of Mondays. */
 const INSIGHTS_WEEK_LIST_SIZE = 52;

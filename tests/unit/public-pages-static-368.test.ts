@@ -31,6 +31,8 @@ const PAGES: Array<[string, number | null]> = [
   ["whats-new/weekly/[week]/page.tsx", 1800],
   // #470: the monthly Insight permalink is ISR like /whats-new/<period>.
   ["insights/monthly/[month]/page.tsx", 1800],
+  // #487: the Insights hub is ISR per locale.
+  ["insights/page.tsx", 1800],
   ["about/page.tsx", null],
   // D6e (#401): methodology reads the model-visibility gate from the DB, so it is ISR (revalidate 300).
   ["methodology/page.tsx", 300],
@@ -60,12 +62,13 @@ const DB_PAGES = [
   "rankings/[list]/page.tsx",
   "tools/page.tsx",
   "tools/[slug]/page.tsx",
-  "news/page.tsx",
+  // #487: news/page.tsx left this list; it reads no database and prerenders every locale.
   "news/[slug]/page.tsx",
   "whats-new/page.tsx",
   "whats-new/[period]/page.tsx",
   "whats-new/weekly/[week]/page.tsx",
   "insights/monthly/[month]/page.tsx", // #470
+  "insights/page.tsx", // #487
   "methodology/page.tsx",
 ];
 
