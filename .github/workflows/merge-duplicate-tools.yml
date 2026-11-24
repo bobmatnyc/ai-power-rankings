@@ -48,6 +48,12 @@ name: Merge duplicate tools (D90)
 #   3. Dispatch from main: merge_set chatgpt-canvas, dry_run false, confirm merge-chatgpt-canvas.
 #   4. Record the `backup: id backup-...` line from the job summary next to the Neon branch name on
 #      #488; the apply step's `apply: backup id` line must name the same id.
+#   5. Republish the current boards, as after the Codex merge (#410/#413): dispatch
+#      .github/workflows/publish-rankings.yml from main with `confirm: publish-v8.1`, after the
+#      Architect clears the publish on #101. It calls /api/cron/regenerate-rankings, which
+#      replaces the current period's per-list boards from active rows only. Until then the current
+#      productivity board still lists ChatGPT Canvas (a collision entry left as is), linking to its
+#      308. The apply writes no new `rankings` row.
 #   Rollback: restore from the pre-488 Neon branch (D98), as for D90.
 #
 # Test: tests/unit/merge-duplicate-tools-workflow-d96.test.ts, tests/unit/codex-merge-t76.test.ts,

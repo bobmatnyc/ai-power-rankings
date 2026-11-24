@@ -295,7 +295,8 @@ describe("parseArgs --set", () => {
   it("defaults to d90 and accepts codex", () => {
     expect(parseArgs([]).set).toBe(MERGE_SETS.d90);
     expect(parseArgs(["--set", "codex", "--dry-run"])).toMatchObject({ set: MERGE_SETS.codex, mode: { mode: "dry-run" } });
-    expect(parseArgs(["--set", "other"]).errors).toEqual(["--set needs one of d90, codex"]);
+    // #488: the error lists every set, now including chatgpt-canvas.
+    expect(parseArgs(["--set", "other"]).errors).toEqual(["--set needs one of d90, codex, chatgpt-canvas"]);
   });
 
   it("derives the one Codex pair from the URL table", () => {
