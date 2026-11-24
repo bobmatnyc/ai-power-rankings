@@ -616,6 +616,8 @@ jobs:
   check-weekly-digest-gap:
     name: Check last weekly digest
     runs-on: ubuntu-latest
+    # #355: DATABASE_URL lives in the prod-db environment, limited to main (see apply-migration.yml).
+    environment: prod-db
     permissions:
       contents: read
     steps:
@@ -647,6 +649,8 @@ jobs:
   check-crawl-spend:
     name: Check month-to-date crawl spend
     runs-on: ubuntu-latest
+    # #355: DATABASE_URL lives in the prod-db environment, limited to main (see apply-migration.yml).
+    environment: prod-db
     permissions:
       contents: read
       issues: write
