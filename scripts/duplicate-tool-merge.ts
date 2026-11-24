@@ -39,9 +39,12 @@ export const D90_OLD_SLUGS = [
 // Codex-merge: ar-Te2/T76 merges the Codex CLI row into OpenAI Codex through this same path.
 export const CODEX_OLD_SLUGS = ["openai-codex-cli"] as const;
 
+// #488: owner ruling (a) merges ChatGPT Canvas into ChatGPT through this same path.
+export const CHATGPT_CANVAS_OLD_SLUGS = ["chatgpt-canvas"] as const;
+
 /** A named group of old slugs merged by one ruling; `--set` picks one, D90 is the default. */
 export interface MergeSet {
-  id: "d90" | "codex";
+  id: "d90" | "codex" | "chatgpt-canvas";
   /** Ruling label written into `data.redirect_reason` and the backup. */
   ruling: string;
   oldSlugs: readonly string[];
@@ -52,7 +55,13 @@ export interface MergeSet {
 export const MERGE_SETS: Readonly<Record<MergeSet["id"], MergeSet>> = {
   d90: { id: "d90", ruling: "D90", oldSlugs: D90_OLD_SLUGS, confirm: "merge-d90-duplicates" },
   codex: { id: "codex", ruling: "ar-Te2/T76", oldSlugs: CODEX_OLD_SLUGS, confirm: "merge-codex-cli" },
+  "chatgpt-canvas": { id: "chatgpt-canvas", ruling: "#488", oldSlugs: CHATGPT_CANVAS_OLD_SLUGS, confirm: "merge-chatgpt-canvas" },
 };
+
+/** The set named `id`, or undefined; `Object.hasOwn` so a prototype key is never a set. */
+export function mergeSetById(id: string | undefined): MergeSet | undefined {
+  return id !== undefined && Object.hasOwn(MERGE_SETS, id) ? MERGE_SETS[id as MergeSet["id"]] : undefined;
+}
 
 export const RETIRED_STATUS = "redirect";
 export const BACKUP_KIND = "duplicate-tool-merge-backup";

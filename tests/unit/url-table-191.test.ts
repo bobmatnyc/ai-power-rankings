@@ -89,9 +89,10 @@ describe("the committed map", () => {
   it("holds the signed table's 308 and noindex counts, path columns only", () => {
     // ar-Te2/T76: 268 signed rows plus the 10 locale rows of the Codex CLI merge.
     // #197 (D84): 311 - 10 = 301 noindex rows after the ten perplexity locale rows left the table (589 -> 579).
-    expect(redirectRows).toHaveLength(278);
+    // #488: plus the 10 locale rows of the ChatGPT Canvas merge (278 + 10).
+    expect(redirectRows).toHaveLength(288);
     expect(noindexRows).toHaveLength(301);
-    expect(URL_TABLE_ROWS).toHaveLength(278 + 301);
+    expect(URL_TABLE_ROWS).toHaveLength(288 + 301);
     for (const row of rawRows as object[]) {
       expect(Object.keys(row).sort()).toEqual(["action", "destination", "source"]);
     }
@@ -102,7 +103,8 @@ describe("the committed map", () => {
     // D6e: released; the 60 rows of the six D58 aliases ship again (91 + 60, 177 - 60).
     // ar-Te2/T76: the 10 openai-codex-cli rows are released too (151 + 10, 127 - 10).
     // #191: the Insights hold is released (/en/insights is live), so the 20 /whats-new rows ship (161 + 20, 117 - 20).
-    expect(shipped).toHaveLength(181);
+    // #488: the 10 chatgpt-canvas rows ship at once (181 + 10); none is held.
+    expect(shipped).toHaveLength(191);
     expect(held).toHaveLength(97);
     const perMajor = /^\/[a-z]{2}\/tools\/(claude-opus-4|claude-sonnet-4|kimi-2|deepseek-base)$/;
     expect(shipped.filter((row) => perMajor.test(row.destination))).toHaveLength(60);
@@ -132,6 +134,30 @@ describe("the committed map", () => {
       expect(resolveTableRedirect(target), target).toBeNull();
       expect(noindexSources.has(target), target).toBe(false);
     }
+  });
+
+  // #488: owner ruling (a) merges ChatGPT Canvas into ChatGPT; every locale 308s to its own ChatGPT page.
+  it("ships one chatgpt-canvas row per locale as a single 308 to that locale's chatgpt page", async () => {
+    const canvasRows = redirectRows.filter((row) => /^\/[a-z]{2}\/tools\/chatgpt-canvas$/.test(row.source));
+    expect(canvasRows.map((row) => row.source.split("/")[1]).sort()).toEqual([...locales].sort());
+    const sources = new Set(redirectRows.map((row) => row.source));
+    const noindexSources = new Set(noindexRows.map((row) => row.source));
+    for (const row of canvasRows) {
+      const locale = row.source.split("/")[1];
+      const target = `/${locale}/tools/chatgpt`;
+      expect(row.destination).toBe(target);
+      expect(shipped).toContain(row);
+      expect(resolveTableRedirect(row.source)).toBe(target);
+      const res = await run(row.source);
+      expect(res.status).toBe(308);
+      expect(location(res)).toBe(target);
+      // No chain and no noindexed landing: the target is neither a 308 source nor a noindex row.
+      expect(sources.has(target), target).toBe(false);
+      expect(resolveTableRedirect(target), target).toBeNull();
+      expect(noindexSources.has(target), target).toBe(false);
+    }
+    // The unprefixed form takes the Q-A85-1 rule to the English page in one hop.
+    expect(resolveTableRedirect("/tools/chatgpt-canvas")).toBe("/en/tools/chatgpt");
   });
 
   it("covers the 17 non-locale rows (Q-A85-1) by the pattern rule, not literal rows", () => {

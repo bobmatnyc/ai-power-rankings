@@ -99,6 +99,17 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-9e6147454260",
+    "version": "Unreleased",
+    "date": "2026-11-24T21:30:00.000Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "data",
+    "title": "ChatGPT Canvas merges into ChatGPT (#488, owner ruling (a))",
+    "description": "ChatGPT Canvas merges into ChatGPT (#488, owner ruling (a)). `scripts/merge-duplicate-tools.ts --set chatgpt-canvas` (`scripts/chatgpt-canvas-merge.ts`) and the `merge_set: chatgpt-canvas` input of the merge-duplicate-tools workflow, whose apply needs `confirm: merge-chatgpt-canvas`, run the D90 merge for `chatgpt-canvas` into `chatgpt`: they move its metrics history and links, re-point its entries in stored ranking boards (`rankings.data`), ranking snapshots (`ranking_versions.rankings_snapshot`) and article mentions (`articles.tool_mentions`) to ChatGPT, and retire the Canvas row as a `redirect` to `chatgpt`, in one transaction. Where a board, snapshot or article already holds ChatGPT, ChatGPT's entry is kept and Canvas's is left as it is; the dry run lists each such collision. Every backup prints a backup id (`backup: id backup-<16 hex>`), and the apply prints the id of the backup it used. The URL table 308s `/<lang>/tools/chatgpt-canvas` to `/<lang>/tools/chatgpt` in all ten locales, and the news alias `chatgpt canvas` maps to ChatGPT. The data changes only when the workflow is dispatched. Tests: `tests/unit/chatgpt-canvas-merge-488.test.ts`, `tests/unit/merge-duplicate-tools-workflow-d96.test.ts`, `tests/unit/url-table-191.test.ts`, `tests/unit/tool-mention-aliases-432.test.ts`, `tests/unit/tool-mention-aliases-187.test.ts`",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-457e576eb676",
     "version": "Unreleased",
     "date": "2026-11-23T10:52:56.000Z",

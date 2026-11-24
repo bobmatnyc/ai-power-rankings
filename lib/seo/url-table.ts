@@ -37,6 +37,7 @@ export const PENDING_TARGETS: readonly RegExp[] = [
   // #191: hold released, /en/insights has been live since 11-11 (#198); the 20 /whats-new rows now 308
   // D6e: the per-major pages of the D58 re-point render since the set_status apply; their 60 alias rows now 308. See #329
   // Codex merge: hold released after apply + publish (runs 42738932628, 42739081839)
+  // #488: the 10 chatgpt-canvas rows are not held; their target /<lang>/tools/chatgpt is a live page
 ];
 
 const LOCALE_SET: ReadonlySet<string> = new Set(locales);

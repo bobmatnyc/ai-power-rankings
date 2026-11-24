@@ -63,6 +63,8 @@ function assertDryRunDefault(text: string): void {
   // Codex-merge: each set has its own typed confirmation; an unknown set fails in either mode.
   expect(code).toContain("d90) set_name='d90'; expected='merge-d90-duplicates' ;;");
   expect(code).toContain("codex) set_name='codex'; expected='merge-codex-cli' ;;");
+  // #488: the ChatGPT Canvas merge has its own confirmation too.
+  expect(code).toContain("chatgpt-canvas) set_name='chatgpt-canvas'; expected='merge-chatgpt-canvas' ;;");
   expect(code).toContain('if [ "$CONFIRM" != "$expected" ]; then');
   // Every step that can write is gated on the apply mode.
   expect(code).toMatch(/id: backup\n {8}if: \$\{\{ success\(\) && steps\.mode\.outputs\.mode == 'apply' \}\}/);
@@ -216,6 +218,14 @@ describe("merge-duplicate-tools workflow step scripts (D96)", () => {
     ["false", "merge-codex-cli", "d90", 1, "set=d90"],
     ["false", "merge-codex-cli", "codex", 0, "set=codex\nmode=apply"],
     ["true", "", "other", 1, ""],
+    // #488: the chatgpt-canvas set needs merge-chatgpt-canvas; no other set's string applies it, nor it another set.
+    ["true", "", "chatgpt-canvas", 0, "set=chatgpt-canvas\nmode=dry-run"],
+    ["false", "", "chatgpt-canvas", 1, "set=chatgpt-canvas"],
+    ["false", "merge-d90-duplicates", "chatgpt-canvas", 1, "set=chatgpt-canvas"],
+    ["false", "merge-codex-cli", "chatgpt-canvas", 1, "set=chatgpt-canvas"],
+    ["false", "merge-chatgpt-canvas", "d90", 1, "set=d90"],
+    ["false", "merge-chatgpt-canvas", "codex", 1, "set=codex"],
+    ["false", "merge-chatgpt-canvas", "chatgpt-canvas", 0, "set=chatgpt-canvas\nmode=apply"],
   ])("dry_run=%s confirm=%j set=%j exits %i with %j", (dryRun, confirm, set, code, output) => {
     const r = runStep("mode", { DRY_RUN: dryRun, CONFIRM: confirm, MERGE_SET: set });
     expect(r.code).toBe(code);
@@ -247,6 +257,16 @@ describe("merge-duplicate-tools workflow step scripts (D96)", () => {
     expect(runStep("backup", { STUB_OUTPUT: "ERROR: permission denied", STUB_EXIT: "1" }).code).toBe(1);
   });
 
+  // #488: the apply's backup id line reaches the apply counts, so the summary ties apply to backup.
+  it("keeps the apply's backup id line with its counts", () => {
+    const out = "--apply: backup id backup-0123456789abcdef\npair 1/1: a -> b [merge]\ntotals: 1 pair(s), 0 unresolved\n--apply: committed (merged)";
+    const r = runStep("apply", { STUB_OUTPUT: out });
+    expect(r.code).toBe(0);
+    expect(r.read("d90-counts-apply.txt")).toBe(
+      "--apply: backup id backup-0123456789abcdef\ntotals: 1 pair(s), 0 unresolved\n--apply: committed (merged)\n"
+    );
+  });
+
   it("propagates a failing apply exit code", () => {
     const r = runStep("apply", { STUB_OUTPUT: "--apply: rolled back, nothing written: deadlock", STUB_EXIT: "1" });
     expect(r.code).toBe(1);
@@ -272,7 +292,8 @@ describe("merge-duplicate-tools workflow step scripts (D96)", () => {
   it("summarises mode, outcomes and counts with no fingerprint or file path", () => {
     const backup = runStep("backup", {
       STUB_BACKUP: "{}",
-      STUB_OUTPUT: "using DATABASE_URL (NODE_ENV=production), database sha256:0123456789abcdef\nbackup: wrote /tmp/runner/d90-backup.json: 14 tools, 3 tool_links, 9 tool_metrics_history row(s)",
+      STUB_OUTPUT:
+        "using DATABASE_URL (NODE_ENV=production), database sha256:0123456789abcdef\nbackup: wrote /tmp/runner/d90-backup.json: 14 tools, 3 tool_links, 9 tool_metrics_history row(s)\nbackup: id backup-0123456789abcdef",
     });
     expect(backup.code).toBe(0);
     const s = runStep(
@@ -285,6 +306,8 @@ describe("merge-duplicate-tools workflow step scripts (D96)", () => {
     expect(summary).toContain("- Mode: apply");
     expect(summary).toContain("- Apply: failure");
     expect(summary).toContain("backup: 14 tools, 3 tool_links, 9 tool_metrics_history row(s)");
+    // #488: the backup id the operator records reaches the summary.
+    expect(summary).toContain("backup: id backup-0123456789abcdef");
     expect(summary).not.toMatch(/sha256:|d90-backup\.json|DATABASE_URL/);
   });
 });
