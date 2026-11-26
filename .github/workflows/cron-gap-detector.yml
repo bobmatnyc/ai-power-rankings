@@ -35,6 +35,14 @@ on:
         type: boolean
         default: false
         required: false
+      # #476: read-only diagnosis of a past run. When set, the check prints the run
+      # nearest this instant (±1h) with its CANDIDATE_REJECTED lines, and every step and
+      # job that opens, comments on or closes an issue, or calls production, is skipped.
+      run_started_at:
+        description: 'Diagnose the run that started within 1h of this ISO-8601 UTC instant (e.g. 2026-11-23T06:00:00Z). Read-only: no alert issue is opened or closed and no fallback trigger runs.'
+        type: string
+        default: ''
+        required: false
 
 # Single source for the production origin the fallback trigger calls, so the host is not
 # repeated per step. Set the PRODUCTION_BASE_URL repository variable to point this at a
@@ -84,6 +92,8 @@ jobs:
           node scripts/check-ingestion-gap.mjs 2>&1 | tee gap-check-output.txt
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          # #476: validated by the script (strict ISO, exit 2); empty on schedule.
+          RUN_STARTED_AT: ${{ inputs.run_started_at }}
 
       # Decide whether to call production, without ever branching on the secret's value.
       # Only a LONE ALERT[STALLED] qualifies. RUN_FAILED / OPENROUTER_CREDITS /
@@ -94,7 +104,7 @@ jobs:
       # wrong-database problem, not a stalled scheduler.
       - name: Classify alert and fallback preconditions
         id: classify
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && !inputs.run_started_at }} # #476: skipped on a diagnostic dispatch
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
           FORCE_TRIGGER: ${{ inputs.force_trigger }}
@@ -172,7 +182,7 @@ jobs:
       # whatever threw. Only a JSON `error` string survives, redacted and capped.
       - name: Trigger production ingestion (fallback)
         id: fallback
-        if: ${{ !cancelled() && steps.classify.outputs.should_trigger == 'true' }}
+        if: ${{ !cancelled() && !inputs.run_started_at && steps.classify.outputs.should_trigger == 'true' }} # #476
         env:
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
@@ -227,7 +237,7 @@ jobs:
       # trigger is a finding to report, not a second failure to raise.
       - name: Re-check ingestion recency after fallback
         id: recheck
-        if: ${{ !cancelled() && steps.classify.outputs.should_trigger == 'true' }}
+        if: ${{ !cancelled() && !inputs.run_started_at && steps.classify.outputs.should_trigger == 'true' }} # #476
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
@@ -244,7 +254,7 @@ jobs:
       # mirrored to the job summary, which is the only surface when force_trigger is used
       # on a passing check (no issue exists to comment on).
       - name: Summarize fallback outcome
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && !inputs.run_started_at }} # #476: skipped on a diagnostic dispatch
         env:
           STALLED: ${{ steps.classify.outputs.stalled }}
           STALL_SUPPRESSED_BY: ${{ steps.classify.outputs.stall_suppressed_by }}
@@ -338,7 +348,7 @@ jobs:
       # cannot mask the real failure: the job still ends red because the gating step exited
       # non-zero. On failure it opens (or comments on) a single de-duplicated tracking issue.
       - name: Open or update ingestion-alert issue
-        if: failure()
+        if: ${{ failure() && !inputs.run_started_at }} # #476: a diagnostic dispatch never files an alert
         uses: actions/github-script@v7
         with:
           script: |
@@ -532,7 +542,7 @@ jobs:
       # and exits clean. Uses the same GITHUB_TOKEN and github-script mechanism as the open
       # path, and swallows its own errors so a transient API hiccup cannot turn a green run red.
       - name: Close ingestion-alert issues on recovery
-        if: success()
+        if: ${{ success() && !inputs.run_started_at }} # #476: a diagnostic dispatch never closes an alert
         uses: actions/github-script@v7
         with:
           script: |
@@ -614,6 +624,8 @@ jobs:
   # scripts/check-weekly-digest-gap.mjs.
   check-weekly-digest-gap:
     name: Check last weekly digest
+    # #476: a run_started_at dispatch diagnoses one ingestion run only.
+    if: ${{ !inputs.run_started_at }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -645,6 +657,8 @@ jobs:
   # step opens one `spend-alert` issue per UTC month — never a comment, never a close.
   check-crawl-spend:
     name: Check month-to-date crawl spend
+    # #476: a run_started_at dispatch must not open a spend-alert issue.
+    if: ${{ !inputs.run_started_at }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
