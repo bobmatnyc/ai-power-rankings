@@ -34,6 +34,11 @@
  *   the exit code: withRunDetail() only extends `lines`, and a failed detail query prints
  *   DETAIL_ERROR= instead of throwing. articles_skipped_stale (#132) is still not read;
  *   it is a count the four verdicts already cover.
+ *   #476: the block also prints one CANDIDATE_REJECTED line per rejected or skipped
+ *   candidate (domain, dates, scores, a bounded reason code; no URL, title or free text).
+ *   With RUN_STARTED_AT set (a workflow_dispatch input) the script runs read-only: it
+ *   selects the run nearest that instant within ±1h, prints only DIAGNOSTIC lines and
+ *   the detail block, and never prints an ALERT[...] or LAST_* line.
  *   The evaluation and formatting logic takes no DB dependency, so it is unit-testable
  *   without a live database (see tests/unit/check-ingestion-gap.test.ts).
  * Test: Run locally with a valid DATABASE_URL — prints `OK: ...` and exits 0 when the
@@ -271,6 +276,131 @@ export function formatCandidateOutcomeLines(candidateOutcomes) {
   }
   if (ingested.length > MAX_DETAIL_LINES) {
     lines.push(`CANDIDATE_INGESTED_TRUNCATED=${ingested.length - MAX_DETAIL_LINES}`);
+  }
+  // #476: rejected lines share MAX_DETAIL_LINES with the ingested lines above.
+  const rejectedBudget = MAX_DETAIL_LINES - Math.min(ingested.length, MAX_DETAIL_LINES);
+  lines.push(...formatCandidateRejectedLines(outcomes, rejectedBudget));
+  return lines;
+}
+
+// #476: the quality gate's thresholds; mirrors INGEST_THRESHOLDS in
+// lib/services/article-quality.service.ts.
+export const QUALITY_MIN_AVERAGE_SCORE = 7.0;
+export const QUALITY_MIN_RELEVANCE_SCORE = 7;
+
+// #476: every reason code a CANDIDATE_REJECTED line can carry. A closed set, so free
+// text (an LLM rationale, an error message, a title) can never reach the line.
+export const REJECTION_REASON_CODES = Object.freeze([
+  "stale",
+  "duplicate",
+  "semantic_dup",
+  "previously_rejected",
+  "blocked_domain",
+  "extraction_failed",
+  "assessment_failed",
+  "teaser_unexpanded",
+  "low_relevance",
+  "low_avg",
+  "low_relevance_and_avg",
+  "summary_rejected",
+  "ingest_failed",
+  "other",
+]);
+
+// #476: outcome -> code where the outcome alone decides it. extraction_failed and
+// quality_rejected are refined in rejectionReasonCode().
+const OUTCOME_REASON_CODES = new Map([
+  ["skipped_stale", "stale"],
+  ["skipped_duplicate", "duplicate"],
+  ["skipped_semantic", "semantic_dup"],
+  ["skipped_previously_rejected", "previously_rejected"],
+  ["extraction_failed", "extraction_failed"],
+  ["assessment_failed", "assessment_failed"],
+  ["quality_rejected_unexpanded", "teaser_unexpanded"],
+  ["summary_rejected", "summary_rejected"],
+  ["ingest_failed", "ingest_failed"],
+]);
+
+// #476: an outcome is printed only when it has the shape of a CandidateOutcomeKind.
+const OUTCOME_TOKEN_PATTERN = /^[a-z_]{1,40}$/;
+const HOSTNAME_PATTERN = /^[a-z0-9.-]{1,253}$/;
+
+/**
+ * Why: #476 — the operator needs to see why each candidate died without the log
+ *   carrying an LLM rationale, an error message or a title from a public page.
+ * What: Maps one candidate_outcomes entry to a code in REJECTION_REASON_CODES. The
+ *   outcome decides the code; `extraction_failed` with reason `blocked_domain` becomes
+ *   `blocked_domain`; `quality_rejected` is split by which threshold the scores missed.
+ *   Anything else, including a quality rejection with no scores, is `other`.
+ * Test: `rejectionReasonCode` cases in tests/unit/check-ingestion-gap.test.ts.
+ */
+export function rejectionReasonCode(entry) {
+  if (!entry || typeof entry !== "object") return "other";
+  const { outcome } = entry;
+  if (outcome === "extraction_failed" && entry.reason === "blocked_domain") return "blocked_domain";
+  if (outcome === "quality_rejected") {
+    const { averageScore: avg, relevanceScore: rel } = entry;
+    if (!Number.isFinite(avg) || !Number.isFinite(rel)) return "other";
+    const lowAvg = avg < QUALITY_MIN_AVERAGE_SCORE;
+    const lowRel = rel < QUALITY_MIN_RELEVANCE_SCORE;
+    if (lowAvg && lowRel) return "low_relevance_and_avg";
+    if (lowRel) return "low_relevance";
+    if (lowAvg) return "low_avg";
+    return "other";
+  }
+  return OUTCOME_REASON_CODES.get(outcome) ?? "other";
+}
+
+/**
+ * Return the URL's lowercase hostname, or `invalid` — never the path or query.
+ *
+ * Test: `sourceDomain` cases in tests/unit/check-ingestion-gap.test.ts.
+ */
+export function sourceDomain(url) {
+  try {
+    const host = new URL(String(url ?? "")).hostname.toLowerCase();
+    return HOSTNAME_PATTERN.test(host) ? host : "invalid";
+  } catch {
+    return "invalid";
+  }
+}
+
+/**
+ * Why: #476 — CANDIDATE_OUTCOME counts said 19 of 20 candidates were rejected, but not
+ *   which source, which dates, or which threshold. One line per candidate answers that.
+ * What: One CANDIDATE_REJECTED line per entry whose outcome is neither ingested nor
+ *   run_counts, in recorded order, up to `limit`; then CANDIDATE_REJECTED_TRUNCATED with
+ *   the overflow. Each field is bounded: outcome by OUTCOME_TOKEN_PATTERN, domain by
+ *   sourceDomain(), dates by toIsoOrNull(), scores by scoreOrNa(), reason by
+ *   rejectionReasonCode(); detailToken() runs over every value as a last guard.
+ * Test: `formatCandidateRejectedLines` cases in tests/unit/check-ingestion-gap.test.ts.
+ */
+export function formatCandidateRejectedLines(candidateOutcomes, limit = MAX_DETAIL_LINES) {
+  const stored = coerceJsonArray(candidateOutcomes);
+  if (stored === null) return [];
+  const rejected = stored.filter(
+    (entry) =>
+      entry &&
+      typeof entry === "object" &&
+      !isRunCountsEntry(entry) &&
+      !INGESTED_OUTCOME_PATTERN.test(String(entry.outcome ?? ""))
+  );
+  const budget = Math.max(0, Math.floor(limit));
+  const lines = rejected.slice(0, budget).map((entry) => {
+    const outcome = OUTCOME_TOKEN_PATTERN.test(String(entry.outcome ?? "")) ? entry.outcome : "other";
+    const fields = [
+      ["outcome", outcome],
+      ["domain", sourceDomain(entry.url)],
+      ["sourceDate", toIsoOrNull(entry.sourceDate)],
+      ["effectiveDate", toIsoOrNull(entry.effectiveDate)],
+      ["averageScore", scoreOrNa(entry.averageScore)],
+      ["relevanceScore", scoreOrNa(entry.relevanceScore)],
+      ["reason", rejectionReasonCode(entry)],
+    ];
+    return ["CANDIDATE_REJECTED", ...fields.map(([key, value]) => `${key}=${detailToken(value)}`)].join(" ");
+  });
+  if (rejected.length > budget) {
+    lines.push(`CANDIDATE_REJECTED_TRUNCATED count=${rejected.length - budget}`);
   }
   return lines;
 }
@@ -538,6 +668,98 @@ async function fetchRunDetail(sql, runId) {
   }
 }
 
+// #476: a diagnostic dispatch selects the run whose started_at is within this much of
+// the RUN_STARTED_AT input.
+export const DIAGNOSTIC_WINDOW_MS = 60 * 60 * 1000;
+
+// #476: exit code for a RUN_STARTED_AT that is set but not a strict ISO timestamp.
+export const INVALID_INPUT_EXIT_CODE = 2;
+
+// #476: YYYY-MM-DDTHH:MM[:SS[.sss]] with a mandatory Z or ±HH:MM zone, so the window
+// never depends on the runner's TZ.
+const RUN_STARTED_AT_PATTERN =
+  /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{1,3}))?)?(?:(Z)|([+-])(\d{2}):(\d{2}))$/;
+const RUN_STARTED_AT_MAX_CHARS = 29;
+
+function naiveUtcText(ms) {
+  return new Date(ms).toISOString().replace("T", " ").replace("Z", "");
+}
+
+/**
+ * Why: #476 — an operator needs the rejection lines of a past run, not only the latest.
+ *   The input comes from a workflow_dispatch form, so it is validated before it reaches
+ *   a query parameter.
+ * What: `{ kind: "unset" }` for an absent or empty value (the scheduled path);
+ *   `{ kind: "invalid" }` for anything that is not a real calendar instant in the strict
+ *   form above; otherwise `{ kind: "valid", centerMs, center, lower, upper }`, where the
+ *   three strings are naive-UTC `timestamp` text for [ts-1h, ts+1h].
+ * Test: `parseRunStartedAtInput` cases in tests/unit/check-ingestion-gap.test.ts.
+ */
+export function parseRunStartedAtInput(raw) {
+  if (raw === undefined || raw === null || raw === "") return { kind: "unset" };
+  const text = String(raw);
+  if (text.length > RUN_STARTED_AT_MAX_CHARS) return { kind: "invalid" };
+  const match = RUN_STARTED_AT_PATTERN.exec(text);
+  if (!match) return { kind: "invalid" };
+  const [, y, mo, d, h, mi, s = "0", frac = "0", zulu, sign, oh, om] = match;
+  const [year, month, day, hour, minute, second] = [y, mo, d, h, mi, s].map(Number);
+  const offsetHours = zulu ? 0 : Number(oh);
+  const offsetMinutes = zulu ? 0 : Number(om);
+  if (month < 1 || month > 12 || hour > 23 || minute > 59 || second > 59) return { kind: "invalid" };
+  if (offsetHours > 14 || offsetMinutes > 59) return { kind: "invalid" };
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  if (day < 1 || day > daysInMonth) return { kind: "invalid" };
+
+  const millis = Number(frac.padEnd(3, "0"));
+  const offsetMs = (sign === "-" ? -1 : 1) * (offsetHours * 60 + offsetMinutes) * 60 * 1000;
+  const centerMs = Date.UTC(year, month - 1, day, hour, minute, second, millis) - offsetMs;
+  return {
+    kind: "valid",
+    centerMs,
+    center: naiveUtcText(centerMs),
+    lower: naiveUtcText(centerMs - DIAGNOSTIC_WINDOW_MS),
+    upper: naiveUtcText(centerMs + DIAGNOSTIC_WINDOW_MS),
+  };
+}
+
+/**
+ * Why: #476 — a diagnostic run is read-only: it must print no ALERT[...] or LAST_* line
+ *   the workflow could act on, and a verdict on a past run measured against now is noise.
+ * What: A DIAGNOSTIC header naming the window, then DIAGNOSTIC_RUN for the selected row
+ *   (exit 0), or DIAGNOSTIC_NO_RUN when no row started inside the window (exit 1).
+ * Test: `formatDiagnosticLines` cases in tests/unit/check-ingestion-gap.test.ts.
+ */
+export function formatDiagnosticLines(window, row) {
+  const header = `DIAGNOSTIC: read-only run selection, window=${detailToken(window.lower)}Z..${detailToken(window.upper)}Z`;
+  if (!row) return { exitCode: 1, lines: [header, "DIAGNOSTIC_NO_RUN"] };
+  return {
+    exitCode: 0,
+    lines: [
+      header,
+      `DIAGNOSTIC_RUN started_at=${toIsoOrNull(row.started_at)} status=${detailToken(row.status ?? "unknown")} ` +
+        `articles_ingested=${countOrNa(row.articles_ingested)}`,
+    ],
+  };
+}
+
+/**
+ * #476: the diagnostic path. One SELECT picks the run nearest the input inside the
+ * window; fetchRunDetail() then prints the same detail block the scheduled path does.
+ */
+async function runDiagnostic(sql, window) {
+  const rows = await sql`
+    SELECT id, started_at, status, articles_ingested
+    FROM automated_ingestion_runs
+    WHERE started_at BETWEEN ${window.lower}::timestamp AND ${window.upper}::timestamp
+    ORDER BY abs(extract(epoch FROM started_at - ${window.center}::timestamp)), started_at
+    LIMIT 1
+  `;
+  const { exitCode, lines } = formatDiagnosticLines(window, rows[0]);
+  const detail = rows[0] ? formatRunDetailLines(await fetchRunDetail(sql, rows[0].id)) : [];
+  for (const line of [...lines, ...detail]) console.log(line);
+  process.exit(exitCode);
+}
+
 async function main() {
   const databaseUrl = process.env.DATABASE_URL;
   if (!databaseUrl) {
@@ -546,7 +768,28 @@ async function main() {
     return;
   }
 
+  // #476: RUN_STARTED_AT (workflow_dispatch input) switches to the read-only diagnostic
+  // path. The value is never echoed, valid or not.
+  const runStartedAt = parseRunStartedAtInput(process.env.RUN_STARTED_AT);
+  if (runStartedAt.kind === "invalid") {
+    console.error("ERROR: RUN_STARTED_AT is not a strict ISO-8601 timestamp (YYYY-MM-DDTHH:MM[:SS[.sss]]Z or ±HH:MM).");
+    process.exit(INVALID_INPUT_EXIT_CODE);
+    return;
+  }
+
   const sql = neon(databaseUrl, NEON_OPTIONS);
+
+  if (runStartedAt.kind === "valid") {
+    try {
+      await runDiagnostic(sql, runStartedAt);
+    } catch (error) {
+      console.error(
+        `ERROR: diagnostic run selection failed: ${redactConnectionString(error instanceof Error ? error.message : error)}`
+      );
+      process.exit(1);
+    }
+    return;
+  }
 
   try {
     // Most-recent-first; fetch enough rows to evaluate both the single-latest-run checks

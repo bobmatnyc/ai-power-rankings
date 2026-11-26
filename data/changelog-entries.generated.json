@@ -99,10 +99,21 @@
     "changeType": "fix"
   },
   {
+    "id": "unreleased-6f4271e7e6c4",
+    "version": "Unreleased",
+    "date": "2026-11-26T09:27:00.716Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "ingestion",
+    "title": "the gap detector prints one CANDIDATE_REJECTED line per rejected or skipped candidate of the run it reads: outcome,…",
+    "description": "the gap detector prints one `CANDIDATE_REJECTED` line per rejected or skipped candidate of the run it reads: outcome, source domain (hostname only), sourceDate, effectiveDate, averageScore, relevanceScore and a reason code from a fixed set (`stale`, `duplicate`, `semantic_dup`, `previously_rejected`, `blocked_domain`, `extraction_failed`, `assessment_failed`, `teaser_unexpanded`, `low_relevance`, `low_avg`, `low_relevance_and_avg`, `summary_rejected`, `ingest_failed`, `other`). No URL path, title or reason text is printed. These lines and the `CANDIDATE_INGESTED` lines share the 50-line budget; overflow prints `CANDIDATE_REJECTED_TRUNCATED count=<n>`. A new `run_started_at` dispatch input (strict ISO-8601 with a zone) selects the run nearest that instant within ±1 hour and runs read-only: no alert issue is opened, commented on or closed, no fallback trigger runs, and the digest and crawl-spend jobs are skipped. Scheduled runs are unchanged. Tests: `tests/unit/check-ingestion-gap.test.ts` (#476)",
+    "changeType": "fix"
+  },
+  {
     "id": "unreleased-9e6147454260",
     "version": "Unreleased",
-    "date": "2026-11-24T21:30:00.000Z",
-    "dateSource": "build",
+    "date": "2026-11-24T21:58:15.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "data",
     "title": "ChatGPT Canvas merges into ChatGPT (#488, owner ruling (a))",
@@ -123,8 +134,8 @@
   {
     "id": "unreleased-91164d578dfb",
     "version": "Unreleased",
-    "date": "2026-11-23T10:25:07.247Z",
-    "dateSource": "build",
+    "date": "2026-11-23T11:33:07.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "digest",
     "title": "the full weekly digest prompt keeps its target of about 280 words, and the 350-word maximum is unchanged",

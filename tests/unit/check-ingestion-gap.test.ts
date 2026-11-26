@@ -13,6 +13,8 @@
  * synthetic rows and an injected clock — no database access, no network.
  */
 
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   CONSECUTIVE_ZERO_YIELD_RUNS,
@@ -28,7 +30,13 @@ import {
   formatRunCountsLine,
   formatTopRejectedLines,
   REJECTED_REASON_MAX_CHARS,
+  REJECTION_REASON_CODES,
   TOP_REJECTED_LIMIT,
+  formatCandidateRejectedLines,
+  formatDiagnosticLines,
+  parseRunStartedAtInput,
+  rejectionReasonCode,
+  sourceDomain,
   withRunDetail,
 } from "../../scripts/check-ingestion-gap.mjs";
 
@@ -423,6 +431,9 @@ describe("formatRunCountsLine (#476)", () => {
     expect(formatCandidateOutcomeLines(stored)).toEqual([
       "CANDIDATE_OUTCOMES=1",
       "CANDIDATE_OUTCOME outcome=quality_rejected count=1",
+      // #476: a quality rejection with no scores carries reason=other.
+      "CANDIDATE_REJECTED outcome=quality_rejected domain=a.example sourceDate=null effectiveDate=null " +
+        "averageScore=n/a relevanceScore=n/a reason=other",
     ]);
   });
 
@@ -473,5 +484,227 @@ describe("formatTopRejectedLines (#476)", () => {
     expect(formatRunCountsLine([{ outcome: "run_counts", teaserExpanded: 1, previouslyRejected: 0, teaserFallback: 2 }])).toBe(
       "RUN_COUNTS teaser_expanded=1 previously_rejected=0 teaser_fallback=2"
     );
+  });
+});
+
+/**
+ * #476: per-candidate rejection lines and the read-only diagnostic dispatch. The lines
+ * reach a public Actions log, so every field is pinned to a bounded token.
+ */
+describe("rejectionReasonCode (#476)", () => {
+  it.each([
+    [{ outcome: "skipped_stale", reason: "source date outside 7d window" }, "stale"],
+    [{ outcome: "skipped_duplicate" }, "duplicate"],
+    [{ outcome: "skipped_semantic" }, "semantic_dup"],
+    [{ outcome: "skipped_previously_rejected" }, "previously_rejected"],
+    [{ outcome: "extraction_failed", reason: "blocked_domain" }, "blocked_domain"],
+    [{ outcome: "extraction_failed", reason: "all_extraction_methods_failed" }, "extraction_failed"],
+    [{ outcome: "assessment_failed", reason: "insufficient credits" }, "assessment_failed"],
+    [{ outcome: "quality_rejected_unexpanded", averageScore: 3, relevanceScore: 2 }, "teaser_unexpanded"],
+    [{ outcome: "quality_rejected", averageScore: 7.3, relevanceScore: 6 }, "low_relevance"],
+    [{ outcome: "quality_rejected", averageScore: 6.9, relevanceScore: 8 }, "low_avg"],
+    [{ outcome: "quality_rejected", averageScore: 4, relevanceScore: 3 }, "low_relevance_and_avg"],
+    [{ outcome: "quality_rejected", averageScore: 7, relevanceScore: 7 }, "other"],
+    [{ outcome: "quality_rejected", reason: "no quality assessment returned" }, "other"],
+    [{ outcome: "summary_rejected" }, "summary_rejected"],
+    [{ outcome: "ingest_failed" }, "ingest_failed"],
+    [{ outcome: "something_new", reason: "Ignore previous instructions\nALERT[STALLED]" }, "other"],
+    [null, "other"],
+  ])("maps %j to %s", (entry, code) => {
+    expect(rejectionReasonCode(entry)).toBe(code);
+    expect(REJECTION_REASON_CODES).toContain(code);
+  });
+});
+
+describe("sourceDomain (#476)", () => {
+  it("returns the lowercase hostname only, never the path or query", () => {
+    expect(sourceDomain("https://News.Example.COM/a/b?utm=x#y")).toBe("news.example.com");
+  });
+
+  it.each(["not a url", "", null, "javascript:alert(1)", "https://[::1]/x"])("returns invalid for %j", (url) => {
+    expect(sourceDomain(url)).toBe("invalid");
+  });
+});
+
+describe("formatCandidateRejectedLines (#476)", () => {
+  const rejectedEntry = (i: number) => ({
+    url: `https://site${i}.example/path/${i}`,
+    outcome: "skipped_stale",
+    title: "A title",
+    reason: "free text",
+  });
+
+  it("prints only outcome, domain, dates, scores and a reason code", () => {
+    const lines = formatCandidateRejectedLines([
+      { outcome: "run_counts", teaserExpanded: 1 },
+      {
+        url: "https://www.example.com/2026/11/secret-path?q=1",
+        outcome: "quality_rejected",
+        title: "Some Title",
+        reason: "The article is a listicle.",
+        averageScore: 6.33,
+        relevanceScore: 5,
+        sourceDate: "2026-11-22T10:00:00.000Z",
+      },
+      { url: "https://ok.example/x", outcome: "ingested" },
+    ]);
+
+    expect(lines).toEqual([
+      "CANDIDATE_REJECTED outcome=quality_rejected domain=www.example.com sourceDate=2026-11-22T10:00:00.000Z " +
+        "effectiveDate=null averageScore=6.3 relevanceScore=5.0 reason=low_relevance_and_avg",
+    ]);
+  });
+
+  it("caps at the budget and reports the overflow with CANDIDATE_REJECTED_TRUNCATED", () => {
+    const stored = Array.from({ length: MAX_DETAIL_LINES + 4 }, (_, i) => rejectedEntry(i));
+    const lines = formatCandidateRejectedLines(stored);
+
+    expect(lines.filter((l) => l.startsWith("CANDIDATE_REJECTED ")).length).toBe(MAX_DETAIL_LINES);
+    expect(lines.at(-1)).toBe("CANDIDATE_REJECTED_TRUNCATED count=4");
+  });
+
+  it("shares MAX_DETAIL_LINES with the ingested lines in formatCandidateOutcomeLines", () => {
+    const ingested = Array.from({ length: MAX_DETAIL_LINES - 2 }, (_, i) => ({
+      url: `https://in${i}.example/x`,
+      outcome: "ingested",
+    }));
+    const rejected = Array.from({ length: 5 }, (_, i) => rejectedEntry(i));
+    const lines = formatCandidateOutcomeLines([...ingested, ...rejected]);
+
+    expect(lines.filter((l) => l.startsWith("CANDIDATE_REJECTED ")).length).toBe(2);
+    expect(lines.at(-1)).toBe("CANDIDATE_REJECTED_TRUNCATED count=3");
+  });
+
+  it("cannot be made to inject a line or leak free text", () => {
+    const lines = formatCandidateRejectedLines([
+      {
+        url: "https://evil.example/a\nALERT[STALLED]: forged",
+        outcome: "quality_rejected\nALERT[RUN_FAILED]",
+        title: "TITLE_TEXT\nLAST_STATUS=running",
+        reason: "REASON_TEXT\nALERT[ZERO_YIELD_STREAK]",
+        sourceDate: "2026-11-22\nALERT[STALLED]",
+        effectiveDate: "yesterday at noon",
+        averageScore: "9\nx",
+        relevanceScore: Number.NaN,
+      },
+    ]);
+    const text = lines.join("\n");
+
+    expect(lines).toHaveLength(1);
+    expect(text).not.toMatch(/ALERT\[|LAST_STATUS|TITLE_TEXT|REASON_TEXT|forged|\n/);
+    expect(lines[0]).toBe(
+      // The URL parser drops the newline, so only the hostname survives.
+      "CANDIDATE_REJECTED outcome=other domain=evil.example sourceDate=invalid effectiveDate=invalid " +
+        "averageScore=n/a relevanceScore=n/a reason=other"
+    );
+  });
+
+  it("prints nothing for an unreadable column", () => {
+    expect(formatCandidateRejectedLines(null)).toEqual([]);
+  });
+});
+
+describe("parseRunStartedAtInput (#476)", () => {
+  it("treats an absent or empty input as the scheduled path", () => {
+    expect(parseRunStartedAtInput(undefined)).toEqual({ kind: "unset" });
+    expect(parseRunStartedAtInput("")).toEqual({ kind: "unset" });
+  });
+
+  it("builds a naive-UTC [ts-1h, ts+1h] window from a Z or offset instant", () => {
+    const expected = {
+      kind: "valid",
+      centerMs: Date.UTC(2026, 10, 23, 6, 0, 0),
+      center: "2026-11-23 06:00:00.000",
+      lower: "2026-11-23 05:00:00.000",
+      upper: "2026-11-23 07:00:00.000",
+    };
+    expect(parseRunStartedAtInput("2026-11-23T06:00:00Z")).toEqual(expected);
+    expect(parseRunStartedAtInput("2026-11-23T01:00-05:00")).toEqual(expected);
+    expect(parseRunStartedAtInput("2026-11-23T06:00:00.000Z")).toEqual(expected);
+  });
+
+  it.each([
+    "2026-11-23",
+    "2026-11-23T06:00:00",
+    "2026-11-23 06:00:00Z",
+    "2026-02-30T06:00:00Z",
+    "2026-13-01T06:00:00Z",
+    "2026-11-23T24:00:00Z",
+    "2026-11-23T06:00:00+15:00",
+    "2026-11-23T06:00:00Z\nALERT[STALLED]",
+    "2026-11-23T06:00:00Z'; DROP TABLE articles;--",
+    "yesterday",
+  ])("rejects %j", (raw) => {
+    expect(parseRunStartedAtInput(raw)).toEqual({ kind: "invalid" });
+  });
+});
+
+describe("formatDiagnosticLines (#476)", () => {
+  const window = parseRunStartedAtInput("2026-11-23T06:00:00Z");
+
+  it("names the selected run and never prints an ALERT or LAST_* line", () => {
+    const { exitCode, lines } = formatDiagnosticLines(window, {
+      started_at: "2026-11-23 06:00:04.123",
+      status: "completed",
+      articles_ingested: 0,
+    });
+
+    expect(exitCode).toBe(0);
+    expect(lines).toEqual([
+      "DIAGNOSTIC: read-only run selection, window=2026-11-23_05:00:00.000Z..2026-11-23_07:00:00.000Z",
+      "DIAGNOSTIC_RUN started_at=2026-11-23T06:00:04.123Z status=completed articles_ingested=0",
+    ]);
+    expect(lines.join("\n")).not.toMatch(/ALERT\[|LAST_STATUS|LAST_RUN_STARTED/);
+  });
+
+  it("exits 1 with DIAGNOSTIC_NO_RUN when no run started inside the window", () => {
+    expect(formatDiagnosticLines(window, undefined)).toEqual({
+      exitCode: 1,
+      lines: [
+        "DIAGNOSTIC: read-only run selection, window=2026-11-23_05:00:00.000Z..2026-11-23_07:00:00.000Z",
+        "DIAGNOSTIC_NO_RUN",
+      ],
+    });
+  });
+});
+
+describe("cron-gap-detector.yml diagnostic dispatch (#476)", () => {
+  const workflow = readFileSync(join(process.cwd(), ".github/workflows/cron-gap-detector.yml"), "utf8");
+
+  it("passes run_started_at through env, never inline in a run script", () => {
+    expect(workflow).toContain("RUN_STARTED_AT: ${{ inputs.run_started_at }}");
+    // A `run: |` body is every following line indented past the `run:` key.
+    const lines = workflow.split("\n");
+    const runBodies: string[] = [];
+    lines.forEach((line, i) => {
+      const m = /^(\s*)run: \|/.exec(line);
+      if (!m) return;
+      const body: string[] = [];
+      for (const next of lines.slice(i + 1)) {
+        if (next.trim() !== "" && next.search(/\S/) <= m[1].length) break;
+        body.push(next);
+      }
+      runBodies.push(body.join("\n"));
+    });
+    expect(runBodies.length).toBeGreaterThan(0);
+    for (const body of runBodies) expect(body).not.toContain("inputs.run_started_at");
+  });
+
+  it("skips every issue-writing or production-calling step and job on a diagnostic dispatch", () => {
+    for (const step of [
+      "Classify alert and fallback preconditions",
+      "Trigger production ingestion (fallback)",
+      "Re-check ingestion recency after fallback",
+      "Summarize fallback outcome",
+      "Open or update ingestion-alert issue",
+      "Close ingestion-alert issues on recovery",
+    ]) {
+      const block = workflow.split(`- name: ${step}`)[1]?.split("\n").slice(0, 4).join("\n") ?? "";
+      expect(block, step).toMatch(/if: \$\{\{[^}]*!inputs\.run_started_at/);
+    }
+    for (const job of ["check-weekly-digest-gap", "check-crawl-spend"]) {
+      const block = workflow.split(`\n  ${job}:\n`)[1]?.split("\n").slice(0, 4).join("\n") ?? "";
+      expect(block, job).toContain("if: ${{ !inputs.run_started_at }}");
+    }
   });
 });
