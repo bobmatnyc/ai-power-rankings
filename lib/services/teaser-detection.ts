@@ -112,11 +112,11 @@ const NEWS_GOOGLE_HOST = /^news\.google\.[a-z]{2,3}(?:\.[a-z]{2})?$/;
 const TAVILY_HOST = /(^|\.)tavily\.com$/;
 
 /**
- * #476: hosts sent as Tavily `exclude_domains`; the .com hosts behind the
- * rules in unresolvableHostRule(), which still catches every other TLD.
+ * #476: hosts sent as Tavily `exclude_domains`. Exact wrapper hosts only: a bare
+ * `google.com` would also suppress cloud.google.com and developers.google.com,
+ * which the pipeline keeps. unresolvableHostRule() drops whatever gets through.
  */
 export const UNRESOLVABLE_EXCLUDE_DOMAINS: readonly string[] = Object.freeze([
-  "google.com",
   "www.google.com",
   "news.google.com",
   "tavily.com",

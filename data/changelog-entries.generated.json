@@ -110,14 +110,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-220f8182d238",
+    "id": "unreleased-c5cf104c8cc2",
     "version": "Unreleased",
-    "date": "2026-11-26T09:55:00.615Z",
+    "date": "2026-11-26T09:55:08.396Z",
     "dateSource": "build",
     "section": "Fixed",
     "scope": "ingestion",
     "title": "daily news ingestion drops a candidate whose URL is an aggregator or wrapper page that cannot reach the publisher,…",
-    "description": "daily news ingestion drops a candidate whose URL is an aggregator or wrapper page that cannot reach the publisher, before the freshness gate, deduplication, extraction, teaser expansion and quality scoring. The rules are a `google.*` page left after the `url=`/`q=` unwrap (`google_wrapper`), any `news.google.*` URL (`news_google`), any `tavily.com` URL (`tavily`), and a value that is not an http(s) URL (`malformed_url`). Each drop is recorded as `skipped_unresolvable_host` with the rule as its reason and counts in `articlesSkipped`; the gap detector prints it as reason code `unresolvable_host`. A `google.com/url?url=<publisher>` wrapper still goes through as the publisher URL, and Google's own sites (`cloud.google.com`, `ai.google.dev`, `blog.google`) are kept. Tavily searches send `exclude_domains` for `google.com`, `www.google.com`, `news.google.com`, `tavily.com` and `www.tavily.com`; `include_domains` is unchanged. A candidate's `sourceDate` is stored as ISO-8601 when it parses, RFC 2822 included, and as the raw text otherwise, and the gap detector prints a stored RFC 2822 `sourceDate` as ISO instead of `invalid`. Quality thresholds and the freshness gate are unchanged. On 2026-11-25, 17 of 30 candidates were google.com or tavily.com pages. Tests: `tests/unit/unresolvable-host-476.test.ts`, `tests/unit/source-date-476.test.ts`, `tests/unit/ingestion-teaser-extraction-476.test.ts`, `tests/unit/check-ingestion-gap.test.ts` (#476)",
+    "description": "daily news ingestion drops a candidate whose URL is an aggregator or wrapper page that cannot reach the publisher, before the freshness gate, deduplication, extraction, teaser expansion and quality scoring. The rules are a `google.*` page left after the `url=`/`q=` unwrap (`google_wrapper`), any `news.google.*` URL (`news_google`), any `tavily.com` URL (`tavily`), and a value that is not an http(s) URL (`malformed_url`). Each drop is recorded as `skipped_unresolvable_host` with the rule as its reason and counts in `articlesSkipped`; the gap detector prints it as reason code `unresolvable_host`. A `google.com/url?url=<publisher>` wrapper still goes through as the publisher URL, and Google's own sites (`cloud.google.com`, `ai.google.dev`, `blog.google`) are kept. Tavily searches send `exclude_domains` for exactly `www.google.com`, `news.google.com`, `tavily.com` and `www.tavily.com`; bare `google.com` is not sent, so Google-owned publisher pages such as `cloud.google.com` stay in the results. `include_domains` is unchanged. A candidate's `sourceDate` is stored as ISO-8601 when it parses, RFC 2822 included, and as the raw text otherwise, and the gap detector prints a stored RFC 2822 `sourceDate` as ISO instead of `invalid`. Quality thresholds and the freshness gate are unchanged. On 2026-11-25, 17 of 30 candidates were google.com or tavily.com pages. Tests: `tests/unit/unresolvable-host-476.test.ts`, `tests/unit/source-date-476.test.ts`, `tests/unit/ingestion-teaser-extraction-476.test.ts`, `tests/unit/check-ingestion-gap.test.ts` (#476)",
     "changeType": "fix"
   },
   {

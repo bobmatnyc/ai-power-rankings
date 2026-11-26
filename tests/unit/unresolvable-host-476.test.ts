@@ -26,6 +26,10 @@ describe("unresolvableHostRule (#476)", () => {
     ["https://news.google.com/articles/CAIiEFake", "news_google"],
     ["https://tavily.com/blog/some-post", "tavily"],
     ["https://www.tavily.com/", "tavily"],
+    // A url= wrapper whose target is itself a wrapper or tavily page.
+    ["https://www.google.com/url?url=https%3A%2F%2Fnews.google.com%2Frss%2Farticles%2FCBMi", "news_google"],
+    ["https://www.google.com/url?url=https%3A%2F%2Fwww.google.com%2Fsearch%3Fq%3Dx", "google_wrapper"],
+    ["https://www.google.com/url?q=https%3A%2F%2Ftavily.com%2Fblog%2Fpost", "tavily"],
     ["not a url", "malformed_url"],
     ["", "malformed_url"],
     ["ftp://files.example/x", "malformed_url"],
@@ -53,6 +57,9 @@ describe("unresolvableHostRule (#476)", () => {
     "https://ai.google.dev/gemini-api/docs/changelog",
     "https://blog.google/technology/ai/",
     "https://developers.googleblog.com/en/jules/",
+    "https://googleblog.com/2026/11/post.html",
+    // Look-alike hosts are not tavily.com.
+    "https://tavily.ai/news/launch",
   ])("keeps publisher URL %j", (url) => {
     expect(ruleAfterUnwrap(url)).toBeNull();
   });
@@ -79,8 +86,7 @@ describe("Tavily search request (#476)", () => {
       expect(body.exclude_domains).toEqual([...UNRESOLVABLE_EXCLUDE_DOMAINS]);
       expect(body.include_domains).toBeUndefined();
     }
-    expect(UNRESOLVABLE_EXCLUDE_DOMAINS).toEqual(
-      expect.arrayContaining(["google.com", "news.google.com", "tavily.com"])
-    );
+    // #476: exact wrapper hosts only; a bare google.com would suppress cloud.google.com.
+    expect(UNRESOLVABLE_EXCLUDE_DOMAINS).toEqual(["www.google.com", "news.google.com", "tavily.com", "www.tavily.com"]);
   });
 });
