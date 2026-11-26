@@ -281,6 +281,9 @@ export type CandidateOutcomeKind =
   | "quality_rejected_unexpanded"
   // #476: quality_rejected in a run within REJECTED_URL_LOOKBACK_DAYS; not re-assessed.
   | "skipped_previously_rejected"
+  // #476: an aggregator/wrapper URL (google.*, news.google.*, tavily.com) or a
+  // malformed URL, dropped before any paid work; `reason` names the host rule.
+  | "skipped_unresolvable_host"
   // #180: the generated summary failed validation twice; `reason` names the failed checks.
   | "summary_rejected"
   | "ingest_failed"
@@ -333,7 +336,9 @@ export const REJECTED_URL_LOOKBACK_DAYS = 30;
 
 // #476: teaser rule (length OR truncation/boilerplate markers) lives in teaser-detection.ts.
 export { TEASER_MAX_CHARS } from "./teaser-detection";
-import { needsFullText, resolvePublisherUrl } from "./teaser-detection";
+import { needsFullText, resolvePublisherUrl, unresolvableHostRule } from "./teaser-detection";
+// #476: stores RFC 2822 provider dates as ISO-8601.
+import { normalizeSourceDate } from "./source-date.mjs";
 
 /**
  * #476: teaser expansion's own budget inside PIPELINE_TIMEOUT_MS (265 s). One
@@ -1209,7 +1214,7 @@ export class AutomatedIngestionService {
         candidateOutcomes.push({
           url: item.url.substring(0, 300),
           discoveredVia: discoveredViaOf(item),
-          sourceDate: item.publishedDate ?? null,
+          sourceDate: normalizeSourceDate(item.publishedDate), // #476: ISO when it parses, else raw
           provisionalDate: Number.isNaN(provisionalMs)
             ? null
             : new Date(provisionalMs).toISOString(),
@@ -1230,14 +1235,39 @@ export class AutomatedIngestionService {
         });
       };
 
-      const staleResults = searchResults.filter(
+      // #476: drop aggregator/wrapper URLs that resolvePublisherUrl could not
+      // unwrap, before the freshness gate and every paid step. Each one is
+      // recorded, so none disappears silently.
+      const resolvableResults: typeof searchResults = [];
+      let unresolvableHostCount = 0;
+      for (const result of searchResults) {
+        const hostRule = unresolvableHostRule(result.url);
+        if (hostRule === null) {
+          resolvableResults.push(result);
+          continue;
+        }
+        unresolvableHostCount++;
+        recordOutcome(
+          { ...result, url: typeof result.url === "string" ? result.url : "" },
+          "skipped_unresolvable_host",
+          hostRule
+        );
+      }
+      if (unresolvableHostCount > 0) {
+        loggers.api.info("[AutomatedIngestion] Dropped unresolvable aggregator URLs", {
+          dropped: unresolvableHostCount,
+          remaining: resolvableResults.length,
+        });
+      }
+
+      const staleResults = resolvableResults.filter(
         (r) => !passesFreshnessGate(r, nowMs, freshnessWindowDays)
       );
       for (const stale of staleResults) {
         recordOutcome(stale, "skipped_stale", `source date outside ${freshnessWindowDays}d window`);
       }
       const freshResults = sortByFreshness(
-        searchResults.filter((r) => passesFreshnessGate(r, nowMs, freshnessWindowDays)),
+        resolvableResults.filter((r) => passesFreshnessGate(r, nowMs, freshnessWindowDays)),
         nowMs,
         freshnessWindowDays
       );
@@ -1269,7 +1299,7 @@ export class AutomatedIngestionService {
           articlesDiscovered,
           articlesPassedQuality: 0,
           articlesIngested: 0,
-          articlesSkipped: articlesSkippedStale,
+          articlesSkipped: articlesSkippedStale + unresolvableHostCount, // #476
           articlesSkippedSemantic: 0,
           articlesSkippedStale,
           candidateOutcomes,
@@ -1325,8 +1355,13 @@ export class AutomatedIngestionService {
       );
       articlesSkippedSemantic = notPreviouslyRejected.length - newArticles.length;
       runCounts.semanticDuplicates = articlesSkippedSemantic; // #172
+      // #476: unresolvable aggregator URLs count as skipped too.
       articlesSkipped =
-        articlesSkippedStale + urlDuplicatesCount + previouslyRejectedCount + articlesSkippedSemantic;
+        unresolvableHostCount +
+        articlesSkippedStale +
+        urlDuplicatesCount +
+        previouslyRejectedCount +
+        articlesSkippedSemantic;
       // #132: record which candidate died where, not just how many.
       const survivingUrls = new Set(newArticles.map((a) => a.url));
       for (const dropped of notPreviouslyRejected.filter((a) => !survivingUrls.has(a.url))) {
