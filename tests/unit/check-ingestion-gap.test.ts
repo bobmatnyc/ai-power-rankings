@@ -521,6 +521,14 @@ describe("sourceDomain (#476)", () => {
     expect(sourceDomain("https://News.Example.COM/a/b?utm=x#y")).toBe("news.example.com");
   });
 
+  it.each([
+    ["https://bücher.example/x", "xn--bcher-kva.example"],
+    ["https://user:pass@host.example/secret", "host.example"],
+    ["http://192.168.0.1:8080/x", "192.168.0.1"],
+  ])("returns only the hostname of %j", (url, host) => {
+    expect(sourceDomain(url)).toBe(host);
+  });
+
   it.each(["not a url", "", null, "javascript:alert(1)", "https://[::1]/x"])("returns invalid for %j", (url) => {
     expect(sourceDomain(url)).toBe("invalid");
   });
@@ -634,6 +642,7 @@ describe("parseRunStartedAtInput (#476)", () => {
     "2026-11-23T06:00:00Z\nALERT[STALLED]",
     "2026-11-23T06:00:00Z'; DROP TABLE articles;--",
     "yesterday",
+    "1969-12-31T23:00:00Z",
   ])("rejects %j", (raw) => {
     expect(parseRunStartedAtInput(raw)).toEqual({ kind: "invalid" });
   });
@@ -655,6 +664,58 @@ describe("formatDiagnosticLines (#476)", () => {
       "DIAGNOSTIC_RUN started_at=2026-11-23T06:00:04.123Z status=completed articles_ingested=0",
     ]);
     expect(lines.join("\n")).not.toMatch(/ALERT\[|LAST_STATUS|LAST_RUN_STARTED/);
+  });
+
+  it("prints only sanitised lines: no title, reason, URL path or slug from the run", () => {
+    const detail = {
+      ingestedArticleIds: ["11111111-1111-1111-1111-111111111111"],
+      articleRows: [{ id: "11111111-1111-1111-1111-111111111111", slug: "SLUG_MARKER_476" }],
+      candidateOutcomes: [
+        { outcome: "run_counts", teaserExpanded: 1, previouslyRejected: 0, teaserFallback: 0 },
+        {
+          url: "https://in.example/PATH_MARKER_INGESTED?q=1",
+          outcome: "ingested",
+          title: "TITLE_MARKER_INGESTED",
+          sourceDate: "2026-11-22T10:00:00.000Z",
+          effectiveDate: "2026-11-22T10:00:00.000Z",
+          publishedDateSource: "article_published_date",
+        },
+        {
+          url: "https://out.example/PATH_MARKER_REJECTED",
+          outcome: "quality_rejected",
+          title: "TITLE_MARKER_REJECTED",
+          reason: "REASON_MARKER free-text rationale",
+          averageScore: 6.5,
+          relevanceScore: 8,
+        },
+      ],
+    };
+    const { exitCode, lines } = formatDiagnosticLines(window, { started_at: "2026-11-23 06:00:04", status: "completed" }, detail);
+    const text = lines.join("\n");
+
+    expect(exitCode).toBe(0);
+    expect(text).not.toMatch(/MARKER|https?:|title=|REJECTED_TOP|INGESTED_ARTICLE id=/);
+    expect(lines.slice(2)).toEqual([
+      "INGESTED_ARTICLE_IDS=1",
+      "CANDIDATE_OUTCOMES=2",
+      "CANDIDATE_OUTCOME outcome=ingested count=1",
+      "CANDIDATE_OUTCOME outcome=quality_rejected count=1",
+      "RUN_COUNTS teaser_expanded=1 previously_rejected=0 teaser_fallback=0",
+      "CANDIDATE_INGESTED domain=in.example sourceDate=2026-11-22T10:00:00.000Z effectiveDate=2026-11-22T10:00:00.000Z",
+      "CANDIDATE_REJECTED outcome=quality_rejected domain=out.example sourceDate=null effectiveDate=null " +
+        "averageScore=6.5 relevanceScore=8.0 reason=low_avg",
+    ]);
+  });
+
+  it("exits 1 with a redacted DETAIL_ERROR when the detail read fails", () => {
+    const { exitCode, lines } = formatDiagnosticLines(
+      window,
+      { started_at: "2026-11-23 06:00:04", status: "completed" },
+      { error: new Error("connect failed postgres://u:secret@db.example/x") }
+    );
+
+    expect(exitCode).toBe(1);
+    expect(lines.at(-1)).toBe("DETAIL_ERROR=connect failed [redacted]");
   });
 
   it("exits 1 with DIAGNOSTIC_NO_RUN when no run started inside the window", () => {

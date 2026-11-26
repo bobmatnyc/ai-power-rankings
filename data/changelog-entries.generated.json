@@ -99,14 +99,14 @@
     "changeType": "fix"
   },
   {
-    "id": "unreleased-6f4271e7e6c4",
+    "id": "unreleased-bf471eb517e6",
     "version": "Unreleased",
-    "date": "2026-11-26T09:27:00.716Z",
+    "date": "2026-11-26T09:31:05.709Z",
     "dateSource": "build",
     "section": "Fixed",
     "scope": "ingestion",
     "title": "the gap detector prints one CANDIDATE_REJECTED line per rejected or skipped candidate of the run it reads: outcome,…",
-    "description": "the gap detector prints one `CANDIDATE_REJECTED` line per rejected or skipped candidate of the run it reads: outcome, source domain (hostname only), sourceDate, effectiveDate, averageScore, relevanceScore and a reason code from a fixed set (`stale`, `duplicate`, `semantic_dup`, `previously_rejected`, `blocked_domain`, `extraction_failed`, `assessment_failed`, `teaser_unexpanded`, `low_relevance`, `low_avg`, `low_relevance_and_avg`, `summary_rejected`, `ingest_failed`, `other`). No URL path, title or reason text is printed. These lines and the `CANDIDATE_INGESTED` lines share the 50-line budget; overflow prints `CANDIDATE_REJECTED_TRUNCATED count=<n>`. A new `run_started_at` dispatch input (strict ISO-8601 with a zone) selects the run nearest that instant within ±1 hour and runs read-only: no alert issue is opened, commented on or closed, no fallback trigger runs, and the digest and crawl-spend jobs are skipped. Scheduled runs are unchanged. Tests: `tests/unit/check-ingestion-gap.test.ts` (#476)",
+    "description": "the gap detector prints one `CANDIDATE_REJECTED` line per rejected or skipped candidate of the run it reads: outcome, source domain (hostname only), sourceDate, effectiveDate, averageScore, relevanceScore and a reason code from a fixed set (`stale`, `duplicate`, `semantic_dup`, `previously_rejected`, `blocked_domain`, `extraction_failed`, `assessment_failed`, `teaser_unexpanded`, `low_relevance`, `low_avg`, `low_relevance_and_avg`, `summary_rejected`, `ingest_failed`, `other`). No URL path, title or reason text is printed. These lines and the `CANDIDATE_INGESTED` lines share the 50-line budget; overflow prints `CANDIDATE_REJECTED_TRUNCATED count=<n>`. A new `run_started_at` dispatch input (strict ISO-8601 with a zone) selects the run nearest that instant within ±1 hour and runs read-only: no alert issue is opened, commented on or closed, no fallback trigger runs, and the digest and crawl-spend jobs are skipped. Its output holds only counts, source domains, dates, scores and reason codes, never a URL path, slug, title or reason text, and it exits 1 when the run's detail cannot be read. Scheduled runs are unchanged. Tests: `tests/unit/check-ingestion-gap.test.ts` (#476)",
     "changeType": "fix"
   },
   {

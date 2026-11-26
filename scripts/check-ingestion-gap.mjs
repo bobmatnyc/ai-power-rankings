@@ -38,7 +38,8 @@
  *   candidate (domain, dates, scores, a bounded reason code; no URL, title or free text).
  *   With RUN_STARTED_AT set (a workflow_dispatch input) the script runs read-only: it
  *   selects the run nearest that instant within ±1h, prints only DIAGNOSTIC lines and
- *   the detail block, and never prints an ALERT[...] or LAST_* line.
+ *   sanitised counts, domains, dates and reason codes (no URL, slug, title or reason
+ *   text), and never prints an ALERT[...] or LAST_* line.
  *   The evaluation and formatting logic takes no DB dependency, so it is unit-testable
  *   without a live database (see tests/unit/check-ingestion-gap.test.ts).
  * Test: Run locally with a valid DATABASE_URL — prints `OK: ...` and exits 0 when the
@@ -248,6 +249,26 @@ export function formatCandidateOutcomeLines(candidateOutcomes) {
   // #476: the run_counts entry describes the run, not a candidate.
   const outcomes = stored.filter((entry) => !isRunCountsEntry(entry));
 
+  const lines = candidateOutcomeCountLines(outcomes);
+  const ingested = ingestedEntries(outcomes);
+  for (const entry of ingested.slice(0, MAX_DETAIL_LINES)) {
+    const dateFields = Object.entries(entry)
+      .filter(([key]) => DATEISH_FIELD_PATTERN.test(key))
+      .map(([key, value]) => `${key}=${detailToken(value)}`);
+    const url = detailToken(String(entry.url ?? "").substring(0, DETAIL_URL_MAX_CHARS));
+    lines.push([`CANDIDATE_INGESTED url=${url}`, ...dateFields].join(" "));
+  }
+  if (ingested.length > MAX_DETAIL_LINES) {
+    lines.push(`CANDIDATE_INGESTED_TRUNCATED=${ingested.length - MAX_DETAIL_LINES}`);
+  }
+  // #476: rejected lines share MAX_DETAIL_LINES with the ingested lines above.
+  const rejectedBudget = MAX_DETAIL_LINES - Math.min(ingested.length, MAX_DETAIL_LINES);
+  lines.push(...formatCandidateRejectedLines(outcomes, rejectedBudget));
+  return lines;
+}
+
+/** The CANDIDATE_OUTCOMES total and per-outcome count lines, commonest first. */
+function candidateOutcomeCountLines(outcomes) {
   const counts = new Map();
   for (const entry of outcomes) {
     const outcome =
@@ -262,22 +283,45 @@ export function formatCandidateOutcomeLines(candidateOutcomes) {
   for (const [outcome, count] of ranked) {
     lines.push(`CANDIDATE_OUTCOME outcome=${detailToken(outcome)} count=${count}`);
   }
+  return lines;
+}
 
-  const ingested = outcomes.filter(
+function ingestedEntries(outcomes) {
+  return outcomes.filter(
     (entry) =>
       entry && typeof entry === "object" && INGESTED_OUTCOME_PATTERN.test(String(entry.outcome ?? ""))
   );
+}
+
+/**
+ * Why: #476 — a diagnostic dispatch can print any past run into a public log, so it must
+ *   not carry the scheduled block's full URLs, slugs, titles or LLM reasons.
+ * What: Only bounded lines: INGESTED_ARTICLE_IDS (a count), the CANDIDATE_OUTCOMES
+ *   counts, RUN_COUNTS, one CANDIDATE_INGESTED line per ingested candidate with domain,
+ *   sourceDate and effectiveDate, then CANDIDATE_REJECTED lines. The ingested and
+ *   rejected lines share MAX_DETAIL_LINES.
+ * Test: `formatDiagnosticLines` cases in tests/unit/check-ingestion-gap.test.ts.
+ */
+export function formatDiagnosticDetailLines(detail) {
+  const ids = coerceJsonArray(detail?.ingestedArticleIds);
+  const lines = [`INGESTED_ARTICLE_IDS=${ids === null ? "unavailable" : ids.length}`];
+  const stored = coerceJsonArray(detail?.candidateOutcomes);
+  const outcomes = stored === null ? null : stored.filter((entry) => !isRunCountsEntry(entry));
+  lines.push(...(outcomes === null ? ["CANDIDATE_OUTCOMES=unavailable"] : candidateOutcomeCountLines(outcomes)));
+  lines.push(formatRunCountsLine(detail?.candidateOutcomes));
+  if (outcomes === null) return lines;
+
+  const ingested = ingestedEntries(outcomes);
   for (const entry of ingested.slice(0, MAX_DETAIL_LINES)) {
-    const dateFields = Object.entries(entry)
-      .filter(([key]) => DATEISH_FIELD_PATTERN.test(key))
-      .map(([key, value]) => `${key}=${detailToken(value)}`);
-    const url = detailToken(String(entry.url ?? "").substring(0, DETAIL_URL_MAX_CHARS));
-    lines.push([`CANDIDATE_INGESTED url=${url}`, ...dateFields].join(" "));
+    lines.push(
+      `CANDIDATE_INGESTED domain=${detailToken(sourceDomain(entry.url))} ` +
+        `sourceDate=${detailToken(toIsoOrNull(entry.sourceDate))} ` +
+        `effectiveDate=${detailToken(toIsoOrNull(entry.effectiveDate))}`
+    );
   }
   if (ingested.length > MAX_DETAIL_LINES) {
     lines.push(`CANDIDATE_INGESTED_TRUNCATED=${ingested.length - MAX_DETAIL_LINES}`);
   }
-  // #476: rejected lines share MAX_DETAIL_LINES with the ingested lines above.
   const rejectedBudget = MAX_DETAIL_LINES - Math.min(ingested.length, MAX_DETAIL_LINES);
   lines.push(...formatCandidateRejectedLines(outcomes, rejectedBudget));
   return lines;
@@ -705,7 +749,8 @@ export function parseRunStartedAtInput(raw) {
   const [year, month, day, hour, minute, second] = [y, mo, d, h, mi, s].map(Number);
   const offsetHours = zulu ? 0 : Number(oh);
   const offsetMinutes = zulu ? 0 : Number(om);
-  if (month < 1 || month > 12 || hour > 23 || minute > 59 || second > 59) return { kind: "invalid" };
+  // #476: no ingestion run predates 1970; an earlier year is a typo, not a query.
+  if (year < 1970 || month < 1 || month > 12 || hour > 23 || minute > 59 || second > 59) return { kind: "invalid" };
   if (offsetHours > 14 || offsetMinutes > 59) return { kind: "invalid" };
   const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
   if (day < 1 || day > daysInMonth) return { kind: "invalid" };
@@ -726,25 +771,28 @@ export function parseRunStartedAtInput(raw) {
  * Why: #476 — a diagnostic run is read-only: it must print no ALERT[...] or LAST_* line
  *   the workflow could act on, and a verdict on a past run measured against now is noise.
  * What: A DIAGNOSTIC header naming the window, then DIAGNOSTIC_RUN for the selected row
- *   (exit 0), or DIAGNOSTIC_NO_RUN when no row started inside the window (exit 1).
+ *   and formatDiagnosticDetailLines() for its detail (exit 0); DIAGNOSTIC_NO_RUN when no
+ *   row started inside the window (exit 1); a redacted DETAIL_ERROR when the detail read
+ *   failed (exit 1 — a diagnosis that could not read its data is not a success).
  * Test: `formatDiagnosticLines` cases in tests/unit/check-ingestion-gap.test.ts.
  */
-export function formatDiagnosticLines(window, row) {
+export function formatDiagnosticLines(window, row, detail) {
   const header = `DIAGNOSTIC: read-only run selection, window=${detailToken(window.lower)}Z..${detailToken(window.upper)}Z`;
   if (!row) return { exitCode: 1, lines: [header, "DIAGNOSTIC_NO_RUN"] };
-  return {
-    exitCode: 0,
-    lines: [
-      header,
-      `DIAGNOSTIC_RUN started_at=${toIsoOrNull(row.started_at)} status=${detailToken(row.status ?? "unknown")} ` +
-        `articles_ingested=${countOrNa(row.articles_ingested)}`,
-    ],
-  };
+  const runLine =
+    `DIAGNOSTIC_RUN started_at=${toIsoOrNull(row.started_at)} status=${detailToken(row.status ?? "unknown")} ` +
+    `articles_ingested=${countOrNa(row.articles_ingested)}`;
+  if (detail === undefined) return { exitCode: 0, lines: [header, runLine] };
+  if (detail.error !== undefined && detail.error !== null) {
+    // #476: fail closed; formatRunDetailLines() renders the redacted DETAIL_ERROR line.
+    return { exitCode: 1, lines: [header, runLine, ...formatRunDetailLines(detail)] };
+  }
+  return { exitCode: 0, lines: [header, runLine, ...formatDiagnosticDetailLines(detail)] };
 }
 
 /**
  * #476: the diagnostic path. One SELECT picks the run nearest the input inside the
- * window; fetchRunDetail() then prints the same detail block the scheduled path does.
+ * window; fetchRunDetail() reads its detail, printed only as sanitised lines.
  */
 async function runDiagnostic(sql, window) {
   const rows = await sql`
@@ -754,9 +802,10 @@ async function runDiagnostic(sql, window) {
     ORDER BY abs(extract(epoch FROM started_at - ${window.center}::timestamp)), started_at
     LIMIT 1
   `;
-  const { exitCode, lines } = formatDiagnosticLines(window, rows[0]);
-  const detail = rows[0] ? formatRunDetailLines(await fetchRunDetail(sql, rows[0].id)) : [];
-  for (const line of [...lines, ...detail]) console.log(line);
+  const detail = rows[0] ? await fetchRunDetail(sql, rows[0].id) : undefined;
+  // #476: never formatRunDetailLines() here — it prints URLs, slugs, titles and reasons.
+  const { exitCode, lines } = formatDiagnosticLines(window, rows[0], detail);
+  for (const line of lines) console.log(line);
   process.exit(exitCode);
 }
 
