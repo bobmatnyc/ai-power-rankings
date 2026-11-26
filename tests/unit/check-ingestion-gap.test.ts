@@ -497,6 +497,9 @@ describe("rejectionReasonCode (#476)", () => {
     [{ outcome: "skipped_duplicate" }, "duplicate"],
     [{ outcome: "skipped_semantic" }, "semantic_dup"],
     [{ outcome: "skipped_previously_rejected" }, "previously_rejected"],
+    // #476: aggregator/wrapper URL dropped before scoring.
+    [{ outcome: "skipped_unresolvable_host", reason: "google_wrapper" }, "unresolvable_host"],
+    [{ outcome: "skipped_unresolvable_host", reason: "tavily" }, "unresolvable_host"],
     [{ outcome: "extraction_failed", reason: "blocked_domain" }, "blocked_domain"],
     [{ outcome: "extraction_failed", reason: "all_extraction_methods_failed" }, "extraction_failed"],
     [{ outcome: "assessment_failed", reason: "insufficient credits" }, "assessment_failed"],
@@ -560,6 +563,34 @@ describe("formatCandidateRejectedLines (#476)", () => {
     expect(lines).toEqual([
       "CANDIDATE_REJECTED outcome=quality_rejected domain=www.example.com sourceDate=2026-11-22T10:00:00.000Z " +
         "effectiveDate=null averageScore=6.3 relevanceScore=5.0 reason=low_relevance_and_avg",
+    ]);
+  });
+
+  // #476: 11-25 rows stored Tavily's RFC 2822 text, which printed sourceDate=invalid.
+  it("prints an RFC 2822 sourceDate as ISO, and an unresolvable-host row as its own code", () => {
+    const lines = formatCandidateRejectedLines([
+      {
+        url: "https://www.google.com/url?rct=j&sa=t&ct=ga",
+        outcome: "skipped_unresolvable_host",
+        reason: "google_wrapper",
+        sourceDate: "Sun, 22 Nov 2026 06:00:00 GMT",
+      },
+      {
+        url: "https://www.marktechpost.com/2026/11/22/story/",
+        outcome: "quality_rejected",
+        averageScore: 4,
+        relevanceScore: 3,
+        sourceDate: "Mon, 23 Nov 2026 14:30:00 +0200",
+      },
+    ]);
+
+    expect(lines).toEqual([
+      "CANDIDATE_REJECTED outcome=skipped_unresolvable_host domain=www.google.com " +
+        "sourceDate=2026-11-22T06:00:00.000Z effectiveDate=null averageScore=n/a relevanceScore=n/a " +
+        "reason=unresolvable_host",
+      "CANDIDATE_REJECTED outcome=quality_rejected domain=www.marktechpost.com " +
+        "sourceDate=2026-11-23T12:30:00.000Z effectiveDate=null averageScore=4.0 relevanceScore=3.0 " +
+        "reason=low_relevance_and_avg",
     ]);
   });
 

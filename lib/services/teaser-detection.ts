@@ -4,7 +4,8 @@
  * those were longer than the 500-char length check, so they were never
  * re-fetched. One candidate also carried a `google.com/url?...` redirect.
  * What: Pure helpers that decide whether a search snippet needs its full text
- * fetched before quality scoring, and that unwrap Google redirect URLs.
+ * fetched before quality scoring, that unwrap Google redirect URLs, and that
+ * name aggregator hosts that cannot be resolved to a publisher.
  * Test: `tests/unit/teaser-detection-476.test.ts`.
  */
 
@@ -96,4 +97,53 @@ export function resolvePublisherUrl(url: string): string {
   } catch {
     return url;
   }
+}
+
+/**
+ * #476: why a candidate URL cannot reach a publisher page. `google_wrapper` is
+ * a google.* page left after resolvePublisherUrl found no `url=`/`q=` target.
+ */
+export type UnresolvableHostRule = "google_wrapper" | "news_google" | "tavily" | "malformed_url";
+
+// #476: google.<tld> or www.google.<tld> only, so cloud.google.com or ai.google.dev posts still pass.
+const GOOGLE_WRAPPER_HOST = /^(?:www\.)?google\.[a-z]{2,3}(?:\.[a-z]{2})?$/;
+// #476: news.google.* serves article tokens that redirect client-side, never the article.
+const NEWS_GOOGLE_HOST = /^news\.google\.[a-z]{2,3}(?:\.[a-z]{2})?$/;
+const TAVILY_HOST = /(^|\.)tavily\.com$/;
+
+/**
+ * #476: hosts sent as Tavily `exclude_domains`. Exact wrapper hosts only: a bare
+ * `google.com` would also suppress cloud.google.com and developers.google.com,
+ * which the pipeline keeps. unresolvableHostRule() drops whatever gets through.
+ */
+export const UNRESOLVABLE_EXCLUDE_DOMAINS: readonly string[] = Object.freeze([
+  "www.google.com",
+  "news.google.com",
+  "tavily.com",
+  "www.tavily.com",
+]);
+
+/**
+ * Why: #476 — on 2026-11-25, 17 of 30 candidates were google.com or tavily.com
+ * pages. They gave all 9 teaser_unexpanded rejections and 1 extraction failure,
+ * and each cost an LLM score.
+ * What: Returns the rule that makes `url` unresolvable, or null for a URL that
+ * can reach a publisher page. Call it after resolvePublisherUrl(), so a google
+ * `url=` wrapper with a target is already the publisher URL. A value that is
+ * not an absolute http(s) URL is `malformed_url`. Never throws.
+ * Test: `unresolvableHostRule` cases in tests/unit/unresolvable-host-476.test.ts.
+ */
+export function unresolvableHostRule(url: unknown): UnresolvableHostRule | null {
+  let parsed: URL;
+  try {
+    parsed = new URL(String(url ?? ""));
+  } catch {
+    return "malformed_url";
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return "malformed_url";
+  const host = parsed.hostname.toLowerCase();
+  if (NEWS_GOOGLE_HOST.test(host)) return "news_google";
+  if (GOOGLE_WRAPPER_HOST.test(host)) return "google_wrapper";
+  if (TAVILY_HOST.test(host)) return "tavily";
+  return null;
 }

@@ -101,12 +101,23 @@
   {
     "id": "unreleased-a41f80d03eff",
     "version": "Unreleased",
-    "date": "2026-11-26T09:48:14.124Z",
-    "dateSource": "build",
+    "date": "2026-11-26T09:53:52.000Z",
+    "dateSource": "commit",
     "section": "Fixed",
     "scope": "ingestion",
     "title": "daily discovery queries no longer name an ambiguous tool bare",
     "description": "daily discovery queries no longer name an ambiguous tool bare. A tracked name that is a common word, a person's name or a sport (`Cursor`, `Devin`, `Windsurf`, `Zed`, `Kiro`, `Lovable`, `Continue`, `v0` and others in `AMBIGUOUS_TOOL_TERMS`) is replaced by the phrases news uses for the tool, for example `\"Cursor AI\" OR \"Cursor IDE\" OR \"Anysphere\"`. Any other single plain word in the catalogue gets `\"<Name> AI\"`. Each query still holds up to 4 tools and stays within 400 characters and 50 words; a group that would exceed either closes early. Every tracked tool stays in the daily rotation, and each run still makes 3 Tavily searches (2 Brave on fallback). Tests: `tests/unit/discovery-queries-precision-476.test.ts`, `tests/unit/discovery-queries-476.test.ts` (#476)",
+    "changeType": "fix"
+  },
+  {
+    "id": "unreleased-c5cf104c8cc2",
+    "version": "Unreleased",
+    "date": "2026-11-26T09:55:08.396Z",
+    "dateSource": "build",
+    "section": "Fixed",
+    "scope": "ingestion",
+    "title": "daily news ingestion drops a candidate whose URL is an aggregator or wrapper page that cannot reach the publisher,…",
+    "description": "daily news ingestion drops a candidate whose URL is an aggregator or wrapper page that cannot reach the publisher, before the freshness gate, deduplication, extraction, teaser expansion and quality scoring. The rules are a `google.*` page left after the `url=`/`q=` unwrap (`google_wrapper`), any `news.google.*` URL (`news_google`), any `tavily.com` URL (`tavily`), and a value that is not an http(s) URL (`malformed_url`). Each drop is recorded as `skipped_unresolvable_host` with the rule as its reason and counts in `articlesSkipped`; the gap detector prints it as reason code `unresolvable_host`. A `google.com/url?url=<publisher>` wrapper still goes through as the publisher URL, and Google's own sites (`cloud.google.com`, `ai.google.dev`, `blog.google`) are kept. Tavily searches send `exclude_domains` for exactly `www.google.com`, `news.google.com`, `tavily.com` and `www.tavily.com`; bare `google.com` is not sent, so Google-owned publisher pages such as `cloud.google.com` stay in the results. `include_domains` is unchanged. A candidate's `sourceDate` is stored as ISO-8601 when it parses, RFC 2822 included, and as the raw text otherwise, and the gap detector prints a stored RFC 2822 `sourceDate` as ISO instead of `invalid`. Quality thresholds and the freshness gate are unchanged. On 2026-11-25, 17 of 30 candidates were google.com or tavily.com pages. Tests: `tests/unit/unresolvable-host-476.test.ts`, `tests/unit/source-date-476.test.ts`, `tests/unit/ingestion-teaser-extraction-476.test.ts`, `tests/unit/check-ingestion-gap.test.ts` (#476)",
     "changeType": "fix"
   },
   {

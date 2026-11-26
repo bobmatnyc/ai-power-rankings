@@ -85,7 +85,7 @@ function setup(results: ReturnType<typeof candidate>[], fetchImpl: FetchImpl) {
 
 describe("teaser extraction before assessment (#476)", () => {
   it("extracts a teaser candidate and the assessor sees the full text", async () => {
-    const url = "https://news.google.com/teaser";
+    const url = "https://teaser.example/teaser";
     const { service, fetchArticleContent, assessedContent } = setup([candidate(url, TEASER)], async () => FULL_TEXT);
 
     await service.runDailyDiscovery({ days: 14 });
@@ -108,7 +108,7 @@ describe("teaser extraction before assessment (#476)", () => {
   });
 
   it("falls back to the teaser when extraction throws, without failing the run", async () => {
-    const url = "https://news.google.com/throws";
+    const url = "https://teaser.example/throws";
     const { service, fetchArticleContent, assessedContent } = setup([candidate(url, TEASER)], async () => {
       throw new Error("extractor down");
     });
@@ -121,7 +121,7 @@ describe("teaser extraction before assessment (#476)", () => {
   });
 
   it("keeps the teaser when the extracted page is consent boilerplate (#477 guard)", async () => {
-    const url = "https://news.google.com/consent";
+    const url = "https://teaser.example/consent";
     const boilerplate = "We use cookies and tracking technologies. Accept all or reject all. ".repeat(10);
     const { service, fetchArticleContent, assessedContent } = setup([candidate(url, TEASER)], async () => boilerplate);
 
@@ -133,7 +133,7 @@ describe("teaser extraction before assessment (#476)", () => {
 
   // #476 review: expansion has its own budget inside the pipeline timeout.
   it("bounds expansion with a hanging extractor: cap respected, run completes, snippets assessed", async () => {
-    const urls = [1, 2, 3, 4, 5].map((i) => `https://news.google.com/hang-${i}`);
+    const urls = [1, 2, 3, 4, 5].map((i) => `https://teaser.example/hang-${i}`);
     const { service, fetchArticleContent, assessedContent } = setup(
       // Distinct titles, so semantic dedupe keeps all five.
       ["Cursor", "Windsurf", "Devin", "Copilot", "Aider"].map((tool, i) => ({
@@ -159,7 +159,7 @@ describe("teaser extraction before assessment (#476)", () => {
   });
 
   it("starts no expansion once the run is past stopAfterRunMs", async () => {
-    const url = "https://news.google.com/late";
+    const url = "https://teaser.example/late";
     const { service, fetchArticleContent, assessedContent } = setup([candidate(url, TEASER)], async () => FULL_TEXT);
     (service as unknown as { teaserBudget: object }).teaserBudget = {
       maxPerRun: 10,
@@ -175,7 +175,7 @@ describe("teaser extraction before assessment (#476)", () => {
   });
 
   it("does not count a teaser fetch's 401 as a run billing/auth failure", async () => {
-    const url = "https://news.google.com/billing";
+    const url = "https://teaser.example/billing";
     const { service, assessedContent } = setup([candidate(url, TEASER)], async (_u, _s, billing) => {
       billing?.note("tavily", "Unauthorized", 401);
       return null;
@@ -229,5 +229,46 @@ describe("teaser extraction before assessment (#476)", () => {
     expect(checkDuplicates.mock.calls[0]?.[0]).toEqual([publisher]);
     expect(fetchArticleContent).toHaveBeenCalledWith(publisher, undefined, undefined);
     expect(assessedContent(publisher)).toBe(FULL_TEXT);
+  });
+
+  // #476: the 2026-11-25 shape — aggregator URLs reached extraction and the LLM.
+  it("drops unresolvable aggregator URLs before dedup, extraction and scoring, with an outcome each", async () => {
+    const rfc2822 = new Date(Date.now() - 24 * 60 * 60 * 1000).toUTCString();
+    const withDate = (c: ReturnType<typeof candidate>) => ({ ...c, publishedDate: rfc2822 });
+    const dropped = {
+      google_wrapper: "https://www.google.com/url?rct=j&sa=t&ct=ga&cd=CAIyGjQ5",
+      news_google: "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1fake?oc=5",
+      tavily: "https://tavily.com/blog/agentic-search",
+      malformed_url: "not a url",
+    };
+    const wrapper = "https://www.google.com/url?rct=j&sa=t&url=https%3A%2F%2Fwww.marktechpost.com%2Fstory&ct=ga";
+    const resolved = "https://www.marktechpost.com/story";
+    const publisher = "https://www.vals.ai/news/benchmark";
+    const { service, batchAssess, fetchArticleContent } = setup(
+      [
+        ...Object.values(dropped).map((url) => withDate(candidate(url, TEASER))),
+        withDate(candidate(wrapper, TEASER)),
+        // A distinct title, so the semantic-duplicate filter keeps both survivors.
+        { ...withDate(candidate(publisher, LONG_SNIPPET)), title: "Vals benchmark ranks coding agents" },
+      ],
+      async () => FULL_TEXT
+    );
+    const checkDuplicates = vi.spyOn(service, "checkDuplicates");
+
+    const result = await service.runDailyDiscovery({ days: 14 });
+
+    const kept = [resolved, publisher];
+    expect([...(checkDuplicates.mock.calls[0]?.[0] ?? [])].sort()).toEqual([...kept].sort());
+    for (const url of Object.values(dropped)) {
+      expect(fetchArticleContent).not.toHaveBeenCalledWith(url, undefined, undefined);
+    }
+    const assessedUrls = batchAssess.mock.calls.flatMap((call) => (call[0] as Array<{ url: string }>).map((a) => a.url));
+    expect(assessedUrls.sort()).toEqual([...kept].sort());
+
+    const skipped = result.candidateOutcomes.filter((o) => o.outcome === "skipped_unresolvable_host");
+    expect(skipped.map((o) => [o.url, o.reason])).toEqual(Object.entries(dropped).map(([rule, url]) => [url, rule]));
+    // #476: the RFC 2822 provider date is stored as ISO-8601.
+    expect(skipped[0]?.sourceDate).toBe(new Date(rfc2822).toISOString());
+    expect(result.articlesSkipped).toBeGreaterThanOrEqual(Object.keys(dropped).length);
   });
 });

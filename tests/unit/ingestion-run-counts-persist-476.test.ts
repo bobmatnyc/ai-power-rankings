@@ -43,7 +43,7 @@ import { AutomatedIngestionService } from "../../lib/services/automated-ingestio
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const REJECTED_URL = "https://www.amazon.com/company-page";
-const TEASER_URL = "https://news.google.com/teaser";
+const TEASER_URL = "https://teaser.example/teaser";
 const TEASER =
   "Anthropic shipped a new Claude Code release with background agents, according to a report published today on the subject.";
 const FULL_TEXT = "Claude Code now runs background agents. ".repeat(40);

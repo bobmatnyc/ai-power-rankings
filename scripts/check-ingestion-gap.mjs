@@ -56,6 +56,8 @@ import { neon } from "@neondatabase/serverless";
 // #103: started_at, published_date and created_at are timestamp WITHOUT time zone
 // holding UTC; read them as UTC whatever the process TZ.
 import { naiveUtcTypes, parseNaiveUtcTimestamp } from "../lib/db/naive-utc-timestamp.mjs";
+// #476: candidate dates may be RFC 2822 text (rows stored before #476 kept Tavily's raw value).
+import { parseSourceDate } from "../lib/services/source-date.mjs";
 
 // ---------------------------------------------------------------------------
 // Named thresholds — tune here, not inline.
@@ -161,8 +163,9 @@ function detailText(value) {
 function toIsoOrNull(value) {
   if (value === null || value === undefined) return "null";
   // #103: a zone-less string is UTC, not process-local time.
-  const date = parseNaiveUtcTimestamp(value);
-  return Number.isNaN(date.getTime()) ? "invalid" : date.toISOString();
+  // #476: RFC 2822 text ("Sun, 22 Nov 2026 06:00:00 GMT") also parses.
+  const date = parseSourceDate(value);
+  return date === null ? "invalid" : date.toISOString();
 }
 
 /**
@@ -339,6 +342,7 @@ export const REJECTION_REASON_CODES = Object.freeze([
   "duplicate",
   "semantic_dup",
   "previously_rejected",
+  "unresolvable_host", // #476: aggregator/wrapper URL dropped before scoring
   "blocked_domain",
   "extraction_failed",
   "assessment_failed",
@@ -358,6 +362,7 @@ const OUTCOME_REASON_CODES = new Map([
   ["skipped_duplicate", "duplicate"],
   ["skipped_semantic", "semantic_dup"],
   ["skipped_previously_rejected", "previously_rejected"],
+  ["skipped_unresolvable_host", "unresolvable_host"], // #476
   ["extraction_failed", "extraction_failed"],
   ["assessment_failed", "assessment_failed"],
   ["quality_rejected_unexpanded", "teaser_unexpanded"],

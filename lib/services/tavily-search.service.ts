@@ -12,6 +12,7 @@ import { loggers } from '@/lib/logger';
 import { buildToolAnchoredQueries, loadTrackedToolNames } from './discovery-queries';
 import { ProviderApiError } from './provider-api-error'; // #367
 import { recordCrawlUsage, tavilyCredits } from './provider-usage'; // #392
+import { UNRESOLVABLE_EXCLUDE_DOMAINS } from './teaser-detection'; // #476
 
 /**
  * Which discovery pass produced a result.
@@ -300,6 +301,9 @@ export class TavilySearchService {
       include_answer: false,
       include_raw_content: false,
       topic,
+      // #476: aggregator/wrapper hosts never resolve to a publisher page; the
+      // pipeline would drop them as skipped_unresolvable_host anyway.
+      exclude_domains: [...UNRESOLVABLE_EXCLUDE_DOMAINS],
     };
 
     // Add domain filtering if specified
