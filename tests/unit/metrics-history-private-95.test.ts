@@ -12,6 +12,7 @@
  *   the freshness guard), so under lib/ its read modules and the ranking service are
  *   allowed too; under app/ only cron and admin routes may import that service at runtime.
  *   #95 PR A: the read-only point-in-time compare modules are allowed under lib/; no app/ file imports them.
+ *   #184: ruling D83 adds the open-weight cron route as a second writer; it serves no page.
  * Test: `npx vitest run tests/unit/metrics-history-private-95.test.ts`
  */
 
@@ -40,8 +41,12 @@ function referencing(dir: string): string[] {
 }
 
 describe("#95 metrics history is private", () => {
-  it("no file under app/ references the history tables except the collect-metrics cron route", () => {
-    expect(referencing("app")).toEqual(["app/api/cron/collect-metrics/route.ts"]);
+  it("no file under app/ references the history tables except the two collection cron routes", () => {
+    expect(referencing("app")).toEqual([
+      "app/api/cron/collect-metrics/route.ts",
+      // #184: the monthly open-weight run (owner ruling D83).
+      "app/api/cron/collect-open-weight-metrics/route.ts",
+    ]);
   });
 
   it("under lib/ only the schema, the history store and the regen read path reference them", () => {
