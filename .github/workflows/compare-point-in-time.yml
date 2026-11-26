@@ -47,6 +47,8 @@ jobs:
     # #95: main only. A dispatch on any other ref skips the job before checkout.
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # #355: DATABASE_URL lives in the prod-db environment, limited to main (see apply-migration.yml).
+    environment: prod-db
     timeout-minutes: 15
     steps:
       - name: Checkout

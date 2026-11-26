@@ -5,8 +5,14 @@ Migrations in `lib/db/migrations/` are applied by hand, not by the deploy. Migra
 applied, and production ingestion was down from 2026-09-04 until someone noticed (#134).
 
 Nobody can pull a production `DATABASE_URL` to a laptop — secrets are injected at runtime.
-The `DATABASE_URL` GitHub Actions repository secret does reach production, so the apply
+The `DATABASE_URL` GitHub Actions secret does reach production, so the apply
 runs from CI.
+
+Every workflow job that reads `DATABASE_URL` runs in the `prod-db` GitHub environment, this
+one included. That environment is limited to the `main` branch and holds `DATABASE_URL`, so
+the secret is available to runs on `main` only. A run of one of these workflows from another
+ref is refused by the environment. In this workflow the dry run and the apply are steps of
+the same job and share the environment.
 
 ## Procedure
 
