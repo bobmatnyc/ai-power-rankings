@@ -48,9 +48,8 @@ describe("daily provider window is split from the freshness gate (#476)", () => 
     internal._articleIngestionService = { ingestArticle };
   });
 
-  it("uses a 2-3 day provider window constant", () => {
-    expect(DAILY_PROVIDER_WINDOW_DAYS).toBeGreaterThanOrEqual(2);
-    expect(DAILY_PROVIDER_WINDOW_DAYS).toBeLessThanOrEqual(3);
+  it("uses a 7 day provider window constant", () => {
+    expect(DAILY_PROVIDER_WINDOW_DAYS).toBe(7);
   });
 
   it("short daily window reaches the provider, gate stays 14", async () => {

@@ -20,12 +20,13 @@ import { loggers } from "@/lib/logger";
 /**
  * #476: provider lookback for the scheduled daily run. A 14-day window let
  * relevance ranking fill the result pages with week-old stories the previous
- * runs had already seen; 3 days keeps the daily pull to new content while
- * covering a missed cron day. Backfills and manual runs keep the 14-day
+ * runs had already seen; 7 days keeps the daily pull to recent content while
+ * covering missed cron days. Backfills and manual runs keep the 14-day
  * default; the freshness gate never drops below 14 (see the gate in
  * automated-ingestion.service.ts).
  */
-export const DAILY_PROVIDER_WINDOW_DAYS = 3;
+// #476: widen Tavily window; 3 days starved on-topic supply after #482.
+export const DAILY_PROVIDER_WINDOW_DAYS = 7;
 
 /** #476: tool names per query; 3-4 keeps a query focused and under provider length limits. */
 export const TOOLS_PER_QUERY = 4;
