@@ -65,7 +65,6 @@ describe("GET /api/cron/daily-news provider window (#476)", () => {
     );
 
     const days = mocks.runDailyDiscovery.mock.calls[0][0]?.days;
-    expect(days).toBeGreaterThanOrEqual(2);
-    expect(days).toBeLessThanOrEqual(3);
+    expect(days).toBe(7);
   });
 });
